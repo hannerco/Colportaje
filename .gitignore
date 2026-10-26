@@ -1,0 +1,37 @@
+# Dependencias y builds
+node_modules/
+.next/
+out/
+dist/
+coverage/
+.turbo/
+*.tsbuildinfo
+
+# Entorno y secretos (NUNCA commitear)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+supabase/.temp/
+supabase/.branches/
+
+# Vercel
+.vercel/
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
+# SO / editor
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.log
+
+# Backups locales
+*.dump
+*.sql.gz
+backups/
