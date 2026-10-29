@@ -122,13 +122,13 @@
 |---|---|---|
 | Deuda | `debt` | Σ precio acordado de ejemplares vendidos al cliente |
 | Suma de abonos | `paid_total` | Σ valor real de abonos cobrados o entregados |
-| Saldo pendiente | `balance` | `debt − paid_total − credit_applied` |
+| Saldo pendiente | `balance` | `debt − paid_total + credit_applied` |
 | Saldo a favor | `credit` | `max(0, −balance)` |
 | Saldo restante | `remaining` | `max(0, balance)` |
 | Total programado | `scheduled_total` | Σ valor acordado de abonos por cobrar |
 | Sobrante de programados | `excess` | `scheduled_total − remaining`; dispara la **alerta de abonos que no cuadran** |
 | Sin programar | `unscheduled` | Saldo aún sin abonos programados (informativo) |
-| Perdidos asumidos | `lost_assumed_value` | Σ precio colportor de ejemplares `lost` |
+| Perdidos asumidos | `lost_assumed_value` | Σ precio colportor de ejemplares `lost` (libros; sin minibooks) |
 | A responder al líder | `owed_to_leader` | Mi compra + perdidos asumidos |
 | Dinero en la calle | `street_money` | Σ saldos restantes (abonos `canceled` no cuentan) |
 | **Por entregar** (sin subtítulo; ⓘ: "dinero que ya cobraste y aún no has entregado al líder") | `to_deliver_total` | Σ abonos `collected` no entregados; desglose Efectivo `cash_to_deliver` / Transferencia `transfer_to_deliver` |

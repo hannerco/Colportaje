@@ -81,3 +81,17 @@ Ver `04-diseno/DESIGN-BRIEF.md` §13: DT-01 (total de deuda en Clientes), DT-02 
 | OQ-27 | Región | **us-east-1** (medido) — ADR-0002 |
 | OQ-28 | Plan de Supabase | Cuenta nueva, dos proyectos, ping anti-pausa, backups cada 2 días; Pro más adelante (SG-06) |
 | OQ-29 | Vercel Hobby | Cuenta nueva, plan gratuito; decidido sobre Render |
+
+## 6. Supuestos tomados al implementar el dominio (2026-10-29)
+No bloquean nada y el código ya los aplica; se anotan aquí para que el dueño los confirme o los cambie. Resueltas por el dueño ese día: orden de recorte, motivo de cancelación, prórroga y minibooks perdidos (ADR-0033).
+
+| ID | Supuesto | Dónde vive | Estado |
+|---|---|---|---|
+| OQ-30 | Desempates deterministas: dos abonos programados con la misma fecha se recortan por orden de creación y luego por id; en el FIFO de minibooks, ejemplares recibidos el mismo día salen por número y luego por id | `payment.ts` (`compareByDueDate`), `minibook.ts` (`compareFifo`) | Por confirmar |
+| OQ-31 | Los "2 meses" de la prórroga se cuentan **desde hoy**, en meses calendario (31/12 + 2 meses = 28/02) y el límite exacto sí se acepta sin confirmar | `payment.ts` (`RESCHEDULE_CONFIRMATION_MONTHS`) | Por confirmar |
+| OQ-32 | "Entregado al líder" en los totalizadores de minibooks suma solo asignaciones de Abibonos **confirmados** (un borrador aún no se entregó), igual que "Total abonado" | `minibook.ts` (`minibookTotals`) | Por confirmar |
+| OQ-33 | Editar un abono **por cobrar** solo cambia su valor acordado; las fechas se cambian únicamente con una prórroga (así siempre queda historial y `original_due_date` no cambia) | `payment.ts` (`editScheduledAmount`) | Por confirmar |
+| OQ-34 | La fecha de una entrada de minibooks acepta cualquier día válido (no se restringe a no futura) y una venta normal ignora el cliente que se envíe | `minibook.ts` | Por confirmar |
+| OQ-35 | Al borrar una entrada de minibooks, el historial de cada ejemplar registra `returned` con motivo `wrong_registration` (no cuenta como devolución de un cliente) | `minibook.ts` (`deleteMinibookSale`) | Por confirmar |
+| OQ-36 | Borrar un abono cobrado se trata como disparador de BR-PAY-13 con orden "más próximo" y motivo `manual` | `schedule-excess.ts` | Por confirmar |
+| OQ-37 | Pendiente de pedir: la cantidad "+ / pastilla" (BR-COPY-02), el calendario (visitas, capacitaciones y recordatorios) y la validación de Títulos (BR-TIT-02/04) aún no están en el dominio | — | Pendiente |

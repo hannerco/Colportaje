@@ -196,7 +196,7 @@ Efecto: consume `quantity` copies `in_stock` del título (FIFO por `received_at`
 debt(c)            = Σ copy.agreed_price           donde copy.customer_id = c ∧ status = sold
 paid_total(c)      = Σ payment.paid_amount         donde payment.customer_id = c ∧ status ∈ {collected, delivered}
 credit_applied(c)  = Σ minibook_sale.amount        donde customer_id = c ∧ payment_source = client_credit
-balance(c)         = debt − paid_total − credit_applied
+balance(c)         = debt − paid_total + credit_applied   (credit_applied CONSUME saldo a favor; ver ADR-0033)
 credit(c)          = max(0, −balance)
 remaining(c)       = max(0, balance)
 scheduled_total(c) = Σ payment.agreed_amount       donde status = scheduled          (canceled NO cuenta)
@@ -215,7 +215,7 @@ deposit.difference = total − expected
 cash_to_deliver    = Σ paid_amount de payments collected con method = cash       (análogo transfer_to_deliver)
 to_deliver_total   = cash_to_deliver + transfer_to_deliver   (tarjeta "Por entregar" en Hoy; excluye minibooks y canceled)
 bonus_progress     = Σ colportor_price_snapshot de copies culturales vendidas ÷ bonus_goal   (barra: min(1, ·))
-lost_assumed_value = Σ colportor_price_snapshot de copies lost
+lost_assumed_value = Σ colportor_price_snapshot de copies lost   (libros; los minibooks perdidos no cuentan)
 owed_to_leader     = Mi compra (Σ colportor_price_snapshot de vendidos) + lost_assumed_value
 minibooks.income   = Σ amount de minibook_sale con payment_source = cash
 minibooks.cost     = Σ colportor_price_snapshot de copies vendidas con minibook_sale_id

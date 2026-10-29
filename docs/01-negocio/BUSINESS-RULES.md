@@ -92,7 +92,7 @@ Notación: "colportor" = usuario con rol colportor. Fechas calendario en **Ameri
   - `debt` (Deuda) = Σ `agreed_price` de sus ejemplares `sold`.
   - `paid_total` (Suma de abonos) = Σ `paid_amount` de sus abonos en estado `collected` o `delivered`.
   - `credit_applied` = Σ `amount` de entradas de minibooks con origen `client_credit` asociadas al cliente.
-  - `balance` (Saldo pendiente) = `debt − paid_total − credit_applied`.
+  - `balance` (Saldo pendiente) = `debt − paid_total + credit_applied`. El signo de `credit_applied` es `+` porque entregar un minibook con saldo a favor **consume** ese saldo (BR-MBK-07, AF-10): con $30.000 a favor y un minibook de $1.500 aplicado quedan $28.500 a favor (ADR-0033).
   - `scheduled_total` = Σ `agreed_amount` de abonos `scheduled`.
   - `unscheduled` = `max(0, balance) − scheduled_total` cuando es positivo (saldo aún sin programar; informativo).
   - `first_sale_at` / `last_sale_at` (Fecha de la venta) = mín./máx. `sold_at`.
@@ -115,7 +115,7 @@ Notación: "colportor" = usuario con rol colportor. Fechas calendario en **Ameri
   - Abono extra: nace `collected`; sin fecha acordada.
 - **BR-PAY-04** `method` ∈ {`cash`, `transfer`}; obligatorio al cobrar.
 - **BR-PAY-05** **Cobrar** un abono programado: se informa `paid_amount` (por defecto el acordado), `paid_at` (por defecto hoy, editable, no futura) y `method`. Pasa a `collected`.
-- **BR-PAY-06** **Prórroga** (cliente pide más plazo), solo mientras `scheduled`: se cambia `due_date` (la que sale en el calendario); `original_due_date` **no cambia nunca**; se inserta una fila en `payment_reschedule` (fecha anterior, fecha nueva, cuándo, nota opcional).
+- **BR-PAY-06** **Prórroga** (cliente pide más plazo), solo mientras `scheduled`: se cambia `due_date` (la que sale en el calendario); `original_due_date` **no cambia nunca**; se inserta una fila en `payment_reschedule` (fecha anterior, fecha nueva, cuándo, nota opcional). La **nueva fecha debe ser posterior** a la actual (una prórroga solo da más plazo; una fecha mal escrita se corrige editando el abono) y, si cae a **más de 2 meses desde hoy** (America/Bogota), la app pide **confirmar la fecha** antes de guardar (ADR-0033).
 - **BR-PAY-07** **Abono parcial**: si `paid_amount < agreed_amount`, el abono queda `collected` con lo realmente pagado; el faltante permanece en el saldo del cliente (derivado) y la app **sugiere** programar un nuevo abono por la diferencia. **Nunca** se crea automáticamente. Si `paid_amount > agreed_amount` se permite y puede disparar BR-PAY-13.
 - **BR-PAY-08** Un abono `scheduled` con `due_date < hoy` está **vencido** (derivado). En Hoy aparece solo como **aviso único** (BR-CAL-09); el detalle se ve en **Dinero ▸ Por cobrar ▸ Vencidos** y en el calendario, hasta que se cobre, se reprograme o se cancele.
 - **BR-PAY-09** Solo abonos `collected` y no vinculados a otro Abibono pueden añadirse a un Abibono.
@@ -131,11 +131,11 @@ Notación: "colportor" = usuario con rol colportor. Fechas calendario en **Ameri
   6. confirmar el asistente de venta (si lo programado supera lo que falta).
   
   Se muestra un **modal** con: saldo restante, total programado, sobrante y la **lista de abonos programados con casillas**. Opciones:
-  - **Recortar automáticamente:** consume el sobrante cancelando abonos completos y, si sobra poco, **reduciendo el `agreed_amount`** del último afectado. Orden: tras un **abono extra o sobrepago**, desde el **más próximo** (el cliente se adelantó); tras una **devolución, baja de precio o archivado**, desde el **más lejano**.
+  - **Recortar automáticamente:** consume el sobrante cancelando abonos completos y, si sobra poco, **reduciendo el `agreed_amount`** del último afectado. Orden: tras un **abono extra o sobrepago**, desde el **más próximo** (el cliente se adelantó); tras una **devolución, baja de precio o archivado**, desde el **más lejano**. Para los otros disparadores: **editar o borrar un abono cobrado** → desde el más próximo; **confirmar el asistente de venta** → desde el más lejano (ADR-0033). Siempre es una **sugerencia**: el colportor elige en el modal si recorta automáticamente (en el orden sugerido u otro) o lo hace él.
   - **Cancelar los que marque** manualmente.
   - **Dejar como está.** La ficha del cliente conserva un aviso persistente ("Los abonos programados superan el saldo en $X") hasta resolverlo.
   
-  Un abono cancelado pasa a `status = canceled` con `canceled_at` y `cancel_reason` ∈ {`book_returned`, `overpaid`, `manual`, `customer_archived`}; **se conserva** (sección Cancelados de la ficha) pero **no cuenta** en el calendario, "Hoy", ni en ningún total. Un recorte por reducción guarda el valor anterior en `payment_event`. El caso inverso (`excess < 0`, saldo sin programar) **no** dispara alerta: se muestra solo como "sin programar".
+  Un abono cancelado pasa a `status = canceled` con `canceled_at` y `cancel_reason` ∈ {`book_returned`, `overpaid`, `manual`, `customer_archived`}; **se conserva** (sección Cancelados de la ficha) pero **no cuenta** en el calendario, "Hoy", ni en ningún total. Un recorte por reducción guarda el valor anterior en `payment_event`. El motivo depende del disparador: abono extra, sobrepago o edición de un cobro → `overpaid`; devolución → `book_returned`; archivar → `customer_archived`; baja de precio, borrar un cobro y asistente de venta → `manual` (ADR-0033). El caso inverso (`excess < 0`, saldo sin programar) **no** dispara alerta: se muestra solo como "sin programar".
 
 ## 8. Abibonos (entregas al líder)
 
@@ -210,7 +210,7 @@ Notación: "colportor" = usuario con rol colportor. Fechas calendario en **Ameri
 - **BR-GOAL-04** Selector **Todos | Culturales | Religiosos** (por defecto Todos = cultural + religioso). Aplica a los totalizadores 1, 4, 5, 6, 7. Los 2, 3 y 8 son globales y no se filtran por categoría.
 - **BR-GOAL-05** *Hacer inventario*: pantalla con tabla por título (BR-COPY-14), agrupada en **Culturales, Religiosos, Minibooks**, con subtotales y total. Dos vistas: **Inventario** (solo culturales) e **Inventario TODOS** (culturales + religiosos). Los minibooks siempre aparte. Es una vista en vivo. **Compartir:** botón **"Copiar resumen"** que deja un texto limpio para pegar (WhatsApp). **PDF y CSV quedan declarados como mejora futura** (backlog). **No** se guardan cortes históricos en la v1.
 - **BR-GOAL-06** Las cifras de dinero se muestran en: **Dinero**, **ficha del cliente**, **Abibono** y **Hacer inventario**, y en **Hoy** únicamente la tarjeta **"Por entregar"** (BR-CAL-08), porque es el dato operativo de cuánto hay que entregar al líder. No se muestran en: **Inventario**, **Agregar** ni **Calendario**. En la lista de **Clientes** solo aparece el saldo pendiente de cada cliente (BR-CUS-05).
-- **BR-GOAL-07** **Pérdidas y "A responder al líder":** `lost_assumed_value = Σ colportor_price_snapshot de ejemplares lost`. `owed_to_leader = Mi compra (vendidos) + lost_assumed_value`. En *Hacer inventario* se muestran la línea **"Perdidos asumidos"** (cantidad y valor) y el total **"A responder al líder"**. "Mi compra" sigue siendo solo vendidos. No son parte de los 8 totalizadores originales.
+- **BR-GOAL-07** **Pérdidas y "A responder al líder":** `lost_assumed_value = Σ colportor_price_snapshot de ejemplares lost`. `owed_to_leader = Mi compra (vendidos) + lost_assumed_value`. En *Hacer inventario* se muestran la línea **"Perdidos asumidos"** (cantidad y valor) y el total **"A responder al líder"**. "Mi compra" sigue siendo solo vendidos. No son parte de los 8 totalizadores originales. **Alcance:** igual que "Mi compra", es decir libros culturales y religiosos según el selector Todos | Culturales | Religiosos; los **minibooks perdidos no cuentan** (los minibooks son una cuenta aparte, ADR-0033).
 
 ## 13. Inventario: agregar, favoritos y vistas
 

@@ -92,7 +92,7 @@ Una sola acción —**"Devolver a inventario"** en la ficha del cliente (o en el
 - *App:* "Fecha real" es editable (por defecto hoy; **no futura**). Útil cuando se registra al día siguiente.
 
 ### AF-24 Prórroga repetida
-- *App:* cada "Dar más plazo" cambia `due_date` y añade una fila al historial; `original_due_date` no cambia nunca. La ficha muestra la fecha original tachada y la actual; el historial muestra cuántas veces se aplazó.
+- *App:* cada "Dar más plazo" cambia `due_date` y añade una fila al historial; `original_due_date` no cambia nunca. La ficha muestra la fecha original tachada y la actual; el historial muestra cuántas veces se aplazó. La nueva fecha debe ser posterior a la actual, y si pasa de 2 meses desde hoy la app pide confirmarla.
 
 ### AF-25 El cliente liquida toda la deuda de una vez
 - *App:* tras registrar el abono, `remaining = 0` y todo lo programado es sobrante → modal con **Recortar** (cancela todos). Resultado: sin abonos programados, saldo 0.

@@ -70,6 +70,7 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
   - *Dado* acordado 50.000 y pagado 30.000, *entonces* `collected` por 30.000, saldo conserva 20.000 y se **sugiere** (no se crea) otro abono.
 - **RQ-PAY-03 [F1]** Doy prórroga: `original_due_date` no cambia, `due_date` sí, se inserta historial.
   - *Cuando* aplazo dos veces, *entonces* hay 2 filas de historial y la fecha original sigue siendo la primera.
+  - *Cuando* la nueva fecha no es posterior a la actual, *entonces* se rechaza; *cuando* cae a más de 2 meses desde hoy, *entonces* la app pide confirmar la fecha.
 - **RQ-PAY-04 [F1]** Los abonos vencidos aparecen en Hoy solo como **aviso único** que abre Dinero ▸ Por cobrar ▸ Vencidos; el detalle se ve en Dinero y en el calendario.
 - **RQ-PAY-05 [F1]** Un abono en un Abibono confirmado está bloqueado (se desbloquea solo reabriendo el Abibono).
 - **RQ-PAY-06 [F1]** **Alerta de abonos que no cuadran** (BR-PAY-13).

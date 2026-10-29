@@ -25,6 +25,8 @@ Plan sugerido (cada hito con pruebas; el orden es también el **orden de recorte
 | 13 | **Calidad** | Tooltips, estilo Notion pulido, lectura sin conexión, estados vacíos/error, E2E completos, backups (cada 2 días) + ping anti-pausa, aviso de datos |
 | 14 | **Piloto** | Uso real del dueño, correcciones, preparar a los demás colportores |
 
+**Avance (2026-10-29):** de la fila 3–4 está hecho el **dominio del dinero, ejemplares, Abibono, minibooks y totalizadores** (`src/domain`, con pruebas); falta la cantidad "+ / pastilla", el calendario (visitas, capacitaciones, recordatorios) y el panel admin.
+
 **Orden de recorte sugerido si el tiempo aprieta** (se recorta primero lo de abajo): selector de categoría en totalizadores → vista "Con descuentos y aumentos" → recordatorios personalizados → barra de meta → "Devolver al líder" en lote → formato 12/24 h. **Nunca se recortan:** RLS y sus pruebas, pruebas del dominio de dinero, recibo obligatorio, backups.
 
 ## Fase 2 — Offline y notificaciones

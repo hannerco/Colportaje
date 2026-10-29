@@ -27,7 +27,7 @@ docs/
 │  ├─ CONVENTIONS.md              idioma, nombres, TypeScript, UI, git, cómo trabaja un agente
 │  ├─ TESTING.md                  estrategia y casos de prueba
 │  ├─ SECURITY.md                 amenazas, secretos, políticas
-│  └─ adr/                        decisiones de arquitectura (ADR-0001 … ADR-0032) + README con índice
+│  └─ adr/                        decisiones de arquitectura (ADR-0001 … ADR-0033) + README con índice
 ├─ 04-diseno/
 │  ├─ DESIGN-BRIEF.md             brief v2 para Claude Design (estilo Notion, lista negra anti-IA, densidad, wireframes)
 │  └─ PROMPT-CLAUDE-DESIGN.md     prompt v2 listo para pegar
@@ -77,7 +77,7 @@ docs/
 Si encuentras una contradicción, **arréglala** en el mismo cambio y anótala en `00-contexto/DECISION-LOG.md`.
 
 ## Estado del proyecto
-- Documentación: **completa y sin preguntas abiertas** (fase 0, revisada el 2026-10-28). **Aún no hay código.**
+- Documentación: **completa y sin preguntas abiertas** (fase 0, revisada el 2026-10-28). **Código: solo la capa de dominio** (`src/domain`, TypeScript puro con pruebas Vitest; 2026-10-29). Falta todo lo demás (repositories, adapters, features, UI).
 - **Plazo: 14 días** para la fase 1 completa (`06-planificacion/ROADMAP.md`). Siguiente paso: diseño en **Claude Design** (2–3 variantes, días 1–3) → elección del dueño → scaffolding por capas con pruebas del dominio primero.
 - Pendientes con el dueño: crear el repo `colportor` (SG-03), cuentas nuevas de Supabase y Vercel (SG-02, guía paso a paso; **pospuesto: primero el diseño**), diseño (SG-04).
 - Dueño del producto: colportor-desarrollador, primer usuario y admin. Idioma de trabajo: español.

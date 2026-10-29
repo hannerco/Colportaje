@@ -185,6 +185,16 @@ El dueño revisó `Colportor.html` (8 tableros de Claude Design) y lo rechazó c
 | Q7 | Grupos del sidebar | **"Sí"** [D] Trabajo y Dinero. |
 | Q8 | "Agregar libro" en la ficha | **"Correcto"** [D] |
 
+## Ronda 12 — Implementación del dominio (2026-10-29)
+
+| # | Tema | Resultado |
+|---|---|---|
+| Q1 | Orden y control del recorte (BR-PAY-13) | **"Recordemos que el colportor debe poder decidir si quiere que el recorte se haga automático o si lo quiere hacer él. Pero en el caso a, se recorta desde el más próximo. En el caso b se recorta desde el más lejano."** [D] (a = editar un abono cobrado → más próximo; b = confirmar el asistente de venta → más lejano). El modal sigue ofreciendo recortar automáticamente, cancelar los marcados o dejar como está. |
+| Q2 | Motivo de cancelación | **"opción A"** [D] Según el disparador: extra/sobrepago/edición → `overpaid`; devolución → `book_returned`; archivar → `customer_archived`; baja de precio, borrar un cobro y asistente → `manual`. |
+| Q3 | Prórroga | **"A. Si la fecha está después de 2 meses se genera una alerta al usuario para que confirme la fecha"** [D] Debe ser posterior a la actual; más de 2 meses desde hoy pide confirmación. |
+| Q4 | Minibooks perdidos | **"No, no cuenta. Opcion A."** [D] Perdidos y "A responder al líder" tienen el alcance de "Mi compra". |
+| — | Orden de trabajo y calidad | **"Vale, haz lo que te pedí hasta ahora, pero hazlo bien. Es la parte más importante del proyecto. Confío en que uses buenas prácticas de arquitectura y revises varias veces todo."** Dominio en TypeScript puro con pruebas por regla `BR-*`, propiedades con `fast-check` y revisión por mutaciones. Ver ADR-0033. |
+
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.
 2. **Repositorio de GitHub llamado `colportor`** (en vez de `colportaje`), coherente con el nombre de la app.
@@ -207,3 +217,4 @@ El dueño revisó `Colportor.html` (8 tableros de Claude Design) y lo rechazó c
 11. Se propuso invitar por correo con el SMTP de Supabase; está limitado a 2/hora y solo a miembros de la organización; se cambió a enlace por WhatsApp.
 13. **Brief v1:** pedía subtítulos, desglose permanente, una variante "Hoy denso" con semana, botones de acción repetidos y 7 colores de etiqueta; Claude Design lo siguió y el resultado fue recargado. Corregido en el brief v2.
 12. Se propuso el botón "×N" para cantidades; el dueño lo rechazó por poco estético; se cambió a "+ / pastilla numérica" estilo Notion.
+14. **Fórmula del saldo (2026-10-29):** la documentación decía `balance = debt − paid_total − credit_applied`, lo que hacía que entregar un minibook con saldo a favor *aumentara* el saldo a favor, contra BR-MBK-07 y AF-10. Lo detectó una prueba de propiedades al implementar el dominio. El signo correcto es `+ credit_applied` (ADR-0033); se corrigió en BR-CUS-04, DOMAIN-MODEL y GLOSSARY.
