@@ -10,6 +10,13 @@
 | Calle (día) | Móvil, una mano, poca señal | Hoy, Clientes, Libros en físico, Agregar al inventario, Vender |
 | Cuadre (noche) | Escritorio | Clientes (completar), Dinero (por entregar), Abibonos, Hacer inventario |
 
+## 1b. Referencias visuales del dueño (2026-10-29)
+Guardadas en `04-diseno/referencias/`. Son **inspiración de estructura y suavidad**, no para copiar (ni su contenido de ejemplo, ni gráficos decorativos, ni avatares con foto).
+- **Referencia 1 — escritorio** (`ref-1-escritorio-sidebar-y-tabla.png`): "me encanta para Clientes y para el sidebar". Rasgos: fondo gris claro con el contenido en **un panel blanco grande y redondeado**; sidebar con **tarjeta de perfil/espacio arriba** (logo, nombre, selector ⌃⌄), separador punteado, ítems con íconos de trazo y **activo = píldora blanca elevada con sombra mínima**; **pestañas de vista como píldoras con el conteo en gris tenue**; título con conteo tenue; **búsqueda + botones-píldora con ícono** como filtros; **tabla** con cabecera gris redondeada, filas altas y aireadas **sin líneas**, y **columna de estado con píldora suave de color + ícono**.
+- **Referencia 2 — móvil** (`ref-2-movil-barra-flotante-y-agenda.png`): "me gusta". Rasgos: fondo cálido suave, superficies casi translúcidas, esquinas muy redondeadas; cabecera con título y **botones circulares pequeños**; búsqueda con **ícono de filtro**; **barra inferior flotante tipo píldora (4 íconos, activo en píldora clara) con un botón circular oscuro "+" aparte**; en agenda, **tira de semana + línea de tiempo por horas** (solo para el módulo Calendario, nunca en Hoy).
+- **Se adopta:** panel blanco sobre gris, sidebar con tarjeta de perfil y píldora activa, pestañas-píldora con conteo, filtros-píldora, tabla aireada, barra flotante + botón "+" circular, calendario con línea de tiempo.
+- **No se adopta:** gráficos decorativos, tarjetas de "rendimiento", fotos de avatar (se usan iniciales), borde oscuro a la izquierda de cada tarjeta (solo en tarjetas de eventos del Calendario).
+
 ## 2. Dirección visual: Notion, sobrio
 Neutros cálidos, bordes finos solo donde separan, mucho aire, **fuente del sistema** (la de Notion: `ui-sans-serif, -apple-system, "Segoe UI"…`), íconos de trazo, tablas tipo base de datos con pestañas de vista, propiedades editables en línea, modo oscuro automático. **Menos explicación, más visualización:** un dato se entiende por posición, ícono o forma, no por una frase.
 
@@ -30,6 +37,7 @@ Investigado en la web; **no usar nada de esto**:
 - **Base:** neutros (fondo, superficie, borde, texto). Estados y categorías en **gris** (se distinguen por ícono o texto).
 - **Acento único** en acciones principales y elemento activo. Variante principal: casi negro (`#1F1E1D`). **Variante pedida: acento `#092e53` (azul marino profundo).**
 - **Rojo** solo para vencido, error y acciones destructivas.
+- **Estado del cliente** (inspirado en la Referencia 1): pequeña **píldora suave con ícono** — *Al día* (verde), *Con saldo* (ámbar), *Vencido* (rojo). **Móvil: solo se muestra la píldora de "Vencido"**; **escritorio: las tres en la tabla**. Es el **único** lugar con verde/ámbar.
 - **Microacentos de color — el único lugar con color de categoría:** un **ícono pequeño (solo el trazo, sin círculo ni fondo)** que distingue el **tipo de evento**: cobro, visita, capacitación. Tonos apagados y bien distinguibles (el primer diseño usó naranja / azul / morado y le gustó; en la variante marino cuidar que "visita" no choque con el acento, p. ej. verde azulado). Nada más lleva color de categoría.
 
 ## 5. Presupuesto de densidad (móvil)
@@ -71,11 +79,10 @@ Basada en lo que usan las apps de referencia (iOS: 17 / 15 / 13 pt; Material: cu
 | **Nielsen #8 (minimalista)** | Quitar lo que distrae; lo secundario bajo demanda |
 
 ## 7. Navegación
-**Móvil — barra inferior, SOLO íconos** (como Instagram; el título va en la cabecera; cada ícono con texto accesible):
-`Hoy · Clientes · [ + Vender ] · Inventario · Más`
+**Móvil — barra inferior flotante tipo píldora, SOLO íconos** (Referencia 2; el título va en la cabecera; cada ícono con texto accesible): **4 íconos** `Hoy · Clientes · Inventario · Más` y, **aparte a su derecha, un botón circular oscuro "+" = Vender**.
 **Más** = hoja con **grupos de máximo 4**: *Trabajo* (Calendario, Minibooks) · *Dinero* (Dinero, Hacer inventario) · *Cuenta* (Ajustes, Admin si aplica).
 
-**Escritorio — sidebar muy parecido al de Notion** (≈240 px; filas de ≈30 px; secciones plegables con etiqueta tenue; "+" y "⋯" que aparecen al pasar el cursor; seleccionado y hover en gris suave; sin etiquetas de color):
+**Escritorio — sidebar estilo Notion + Referencia 1** (≈260 px; tarjeta de perfil arriba con selector; secciones plegables con etiqueta tenue; "+" y "⋯" al pasar el cursor; **ítem activo = píldora blanca elevada**; sin etiquetas de color):
 ```
 ┌──────────────────────────┐
 │ ◧ Colportor        ▾  HC │   ← perfil (como el selector de espacio de trabajo)
@@ -103,8 +110,8 @@ Basada en lo que usan las apps de referencia (iOS: 17 / 15 / 13 pt; Material: cu
 ## 9. Pantallas
 | # | Pantalla | Contenido (lo mínimo) | Flujo |
 |---|---|---|---|
-| 1 | **Hoy** | Ver wireframe abajo | F-20 |
-| 2 | **Clientes** | Buscador, barra de vista (Recientes / Deudores / Todos / Archivados + orden), saldo pendiente por fila; "Incluir prospectos" | F-11, F-23 |
+| 1 | **Clientes** (se diseña primero) | Móvil: búsqueda con filtro, pestañas-píldora con conteo tenue (Recientes / Deudores / Todos / Archivados), lista aireada con avatar de iniciales, "N libros", saldo y píldora roja "Vencido"; escritorio: panel blanco "Clientes 48", filtros-píldora y tabla (Cliente · Teléfono · Libros · Saldo · Último abono · Estado); orden e "Incluir prospectos" dentro del filtro | F-11, F-23 |
+| 2 | **Hoy** | Ver wireframe abajo | F-20 |
 | 3 | **Ficha de cliente** | Datos, llamar/WhatsApp, información y fotos, dirección (Abrir en Maps; mapa al tocar), libros, abonos, deuda/saldo/saldo a favor, "Agregar libro" (texto), acciones en "⋯" (devolver, archivar) | F-12 |
 | 4 | **+ Vender** | 5 pasos: cliente → ejemplares uno por uno → cuota inicial y abonos → factura → confirmar | F-10 |
 | 5 | **Inventario** | Libros en físico por título con ícono de antigüedad; minibooks al final; "Por resolver"; **Agregar** (principal); "Devolver al líder" en lote | F-06, F-26 |
@@ -139,10 +146,13 @@ Hoy                                   mié 28 oct      ← título + fecha peque
 No hay semana, ni "agenda" aparte, ni lista de vencidos fila por fila, ni botón "Agregar inventario" (vive en Inventario). El aviso de vencidos solo aparece si hay alguno.
 
 ## 10. Variantes (desde el principio; que sean realmente distintas)
-- **A · Tinta:** acento casi negro `#1F1E1D`; barra inferior de 5 íconos con **+ Vender** central.
-- **B · Marino:** **acento `#092e53`** en la acción principal y el elemento activo; misma estructura que A para poder comparar solo el color.
-- **C · Editorial:** estructura distinta para la densidad: **sin tarjetas** (cifras sobre fondo con líneas finas y espacio), barra inferior de **4 íconos + Vender como botón flotante** (sigue siendo la única acción principal).
+Todas comparten la navegación de las Referencias (barra flotante + botón "+" circular en móvil; sidebar con tarjeta de perfil y píldora activa en escritorio).
+- **A · Tinta:** acento casi negro `#1F1E1D`.
+- **B · Marino:** **acento `#092e53`** en la acción principal y el elemento activo; misma estructura que A para comparar solo el color (ícono de "visita" en verde azulado).
+- **C · Editorial:** **sin superficies elevadas ni sombras**, solo líneas finas y espacio.
 Cada variante en móvil y escritorio, claro y oscuro. En todas rigen las secciones 3–8.
+
+**Orden de pantallas:** se empieza por **Clientes** (lista móvil + tabla de escritorio con el sidebar); **no** por Hoy. Después: ficha de cliente → Hoy → + Vender → Inventario y Agregar → Devolver + modal → Dinero y Abibono → Minibooks → Calendario (con tira de semana y línea de tiempo) → Hacer inventario → Admin → Login y Ajustes.
 
 ## 11. Estados y patrones
 - Estados de abono: Por cobrar → Cobrado → Entregado (+ Cancelado), por **ícono/texto en gris**, no por color.

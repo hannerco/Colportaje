@@ -196,6 +196,19 @@ El dueño revisó `Colportor.html` (8 tableros de Claude Design) y lo rechazó c
 | Q4 | Minibooks perdidos | **"No, no cuenta. Opcion A."** [D] Perdidos y "A responder al líder" tienen el alcance de "Mi compra". |
 | — | Orden de trabajo y calidad | **"Vale, haz lo que te pedí hasta ahora, pero hazlo bien. Es la parte más importante del proyecto. Confío en que uses buenas prácticas de arquitectura y revises varias veces todo."** Dominio en TypeScript puro con pruebas por regla `BR-*`, propiedades con `fast-check` y revisión por mutaciones. Ver ADR-0033. |
 
+---
+
+## Ronda 12 — Referencias visuales y orden de diseño (2026-10-29)
+
+El dueño envió dos imágenes de referencia (guardadas en `04-diseno/referencias/`): *"para Clientes y para el sidebar, me gusta mucho [la de escritorio]. Este otro diseño en Mobile, me gusta."* y pidió: *"Cambia el prompt para que inicie con el apartado de clientes. Por ahora no con 'Hoy', y mira qué puedes sacar de las imágenes."*
+
+| Decisión | Resultado |
+|---|---|
+| Orden de diseño | **Se empieza por Clientes** (lista móvil + tabla de escritorio con sidebar); Hoy después. |
+| Escritorio | Panel blanco sobre gris; sidebar con tarjeta de perfil y píldora activa elevada; pestañas-píldora con conteo tenue; filtros-píldora; tabla aireada con píldora de estado. |
+| Móvil | Barra inferior flotante tipo píldora (4 íconos) + botón circular oscuro "+" (Vender); búsqueda con ícono de filtro. |
+| Conciliación con reglas previas **(propuesta del asistente, pendiente de confirmar)** | (1) Conteos tenues **solo en pestañas de vista** y solo conteos, nunca dinero. (2) **Estado del cliente** con píldora verde/ámbar/rojo: en móvil solo "Vencido", en escritorio las tres (BR-CUS-13); único lugar con verde/ámbar. (3) El borde oscuro a la izquierda de las tarjetas **no** se adopta (solo en tarjetas de eventos del Calendario). (4) Sidebar agrupado en *Trabajo* y *Dinero* (>5 ítems), con el aspecto de la referencia. (5) **Sin** fila de tarjetas KPI (duplicaría los conteos y mostraría dinero). (6) Avatares de **iniciales** neutros, no fotos. |
+
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.
 2. **Repositorio de GitHub llamado `colportor`** (en vez de `colportaje`), coherente con el nombre de la app.
