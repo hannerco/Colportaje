@@ -29,8 +29,16 @@ distinguibles; el primer diseño usó naranja/azul/morado y funcionó).
 
 DENSIDAD (móvil): fila = máximo 2 líneas y una sola señal de estado; sin subtítulos, sin
 contadores, sin explicaciones permanentes (la ayuda va en un ⓘ que se abre al tocar);
-máximo 5 bloques en el primer vistazo; máximo 3 tamaños de texto; cuerpo ≥ 15 px. Más de
-5 opciones en cualquier menú/filtro/selector => agrúpalas.
+máximo 5 bloques en el primer vistazo. Más de 5 opciones en cualquier menú/filtro/selector
+=> agrúpalas.
+
+TIPOGRAFÍA (tamaños como las apps de referencia; el texto pequeño está PROHIBIDO):
+ móvil: cifra destacada 36 · título 28 · TEXTO PRINCIPAL 17 (filas, botones, campos,
+ nombres) · texto secundario 15 (hora, detalle) · leyendas 13 como mínimo absoluto y nunca
+ para información clave. Campos de texto ≥ 16.
+ escritorio: cifra 40 · título 32 · principal 16 (sidebar 15) · secundario 14 · mínimo 13.
+ Máximo 3 tamaños por pantalla; interlineado 1.4–1.5; unidades rem. Nada importante por
+ debajo de 15 px en móvil.
 
 LEYES DE UX: Hick, Miller, Fitts (acción principal grande, abajo), Jakob (como Notion e
 Instagram), Von Restorff (un solo elemento destacado por pantalla), proximidad/región

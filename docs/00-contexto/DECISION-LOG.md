@@ -184,6 +184,7 @@ El dueño revisó `Colportor.html` (8 tableros de Claude Design) y lo rechazó c
 | Q6 | Variantes | **"No, igual quiero ver las variantes desde el principio."** [D] A casi negro, B marino #092e53, C editorial. |
 | Q7 | Grupos del sidebar | **"Sí"** [D] Trabajo y Dinero. |
 | Q8 | "Agregar libro" en la ficha | **"Correcto"** [D] |
+| 9 | Tamaño de letra | **"Creo que la letra que pediste es muy pequeña, mira cuál es la letra que usan otras apps."** Se midió el diseño (mayoría 13 px) y se comparó con iOS (17/15/13 pt) y Material (cuerpo 16 sp). [D] Escala nueva en el brief §5b: móvil principal **17**, secundario **15**, mínimo 13; campos ≥ 16. |
 
 ## Ronda 12 — Implementación del dominio (2026-10-29)
 

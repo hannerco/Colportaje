@@ -36,8 +36,24 @@ Investigado en la web; **no usar nada de esto**:
 - Una **fila = 2 líneas máximo** y **una sola señal** de estado.
 - **Sin** subtítulos de página, **sin** contadores en secciones, **sin** explicaciones permanentes. La ayuda va en un **ⓘ** discreto que se abre solo al tocar.
 - Máximo **5 bloques** por pantalla en el primer vistazo; todo lo secundario se revela al tocar (**divulgación progresiva**).
-- Máximo **3 tamaños de texto** por pantalla; cuerpo ≥ 15 px.
+- Máximo **3 tamaños de texto** por pantalla, con la **escala tipográfica** de la sección 5b (el texto pequeño del primer diseño —13 px y menos— queda prohibido para información clave).
 - **Más de 5 opciones → se dividen en grupos** (menús, sidebar, "Más", filtros, selectores).
+
+## 5b. Escala tipográfica (tamaños de referencia)
+Basada en lo que usan las apps de referencia (iOS: 17 / 15 / 13 pt; Material: cuerpo 16 sp mínimo, leyendas 12 sp; sistemas de diseño: base 16 px). **El primer diseño usó sobre todo 13 px: demasiado pequeño.**
+
+| Uso | Móvil | Escritorio |
+|---|---|---|
+| Cifra destacada (p. ej. "Por entregar") | 36 | 40 |
+| Título de pantalla | 28 | 32 |
+| **Texto principal** (nombres, filas, botones, campos, sidebar) | **17** | **16** (sidebar 15) |
+| **Texto secundario** (hora, detalle, saldo) | **15** | **14** |
+| Leyendas y marcas cortas (solo si no son información clave) | 13 mínimo | 13 mínimo |
+
+- **Nunca menos de 13 px**, y nada importante por debajo de 15 px en móvil.
+- Los **campos de texto en móvil, 16 px o más** (evita que iOS amplíe la pantalla al enfocar).
+- Interlineado 1.4–1.5; tamaños en `rem` para respetar el tamaño de texto del sistema; probar con texto del sistema aumentado.
+- Con texto más grande caben menos elementos: es coherente con el minimalismo (si no cabe, sobra).
 
 ## 6. Leyes de UX aplicadas
 | Ley | Cómo se aplica |

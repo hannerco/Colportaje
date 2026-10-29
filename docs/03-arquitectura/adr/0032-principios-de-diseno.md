@@ -9,6 +9,7 @@ El primer resultado de Claude Design (`Colportor.html`) no convenció al dueño:
 - **Color con propósito:** base neutra; estados y categorías en gris; **un acento único** (variantes: casi negro y **#092e53**); **rojo** solo para vencido/error/destructivo; y como **único** color de categoría, un **microícono** (solo el trazo) que distingue cobro / visita / capacitación.
 - **Fuente del sistema** (como Notion) en vez de Inter.
 - **Presupuesto de densidad móvil:** filas de 2 líneas y una señal; sin subtítulos, contadores ni explicaciones permanentes (ⓘ bajo demanda); máximo 5 bloques; divulgación progresiva.
+- **Escala tipográfica** (2026-10-29): móvil 36 / 28 / **17 principal** / **15 secundario** / 13 mínimo; escritorio 40 / 32 / 16 / 14 / 13; campos ≥ 16 px; `rem`. El primer diseño usó sobre todo 13 px (demasiado pequeño) frente a iOS (17/15/13 pt) y Material (cuerpo 16 sp).
 - **Más de 5 opciones → grupos** (sidebar tipo Notion con secciones plegables; "Más" con grupos de máximo 4).
 - **Una acción principal:** "Vender" aparece una sola vez; cada pantalla tiene como máximo una acción de contexto destacada; **Hoy no tiene botones**.
 - **Hoy sin redundancia:** una lista cronológica de hoy, un aviso único de cobros vencidos que lleva a Dinero ▸ Por cobrar ▸ Vencidos, sin semana ni agenda aparte; "Agregar" vive en Inventario.
