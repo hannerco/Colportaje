@@ -88,7 +88,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 - **Reglas:** BR-COPY-09, BR-PAY-13, BR-CUS-06. **Todos los casos:** `01-negocio/FLOWS-ALTERNATIVOS.md` A (AF-01..AF-12).
 
 ## F-17 Crear un Abibono (Entrega al líder)
-1. Dinero → "Nuevo Abibono" (`draft`; título y fecha automáticos, editables).
+1. **Entrada:** Dinero → "Nuevo Abibono", **o** el botón **"Entregar"** de la tarjeta "Por entregar" en Hoy (abre el asistente con todos los abonos cobrados ya seleccionados, BR-DEP-13). Nace `draft` al guardar; título y fecha automáticos, editables.
 2. Elegir **abonos `collected`** libres y/o **entradas de minibooks** (indicando cuánto de cada una).
 3. Efectivo y transferencia se **autocalculan** y se pueden editar; el **Total** no.
 4. **Esperado vs. Entregado** y **Diferencia** siempre visibles; si ≠ 0 → **nota obligatoria**.
@@ -107,7 +107,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 - **Reglas:** BR-CAL-03/04.
 
 ## F-20 Hoy (pendientes del día)
-- **Muestra (nada más):** tarjeta **"Por entregar"** (total grande, una línea gris con el desglose, ojo para ocultar; toca → Dinero) · **aviso único** "N cobros vencidos ›" solo si hay (toca → Dinero ▸ Por cobrar ▸ Vencidos) · barra de meta fina sin números (ubicación sujeta a cambio) · **una lista cronológica** de hoy con cobros, visitas, capacitaciones y recordatorios (ícono de tipo en color, hora, nombre, detalle). **Sin botones, sin subtítulos, sin semana.**
+- **Muestra (nada más):** tarjeta **"Por entregar"** destacada en color de acento (total grande con ojo al lado, una línea con el desglose y el botón **"Entregar"** → Nuevo Abibono precargado; tocar el resto de la tarjeta → Dinero) · **aviso único** "N cobros vencidos ›" solo si hay (toca → Dinero ▸ Por cobrar ▸ Vencidos) · barra de meta fina sin números (ubicación sujeta a cambio) · **una lista cronológica** de hoy con cobros, visitas, capacitaciones y recordatorios (ícono de tipo en color, hora, nombre, detalle). **Único botón: "Entregar". Sin subtítulos, sin semana.**
 - **Acciones:** tocar un cobro → F-13; tocar un evento → su detalle. El calendario es una sección aparte.
 - **Reglas:** BR-CAL-05..09, BR-GOAL-01, BR-GEN-10/11. Los abonos `canceled` no aparecen; los vencidos no se listan uno por uno.
 

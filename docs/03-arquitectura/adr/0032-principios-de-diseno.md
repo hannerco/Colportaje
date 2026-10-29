@@ -12,7 +12,7 @@ El primer resultado de Claude Design (`Colportor.html`) no convenció al dueño:
 - **Presupuesto de densidad móvil:** filas de 2 líneas y una señal; sin subtítulos, contadores ni explicaciones permanentes (ⓘ bajo demanda); máximo 5 bloques; divulgación progresiva.
 - **Escala tipográfica** (2026-10-29): móvil 36 / 28 / **17 principal** / **15 secundario** / 13 mínimo; escritorio 40 / 32 / 16 / 14 / 13; campos ≥ 16 px; `rem`. El primer diseño usó sobre todo 13 px (demasiado pequeño) frente a iOS (17/15/13 pt) y Material (cuerpo 16 sp).
 - **Más de 5 opciones → grupos** (sidebar tipo Notion con secciones plegables; "Más" con grupos de máximo 4).
-- **Una acción principal:** "Vender" aparece una sola vez; cada pantalla tiene como máximo una acción de contexto destacada; **Hoy no tiene botones**.
+- **Una acción principal:** "Vender" aparece una sola vez; cada pantalla tiene como máximo una acción de contexto destacada; **Hoy tiene un único botón, "Entregar", dentro de la tarjeta "Por entregar"** (Referencia 4, ADR-0031).
 - **Hoy sin redundancia:** una lista cronológica de hoy, un aviso único de cobros vencidos que lleva a Dinero ▸ Por cobrar ▸ Vencidos, sin semana ni agenda aparte; "Agregar" vive en Inventario.
 - **Variantes desde el inicio y realmente distintas:** A casi negro, B marino #092e53, C editorial (sin tarjetas, Vender flotante).
 - **Leyes de UX** que gobiernan las decisiones: Hick, Miller, Fitts, Jakob, Von Restorff, proximidad/región común, Tesler, Doherty, meta-gradiente, Zeigarnik, estético-usabilidad, Nielsen #8.

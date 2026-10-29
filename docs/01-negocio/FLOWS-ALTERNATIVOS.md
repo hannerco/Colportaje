@@ -259,6 +259,10 @@ Una sola acción —**"Devolver a inventario"** en la ficha del cliente (o en el
 - *Situación:* el colportor muestra el celular a un cliente.
 - *App:* toca el **ojo** de la tarjeta "Por entregar" en Hoy: los montos se reemplazan por puntos. La preferencia se guarda en el dispositivo (no en el servidor) y se mantiene entre sesiones.
 
+### AF-106 Entregar desde Hoy
+- *Situación:* el colportor toca "Entregar" en la tarjeta de Hoy.
+- *App:* abre **Nuevo Abibono** con todos los abonos `collected` libres ya seleccionados y efectivo/transferencia autocalculados; puede desmarcar, ajustar, añadir minibooks y subir el recibo. **No se crea borrador hasta guardar**; si cierra sin guardar, no queda nada. Con total 0 el botón no existe. Abonos ya vinculados a **otro borrador** no se preseleccionan.
+
 ### AF-105 "Por entregar" frente a un Abibono en borrador o reabierto
 - *App:* los abonos vinculados a un **borrador** siguen contando como por entregar. Al **confirmar**, salen. Al **reabrir** un Abibono, sus abonos vuelven a `collected` y **vuelven a contar**.
 

@@ -128,5 +128,20 @@ NO DISEÑAR AHORA: Hoy, vista de líder, campañas, reembolsos, exportar PDF/CSV
 push, escritura sin conexión.
 ````
 
+## Spec de HOY (para cuando toque; **no** va en el prompt de Clientes)
+Adjuntar entonces `referencias/ref-4-movil-tarjeta-saldo-con-accion.png` (solo la tarjeta de arriba). Añadir al prompt base:
+```
+PANTALLA — HOY (móvil, 390 px): título "Hoy" + fecha pequeña. UNA tarjeta destacada en el COLOR DE
+ACENTO (casi negro en A, #092e53 en B), texto claro, como la Referencia 4: etiqueta "Por entregar",
+cifra grande con un ícono de OJO al lado (oculta montos), una línea con "Efectivo 265.000 ·
+Transferencia 120.000" y UN SOLO BOTÓN en píldora clara "Entregar" (abre Nuevo Abibono con ese
+dinero). Sin subtítulo, sin barra de colores. Debajo: UN aviso rojo discreto "2 cobros vencidos ›"
+solo si hay; una barra de meta fina sin números; y UNA lista cronológica de hoy (cobros, visitas,
+capacitaciones con su microícono de color · hora · nombre · detalle). Sin semana ni calendario,
+sin otros botones. Barra flotante + botón circular "+" (Vender). En C (editorial) la cifra va
+sobre el fondo con línea fina y el botón de acento, sin tarjeta elevada.
+No copies de la Referencia 4: tracking de envíos, líneas de progreso, saludo con avatar.
+```
+
 ## Orden de las siguientes pantallas (cuando se elija Clientes)
 2 Ficha de cliente · 3 Hoy · 4 + Vender · 5 Inventario y Agregar · 6 Devolver + modal de abonos · 7 Dinero y Abibono · 8 Minibooks · 9 Calendario (aquí sí tira de semana y línea de tiempo, estilo Referencia 2) · 10 Hacer inventario · 11 Admin · 12 Login y Ajustes. En cada paso se reutiliza el prompt base (estilo, lista negra, color, tipografía, densidad) cambiando solo la pantalla.

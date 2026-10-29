@@ -15,6 +15,7 @@ Guardadas en `04-diseno/referencias/`. Son **inspiración de estructura y suavid
 - **Referencia 1 — escritorio** (`ref-1-escritorio-sidebar-y-tabla.png`): "me encanta para Clientes y para el sidebar". Rasgos: fondo gris claro con el contenido en **un panel blanco grande y redondeado**; sidebar con **tarjeta de perfil/espacio arriba** (logo, nombre, selector ⌃⌄), separador punteado, ítems con íconos de trazo y **activo = píldora blanca elevada con sombra mínima**; **pestañas de vista como píldoras con el conteo en gris tenue**; título con conteo tenue; **búsqueda + botones-píldora con ícono** como filtros; **tabla** con cabecera gris redondeada, filas altas y aireadas **sin líneas**, y **columna de estado con píldora suave de color + ícono**.
 - **Referencia 2 — móvil** (`ref-2-movil-barra-flotante-y-agenda.png`): "me gusta". Rasgos: fondo cálido suave, superficies casi translúcidas, esquinas muy redondeadas; cabecera con título y **botones circulares pequeños**; búsqueda con **ícono de filtro**; **barra inferior flotante tipo píldora (4 íconos, activo en píldora clara) con un botón circular oscuro "+" aparte**; en agenda, **tira de semana + línea de tiempo por horas** (solo para el módulo Calendario, nunca en Hoy).
 - **Referencia 3 — móvil** (`ref-3-movil-lista-de-actividad.png`): del dueño, para la **lista de clientes**: fila con avatar circular a la izquierda, **nombre**, segunda línea gris y **monto a la derecha**, sin tarjetas. Aplicación: nombre del cliente, **libro vendido** debajo (si hay varios, el más reciente + "+N"), **saldo pendiente** a la derecha. **No se adopta** de esa imagen: cabecera morada con gradiente, tarjeta con gráfico, bandera ni botones de acción en píldora (lista negra §3).
+- **Referencia 4 — móvil** (`ref-4-movil-tarjeta-saldo-con-accion.png`): del dueño, **solo la tarjeta de arriba** para **Hoy**: tarjeta oscura destacada con "Your Balance", cifra grande, **ícono de ojo junto a la cifra** y botones en píldora clara. Aplicación: tarjeta **"Por entregar"** (cifra, ojo, desglose) con **un solo botón "Entregar"** que lleva a hacer el Abibono con ese dinero. En la variante B la tarjeta usa `#092e53`. **No se adopta** de esa imagen: el resto (seguimiento de envíos, líneas de progreso, avatar con saludo, tarjetas "Current Tracking"). Idea para más adelante, **no aplicada**: su paso a paso conectado (Recibido · En tránsito · Entregado) encaja con los estados de abono (Por cobrar · Cobrado · Entregado); se evaluará si el dueño lo pide.
 - **Se adopta:** panel blanco sobre gris, sidebar con tarjeta de perfil y píldora activa, pestañas-píldora con conteo, filtros-píldora, tabla aireada, barra flotante + botón "+" circular, calendario con línea de tiempo.
 - **No se adopta:** gráficos decorativos, tarjetas de "rendimiento", fotos de avatar (se usan iniciales), borde oscuro a la izquierda de cada tarjeta (solo en tarjetas de eventos del Calendario).
 
@@ -106,7 +107,7 @@ Basada en lo que usan las apps de referencia (iOS: 17 / 15 / 13 pt; Material: cu
 
 ## 8. Una acción principal por pantalla; "Vender" una sola vez
 - **"Vender" existe una sola vez:** botón central de la barra (móvil) / entrada destacada del sidebar (escritorio). **Ninguna pantalla lo repite.** En la ficha de un cliente se usa un enlace de texto secundario **"Agregar libro"**.
-- Cada pantalla tiene como máximo **una** acción de contexto destacada: Inventario → **Agregar**; Dinero → **Nuevo Abibono**; Minibooks → **Nueva venta**; Clientes → **Nuevo** (en la barra de vista); Calendario → **+**; Hacer inventario → **Copiar resumen**. **Hoy no tiene botones.**
+- Cada pantalla tiene como máximo **una** acción de contexto destacada: Inventario → **Agregar**; Dinero → **Nuevo Abibono**; Minibooks → **Nueva venta**; Clientes → **Nuevo** (en la barra de vista); Calendario → **+**; Hacer inventario → **Copiar resumen**. **Hoy tiene un único botón: "Entregar", dentro de la tarjeta "Por entregar".**
 
 ## 9. Pantallas
 | # | Pantalla | Contenido (lo mínimo) | Flujo |
@@ -128,14 +129,15 @@ Basada en lo que usan las apps de referencia (iOS: 17 / 15 / 13 pt; Material: cu
 | 15 | **Admin** | Catálogo, Ajustes, Usuarios (Invitar con enlace copiable), almacenamiento | F-03, F-04, F-25 |
 | 16 | **Login / Ajustes** | Invitación; modo admin, formato de hora, favoritos | F-01, F-28 |
 
-### Hoy (móvil) — sin calendario, sin botones, sin subtítulos
+### Hoy (móvil) — sin calendario, un solo botón, sin subtítulos
 ```
 Hoy                                   mié 28 oct      ← título + fecha pequeña, nada más
-┌───────────────────────────────────────┐
-│ Por entregar                       ◉  │   ← tarjeta ÚNICA de la pantalla; ◉ = ojo
-│ $385.000                              │   ← total grande
-│ Efectivo 265.000 · Transferencia 120.000   ← una línea gris pequeña
-└───────────────────────────────────────┘      (tocar → Dinero)
+┌───────────────────────────────────────┐   ← tarjeta destacada en COLOR DE ACENTO (Referencia 4)
+│ Por entregar                          │      texto claro; la única tarjeta oscura de la pantalla
+│ $385.000  ◉                           │   ← total grande + ojo al lado de la cifra
+│ Efectivo 265.000 · Transferencia 120.000   ← una línea pequeña
+│ ( Entregar )                          │   ← ÚNICO botón de Hoy (píldora clara) → Nuevo Abibono precargado
+└───────────────────────────────────────┘      (tocar el resto de la tarjeta → Dinero)
 ⚠ 2 cobros vencidos                      ›     ← aviso ÚNICO en rojo; tocar → Dinero ▸ Por cobrar ▸ Vencidos
 ▬▬▬▬▬▬▬▬▬▬▬▬▬▬░░░░░░░░░░                      ← meta: barra fina, sin números ni etiqueta
  ◔ 9:40   María Camila Henao       $40.000     ← UNA lista cronológica de hoy:
@@ -189,7 +191,7 @@ Vista de líder, campañas, reembolsos, exportar PDF/CSV, notificaciones push, e
 - [ ] Color solo en: acento, rojo semántico y microíconos de tipo de evento.
 - [ ] Filas ≤ 2 líneas, una señal de estado; sin subtítulos ni contadores.
 - [ ] "Vender" una sola vez por pantalla/layout.
-- [ ] Hoy: una lista cronológica, aviso único de vencidos, sin semana, sin botones.
+- [ ] Hoy: una lista cronológica, aviso único de vencidos, sin semana; el único botón es "Entregar" dentro de la tarjeta "Por entregar".
 - [ ] Más de 5 opciones agrupadas; sidebar tipo Notion.
 - [ ] Barra de vista idéntica en todos los módulos.
 - [ ] Móvil legible a 390 px; escritorio coherente; claro y oscuro.

@@ -210,6 +210,18 @@ El dueño envió dos imágenes de referencia (guardadas en `04-diseno/referencia
 | Conciliación con reglas previas **(propuesta del asistente, pendiente de confirmar)** | (1) Conteos tenues **solo en pestañas de vista** y solo conteos, nunca dinero. (2) **Estado del cliente** con píldora verde/ámbar/rojo: en móvil solo "Vencido", en escritorio las tres (BR-CUS-13); único lugar con verde/ámbar. (3) El borde oscuro a la izquierda de las tarjetas **no** se adopta (solo en tarjetas de eventos del Calendario). (4) Sidebar agrupado en *Trabajo* y *Dinero* (>5 ítems), con el aspecto de la referencia. (5) **Sin** fila de tarjetas KPI (duplicaría los conteos y mostraría dinero). (6) Avatares de **iniciales** neutros, no fotos. |
 | Referencia 3 (lista) | El dueño: *"la lista de abajo podría ser cada cliente, su nombre, lo que adeuda a la derecha, y abajo del nombre el libro vendido."* [D] Fila: avatar · nombre · **libro vendido** debajo (el más reciente + "+N") · **saldo** a la derecha. Para respetar "una señal por fila", en móvil el estado vencido se indica con el **saldo en rojo** (se elimina la píldora roja en móvil; las píldoras de estado quedan solo en la tabla de escritorio). No se toman de la imagen la cabecera con gradiente, la tarjeta con gráfico ni los botones en píldora. |
 
+---
+
+## Ronda 13 — Tarjeta de Hoy con acción (2026-10-29)
+
+El dueño envió la referencia 4 (guardada): *"Este me gustó para el Hoy, solo me refiero a la card de arriba. Así me puede aparecer el dinero y uno de los botones podría mandar a hacer el abibono con ese dinero."*
+
+| Decisión | Resultado |
+|---|---|
+| Tarjeta de Hoy | **Tarjeta "Por entregar" destacada en color de acento** (casi negro en A, `#092e53` en B), cifra grande con ojo al lado y desglose en una línea. |
+| Acción | Un único botón **"Entregar"** abre **Nuevo Abibono precargado** con todos los abonos cobrados libres (BR-DEP-13). Cambia la regla anterior "Hoy no tiene botones" → "Hoy tiene un único botón, dentro de la tarjeta" (BR-GEN-10, BR-CAL-07/08). |
+| Propuestas del asistente (pendientes de confirmar) | (1) Un solo botón en vez de dos como en la referencia (minimalismo). (2) Tocar el resto de la tarjeta abre Dinero. (3) Con total 0 el botón no aparece. (4) El asistente no crea borrador hasta que el usuario guarda. (5) La idea del paso a paso conectado de la referencia (Recibido · En tránsito · Entregado) para los estados de abono queda anotada, no aplicada. |
+
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.
 2. **Repositorio de GitHub llamado `colportor`** (en vez de `colportaje`), coherente con el nombre de la app.

@@ -9,7 +9,7 @@ El dueño propuso que en **Hoy** el colportor sepa cuánto tiene recaudado para 
 - Cifra principal: **total** (`to_deliver_total`); como ayuda, **una línea gris** con el desglose Efectivo · Transferencia (sin barra de colores).
 - **Ícono de ojo** para ocultar los montos (preferencia local al dispositivo, visible por defecto).
 - Cuenta abonos `collected` (incluso en Abibonos borrador); **excluye minibooks y abonos cancelados**; deja de contar al confirmar el Abibono y vuelve a contar al reabrirlo.
-- Al tocarla abre **Dinero** (con el atajo "Nuevo Abibono"); sin enlace "Ir a Dinero"; con total 0 dice "Nada por entregar".
+- Tarjeta **destacada en color de acento** (Referencia 4) con **un botón "Entregar"** que abre **Nuevo Abibono precargado** con los abonos cobrados (BR-DEP-13); tocar el resto de la tarjeta abre **Dinero**; sin enlace "Ir a Dinero"; con total 0 dice "Nada por entregar".
 - Es la **única cifra de dinero** permitida en Hoy (BR-GOAL-06 actualizada). El estado de abono `collected` se muestra como "Cobrado" (se retira la expresión "en mi poder" de toda la app).
 
 ## Alternativas descartadas

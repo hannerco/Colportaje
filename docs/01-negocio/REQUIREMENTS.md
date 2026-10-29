@@ -89,6 +89,9 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
 - **RQ-DEP-04 [F1]** Sin recibo no se confirma; con recibo, los abonos pasan a `delivered`. Una foto por defecto, "Añadir otra" disponible.
 - **RQ-DEP-05 [F1]** Un Abibono sin abonos vinculados (donación) es válido con nota.
 - **RQ-DEP-06 [F1]** Un abono no puede estar en dos Abibonos; título y fecha son automáticos y editables.
+- **RQ-DEP-08 [F1]** Entrego desde Hoy: el botón "Entregar" abre Nuevo Abibono precargado (BR-DEP-13).
+  - *Dado* abonos cobrados libres por 30.000 en efectivo y 20.000 por transferencia, *entonces* el asistente abre con ambos seleccionados, efectivo 30.000 y transferencia 20.000, total 50.000 y esperado 50.000.
+  - *Cuando* desmarco el de 20.000, *entonces* los montos se recalculan sin recargar.
 - **RQ-DEP-07 [F1]** **Reabro** un Abibono confirmado con motivo obligatorio; vuelve a borrador, sus abonos a `collected`, y queda en el historial. Siempre puedo editar la nota y añadir fotos.
 
 ## Minibooks
@@ -113,8 +116,10 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
   - *Dado* 10.000 de esos abonos en un Abibono **borrador**, *entonces* siguen contando; *dado* que el Abibono se **confirma**, *entonces* dejan de contar.
   - *Dado* dinero de minibooks o abonos `canceled`, *entonces* **no** cuentan.
   - *Cuando* toco el ojo, *entonces* los montos se ocultan y la preferencia persiste en el dispositivo.
-  - *Cuando* toco la tarjeta, *entonces* abre Dinero con el atajo a "Nuevo Abibono".
-  - *Dado* total 0, *entonces* muestra "Nada por entregar".
+  - *Cuando* toco el botón **"Entregar"**, *entonces* abre Nuevo Abibono con los abonos cobrados preseleccionados y efectivo/transferencia autocalculados; no se crea borrador hasta guardar.
+  - *Cuando* toco el resto de la tarjeta, *entonces* abre Dinero.
+  - *Entonces* la tarjeta usa el color de acento y es el elemento más destacado de Hoy.
+  - *Dado* total 0, *entonces* muestra "Nada por entregar" y el botón "Entregar" no aparece.
 
 ## Totalizadores, metas y cuadre
 - **RQ-TOT-01 [F1]** "Hacer inventario" con tabla por título, grupos y vistas Inventario/Todos.
