@@ -8,7 +8,8 @@ El texto original pedía distinguir abonos y capacitaciones, con recordatorios. 
 - **Abono programado:** derivado de `payment` (`status = scheduled`, por `due_date`); no hay entidad de evento duplicada.
 - **Visita:** `customer_id` **opcional** + etiqueta libre; fecha, hora opcional, nota, estado; sobrevive al cliente; convertible en cliente.
 - **Capacitación:** título, lugar/empresa, fecha **y hora**, notas.
-- **Recordatorios:** inicio del día, un día antes, una semana antes o personalizado, solo para visitas y capacitaciones. Los abonos usan siempre inicio del día. En **F1 se muestran dentro de la app**; **push en F2**.
+- **Recordatorios:** inicio del día (**07:00 Bogota**), un día antes, una semana antes o personalizado, solo para visitas y capacitaciones; **ninguno por defecto** (se ofrece al crear). Los abonos usan siempre inicio del día. En **F1 se muestran dentro de la app**; **push en F2**.
+- La semana del calendario empieza el **domingo**; el formato de hora (12 h/24 h) es una preferencia del usuario (ADR-0030).
 - **Hoy** (también "Pendientes del día") resume cobros, vencidos, visitas, capacitaciones y recordatorios.
 
 ## Alternativas descartadas

@@ -7,7 +7,8 @@ El texto original pedía los 8 totalizadores "cada uno en su propio apartado". E
 ## Decisión
 - No hay pantalla "Totalizadores". Viven en **Hacer inventario**, con selector **Todos | Culturales | Religiosos** (aplica a 1, 4, 5, 6, 7; los 2, 3 y 8 son globales). Minibooks siempre aparte, con totalizadores propios.
 - Cada totalizador es una **pieza registrada** (`features/totals/registry.ts`): quitar o añadir uno cuesta una línea.
-- Vista en vivo, imprimible/compartible; **sin cortes históricos** en la v1.
+- Se añaden las líneas **"Perdidos asumidos"** y **"A responder al líder"** (= Mi compra + perdidos), fuera de los 8 originales (ADR-0028).
+- Vista en vivo; se comparte con **"Copiar resumen"** (texto para pegar en WhatsApp). **PDF y CSV son mejora futura** declarada. **Sin cortes históricos** en la v1.
 
 ## Alternativas descartadas
 - *Apartado por totalizador*: contradice la crítica de Notion (demasiados apartados).

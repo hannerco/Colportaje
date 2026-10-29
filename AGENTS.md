@@ -1,11 +1,11 @@
 # AGENTS.md — Instrucciones para agentes de IA y colaboradores
 
-Este proyecto es una PWA mobile-first para colportores (venta de libros a cuotas). **Hoy el repositorio contiene solo documentación**: el código empieza después del diseño en Claude Design.
+**Colportor** (marca de Emprendum) es una PWA mobile-first para colportores (venta de libros a cuotas). **Hoy el repositorio contiene solo documentación**: el código empieza después del diseño en Claude Design. **Plazo: 14 días** para la fase 1 completa (`docs/ROADMAP.md`).
 
 ## Antes de hacer cualquier cosa
 1. Lee `docs/README.md` y sigue su orden de lectura. Es obligatorio leer `docs/CONTEXT.md`, `docs/BUSINESS-RULES.md`, `docs/GLOSSARY.md`, `docs/DOMAIN-MODEL.md` y `docs/CONVENTIONS.md`.
 2. Respeta la jerarquía de la verdad de `docs/README.md`.
-3. Mira `docs/OPEN-QUESTIONS.md`: usa el supuesto indicado, y **pregunta al dueño** en los 🔴.
+3. Mira `docs/OPEN-QUESTIONS.md`: **no hay preguntas abiertas**; contiene seguimientos, cosas por revisar y decisiones de diseño. Si surge una duda nueva, añádela allí con un supuesto y **pregunta al dueño**.
 
 ## Reglas inquebrantables
 - **No inventes reglas de negocio.** Si no está en `BUSINESS-RULES.md`/`DECISION-LOG.md`, pregunta.
@@ -17,11 +17,13 @@ Este proyecto es una PWA mobile-first para colportores (venta de libros a cuotas
 - **Pruebas:** escribe pruebas junto con el código; el dominio primero. Cada regla `BR-*` tiene prueba.
 - **No hay "parche sobre parche":** si una regla no encaja, corrige el diseño y escribe un ADR.
 - **Alcance:** no implementes fase 2/3 ni el backlog sin que se pida.
-- **Acciones externas** (crear recursos, borrar, publicar, gastar dinero): confirma con el dueño primero.
+- **Acciones externas** (crear recursos, borrar, publicar, gastar dinero): confirma con el dueño primero. El dueño crea las cuentas nuevas de Supabase y Vercel y hace `supabase login` / `vercel login` él mismo (ver `docs/GUIA-DESPLIEGUE-PASO-A-PASO.md`); **nunca** pidas ni pegues claves en el chat.
+- **Regla de contenido:** ningún texto de la app menciona que el líder pueda asumir una pérdida (BR-COPY-11).
+- **Región:** Supabase **us-east-1** y Vercel **iad1** (medido desde Medellín; no uses São Paulo).
 
 ## Estado y siguientes pasos
-- Fase 0 (documentación y conexiones): ver `docs/ROADMAP.md` y `docs/DEPLOYMENT.md` §2.
-- Siguiente: el dueño lleva `docs/DESIGN-BRIEF.md` a Claude Design y elige variante. Luego, scaffolding Next.js+TS por capas.
+- Fase 0: ver `docs/ROADMAP.md` y `docs/DEPLOYMENT.md` §2 (repo, cuentas y diseño pendientes).
+- Siguiente: el dueño lleva `docs/DESIGN-BRIEF.md` a Claude Design (días 1–3) y elige variante. Luego, scaffolding Next.js+TS por capas y pruebas del dominio primero.
 
 ## Comandos (cuando exista el código)
 ```bash
@@ -34,7 +36,7 @@ pnpm test:e2e       # Playwright
 ```
 
 ## Herramientas instaladas en la máquina del dueño
-`git`, `gh` (autenticado como `hannerco`), `node`, `pnpm`, `vercel` (requiere `vercel login`), `supabase` (requiere `supabase login`).
+`git`, `gh` (autenticado como `hannerco`), `node`, `pnpm`, `vercel` (requiere `vercel login` con la cuenta **nueva**), `supabase` (requiere `supabase login` con la cuenta **nueva**).
 
 ## Estilo de trabajo con el dueño
-Directo, en español, le gustan las recomendaciones concretas y que se le explique el porqué. Valora la rigurosidad y odia las ambigüedades. Cuando tenga dudas de diseño, prefiere ver alternativas antes de decidir.
+Directo, en español, le gustan las recomendaciones concretas y que se le explique el porqué. Valora la rigurosidad y odia las ambigüedades. Cuando tenga dudas de diseño, prefiere ver alternativas antes de decidir. Corrige al asistente cuando se equivoca (ej.: la región, "Cambiar de cliente", "el líder lo asume"): **verifica con datos** antes de recomendar. No está familiarizado con Supabase ni Vercel: explica la interfaz paso a paso. El estilo visual es el de **Notion**.

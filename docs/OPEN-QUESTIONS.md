@@ -1,51 +1,83 @@
-# Preguntas abiertas y supuestos
+# Preguntas abiertas, supuestos y seguimientos
 
-Todo lo que **no** quedó decidido explícitamente por el dueño. Cada ítem trae el supuesto por defecto que se debe usar **mientras no se confirme**. Al resolver uno: moverlo a `DECISION-LOG.md`, actualizar la regla correspondiente y borrarlo de aquí.
+**Estado actual: no queda ninguna pregunta abierta de producto ni de arquitectura.** Todas las dudas del documento original se resolvieron en la entrevista (ver `DECISION-LOG.md`, rondas 7–9). Este archivo conserva:
 
-Leyenda: 🟡 supuesto razonable (seguir) · 🔴 necesita confirmación antes de implementar · 🔵 se resuelve con el diseño.
+1. **Seguimientos (SG-*)** — cosas ya decididas que requieren una acción concreta, con responsable.
+2. **Cosas por revisar (RV-*)** — decisiones que el dueño quiere reevaluar con uso real.
+3. **Decisiones de diseño (DT-*)** — se toman con el diseño (ver `DESIGN-BRIEF.md` §11).
+4. **Backlog declarado.**
+5. **Tabla de resolución** de las preguntas abiertas anteriores (para trazabilidad).
 
-## Producto / reglas
+Si aparece una duda nueva, se agrega aquí con ID `OQ-*` y un supuesto por defecto, y se pregunta al dueño.
 
-| ID | Tema | Supuesto vigente | Estado |
+---
+
+## 1. Seguimientos (decididos, con acción pendiente)
+
+| ID | Qué | Quién | Cuándo |
 |---|---|---|---|
-| OQ-01 | **Qué significa "Recientes"** en Clientes | Orden por fecha de creación descendente. Alternativa: última actividad (venta o abono) | 🟡 |
-| OQ-02 | **Ubicación de la barra de meta** | En **Hoy**; el dueño dijo "sujeto a cambios, puede que no la muestre si no me gusta". Pedir 2 propuestas al diseño | 🔵 |
-| OQ-03 | **Representación de "Con novedad"** | Marcador con nota; resolución Apareció / Perdido / Corregido. El dueño dijo: "cualquier cosa te aviso en el momento" | 🔵 |
-| OQ-04 | **Número máximo de favoritos** | 6 (editable por el admin vía `max_favorites`) | 🟡 |
-| OQ-05 | **¿`received_at` editable?** | No, en v1 (es automático). Puede ser necesario si se registran libros recibidos días atrás | 🟡 |
-| OQ-06 | **Hora de "inicio del día"** para recordatorios | 07:00 America/Bogota | 🟡 |
-| OQ-07 | **Tope del saldo a favor aplicado a minibooks** | El monto aplicado no puede exceder el saldo a favor vigente | 🟡 |
-| OQ-08 | **¿Cuántas fotos de recibo en un Abibono?** | Una o más; mínimo una para confirmar | 🟡 |
-| OQ-09 | **Imprimir/compartir "Hacer inventario"** | Vista imprimible (CSS de impresión) + botón compartir/copiar; sin PDF generado en servidor | 🟡 |
-| OQ-10 | **Borrado de cliente con ejemplares vendidos** | Prohibido hasta devolver los ejemplares (BR-CUS-09). El dueño dijo "borrado lógico con confirmación" | 🟡 |
-| OQ-11 | **Entregas parciales de un abono entre Abibonos** | No: un abono va completo en un solo Abibono (BR-DEP-08) | 🟡 |
-| OQ-12 | **Ejemplares "perdidos": ¿afectan la cuenta con el líder?** | Solo se registran (columna "Perdidos"); sin efecto monetario automático. Confirmar con el dueño cómo se factura una pérdida | 🔴 |
-| OQ-13 | **Nombres definitivos** (Abibono, Títulos, Ejemplares, "Hoy") | Usar los de `GLOSSARY.md` (🔶). El dueño dijo: "todos los nombres… vamos a discutirlos" | 🔵 |
-| OQ-14 | **Ordenamientos exactos** de las listas de Ejemplares | Recibido, vendido, título, precio acordado, diferencia | 🟡 |
-| OQ-15 | **Visibilidad de cifras de dinero en Dinero y ficha de cliente** | Visibles (necesarias para operar); ocultas en pantallas de uso diario fuera de esas | 🔵 |
-| OQ-16 | **Qué pasa con el abono `scheduled` si se devuelve el libro** | Se mantiene (el dueño pidió conservar la información); el colportor puede borrarlo manualmente | 🟡 |
+| SG-01 | Repetir la **medición de latencia desde un celular con datos móviles** para confirmar us-east-1 (medido ~85 ms vs ~146 ms de São Paulo, desde Medellín, línea fija) | Agente + dueño | Antes de crear los proyectos |
+| SG-02 | **Crear las cuentas nuevas** de Supabase y Vercel y hacer login por CLI (`supabase login`, `vercel login`) siguiendo `GUIA-DESPLIEGUE-PASO-A-PASO.md` | Dueño | Cuando llegue el momento de desplegar |
+| SG-03 | **Crear el repositorio GitHub** (privado, nombre `colportor`) y subir el commit inicial (el modo automático bloqueó el comando; lo corre el dueño con `! `) | Dueño | Antes de comenzar a programar |
+| SG-04 | **Fecha de diseño en Claude Design**: el diseño debe estar elegido en los primeros 2–3 días del plazo de 14 | Dueño | Día 1–3 |
+| SG-05 | **Aviso de tratamiento de datos (Ley 1581)**: el agente redacta la **plantilla con huecos** (responsable y correo de contacto) en `docs/AVISO-DATOS-PLANTILLA.md`; el dueño define responsable y alguien con criterio legal la revisa antes de abrir a otros colportores | Agente / dueño | Antes del piloto con otros |
+| SG-06 | **Decidir el paso a Supabase Pro (~25 USD/mes)** cuando el equipo use la app con dinero real (copias diarias, sin pausa) | Dueño | Tras validar con los colportores |
+| SG-07 | **Presentar la app a Emprendum** (marca "Colportor") cuando se valide con los colportores | Dueño | Tras validar |
+| SG-08 | Nombre de dominio propio y correo SMTP para enviar invitaciones por correo (hoy: enlace por WhatsApp) | Dueño | Opcional, futuro |
 
-## Técnicas
+## 2. Cosas por revisar con uso real
 
-| ID | Tema | Supuesto vigente | Estado |
+| ID | Tema | Estado actual | Condición para reabrir |
 |---|---|---|---|
-| OQ-20 | **Numeración de ejemplares en offline (F2)** | En F1 la asigna el servidor (función transaccional). En F2 hay que definir número provisional + reconciliación, o derivarlo (p. ej. por orden de `received_at`) | 🔴 (solo para F2) |
-| OQ-21 | **Librería de búsqueda** (Fuse.js vs MiniSearch) | Elegir al scaffolding con la prueba RQ-CUS-04 | 🟡 |
-| OQ-22 | **Librería UI** (Tailwind + shadcn/Radix) | Propuesta; no discutida con el dueño | 🟡 |
-| OQ-23 | **Captura de fotos**: `<input capture>` vs. getUserMedia | `<input type=file accept=image/* capture>` por simplicidad y compatibilidad iOS | 🟡 |
-| OQ-24 | **Escritura admin de invitaciones**: solo instrucciones o formulario en app | Solo instrucciones (dueño: "deja instrucciones de cómo invitar"). Un formulario con `service_role` sería F2 | 🟡 |
-| OQ-25 | **Dominio propio / nombre comercial / marca** | Sin definir; usar nombre de trabajo "Colportaje". Pendiente para ícono PWA, nombre en el manifest | 🔴 |
-| OQ-26 | **Aviso de tratamiento de datos (Ley 1581)** | Sin redactar | 🔴 |
-| OQ-27 | **Región de Supabase** | `sa-east-1` (São Paulo). Verificar disponibilidad en el plan gratuito al crear el proyecto | 🟡 |
-| OQ-28 | **Plan gratuito de Supabase**: pausa tras 7 días sin actividad y sin backups | Backups propios semanales; con uso diario no se pausa | 🟡 |
-| OQ-29 | **Vercel Hobby es "no comercial"** | Aceptado mientras la app no se monetice; migrar a otro host o plan si cambia | 🟡 |
+| RV-01 | **Nombres "Catálogo / Libros / Ejemplar / Título"** en la interfaz | Decisión del agente (el dueño propuso "Títulos y Ejemplares" por considerarlos menos ambiguos, pero prefirió confiar en la recomendación): *Catálogo* en el admin, *Libros* para el colportor, *Ejemplar* para la unidad, *Título* sobre todo en código y tooltips | Si el dueño ve **confusión** en uso, pide el cambio |
+| RV-02 | **Ubicación y existencia de la barra de meta** | En Hoy | Si no le gusta (DT-02) |
+| RV-03 | **Nombre "Abibono"** | Se conserva (chiste interno), tooltip "Entrega al líder" | Si confunde a nuevos colportores |
+| RV-04 | Orden de recorte de abonos programados (BR-PAY-13: más próximo tras abono extra, más lejano tras devolución) | Sugerencia modificable por el usuario en el modal | Si resulta incómodo |
 
-## Diferido (backlog; el dueño pidió dejarlo anotado)
-- **Campañas**: tabla, filtros por campaña, metas por campaña, apartado de Metas ampliado ("en la nueva etapa tendrá muchas cosas").
+## 3. Decisiones de diseño
+Ver `DESIGN-BRIEF.md` §11: DT-01 (total de deuda en Clientes), DT-02 (barra de meta), DT-03 ("Con novedad"), DT-04 (íconos), DT-05 (antigüedad), DT-06 (barra de vista).
+
+## 4. Backlog declarado (explícito por el dueño)
+- **Campañas** (tabla, filtros, metas por campaña, apartado de Metas ampliado: "en la nueva etapa tendrá muchas cosas").
+- **Exportar "Hacer inventario" a PDF y CSV** ("en el futuro se podrá descargar"). Hoy: solo **Copiar resumen**.
 - Cortes históricos de "Hacer inventario".
-- Reembolsos a clientes ("no sé de dónde sale esa plata, mejor obviar").
-- Seguimiento/recordatorio de personas interesadas en minibooks (la nota basta en v1).
-- Vista de líder y transferencia de libros (F3).
-- Posible eliminación de totalizadores (el dueño lo mencionó).
-- Migración de fotos a Cloudflare R2.
-- Vista de clientes vencidos (propuesta).
+- Reembolsos a clientes.
+- **Fusión de clientes duplicados.**
+- Edición masiva de "Recibido el".
+- Recordatorios/seguimiento de personas interesadas en minibooks.
+- Posible eliminación de totalizadores (cada uno es una pieza registrada).
+- Migración de fotos a Cloudflare R2 al 70 % de uso.
+- Vista de clientes vencidos.
+- Invitaciones por correo automáticas (con dominio + SMTP propio).
+- Offline de escritura y push (**fase 2**) y vista de líder (**fase 3**).
+
+## 5. Tabla de resolución de preguntas anteriores
+
+| ID previo | Tema | Resolución |
+|---|---|---|
+| OQ-01 | "Recientes" | Fecha de creación descendente + selector de orden (BR-CUS-05) |
+| OQ-02 | Barra de meta | En Hoy; sujeta a diseño (DT-02) |
+| OQ-03 | "Con novedad" | Resolución Apareció / Perdido (lo asumo yo) / Eliminar; diseño abierto (DT-03); sin mención al líder (BR-COPY-11) |
+| OQ-04 | Máx. favoritos | 6, editable por admin (BR-INV-02) |
+| OQ-05 | `received_at` editable | Sí: fecha pasada al agregar y edición en línea (BR-COPY-04) |
+| OQ-06 | Hora de inicio del día | 07:00; sin recordatorios por defecto (BR-CAL-04) |
+| OQ-07 | Tope saldo a favor | Monto ≤ saldo a favor vigente (BR-MBK-07) |
+| OQ-08 | Fotos de recibo | Una por defecto, "Añadir otra" (BR-DEP-09) |
+| OQ-09 | Compartir "Hacer inventario" | Solo "Copiar resumen"; PDF/CSV futuro (BR-GOAL-05) |
+| OQ-10 | Borrado de cliente | Se reemplaza por **Archivar** (BR-CUS-09) |
+| OQ-11 | Abono entre varios Abibonos | No; completo en uno (BR-DEP-08) |
+| OQ-12 | Libros perdidos | El colportor asume; "A responder al líder" (BR-COPY-11, BR-GOAL-07) |
+| OQ-13 | Nombres definitivos | Cerrados en `GLOSSARY.md`; revisión RV-01/RV-03 |
+| OQ-14 | Ordenamientos de ejemplares | Recibido, vendido, título, precio acordado, diferencia |
+| OQ-15 | Visibilidad de cifras | BR-GOAL-06 |
+| OQ-16 | Abonos programados tras devolución | Alerta y recorte; `canceled` conservado (BR-PAY-13) |
+| OQ-20 | Número de ejemplar offline (F2) | Provisional con marca; puede cambiar al sincronizar (BR-COPY-05) |
+| OQ-21 | Búsqueda | Fuse.js |
+| OQ-22 | UI | Tailwind + shadcn/ui, estilo Notion |
+| OQ-23 | Captura de fotos | `<input type=file capture>` |
+| OQ-24 | Invitaciones | Desde el panel de admin: enlace copiable (BR-USR-05) |
+| OQ-25 | Nombre de la app | **Colportor** (marca de Emprendum) |
+| OQ-26 | Ley 1581 | Plantilla con huecos; SG-05 |
+| OQ-27 | Región | **us-east-1** (medido) — ADR-0002 |
+| OQ-28 | Plan de Supabase | Cuenta nueva, dos proyectos, ping anti-pausa, backups cada 2 días; Pro más adelante (SG-06) |
+| OQ-29 | Vercel Hobby | Cuenta nueva, plan gratuito; decidido sobre Render |

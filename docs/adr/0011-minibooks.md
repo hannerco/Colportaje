@@ -11,6 +11,9 @@ Los minibooks son libros pequeños que se ofrecen cuando un cliente rechaza uno 
 - **Asignación a Abibono** (`leader_deposit_minibook_allocation`): se elige cuánto de cada entrada se entrega (parcial permitido).
 - **Entrega por saldo a favor:** entrada con `customer_id` y `payment_source = client_credit`; reduce el saldo a favor, no es ingreso, no va a Abibono, sí descuenta stock.
 - Totalizadores propios: vendidos, ingresos, costo, ganancia neta, entregado al líder, stock.
+- **Agregar stock** con el mismo patrón "+ / pastilla numérica" que los libros (ADR-0017), desde el inventario general y desde su sección.
+- En `client_credit`, el monto aplicado **no puede superar el saldo a favor vigente**.
+- En la UI la sección se llama literalmente **"Minibooks"**.
 
 ## Alternativas descartadas
 - *Cliente "minibooks"* (truco previo): contamina el conteo y los saldos.

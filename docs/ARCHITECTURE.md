@@ -7,16 +7,16 @@ Principios: **escalable, probada, sin "parche sobre parche", decisiones lógicas
 |---|---|---|
 | Lenguaje | **TypeScript estricto** (`strict`, `noUncheckedIndexedAccess`) | |
 | Framework | **Next.js (App Router)** como PWA | Mayormente componentes cliente; evitar lógica de negocio en servidor salvo admin/invitaciones |
-| Backend | **Supabase** (Postgres + Auth + Storage), región **São Paulo** | Sin API propia |
-| Hosting | **Vercel** (región `gru1`) | Sin funciones exclusivas de Vercel (migrable) |
+| Backend | **Supabase** (Postgres + Auth + Storage), región **us-east-1 (N. Virginia)** | Sin API propia. Región elegida **midiendo** desde Medellín: ~85 ms vs ~146 ms de São Paulo (ADR-0002) |
+| Hosting | **Vercel Hobby** (cuenta nueva), región de funciones por defecto **iad1 (Washington D.C.)**, la más cercana a us-east-1 | Sin funciones exclusivas de Vercel (migrable). Render descartado (se duerme) |
 | Paquetes | **pnpm** | |
 | Node | **22 LTS** (`.nvmrc`, `engines`) | |
 | Estilos / UI | Tailwind CSS + componentes accesibles (shadcn/ui sobre Radix) | Propuesto; cambiar solo con ADR |
-| Datos en cliente | **TanStack Query** (caché, optimista) | |
+| Datos en cliente | **TanStack Query** (caché, optimista) con **persistencia en IndexedDB** del caché de lecturas (lectura sin conexión, BR-GEN-08) | |
 | Formularios | React Hook Form + **Zod** | Zod también valida en el límite de los repositorios |
 | Fechas | `date-fns` + `date-fns-tz` (America/Bogota) | Todo "hoy" pasa por `domain/time` |
 | Búsqueda | **Fuse.js** o MiniSearch (local, difusa, sin acentos) | Elegir en el scaffolding con una prueba de aceptación (RQ-CUS-04) |
-| PWA | Serwist (service worker + manifest) | F1: instalable + caché del shell; F2: offline de escritura |
+| PWA | Serwist (service worker + manifest) | F1: instalable + caché del shell + **lectura sin conexión**; F2: offline de escritura |
 | Pruebas | Vitest (unitarias/integración), Playwright (E2E), Testing Library | Ver `TESTING.md` |
 | Calidad | ESLint (+ reglas de límites entre capas), Prettier, `tsc --noEmit` | |
 | Offline (F2) | Dexie (IndexedDB) | Detrás de `repositories` |
@@ -63,7 +63,7 @@ ui  ──►  features  ──►  repositories (interfaces)  ──►  domain
 │  ├─ e2e/                     (Playwright)
 │  └─ rls/                     (integración de seguridad contra Supabase local)
 ├─ .github/workflows/          (ci.yml, backup.yml)
-├─ vercel.json                 (regions: ["gru1"])
+├─ vercel.json                 (regions: ["iad1"])
 └─ package.json  tsconfig.json  .env.example
 ```
 
@@ -80,14 +80,22 @@ ui  ──►  features  ──►  repositories (interfaces)  ──►  domain
 - **Registro de reglas de antigüedad:** `domain/age.ts` recibe `thresholds` desde `app_settings` (nunca constantes enterradas).
 
 ## 5. Datos y rendimiento percibido
-- Región Supabase **sa-east-1** y Vercel **gru1**.
+- Región Supabase **us-east-1** y Vercel **iad1** (misma zona; medido ~85 ms desde Medellín). La web es mayormente cliente y habla directo con Supabase, por lo que la latencia usuario→Supabase es la que importa.
 - TanStack Query con caché; **actualizaciones optimistas** al agregar ejemplares y registrar abonos (con rollback).
 - Listas con **miniaturas**; imágenes completas solo al abrir; mapa embebido solo al tocar.
 - Los clientes (cientos) se cargan completos para búsqueda local; paginar solo ejemplares/abonos si crecen.
 - Medir con dispositivos reales antes de lanzar (objetivo: primera interacción < 2 s en 4G; acciones de un toque < 300 ms percibidos).
 
+## 5b. Lectura sin conexión (fase 1)
+- El caché de TanStack Query se **persiste** (IndexedDB) y el service worker cachea el shell: sin internet la app abre y muestra lo último sincronizado (clientes, teléfonos, direcciones, Hoy, inventario, abonos).
+- Las **mutaciones** se bloquean cuando no hay conexión (hook `useOnline`), con el mensaje de BR-GEN-08 y un banner persistente. No hay cola de escritura hasta la fase 2.
+- Al volver la conexión se revalida todo el caché.
+
+## 5c. Endpoints de servidor (únicos con `service_role`)
+Next Route Handlers **solo para administración**: `POST /api/admin/invitations` (crear invitación y devolver enlace con `auth.admin.generateLink({type:'invite'})`), `POST /api/admin/password-links` (enlace de restablecimiento, `type:'recovery'`), `POST /api/admin/users/:id/active` (activar/desactivar y banear/desbanear en Auth). Cada uno **verifica en servidor** que la sesión llamante es admin (`is_admin()`), valida entrada con Zod, registra la acción y **nunca** devuelve claves. La `service_role` vive solo en variables de servidor (ADR-0027).
+
 ## 6. PWA
-- Manifest (nombre, iconos, `display: standalone`, tema), service worker con caché del shell. F1 requiere conexión para datos.
+- Manifest (nombre **"Colportor"**, iconos, `display: standalone`, tema), service worker con caché del shell. F1: lectura sin conexión; **escribir requiere conexión**.
 - iOS: instalable desde Safari ≥ 16.4; sin background sync (F2 sincroniza al abrir); push solo con la PWA instalada.
 
 ## 7. Fase 2 — Offline (diseño ya previsto)

@@ -1,23 +1,22 @@
 # ADR-0003: Offline por fases
-Estado: Aceptado · Fecha: 2026-10-26
+Estado: Aceptado · Fecha: 2026-10-26 · Revisado: 2026-10-28 (lectura sin conexión en F1)
 
 ## Contexto
-El colportor trabaja en la calle con señal irregular. Construir offline desde el inicio amplía mucho el alcance y el riesgo. El dueño preguntó cómo se haría sin tener aún la app.
+El colportor trabaja en la calle con señal irregular. Construir escritura offline desde el inicio amplía mucho el alcance y el riesgo. Con un plazo de 14 días no cabe.
 
 ## Decisión
-- **Fase 1: PWA online.** Se diseñan desde ya tres reglas que hacen barato el offline después: (1) **IDs UUID generados en el cliente**; (2) toda lectura/escritura pasa por una capa **`repositories`** (la UI nunca habla con Supabase); (3) todo registro lleva **`updated_at`** y **borrado lógico**.
-- **Fase 2: offline.** Base local **Dexie/IndexedDB**, **cola de escrituras idempotente**, **cola de fotos**, indicadores de sincronización. Conflictos: **gana la última escritura por registro** (un solo escritor por cuenta).
+- **Fase 1:** PWA online **con lectura sin conexión**: se persiste el caché de lecturas (TanStack Query → IndexedDB) y el service worker cachea el shell. Sin internet la app **abre y permite consultar** lo último sincronizado (clientes, teléfonos, direcciones, Hoy, inventario, abonos). **Registrar o modificar exige conexión**, con mensaje claro y banner persistente.
+- Reglas que hacen barato el offline de escritura después: (1) **UUID generados en el cliente**; (2) capa **`repositories`**; (3) **`updated_at`** y **borrado lógico**.
+- **Fase 2:** escritura offline con Dexie, **cola idempotente**, **cola de fotos**, indicadores de sincronización. Conflictos: **gana la última escritura por registro**. El **número de ejemplar** será **provisional con marca** y puede cambiar al sincronizar.
 - iOS no tiene background sync: se sincroniza al abrir la app.
 
 ## Alternativas descartadas
-- *Offline desde la v1*: duplica la complejidad (sincronización, conflictos, pruebas) antes de validar el producto.
-- *CRDT / PowerSync / ElectricSQL*: sobredimensionado para ~10 usuarios de un solo escritor.
-- *App nativa*: innecesaria; la PWA cubre Android e iOS ≥ 16.4.
+- *Escritura offline en la v1*: duplica complejidad antes de validar.
+- *CRDT/PowerSync/ElectricSQL*: sobredimensionado para ~10 usuarios de un solo escritor.
+- *App nativa*: innecesaria.
 
 ## Consecuencias
-- Cambiar a offline solo toca los adaptadores, no las features ni la UI.
-- **Pendiente:** numeración de ejemplares offline (OQ-20, ADR-0023).
-- Sesión caducada sin conexión: permitir uso local y reautenticar al volver.
+Cambiar a offline de escritura solo toca adaptadores. En zonas sin señal el colportor no podrá registrar en la v1 (riesgo aceptado por el dueño).
 
 ## Referencias
-ARCHITECTURE.md §7 · RQ-OFF-01 · DECISION-LOG Q2, Q9
+BR-GEN-08, BR-COPY-05 · RQ-OFF-00, RQ-OFF-01 · AF-90..AF-92 · DECISION-LOG Q2, Q9, Q21

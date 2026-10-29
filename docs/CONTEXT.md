@@ -1,7 +1,7 @@
 # Contexto del producto
 
 ## Qué es
-PWA **mobile-first** para **colportores** (vendedores de libros a cuotas). Reemplaza el sistema que el dueño del producto construyó y usó en **Notion**, donde 3 personas más lo adoptaron. Debe verse bien también en **escritorio**, porque el cuadre de cuentas se hace de noche en computador.
+**Colportor** (marca de Emprendum; por ahora la usa el dueño con unos pocos colportores y, cuando se valide, se presentará a Emprendum). PWA **mobile-first** para **colportores** (vendedores de libros a cuotas). Reemplaza el sistema que el dueño del producto construyó y usó en **Notion**, donde 3 personas más lo adoptaron. Debe verse bien también en **escritorio**, porque el cuadre de cuentas se hace de noche en computador.
 
 Trabaja con la casa publicadora vía un **líder** (quien entrega libros y recibe el dinero). El proyecto se enmarca en **Emprendum** (quien en el futuro puede administrar el catálogo de títulos).
 
@@ -32,13 +32,16 @@ La versión de Notion recibió críticas por **tener demasiados apartados y ser 
 - **Minibooks: cuenta aparte.** No suman a libros vendidos ni a las demás cuentas. A veces su dinero se entrega al líder en un Abibono y a veces se usa para otra cosa del día; por eso solo afecta "Total abonado" si se asigna a un Abibono.
 
 ## Restricciones
-- **Presupuesto cero:** Supabase y Vercel gratis, regiones São Paulo (cercanía a Colombia: **la lentitud hace que la gente odie la app**).
+- **Presupuesto cero:** Supabase y Vercel gratis (cuentas nuevas, dedicadas al proyecto), región **us-east-1 / iad1**, elegida **midiendo** la latencia desde Medellín (~85 ms vs ~146 ms de São Paulo): **la lentitud hace que la gente odie la app**. La confiabilidad total no está garantizada en planes gratuitos: se mitiga con backups, ping anti-pausa y paso futuro a Supabase Pro.
 - **Almacenamiento de fotos limitado** (1 GB gratis): compresión obligatoria.
-- **Sin conexión confiable** en la calle → offline planeado para fase 2.
+- **Sin conexión confiable** en la calle → en la fase 1 se puede **consultar** sin conexión lo último sincronizado; **registrar exige conexión**; escribir sin conexión es fase 2.
 - **Arquitectura escalable, con pruebas, sin "parche sobre parche".** Decisiones lógicas y documentadas.
 
 ## Calendario de entrega
-La **próxima campaña** (~3 meses) empieza pronto; la fase 1 debe estar lista para usarse en ella. Las **campañas** como entidad quedan para después.
+La **próxima campaña** (~3 meses) empieza pronto; **la fase 1 completa debe estar lista en 14 días** (se construye con IA). Las **campañas** como entidad quedan para después.
+
+## Estilo visual
+El sistema original estaba en Notion y el dueño quiere **el mismo estilo visual** (neutro, sutil, bases de datos con pestañas de vista, propiedades editables en línea). Ver `DESIGN-BRIEF.md`.
 
 ## Proceso acordado
 1. Documentación completa (este directorio).

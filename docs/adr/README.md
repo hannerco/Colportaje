@@ -8,14 +8,14 @@ Un ADR por decisión relevante. Formato: contexto → decisión → alternativas
 | ADR | Tema | Estado |
 |---|---|---|
 | 0001 | Multiusuario, roles e invitación | Aceptado |
-| 0002 | Stack y despliegue | Aceptado |
-| 0003 | Offline por fases | Aceptado |
+| 0002 | Stack, plataformas y región (us-east-1, medida) | Aceptado (revisado) |
+| 0003 | Offline por fases (+ lectura sin conexión en F1) | Aceptado (revisado) |
 | 0004 | Idioma, formato y glosario | Aceptado |
 | 0005 | Cliente como agregado y valores derivados | Aceptado |
 | 0006 | Prospectos derivados | Aceptado |
 | 0007 | Títulos con categoría y catálogo de admin | Aceptado |
 | 0008 | Ejemplares: número, snapshots, novedad | Aceptado |
-| 0009 | Abonos: una tabla, prórrogas, parciales | Aceptado |
+| 0009 | Abonos: una tabla, prórrogas, parciales, cancelación y alerta | Aceptado (revisado) |
 | 0010 | Cuadre del Abibono | Aceptado |
 | 0011 | Minibooks | Aceptado |
 | 0012 | Calendario con tres tipos de evento | Aceptado |
@@ -23,16 +23,20 @@ Un ADR por decisión relevante. Formato: contexto → decisión → alternativas
 | 0014 | Búsqueda y dirección | Aceptado |
 | 0015 | Totalizadores en Hacer inventario | Aceptado |
 | 0016 | Meta de bonificación | Aceptado |
-| 0017 | Antigüedad de ejemplares y favoritos | Aceptado |
+| 0017 | Antigüedad, favoritos y agregar a inventario | Aceptado (revisado) |
 | 0018 | Navegación base | Aceptado (base; el diseño decide) |
 | 0019 | Arquitectura en capas y pruebas | Aceptado |
 | 0020 | Copias de seguridad | Aceptado |
 | 0021 | Rendimiento percibido | Aceptado |
-| 0022 | Borrado lógico y bloqueos de dinero entregado | Aceptado |
+| 0022 | Borrado lógico, archivado y bloqueos de dinero entregado | Aceptado (revisado) |
 | 0023 | Numeración de ejemplares | Propuesto |
 | 0024 | Campañas diferidas | Aceptado |
-| 0025 | Devoluciones y saldo a favor, sin reembolsos | Aceptado |
+| 0025 | Devoluciones, saldo a favor y sin reembolsos | Aceptado (revisado) |
 | 0026 | Elección de ejemplares uno por uno | Aceptado |
+| 0027 | Invitaciones y restablecimiento por enlace desde el panel de admin | Aceptado |
+| 0028 | Pérdidas, "A responder al líder" y devolución al líder | Aceptado |
+| 0029 | Estilo Notion, barra de vista única y navegación por íconos | Aceptado |
+| 0030 | Formato regional y preferencias de usuario | Aceptado |
 
 ## Plantilla
 ```markdown

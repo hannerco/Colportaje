@@ -1,137 +1,154 @@
-# Flujos de usuario
+# Flujos de usuario (caminos principales)
 
-Cada flujo indica: actor/contexto, precondiciones, pasos, reglas aplicadas (`BR-*`), resultado y casos borde. Sirve de base para el diseño (Claude Design) y para las pruebas E2E.
+Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y bordes principales. **Los casos especiales y errores están en `FLOWS-ALTERNATIVOS.md` (`AF-*`).** Sirve de base para el diseño y para las pruebas E2E.
 
 ---
 
 ## F-01 Iniciar sesión (invitación)
-- **Contexto:** persona invitada por el admin.
-- **Pasos:** recibe correo de invitación → crea contraseña → entra a **Hoy**.
-- **Reglas:** BR-USR-01/02. No hay "Crear cuenta".
-- **Borde:** enlace caducado → mensaje y pedir nueva invitación al admin. Sesión expirada → volver a login conservando la ruta.
+- **Pasos:** el admin le pasa un enlace de invitación (WhatsApp) → abre el enlace → crea contraseña → entra a **Hoy**. Después entra con correo + contraseña.
+- **Reglas:** BR-USR-01/02/03/05. No hay "Crear cuenta".
+- **Borde:** enlace caducado → pedir uno nuevo al admin (AF-80). Contraseña olvidada → pedir al admin un enlace de restablecimiento (AF-82). Sesión expirada (AF-83).
 
 ## F-02 Cambiar a modo administrador
-- **Pasos:** Más → Ajustes → "Modo administrador" (solo si tiene rol) → la navegación incorpora **Admin**.
-- **Reglas:** BR-USR-04. Con la UI manipulada, el servidor igual rechaza escrituras sin rol.
+- **Pasos:** Más → Ajustes → "Modo administrador" (solo si tiene rol) → aparece la sección **Admin**.
+- **Reglas:** BR-USR-04.
 
-## F-03 Administrar el catálogo de Títulos (admin)
-- **Pasos:** Admin → Títulos → Crear (nombre, imagen, autor, descripción, precio público, precio colportor, categoría) → Guardar. Editar. Desactivar (no borrar).
-- **Reglas:** BR-TIT-01..07. Precio público opcional solo en minibooks.
-- **Borde:** desactivar título con ejemplares → permitido; no aparece al agregar a inventario. Cambiar precio → no afecta ejemplares existentes.
+## F-03 Administrar el catálogo (admin)
+- **Pasos:** Admin → **Catálogo** → crear (nombre, imagen, autor, descripción, precio público, precio colportor, categoría) → guardar. Editar. Desactivar (no borrar).
+- **Reglas:** BR-TIT-01..07.
+- **Borde:** AF-55, AF-56.
 
-## F-04 Ajustes de admin
-- **Pasos:** Admin → Ajustes: editar **meta de bonificación**, **umbrales de antigüedad** (con valores por defecto), **máximo de favoritos**; ver **"Cómo invitar a alguien"** y lista de usuarios con rol.
-- **Reglas:** BR-GOAL-01, BR-COPY-13, BR-USR-05.
-- **Texto mínimo de "Cómo invitar":** (1) Abre Supabase → Authentication → Users → *Invite user*; (2) escribe el correo; (3) la persona recibe el enlace y crea su contraseña; (4) vuelve aquí y confirma que aparece en la lista.
+## F-04 Ajustes de admin y usuarios
+- **Pasos:** Admin → **Ajustes**: meta de bonificación, umbrales de antigüedad (valores por defecto 2/6/12), máximo de favoritos. Admin → **Usuarios**: lista (nombre, correo, rol, estado), **Invitar** (F-25), generar enlace de restablecimiento, **desactivar/reactivar**.
+- **Reglas:** BR-GOAL-01, BR-COPY-13, BR-USR-05/07.
 
 ## F-05 Agregar a inventario
-- **Contexto:** móvil, en la calle, con una mano.
-- **Pasos A (favoritos):** Inventario → Agregar → toca el botón del Título favorito → se crea **un** ejemplar (toast "Corazón tranquilo #13 agregado", deshacer disponible unos segundos). Repetir toques = más ejemplares.
-- **Pasos B (lista):** Agregar → buscar o elegir de la lista de Títulos activos → agregar → opción de repetir.
-- **Favoritos:** estrella en cada Título de la lista para marcar/desmarcar; tope 6 (aviso al exceder).
-- **Reglas:** BR-COPY-01..05, BR-INV-01/02. Los minibooks se agregan igual (también desde su sección).
-- **Resultado:** ejemplar `in_stock` con snapshots de precio y `received_at = ahora`.
-- **Borde:** sin título activo → estado vacío con explicación; error de red → mensaje y reintento (F1 online).
+- **Contexto:** móvil, en la calle. **Mismo patrón para libros y minibooks.**
+- **Pasos:** Inventario → **Agregar** → lista de Títulos activos (buscable) con favoritos arriba. Cada fila tiene un **"+"**: un toque agrega **un** ejemplar ("Corazón tranquilo #13 agregado", **Deshacer** unos segundos). Tras agregar, el "+" se vuelve una **pastilla con el número** de esta sesión; tocarla permite **escribir la cantidad total** (el sistema ajusta). Un chip discreto **"Hoy ▾"** permite escoger un día pasado antes de agregar.
+- **Favoritos:** estrella en cada fila (máx. 6); los favoritos aparecen como botones de un toque.
+- **Reglas:** BR-COPY-02..05, BR-INV-02, BR-MBK-01.
+- **Resultado:** ejemplar `in_stock` con snapshots de precio y `received_at` indicada.
+- **Borde:** AF-50 (fecha pasada), AF-51 (agregué de más); sin títulos activos → estado vacío.
 
 ## F-06 Ver libros en físico
-- **Pasos:** Inventario → lista de Títulos con cantidad `in_stock` y icono de antigüedad (el más antiguo del título); detalle por título con ejemplares (número, antigüedad). Minibooks al final/aparte. Sección "Por resolver" con ejemplares `flagged`.
+- **Pasos:** Inventario → lista de Títulos con cantidad `in_stock` e icono de antigüedad; detalle por título con ejemplares (número, antigüedad). Minibooks al final/aparte. Sección **"Por resolver"** (`flagged`). Desde aquí: **Devolver al líder** (F-26).
 - **Reglas:** BR-INV-03, BR-COPY-13.
 
 ## F-07 Lista de ejemplares con vistas
-- **Pasos:** Inventario → Ejemplares → pestañas **Todos / En inventario / Vendidos / Con descuentos y aumentos**; ordenar (fecha recibido, fecha vendido, título, precio, diferencia) y buscar (título, cliente, número).
+- **Pasos:** Inventario → Ejemplares → pestañas **Todos / En inventario / Vendidos / Con descuentos y aumentos**; orden y búsqueda con la **barra de vista común**.
 - **Reglas:** BR-COPY-12.
 
-## F-08 Editar el precio acordado de un ejemplar
-- **Pasos:** abrir el ejemplar vendido → editar *Precio acordado* → ver *Precio distinto* y *Diferencia* (aumento/descuento) → guardar.
-- **Reglas:** BR-COPY-07, BR-PRC-01/02. Recalcula saldo del cliente.
+## F-08 Detalle de un ejemplar
+- **Muestra:** título, número, estado, antigüedad, cliente, **precio acordado** (editable), precio distinto y diferencia, **"Recibido el"** (propiedad editable en línea, discreta), historial.
+- **Acciones:** editar precio acordado (recalcula saldo; puede disparar F-29), editar "Recibido el" (BR-COPY-04), devolver (F-16), marcar con novedad (F-09), eliminar (con nota).
+- **Reglas:** BR-COPY-04/07, BR-PRC-01/02.
 
 ## F-09 Marcar y resolver "Con novedad"
-- **Pasos:** ejemplar `in_stock` → "Marcar con novedad" → nota obligatoria → pasa a `flagged` (sale del stock físico, aparece en "Por resolver"). Resolver: *Apareció* (→ `in_stock`) / *Perdido* (→ `lost`) / *Corregido* (borra el ejemplar), con nota opcional.
-- **Reglas:** BR-COPY-10/11. **Diseño visual abierto**: el dueño lo ajustará al verlo.
-- **Caso típico:** "el líder dice que me dio 4 y tengo 3" → se marca el ejemplar que falta.
+- **Pasos:** ejemplar `in_stock` → "Marcar con novedad" → **nota obligatoria** → `flagged` (sale del físico, aparece en "Por resolver"). Resolver: **Apareció** (→ `in_stock`), **Perdido (lo asumo yo)** (→ `lost`) o **Eliminar** (nota opcional; se borra).
+- **Reglas:** BR-COPY-10/11. **Ninguna etiqueta o tooltip menciona que el líder pueda asumir una pérdida.** Representación visual abierta (DT-03).
+- **Casos:** AF-52, AF-53.
 
 ## F-10 **+ Vender** (flujo central)
-- **Contexto:** botón central; el mismo flujo cubre cliente nuevo, cliente existente y prospecto.
-- **Paso 1 – Cliente:** buscar (búsqueda difusa) o "Crear cliente" (nombre obligatorio; teléfono, información, fotos, dirección opcionales).
-- **Paso 2 – Libros:** lista de ejemplares `in_stock` agrupados por título, con número y antigüedad; el colportor los **elige uno por uno**. Cada uno entra con precio acordado = precio público del snapshot. (Cambiar un precio individual se hace luego, en el ejemplar: F-08.)
-- **Paso 3 – Dinero:** total de la deuda (derivado). Registrar **cuota inicial** (monto, método) → abono `collected`. Programar **abonos programados** (monto, fecha) → `scheduled`. Se muestra el saldo restante resultante.
-- **Paso 4 – Factura:** foto de la factura inicial (puede añadirse después; admite varias).
-- **Paso 5 – Confirmar:** crea todo en una transacción lógica.
-- **Reglas:** BR-COPY-06/08, BR-CUS-02/03, BR-PAY-01..03.
-- **Resultado:** cliente con ejemplares `sold`, abonos y factura; deja de ser prospecto.
-- **Borde:** sin stock suficiente → no se puede elegir; sin cuota inicial → válido; abonos programados que no suman el saldo → válido (saldo pendiente queda como "sin fecha").
-- **Cliente existente que recompra:** mismos pasos; se agregan ejemplares y abonos al mismo cliente, el saldo se recalcula.
+- **Contexto:** botón central; cubre cliente nuevo, existente y prospecto.
+- **Paso 1 – Cliente:** buscar (difuso) o crear (nombre obligatorio; aviso de posible duplicado, AF-70).
+- **Paso 2 – Libros:** lista de ejemplares `in_stock` agrupados por título (número y antigüedad); se **eligen uno por uno**. Precio acordado = precio público del snapshot (se cambia después, F-08).
+- **Paso 3 – Dinero:** deuda total (derivada). **Cuota inicial** (monto, método) → `collected`. **Abonos programados** (monto, fecha) → `scheduled`. Se muestra el saldo restante y, si lo programado lo excede, el aviso de F-29 (AF-32).
+- **Paso 4 – Factura:** foto de la factura (una o varias; también después).
+- **Paso 5 – Confirmar:** crea todo de forma atómica.
+- **Reglas:** BR-COPY-06/08, BR-CUS-02/03, BR-PAY-01..03/13.
+- **Cliente que recompra:** mismos pasos sobre el cliente existente (saldo recalculado).
+- **Borde:** AF-31 (sin cuota ni programados).
 
 ## F-11 Crear cliente sin libros (prospecto)
-- **Pasos:** Clientes → "+" → datos → guardar. Opcionalmente programar una **visita** (F-18).
-- **Reglas:** BR-CUS-02/05. No cuenta en totalizadores ni listas por defecto.
+- **Pasos:** Clientes → "+" → datos → guardar; opcionalmente programar una **visita** (F-18).
+- **Reglas:** BR-CUS-02/05/11.
 
 ## F-12 Ficha de cliente
-- **Muestra:** datos, información (texto + fotos), dirección (texto, "Abrir en Maps", mapa al tocar), libros con precio acordado/diferencia, abonos con estado y fechas (original tachada si hubo prórroga), deuda, saldo pendiente o **saldo a favor**, facturas, visitas.
-- **Acciones:** agregar libro (F-10 prefijado), registrar abono (F-13), programar abono, agregar factura/foto, programar visita, devolver libro (F-16), editar, eliminar (BR-CUS-09).
+- **Muestra:** datos; teléfono con **llamar** y **WhatsApp**; información (texto + fotos); dirección (texto, **Abrir en Maps**, mapa al tocar); libros con precio y diferencia; abonos con estado (**Cancelados** plegable); deuda, saldo pendiente o **saldo a favor**, "sin programar"; facturas; visitas; aviso persistente si los programados exceden el saldo.
+- **Acciones:** agregar libro, registrar/programar/cobrar abono, factura/foto, visita, **devolver libro** (F-16), editar, **archivar** (F-27).
+- **Reglas:** BR-CUS-04..12.
 
 ## F-13 Registrar y cobrar abonos
-- **Cuota inicial / abono extra:** ficha → "Registrar abono" → monto, método, fecha (hoy) → `collected`.
-- **Programar:** monto + fecha → `scheduled` (aparece en Hoy y calendario).
-- **Cobrar uno programado:** desde Hoy o la ficha → "Cobrado" → monto real (por defecto el acordado), fecha real (hoy), método → `collected`.
-- **Parcial:** si monto real < acordado → aviso no intrusivo "Faltan $X: ¿programar otro abono?" (BR-PAY-07).
+- **Cuota inicial / extra:** ficha → "Registrar abono" → monto, método, fecha (hoy, no futura) → `collected` (evalúa F-29).
+- **Programar:** monto + fecha → `scheduled`.
+- **Cobrar uno programado:** desde Hoy o la ficha → "Cobrado" → monto real (por defecto el acordado), fecha real, método → `collected`.
+- **Parcial:** aviso no intrusivo para programar el faltante (AF-22). **Mayor al acordado:** AF-21.
 - **Reglas:** BR-PAY-01..07.
 
 ## F-14 Prórroga
-- **Pasos:** abono `scheduled` → "Dar más plazo" → nueva fecha (y nota opcional) → la fecha original queda visible tachada, el calendario usa la nueva; se guarda el historial.
-- **Reglas:** BR-PAY-06. Disponible solo si `scheduled`.
+- **Pasos:** abono `scheduled` → "Dar más plazo" → nueva fecha (nota opcional) → fecha original tachada visible; el calendario usa la nueva; historial guardado.
+- **Reglas:** BR-PAY-06. **Caso:** AF-24.
 
 ## F-15 Dinero (cuadre nocturno, escritorio)
-- **Pasos:** Dinero → tarjetas **Por cobrar** (con vencidos), **En mi poder** (efectivo / transferencia por separado — "esto debes tener físicamente / en cuenta"), **Entregado**. Desde "En mi poder" → "Crear Abibono".
-- **Reglas:** BR-PAY-02, "cash_on_hand / transfer_on_hand".
+- **Pasos:** Dinero → **Por cobrar** (con vencidos), **En mi poder** (efectivo / transferencia por separado), **Entregado**, lista de **Abibonos**. Desde "En mi poder" → "Nuevo Abibono".
+- **Reglas:** BR-PAY-02/08.
 
-## F-16 Devolver un libro
-- **Pasos:** ficha del cliente → ejemplar → "Devolver a inventario" → confirmación explicando que los abonos y Abibonos **no cambian** → ejemplar vuelve a `in_stock`.
-- **Reglas:** BR-COPY-09, BR-CUS-06. Si queda saldo a favor, se muestra con nota y la opción "Entregar un minibook" (F-21).
-- **Sin reembolsos** en la v1 (backlog).
+## F-16 Devolver un libro / quitar de un cliente
+- **Pasos:** ficha del cliente (o detalle del ejemplar) → **"Devolver a inventario"** → motivo (*El cliente lo devolvió* / *Me equivoqué de cliente o de registro*) → confirmación que aclara "los abonos y los Abibonos no cambian" → ejemplar a `in_stock` → si quedan abonos programados que ya no cuadran, **modal F-29** (sugerido: recortar desde el más lejano). Si queda **saldo a favor**, nota y acceso a "Entregar un minibook" (F-21).
+- **Reglas:** BR-COPY-09, BR-PAY-13, BR-CUS-06. **Todos los casos:** `FLOWS-ALTERNATIVOS.md` A (AF-01..AF-12).
 
-## F-17 Crear un Abibono
-1. Dinero → "Nuevo Abibono" (nace `draft`; título y fecha automáticos, editables).
-2. Elegir **abonos `collected`** (los no vinculados a otro borrador) y/o **entradas de minibooks** (indicando cuánto de cada una; parcial permitido, no las de `client_credit`).
-3. Efectivo y transferencia se **autocalculan**; el usuario puede editarlos (lo realmente entregado). El **Total** no se edita.
-4. Se muestra **Esperado vs. Entregado** y la **Diferencia** (faltante/sobrante). Si ≠ 0 → nota obligatoria.
-5. Subir **foto del recibo** (obligatoria).
-6. **Confirmar** → los abonos pasan a `delivered` y quedan bloqueados.
-- **Caso donación:** sin abonos vinculados; se indica efectivo/transferencia, título explicativo y nota.
-- **Reglas:** BR-DEP-01..11.
-- **Borde:** sin recibo → no se puede confirmar; borrar borrador libera los abonos.
+## F-17 Crear un Abibono (Entrega al líder)
+1. Dinero → "Nuevo Abibono" (`draft`; título y fecha automáticos, editables).
+2. Elegir **abonos `collected`** libres y/o **entradas de minibooks** (indicando cuánto de cada una).
+3. Efectivo y transferencia se **autocalculan** y se pueden editar; el **Total** no.
+4. **Esperado vs. Entregado** y **Diferencia** siempre visibles; si ≠ 0 → **nota obligatoria**.
+5. Subir **foto del recibo** (una; "Añadir otra" disponible).
+6. **Confirmar** → abonos a `delivered`, bloqueados.
+- **Reabrir** (discreto): motivo obligatorio; vuelve a borrador (AF-44).
+- **Reglas:** BR-DEP-01..12. **Casos:** AF-40..AF-47.
 
 ## F-18 Visitas
-- **Pasos:** crear desde la ficha del cliente, desde Clientes o desde el calendario: cliente (opcional) o etiqueta libre, fecha, hora opcional, nota, recordatorio opcional.
-- **Estados:** pendiente → hecha / cancelada.
-- **Convertir en cliente:** visita sin cliente → "Crear cliente" con un toque (precarga la etiqueta como nombre).
-- **Reglas:** BR-CAL-02/04.
+- **Pasos:** desde la ficha, desde Clientes o desde el calendario: cliente (opcional) o etiqueta libre, fecha, hora opcional, nota, recordatorio opcional.
+- **Estados:** pendiente → hecha / cancelada. **Convertir en cliente:** un toque.
+- **Reglas:** BR-CAL-02/04. **Casos:** AF-72, AF-100.
 
 ## F-19 Capacitaciones
-- **Pasos:** Calendario → "+" → Capacitación: título, empresa o lugar, fecha y hora, notas, recordatorios.
+- **Pasos:** Calendario → "+" → Capacitación: título, empresa o lugar, fecha **y hora**, notas, recordatorios opcionales.
 - **Reglas:** BR-CAL-03/04.
 
 ## F-20 Hoy (pendientes del día)
-- **Muestra:** cobros de hoy, cobros vencidos, visitas de hoy, capacitaciones de hoy, recordatorios activos, barra de meta, accesos rápidos (Agregar a inventario, + Vender).
-- **Acciones:** tocar un cobro → F-13; tocar un evento → detalle; "Ver calendario" → calendario con filtro por tipo.
-- **Reglas:** BR-CAL-05/06/07, BR-GOAL-01.
+- **Muestra:** cobros de hoy, **cobros vencidos**, visitas de hoy, capacitaciones de hoy, recordatorios activos, barra de meta (ubicación sujeta a cambio), accesos rápidos (Agregar a inventario, + Vender).
+- **Acciones:** tocar un cobro → F-13; tocar un evento → detalle; "Ver calendario" con el filtro adecuado.
+- **Reglas:** BR-CAL-05/06/07, BR-GOAL-01. Los abonos `canceled` no aparecen.
 
 ## F-21 Minibooks
-- **Registrar entrada:** Minibooks → "Nueva entrada" → título (solo minibooks con stock), cantidad, monto (puede ser 0), método, fecha (hoy), nota → descuenta stock. Para varios títulos se repite rápido.
-- **Entrega por saldo a favor:** desde la ficha del cliente con saldo a favor → "Entregar un minibook" → título y cantidad, monto aplicado (≤ saldo a favor) → origen `client_credit` (no ingreso, no va a Abibono).
+- **Registrar venta:** Minibooks → "Nueva venta" → título (con stock), cantidad, monto (puede ser 0), método, fecha (hoy), nota → descuenta stock. Para varios títulos se repite.
+- **Agregar stock:** mismo patrón "+ / pastilla numérica" que los libros (F-05).
+- **Entrega por saldo a favor:** ficha del cliente → "Entregar un minibook" → título, cantidad, monto aplicado (≤ saldo a favor) → origen `client_credit`.
 - **Totales de minibooks:** vendidos, ingresos, costo, ganancia neta, entregado al líder, stock.
-- **Reglas:** BR-MBK-01..09.
-- **Borde:** sin stock → bloquea con atajo "Agregar al inventario".
+- **Reglas:** BR-MBK-01..09. **Casos:** AF-10, AF-60..AF-64.
 
 ## F-22 Hacer inventario (cuadre con el líder)
-- **Pasos:** Más → Hacer inventario → elegir vista **Inventario** (solo culturales) o **Todos** (culturales + religiosos); minibooks siempre aparte → tabla por título (Recibidos, Vendidos, En físico, Con novedad, Perdidos, Compra, Venta) con subtotales por grupo y total → selector **Todos | Culturales | Religiosos** de los totalizadores → imprimir/compartir.
-- **Reglas:** BR-GOAL-02..06, BR-COPY-14.
-- **Borde:** `Recibidos = Vendidos + En físico + Con novedad + Perdidos` siempre.
+- **Pasos:** Más → Hacer inventario → vista **Inventario** (solo culturales) o **Todos** (culturales + religiosos); minibooks siempre aparte → tabla por título (Recibidos, Vendidos, En físico, Con novedad, Perdidos, Devueltos, Compra, Venta) con subtotales y total → selector **Todos | Culturales | Religiosos** de los totalizadores → líneas **"Perdidos asumidos"** y **"A responder al líder"** → botón **"Copiar resumen"** (texto para pegar en WhatsApp). PDF/CSV: mejora futura.
+- **Reglas:** BR-GOAL-02..07, BR-COPY-14.
+- **Control:** `Recibidos = Vendidos + En físico + Con novedad + Perdidos + Devueltos`.
 
 ## F-23 Buscar clientes
-- **Pasos:** Clientes → campo de búsqueda → resultados al teclear (tolerante a errores y acentos) sobre nombre, teléfono, información y dirección → listas Recientes / Deudores / Todos + interruptor "Incluir prospectos".
+- **Pasos:** Clientes → campo de búsqueda → resultados al teclear (tolerante a errores y acentos) sobre nombre, teléfono, información y dirección → vistas **Recientes / Deudores / Todos**, selector de orden, interruptor "Incluir prospectos", opción "Archivados".
 - **Reglas:** BR-CUS-05/07.
 
 ## F-24 Fotos
-- **Pasos:** tomar/elegir → el cliente comprime (WebP ≤1280 px ~150 KB + miniatura) → sube; en F1 requiere conexión.
+- **Pasos:** tomar/elegir (`<input capture>`) → el cliente comprime (WebP ≤1280 px ~150 KB + miniatura) → sube; requiere conexión (AF-92).
 - **Reglas:** BR-PHO-01..04.
+
+## F-25 Invitar a un colportor (admin)
+- **Pasos:** Admin → Usuarios → **Invitar** → correo → la app muestra un **enlace** con botón "Copiar" → enviarlo por WhatsApp. Si caduca → **Regenerar**.
+- **Reglas:** BR-USR-05. **Casos:** AF-80, AF-82.
+
+## F-26 Devolver libros al líder (lote)
+- **Pasos:** Inventario → Libros en físico → **Devolver al líder** → elegir ejemplares `in_stock` (cualquier antigüedad) → nota → confirmar. **Deshacer** desde el historial con nota.
+- **Reglas:** BR-COPY-16. **Caso:** AF-54.
+
+## F-27 Archivar y restaurar un cliente
+- **Pasos:** ficha → **Archivar** (solo sin ejemplares vendidos; los programados se cancelan con confirmación) → desaparece de las listas. Clientes → **Archivados** → **Restaurar**.
+- **Reglas:** BR-CUS-09. **Caso:** AF-71.
+
+## F-28 Ajustes personales
+- **Pasos:** Más → Ajustes → **formato de hora (12 h / 24 h)**, favoritos, modo administrador (si aplica), cerrar sesión. Tema claro/oscuro automático.
+- **Reglas:** BR-GEN-07, BR-USR-08.
+
+## F-29 Alerta de abonos programados que no cuadran
+- **Disparadores:** abono extra o mayor al acordado, devolución, bajar precio, editar/borrar abono cobrado, archivar, confirmar la venta.
+- **Pasos:** modal con saldo restante, total programado, **sobrante** y lista con casillas → **Recortar automáticamente** (desde el más próximo tras un abono extra; desde el más lejano tras devolución/baja de precio/archivado) / **Cancelar los que marque** / **Dejar como está** (aviso persistente en la ficha).
+- **Resultado:** abonos `canceled` conservados en "Cancelados"; no cuentan en calendario ni totales.
+- **Reglas:** BR-PAY-13. **Casos:** AF-05, AF-20, AF-21, AF-25, AF-29, AF-32.

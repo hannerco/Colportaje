@@ -96,6 +96,69 @@ Convención: **[D]** = decidido · **[A]** = asumido por defecto, pendiente de c
 
 ---
 
+## Ronda 7 — Cierre de cabos sueltos (2026-10-28)
+
+| # | Tema | Resultado |
+|---|---|---|
+| Q1 | "Recientes" en Clientes | **"Sí, es por fecha de creación. Pero si quieres ponerte creativo, está bien eso del selector. Quiero que el diseño sea muy atractivo, así que este tipo de filtros/selectores deben seguir un mismo estilo en todos los módulos."** [D] Barra de vista única (ADR-0029). |
+| Q2 | Fecha de recibido y cantidad | **"Debe haber manera de editar el día que lo recibí, ya que puede que haya un día entero en que no tenga acceso a internet o al celular… no tan grande el CAMBIAR FECHA DE RECIBIDO, la idea es que no lo cambien, pero debe existir la posibilidad. Debe seguir la forma en que se hace en diferentes páginas web."** [D] Chip de fecha + propiedad editable en línea. **"No quiero que esté tan visual cargar muchos de un solo Título, usualmente el líder da 2 o máximo 4… los minibooks sí suelen darnos bastantes."** |
+| — | Estilo | **"El mayor estilo específico que quiero seguir es el de Notion… quiero que siga el mismo estilo visual."** [D] |
+| Q3 | Tiempo y formato | **"La semana empieza el domingo; el usuario debería poder escoger en ajustes si el formato es 12 o 24 horas. El resto está bien."** [D] Inicio del día 07:00, sin recordatorio por defecto, fechas dd/mm/aaaa, tema automático. |
+| Q4 | Después de devolver | **"No. Aunque sí se debe conservar la información, al devolverse un libro el cliente ya no va a dar esa plata de los abonos programados, y ese es el campo que usamos para saber cuánto tenemos en la calle, así que no debería guardarse eso… a veces eliminaba el cliente. Por favor escribe todos los diferentes flujos que pueden suceder."** [D] → alerta de abonos que no cuadran, estado `canceled`, `FLOWS-ALTERNATIVOS.md`. Tope del saldo a favor en minibooks confirmado. |
+| Q5 | Compartir "Hacer inventario" | **"Por ahora simplemente copiar el resumen, pero explícitamente que en el futuro se podrá descargar en PDF o CSV."** [D] |
+| Q6 | Libros perdidos | **"Usualmente el colportor asume la pérdida, por lo que se nos sigue cobrando el libro. Puede haber un líder muy amigable que acepte asumir la pérdida, por lo que el libro se resolvería eliminándose, como si uno se hubiera equivocado al agregarlo."** [D] |
+| Q7 | Abono extra | **"Considero que se debería dejar, ya que en efecto puede suceder. El sistema debe ser capaz de calcular que si el cliente dio un abono extra, el abono programado ya no debería ser del mismo valor, por lo que debería surgir algún tipo de alerta, ya sea modal, popup o lo que sea mejor."** [D] → BR-PAY-13. |
+| Q8 | Nombres | **"Abonos, Abibonos déjalo así con el nombre, porque es un chiste interno que quiero conservar y en el tooltip puedes dejar 'Entrega al líder'… minibooks literalmente 'Minibooks'. Dinero, hacer inventario, + vender está bien. Quiero que cada uno tenga un ícono que lo caracterice, así como en Instagram."** [D] |
+| Q9 | Cifras de dinero | **"Correcto. Pero creo que sí deberías dar la opción de mostrar el total de deuda en Clientes. Eso lo veremos bien cuando sea el momento."** [D] → DT-01 (se decide en el diseño). |
+| Q10 | Duplicados y llamar/WhatsApp | **"Sí a los dos, me encanta esa creatividad."** [D] |
+| Q11 | Fotos | **"Un abibono debería tener una sola [foto de recibo], sin embargo deja la opción de agregar más."** [D] |
+| Q12 | Admin | **"Correcto."** [D] El admin no ve datos de otros; puede desactivar usuarios. |
+| Q13 | Piezas técnicas | **"Todo correcto, excepto lo de la invitación. Considero que no debería andar tocando la base de datos directamente, por lo que desde mi panel de admin debería ser capaz de enviar la invitación."** [D] → ADR-0027. |
+| Q14 | Nombre de la app | **"Pon 'Colportor' como nombre. Es marca de Emprendum, pero por ahora la estoy usando yo y unos pocos. Cuando lo valide con ellos, se la voy a presentar a Emprendum."** [D] |
+| Q15 | Ley 1581 | **"Va."** [D] → plantilla con huecos (SG-05). |
+| Q16 | Entornos y cuenta de Supabase | **"Debería crear una cuenta nueva de Supabase porque ya tengo varios proyectos y quiero que este no se caiga por nada del mundo. Ayúdame a escoger cómo le hacemos, en qué plataformas montarlo."** [D] Cuenta nueva, 2 proyectos, mitigaciones, Pro más adelante (ADR-0002, DEPLOYMENT §7). |
+| Q17 | Plazo | **"Tenemos dos semanas."** [D] → ROADMAP de 14 días. |
+| Q18 | Número de ejemplar offline | **"Vale."** [D] Provisional con marca (F2). |
+| Q19 | Un Abibono por abono | **"Correcto."** [D] |
+
+## Ronda 8 — Plazo, devoluciones y plataformas
+
+| # | Tema | Resultado |
+|---|---|---|
+| Q20 | Alcance en 14 días | **"No tengas miedo, intentemos hacer esto en las dos semanas. Lo voy a construir con IA, entonces se podrá."** [D] La fase 1 completa en 14 días; el orden propuesto sirve de prioridad y de orden de recorte. |
+| Q21 | Lectura sin conexión | **"Vale, estoy de acuerdo."** [D] |
+| Q22 | Alerta de abonos que no cuadran | **"Perfecto."** [D] BR-PAY-13 y estado `canceled`. |
+| Q23 | Detalles de devolución | **"Perfecto."** [D] Motivo opcional, conserva `received_at`, prospecto, **Archivar**. |
+| Q24 | Perdidos | **"No debería haber un 'El líder lo asume' porque eso es comprometer al líder… él no debe saber eso, ya que es un acto de bondad del líder y muchos no lo harán."** [D] Salidas: Apareció / Perdido (lo asumo yo) / Eliminar. **Ningún texto menciona que el líder pueda asumir.** |
+| Q25 | Devolver libros al líder | **"Es cierto, sí ocurre. Además, puede que tengas un libro hace mucho tiempo y el líder acepte que lo devuelvas. Hay que contemplar ese caso."** [D] `returned_to_leader`, cualquier antigüedad. |
+| Q26 | Reabrir Abibono | **"Perfecto."** [D] |
+| Q27 | Cambiar de cliente | **"No entiendo la pregunta. Si me equivoco de cliente, probablemente tenga que devolver el libro de vendido a inventario, y ahí sí pasarlo al otro cliente. Cuando le agrego un libro a un cliente puedo tanto agregar como eliminar y eso debería cambiar el estado del ejemplar."** [D] Se **eliminó** la propuesta "Cambiar de cliente"; motivo "Me equivoqué de cliente" en la devolución. |
+| Q28 | Cantidad en Notion | **"El concepto está bien, pero el botón discreto ×N no me parece muy estético. Piensa cómo lo haría Notion."** [D] → "+ / pastilla numérica". |
+| Q29 | Estilo, íconos, nombres | **"Okay, estoy de acuerdo por ahora. Yo había propuesto Títulos y Ejemplares porque me parecía la forma menos ambigua, pero si crees que se va a entender bien, estoy de acuerdo."** [D] |
+| Q30 | Invitar desde el panel | **"Exactamente eso es lo que te pido."** [D] Enlace copiable para WhatsApp. |
+| Q31 | Cuenta Supabase | **"Va. Déjame instrucciones muy claras… no estoy muy familiarizado con Supabase o Vercel… ¿A la final decidimos Vercel o Render?"** [D] Guía `GUIA-DESPLIEGUE-PASO-A-PASO.md`. **Vercel**, no Render. |
+| Q32 | Hosting y región | **"Creo que voy a usar una cuenta Vercel nueva, y sí, por ahora el plan gratuito. ¿Estás seguro que São Paulo es mejor? Investigué y se menciona que aunque la de EE. UU. está más lejos, suele ser más rápida."** [D] **Se midió** desde Medellín (us-east-1 ~85 ms vs sa-east-1 ~146 ms): el dueño tenía razón → **us-east-1 / iad1**. |
+
+## Ronda 9 — Últimos ajustes
+
+| # | Tema | Resultado |
+|---|---|---|
+| Q33 | Perdidos sin mencionar al líder | **"Sí."** [D] |
+| Q34 | Devolver al líder | **"Sí a todo."** [D] Cualquier antigüedad, deshacer con nota, columna "Devueltos". |
+| Q35 | Cliente equivocado | **"Correcto."** [D] |
+| Q36 | Cantidad estilo Notion | **"Vaaale, vale. Me gusta. Pero haz lo mismo tanto en minibooks como en libros normales."** [D] Misma pastilla en ambos (sin selector visible desde el inicio en minibooks). |
+| Q37 | Región | **"Perfecto."** [D] us-east-1 + iad1. Pendiente repetir la medición desde un celular (SG-01). |
+| Q38 | Nombres Título/Ejemplar | **"No. Por ahora prefiero lo que tú consideras mejor. Si en un futuro veo confusión, te pediré que lo cambies. Déjalo anotado en cosas por revisar."** [D] *Catálogo* (admin), *Libros* (colportor), *Ejemplar*; RV-01. |
+
+---
+
+## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
+1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.
+2. **Repositorio de GitHub llamado `colportor`** (en vez de `colportaje`), coherente con el nombre de la app.
+3. **Estado `returned_to_leader`** y columna "Devueltos" en *Hacer inventario*; la identidad de control del inventario se actualiza.
+4. **Recorte automático de abonos**: tras abono extra, desde el más próximo; tras devolución/baja de precio/archivado, desde el más lejano (modificable en el modal).
+5. **Archivar** sustituye a "eliminar" cliente (conserva información, que el dueño quiere guardar).
+
 ## Correcciones al propio asistente (para no repetir errores)
 1. Se afirmó que "Venta" era necesaria; el dueño la rechazó (Q5). No existe.
 2. Se propuso "título + cantidad" al vender; el dueño exige elegir ejemplares uno por uno (Q35).
@@ -104,3 +167,8 @@ Convención: **[D]** = decidido · **[A]** = asumido por defecto, pendiente de c
 5. Se supuso que la meta se medía por cantidad; es por **suma de precio colportor** de culturales (Q47).
 6. Se había omitido la vista **Ejemplares** (Todos / En inventario / Vendidos / Con descuentos y aumentos, con ordenar y buscar) del texto original; ahora está en `DESIGN-BRIEF.md`.
 7. Se había omitido el método (efectivo/transferencia) en las entradas de minibooks, necesario para autocalcular el Abibono; añadido.
+8. **Región:** se recomendó São Paulo por cercanía geográfica; el dueño dudó y la **medición** desde Medellín mostró que us-east-1 (~85 ms) es más rápida que sa-east-1 (~146 ms). Corregido en todos los documentos.
+9. Se propuso "Cambiar de cliente" en un ejemplar vendido sin entender el flujo real del dueño; se retiró (quitar y volver a agregar ya cambia el estado).
+10. Se propuso la resolución "El líder lo asume", que comprometía al líder; se reemplazó por *Eliminar* sin mención al líder.
+11. Se propuso invitar por correo con el SMTP de Supabase; está limitado a 2/hora y solo a miembros de la organización; se cambió a enlace por WhatsApp.
+12. Se propuso el botón "×N" para cantidades; el dueño lo rechazó por poco estético; se cambió a "+ / pastilla numérica" estilo Notion.

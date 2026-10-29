@@ -32,7 +32,9 @@ Obligatorias para todo agente o persona que escriba código o documentación aqu
 ## 4. UI
 - Mobile-first: se diseña y prueba primero a 360–390 px; escritorio ≥ 1024 px.
 - Objetivos táctiles ≥ 44×44 px; acciones principales en la zona del pulgar.
-- Todo texto desde `src/copy/es.ts`. Todo dinero con `formatCOP`; toda fecha con helpers de `domain/time` (zona Bogota).
+- Todo texto desde `src/copy/es.ts`. Todo dinero con `formatCOP`; toda fecha y hora con helpers de `domain/time` (zona Bogota, semana desde domingo, formato 12 h/24 h según el perfil).
+- **Estilo visual Notion.** Usa siempre el componente `ViewBar` para pestañas de vista, filtro, orden y búsqueda; no crees variantes por módulo. Cada sección tiene su ícono; la barra inferior móvil es solo íconos con texto accesible.
+- **Contenido:** nunca insinúes en textos que el líder pueda asumir una pérdida (BR-COPY-11). "Abibono" se conserva; su tooltip dice "Entrega al líder".
 - Tooltips para conceptos de `DESIGN-BRIEF.md` §7; accesibles por teclado y táctiles.
 - Estados obligatorios en cada vista: carga, vacío, error, éxito.
 - No depender solo del color para transmitir estado.
@@ -57,8 +59,8 @@ Obligatorias para todo agente o persona que escriba código o documentación aqu
 - Los nombres marcados 🔶 en el glosario siguen abiertos a discusión con el dueño.
 
 ## 8. Cómo debe trabajar un agente en este repo
-1. Lee `AGENTS.md` y `docs/README.md` antes de actuar.
-2. **No inventes reglas de negocio.** Si algo no está en `BUSINESS-RULES.md` o `DECISION-LOG.md`, mira `OPEN-QUESTIONS.md`; si sigue sin estar, **pregunta al dueño**.
+1. Lee `AGENTS.md` y `docs/README.md` antes de actuar. **La app se llama "Colportor"**; el repositorio es `colportor`.
+2. **No inventes reglas de negocio.** Si algo no está en `BUSINESS-RULES.md`, `FLOWS-ALTERNATIVOS.md` o `DECISION-LOG.md`, **pregunta al dueño** y regístralo en `OPEN-QUESTIONS.md` (`OQ-*`) con un supuesto.
 3. No implementes lo que está en backlog, fase 2 o fase 3 salvo que se pida.
 4. Mantén las capas (`ARCHITECTURE.md` §2). La UI no habla con Supabase.
 5. Escribe pruebas junto con el código (`TESTING.md`).
