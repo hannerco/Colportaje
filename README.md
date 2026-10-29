@@ -6,6 +6,6 @@ PWA mobile-first para colportores: clientes, libros en físico, ventas a cuotas,
 
 - 📚 Documentación: [`docs/README.md`](docs/README.md) (empieza aquí)
 - 🤖 Para agentes de IA y colaboradores: [`AGENTS.md`](AGENTS.md)
-- 🗺️ Hoja de ruta: [`docs/ROADMAP.md`](docs/ROADMAP.md)
+- 🗺️ Hoja de ruta: [`docs/06-planificacion/ROADMAP.md`](docs/06-planificacion/ROADMAP.md)
 
 Stack previsto: Next.js + TypeScript (PWA) · Supabase (Postgres, Auth, Storage; **us-east-1**) · Vercel (**iad1**) · Vitest + Playwright. Estilo visual: Notion.
