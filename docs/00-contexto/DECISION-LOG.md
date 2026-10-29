@@ -161,6 +161,30 @@ Convención: **[D]** = decidido · **[A]** = asumido por defecto, pendiente de c
 | Q2 | Desglose y privacidad | **"Correcto, debe poderse ocultar el monto. Pero además de separado debo poder ver el total; de hecho principalmente debería ver el total y como ayuda el desglose."** [D] Total como cifra principal, desglose Efectivo/Transferencia secundario, ojo para ocultar. |
 | Q3 | Minibooks | **"Vale, está bien. No incluyamos minibooks."** [D] |
 
+---
+
+## Ronda 11 — Revisión del primer diseño (2026-10-29)
+
+El dueño revisó `Colportor.html` (8 tableros de Claude Design) y lo rechazó casi por completo: *"no me gustó casi nada… supongo que es porque el design brief no está alineado con lo que realmente quiero."* Se renderizó el archivo y se investigó (tells de "hecho con IA", leyes de UX, sidebar de Notion).
+
+| # | Crítica / decisión | Resultado |
+|---|---|---|
+| 1 | **"Busca en internet las cosas que las personas asocian a 'creado con IA'… no cometas ninguna."** | Lista negra anti-IA (BR-GEN-12, ADR-0032). |
+| 2 | **"No está siendo minimalista, especialmente en el mobile. Demasiada información, demasiadas aclaraciones, demasiadas letras."** | Presupuesto de densidad: filas de 2 líneas, sin subtítulos/contadores, ayuda con ⓘ. |
+| 3 | **"Cuando hayan más de 5 opciones, se debe dividir en grupos."** | BR-GEN-11. |
+| 4 | **"Busca las leyes de UX/UI y síguelas."** | Leyes aplicadas en el brief §6 y ADR-0032. |
+| 5 | **"El sidebar quiero que sea muy parecido al de Notion."** | Sidebar con perfil, Buscar, Hoy, secciones plegables Trabajo y Dinero, "+" y "⋯" al hover. |
+| 6 | **"El botón vender se repite muchas veces, con una sola principal está bien."** | BR-GEN-10: "Vender" una sola vez. |
+| 7 | **"Hay redundancia: hay un apartado calendario y en 'hoy' hay un calendario completo de una semana. Está bien que aparezca lo de hoy, pero no toda una semana."** | Hoy sin semana ni agenda aparte; el error vino de mi brief v1 (variante "Hoy denso"). |
+| Q1 | "Agregar inventario" dentro de Inventario | **"Sí"** [D] |
+| Q2 | Tarjeta "Por entregar" sin subtítulo, desglose en una línea gris, sin barra | **"Perfecto. Menos explicación, más visualización."** [D] |
+| Q3 | Color | **"Bien, sin embargo algo que me gustó es que había un ícono PEQUEÑO que sí tenía color, que diferenciaba las visitas, de las capacitaciones, de los cobros… es muy específico el lugar donde se ponen los colores, pero así sí es bueno. No te pido que todo sea blanco y negro, sino que sepas dónde poner colores. Quiero que una de las variantes sea con este segundo color de acento #092e53."** [D] Microíconos de tipo; variante B con #092e53. |
+| Q4 | Fuente del sistema | **"Sí"** [D] |
+| Q5 | Cobros vencidos | **"Ni siquiera sé si quiero ese bloque de vencidos. Puede aparecer como un aviso, pero no uno por uno porque recarga mucho. Si le das click, lleva al módulo que lo muestra correctamente. O no sé, ¿qué opinas?"** [D] Aviso único que abre Dinero ▸ Por cobrar ▸ Vencidos (BR-CAL-09). |
+| Q6 | Variantes | **"No, igual quiero ver las variantes desde el principio."** [D] A casi negro, B marino #092e53, C editorial. |
+| Q7 | Grupos del sidebar | **"Sí"** [D] Trabajo y Dinero. |
+| Q8 | "Agregar libro" en la ficha | **"Correcto"** [D] |
+
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.
 2. **Repositorio de GitHub llamado `colportor`** (en vez de `colportaje`), coherente con el nombre de la app.
@@ -181,4 +205,5 @@ Convención: **[D]** = decidido · **[A]** = asumido por defecto, pendiente de c
 9. Se propuso "Cambiar de cliente" en un ejemplar vendido sin entender el flujo real del dueño; se retiró (quitar y volver a agregar ya cambia el estado).
 10. Se propuso la resolución "El líder lo asume", que comprometía al líder; se reemplazó por *Eliminar* sin mención al líder.
 11. Se propuso invitar por correo con el SMTP de Supabase; está limitado a 2/hora y solo a miembros de la organización; se cambió a enlace por WhatsApp.
+13. **Brief v1:** pedía subtítulos, desglose permanente, una variante "Hoy denso" con semana, botones de acción repetidos y 7 colores de etiqueta; Claude Design lo siguió y el resultado fue recargado. Corregido en el brief v2.
 12. Se propuso el botón "×N" para cantidades; el dueño lo rechazó por poco estético; se cambió a "+ / pastilla numérica" estilo Notion.

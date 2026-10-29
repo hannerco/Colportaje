@@ -20,7 +20,7 @@ Plan sugerido (cada hito con pruebas; el orden es también el **orden de recorte
 | 5–6 | **Inventario y clientes** | Agregar (lista, favoritos, "+" y pastilla numérica, fecha pasada, deshacer), libros en físico, antigüedad, vistas de ejemplares, "Con novedad", devolver al líder, clientes/prospectos, búsqueda difusa, ficha, archivar, duplicados, llamar/WhatsApp, fotos (compresión + miniaturas) |
 | 7–8 | **Vender y abonos** | Asistente **+ Vender**, abonos (cuota inicial, programado, extra, cobrar, parcial, prórroga), **alerta de abonos que no cuadran**, devolución con motivo, saldo a favor |
 | 9–10 | **Dinero y minibooks** | Dinero (por entregar, por método), Abibono (autocálculo, diferencia, recibo, confirmar, **reabrir**), minibooks (ventas, stock, asignación, `client_credit`) |
-| 11 | **Hoy y calendario** | Hoy (tarjeta **Por entregar**, cobros, vencidos), calendario (abonos, visitas, capacitaciones), recordatorios en app, semana desde domingo, formato 12/24 h |
+| 11 | **Hoy y calendario** | Hoy (tarjeta **Por entregar**, aviso único de vencidos, lista cronológica), calendario (abonos, visitas, capacitaciones), recordatorios en app, semana desde domingo, formato 12/24 h |
 | 12 | **Hacer inventario y metas** | Tabla, 8 totalizadores + perdidos + A responder, selector de categoría, **Copiar resumen**, barra de meta |
 | 13 | **Calidad** | Tooltips, estilo Notion pulido, lectura sin conexión, estados vacíos/error, E2E completos, backups (cada 2 días) + ping anti-pausa, aviso de datos |
 | 14 | **Piloto** | Uso real del dueño, correcciones, preparar a los demás colportores |

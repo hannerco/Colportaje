@@ -70,7 +70,7 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
   - *Dado* acordado 50.000 y pagado 30.000, *entonces* `collected` por 30.000, saldo conserva 20.000 y se **sugiere** (no se crea) otro abono.
 - **RQ-PAY-03 [F1]** Doy prórroga: `original_due_date` no cambia, `due_date` sí, se inserta historial.
   - *Cuando* aplazo dos veces, *entonces* hay 2 filas de historial y la fecha original sigue siendo la primera.
-- **RQ-PAY-04 [F1]** Abonos vencidos se resaltan en Hoy y calendario.
+- **RQ-PAY-04 [F1]** Los abonos vencidos aparecen en Hoy solo como **aviso único** que abre Dinero ▸ Por cobrar ▸ Vencidos; el detalle se ve en Dinero y en el calendario.
 - **RQ-PAY-05 [F1]** Un abono en un Abibono confirmado está bloqueado (se desbloquea solo reabriendo el Abibono).
 - **RQ-PAY-06 [F1]** **Alerta de abonos que no cuadran** (BR-PAY-13).
   - *Dado* saldo restante 20.000 y programados 40.000 (4 × 10.000), *cuando* el cliente da un abono extra de 20.000, *entonces* aparece el modal con sobrante 20.000; **Recortar** cancela los **2 más próximos**.
@@ -102,7 +102,10 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
 - **RQ-CAL-02 [F1]** Visitas con cliente opcional/etiqueta, hora opcional, estado; convertir visita en cliente.
 - **RQ-CAL-03 [F1]** Capacitaciones con fecha y hora, lugar, notas.
 - **RQ-CAL-04 [F1]** Recordatorios (inicio del día 07:00, 1 día, 1 semana, personalizado), sin valor por defecto, dentro de la app y descartables.
-- **RQ-CAL-05 [F1]** **Hoy** resume cobros (hoy y vencidos), visitas, capacitaciones, recordatorios y meta.
+- **RQ-CAL-05 [F1]** **Hoy** muestra: tarjeta "Por entregar", aviso único de vencidos (si hay), barra de meta y **una lista cronológica** de cobros, visitas, capacitaciones y recordatorios de hoy.
+  - *Entonces* **no** hay semana ni agenda aparte, ni botones, ni subtítulos; cada fila tiene máximo 2 líneas y un ícono de tipo (único color de categoría).
+  - *Dado* 2 abonos vencidos, *entonces* se ve **una** fila "2 cobros vencidos ›" y no hay filas individuales de vencidos; *dado* 0, *entonces* no aparece.
+  - *Cuando* toco el aviso, *entonces* abre Dinero ▸ Por cobrar filtrado a Vencidos.
 - **RQ-CAL-06 [F2]** Push de recordatorios.
 - **RQ-CAL-07 [F1]** **Hoy** muestra la tarjeta **"Por entregar"** (BR-CAL-08).
   - *Dado* abonos cobrados no entregados por 30.000 en efectivo y 20.000 por transferencia, *entonces* la cifra principal es **50.000** y el desglose muestra Efectivo 30.000 · Transferencia 20.000.
@@ -131,6 +134,7 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
 - **RQ-QLT-02 [F1]** PWA instalable; despliegue en us-east-1 (Supabase) e iad1 (Vercel), elegidas midiendo la latencia (ADR-0002).
 - **RQ-QLT-03 [F1]** Tooltips en: estados de abono, fecha acordada vs. real, diferencia, esperado vs. entregado, con novedad, saldo a favor, prospecto, antigüedad, Abibono ("Entrega al líder"), título vs. ejemplar.
 - **RQ-QLT-04 [F1]** Backups cada 2 días al inicio, luego semanales, con guía de restauración probada; ping anti-pausa cada 3 días.
+- **RQ-QLT-06 [F1]** Principios visuales (ADR-0032): **una sola acción principal** ("Vender" una vez), más de 5 opciones agrupadas, sidebar estilo Notion, color solo en acento/rojo semántico/microíconos de tipo de evento, sin elementos de la lista negra anti-IA, filas de máximo 2 líneas, tooltips solo con ⓘ.
 - **RQ-QLT-05 [F1]** COP enteros `$1.250.000`, zona America/Bogota, español, `dd/mm/aaaa`, tema claro/oscuro automático.
 - **RQ-OFF-01 [F2]** Offline de escritura: base local, cola idempotente, cola de fotos, indicadores, número de ejemplar provisional.
 - **RQ-LDR-01 [F3]** Vista de líder y transferencia de libros con aceptación del colportor.

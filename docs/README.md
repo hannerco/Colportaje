@@ -27,9 +27,10 @@ docs/
 │  ├─ CONVENTIONS.md              idioma, nombres, TypeScript, UI, git, cómo trabaja un agente
 │  ├─ TESTING.md                  estrategia y casos de prueba
 │  ├─ SECURITY.md                 amenazas, secretos, políticas
-│  └─ adr/                        decisiones de arquitectura (ADR-0001 … ADR-0031) + README con índice
+│  └─ adr/                        decisiones de arquitectura (ADR-0001 … ADR-0032) + README con índice
 ├─ 04-diseno/
-│  └─ DESIGN-BRIEF.md             brief para Claude Design (pantallas, estilo Notion, decisiones DT-*)
+│  ├─ DESIGN-BRIEF.md             brief v2 para Claude Design (estilo Notion, lista negra anti-IA, densidad, wireframes)
+│  └─ PROMPT-CLAUDE-DESIGN.md     prompt v2 listo para pegar
 ├─ 05-operacion/                  PUESTA EN MARCHA
 │  ├─ DEPLOYMENT.md               plataformas, entornos, migraciones, backups, confiabilidad
 │  ├─ GUIA-DESPLIEGUE-PASO-A-PASO.md   guía explicada para el dueño (Supabase, Vercel, GitHub)
@@ -50,7 +51,7 @@ docs/
 8. [`01-negocio/REQUIREMENTS.md`](01-negocio/REQUIREMENTS.md) — requisitos `RQ-*` con criterios de aceptación.
 9. [`03-arquitectura/ARCHITECTURE.md`](03-arquitectura/ARCHITECTURE.md), [`03-arquitectura/CONVENTIONS.md`](03-arquitectura/CONVENTIONS.md), [`03-arquitectura/TESTING.md`](03-arquitectura/TESTING.md), [`03-arquitectura/SECURITY.md`](03-arquitectura/SECURITY.md).
 10. [`03-arquitectura/adr/`](03-arquitectura/adr/README.md) — decisiones de arquitectura.
-11. [`04-diseno/DESIGN-BRIEF.md`](04-diseno/DESIGN-BRIEF.md) — brief para Claude Design.
+11. [`04-diseno/DESIGN-BRIEF.md`](04-diseno/DESIGN-BRIEF.md) — brief v2 para Claude Design · [`04-diseno/PROMPT-CLAUDE-DESIGN.md`](04-diseno/PROMPT-CLAUDE-DESIGN.md) — prompt listo para pegar.
 12. [`05-operacion/DEPLOYMENT.md`](05-operacion/DEPLOYMENT.md) y [`05-operacion/GUIA-DESPLIEGUE-PASO-A-PASO.md`](05-operacion/GUIA-DESPLIEGUE-PASO-A-PASO.md) (para el dueño, explicada) · [`05-operacion/AVISO-DATOS-PLANTILLA.md`](05-operacion/AVISO-DATOS-PLANTILLA.md).
 13. [`06-planificacion/ROADMAP.md`](06-planificacion/ROADMAP.md) — plan de 14 días, fases y backlog · [`06-planificacion/OPEN-QUESTIONS.md`](06-planificacion/OPEN-QUESTIONS.md) — **no hay preguntas abiertas**; seguimientos (SG), cosas por revisar (RV) y decisiones de diseño (DT).
 
@@ -61,7 +62,7 @@ docs/
 | Saber por qué se decidió algo | `00-contexto/DECISION-LOG.md` y el ADR correspondiente |
 | Saber cómo se llama algo (UI y código) | `00-contexto/GLOSSARY.md` |
 | Crear tablas o migraciones | `02-datos/DATABASE.md` |
-| Diseñar pantallas | `04-diseno/DESIGN-BRIEF.md` |
+| Diseñar pantallas | `04-diseno/DESIGN-BRIEF.md` y `04-diseno/PROMPT-CLAUDE-DESIGN.md` |
 | Escribir código o pruebas | `03-arquitectura/ARCHITECTURE.md`, `03-arquitectura/CONVENTIONS.md`, `03-arquitectura/TESTING.md` |
 | Crear cuentas y desplegar | `05-operacion/GUIA-DESPLIEGUE-PASO-A-PASO.md` |
 | Ver qué toca hacer y cuándo | `06-planificacion/ROADMAP.md` |

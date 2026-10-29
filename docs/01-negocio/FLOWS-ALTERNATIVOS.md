@@ -98,7 +98,7 @@ Una sola acción —**"Devolver a inventario"** en la ficha del cliente (o en el
 - *App:* tras registrar el abono, `remaining = 0` y todo lo programado es sobrante → modal con **Recortar** (cancela todos). Resultado: sin abonos programados, saldo 0.
 
 ### AF-26 Abono vencido
-- *App:* se resalta como **vencido** en Hoy y en el calendario hasta que se cobre, se reprograme o se cancele. No hay cancelación automática.
+- *App:* en Hoy aparece como **aviso único** ("N cobros vencidos ›", nunca uno por uno); al tocarlo abre Dinero ▸ Por cobrar ▸ Vencidos, donde se cobran, reprograman o cancelan. En el calendario se ve resaltado. No hay cancelación automática.
 
 ### AF-27 Abono cobrado registrado por error
 - *App:* si **no** está en un Abibono confirmado, se edita o borra (lógico) y se recalcula todo. Si ya está entregado → AF-44 (Reabrir).

@@ -37,7 +37,8 @@ Un ADR por decisión relevante. Formato: contexto → decisión → alternativas
 | 0028 | Pérdidas, "A responder al líder" y devolución al líder | Aceptado |
 | 0029 | Estilo Notion, barra de vista única y navegación por íconos | Aceptado |
 | 0030 | Formato regional y preferencias de usuario | Aceptado |
-| 0031 | Tarjeta "Por entregar" en Hoy | Aceptado |
+| 0031 | Tarjeta "Por entregar" en Hoy | Aceptado (revisado) |
+| 0032 | Principios de diseño: minimalismo, color con propósito, anti-IA | Aceptado |
 
 ## Plantilla
 ```markdown

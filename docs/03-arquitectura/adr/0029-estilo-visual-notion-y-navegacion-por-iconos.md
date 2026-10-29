@@ -1,5 +1,5 @@
 # ADR-0029: Estilo visual Notion, barra de vista única y navegación por íconos
-Estado: Aceptado · Fecha: 2026-10-28
+Estado: Aceptado · Fecha: 2026-10-28 · Ampliado por ADR-0032 (principios de diseño, 2026-10-29)
 
 ## Contexto
 El sistema original estaba en Notion y el dueño quiere **el mismo estilo visual**, con un diseño "muy atractivo" y filtros/selectores con **un mismo estilo en todos los módulos**. Quiere que cada sección tenga un ícono, como en Instagram, donde el ícono basta en la barra y el título se ve por otro lado.

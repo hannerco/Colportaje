@@ -1,121 +1,168 @@
-# Brief de diseño (para Claude Design)
+# Brief de diseño v2 (para Claude Design)
 
-> Entregable para la herramienta de diseño. Pedir **2–3 variantes** de navegación y de los flujos clave (F-05 agregar a inventario, F-10 + Vender, F-16 devolución, F-17 Abibono, Hoy). El dueño elegirá. Reglas y datos exactos: `01-negocio/BUSINESS-RULES.md`, `01-negocio/FLOWS.md`, `01-negocio/FLOWS-ALTERNATIVOS.md`, `02-datos/DOMAIN-MODEL.md`. **El diseño debe estar listo en los primeros 2–3 días** para respetar el plazo de 14 días (`06-planificacion/ROADMAP.md`).
+> **Versión 2 (2026-10-29).** Reemplaza la v1 tras revisar el primer resultado de Claude Design (`Colportor.html`): demasiada información, colores por todas partes, "Vender" repetido, calendario redundante en Hoy y rasgos típicos de interfaz generada por IA. Reglas de comportamiento: `01-negocio/BUSINESS-RULES.md`; flujos: `01-negocio/FLOWS.md`; decisiones: `00-contexto/DECISION-LOG.md` (ronda 11); principios: `03-arquitectura/adr/0032-principios-de-diseno.md`. **Prompt listo para pegar:** `04-diseno/PROMPT-CLAUDE-DESIGN.md`.
 
-## 1. Producto en una frase
-**Colportor**: PWA para colportores. Llevar clientes, libros en físico, ventas a cuotas, abonos y entregas al líder, desde el celular en la calle y desde el computador en el cuadre de la noche.
+## 1. Producto
+**Colportor**: PWA para colportores (venta de libros a cuotas, Colombia). Móvil en la calle; escritorio para el cuadre de la noche. Texto en español. Dinero `$1.250.000`, fechas `dd/mm/aaaa`, semana desde domingo.
 
-## 2. Usuarios y uso real
-| Momento | Dispositivo | Lo que más usa |
+| Momento | Dispositivo | Usa |
 |---|---|---|
-| **Calle (día)** | Móvil, una mano, poca señal | **Pendientes del día (Hoy)**, **Clientes** (donde agrega las ventas), **Libros en físico**, **Agregar al inventario** |
-| **Cuadre (noche)** | Escritorio | **Clientes** (completar información), **Abonos** (cuánto debe tener en **efectivo** y cuánto en **transferencia** para entregar), **Abibonos** (entregar al líder y guardar la foto del recibo) |
-| Esporádico | Cualquiera | Totalizadores, libros individuales, inventario por título |
+| Calle (día) | Móvil, una mano, poca señal | Hoy, Clientes, Libros en físico, Agregar al inventario, Vender |
+| Cuadre (noche) | Escritorio | Clientes (completar), Dinero (por entregar), Abibonos, Hacer inventario |
 
-## 3. Estilo visual: **Notion**
-El sistema original estaba en Notion y el dueño quiere **el mismo estilo visual**:
-- Paleta **neutra** (blancos y grises cálidos), bordes finos y sutiles, **mucho aire**, tipografía sans limpia y legible.
-- **Etiquetas/píldoras suaves** de color para estados, categorías y tipos (cultural / religioso / minibook; por cobrar / cobrado / entregado; reciente … antiguo).
-- **Tablas tipo base de datos** con **pestañas de vista** arriba; **propiedades editables en línea** (clic → editar) con selectores de fecha y menús sencillos.
-- Un **ícono por página/sección**. Modo **oscuro** equivalente al de Notion (automático según el dispositivo).
-- Interacciones discretas: acciones secundarias en menús "⋯", hover/pulsación larga, nada estridente.
-- **Un único componente de barra de vista** (pestañas de vista, filtro, orden y búsqueda) con **idéntico estilo en todos los módulos** (Clientes, Ejemplares, Dinero, Calendario, Hacer inventario…). El dueño exige consistencia y que el diseño sea **muy atractivo**.
+## 2. Dirección visual: Notion, sobrio
+Neutros cálidos, bordes finos solo donde separan, mucho aire, **fuente del sistema** (la de Notion: `ui-sans-serif, -apple-system, "Segoe UI"…`), íconos de trazo, tablas tipo base de datos con pestañas de vista, propiedades editables en línea, modo oscuro automático. **Menos explicación, más visualización:** un dato se entiende por posición, ícono o forma, no por una frase.
 
-## 4. Principios de diseño
-1. **Pocos apartados.** Problema de Notion: demasiados apartados; la gente solo usaba Clientes y se perdía con "abonos vs abibonos". Se presentan juntos como **Dinero**.
-2. **Un solo flujo de venta** (**+ Vender**, botón central).
-3. **Calle:** acciones de un toque, objetivos táctiles grandes, legible al sol, poco texto por escribir.
-4. **Noche/escritorio:** tablas con orden y filtros, paneles lista+detalle.
-5. **Cifras con mesura:** el dinero total no se exhibe en pantallas de uso diario (es parte de la emoción del "Hacer inventario" con el líder). La meta es una **barra sin números**. Dónde sí se ve dinero: Dinero, ficha del cliente, Abibono, Hacer inventario y, en Hoy, **solo** la tarjeta "Por entregar" (BR-GOAL-06, BR-CAL-08).
-6. **Tono:** sobrio, profesional, cálido. **Sin metáforas infantiles** (el icono de antigüedad no es una fruta).
-7. **Ayuda contextual:** tooltips en español (ver §8).
-8. **Rendimiento percibido:** estados de carga, UI optimista, miniaturas, mapa que carga al tocarlo.
-9. **Acciones destructivas o delicadas son discretas** (ej.: "Reabrir" un Abibono, editar "Recibido el") pero siempre posibles.
+## 3. Lista negra (lo que hace que una UI parezca "hecha con IA")
+Investigado en la web; **no usar nada de esto**:
+- Gradientes (sobre todo morado/azul/índigo), "glow", glassmorphism, blobs 3D.
+- Emojis como íconos.
+- Héroes centrados con tres tarjetas de ícono.
+- **Etiquetas/badges por todas partes** y **íconos dentro de círculos tintados** en cada fila.
+- **Todo en tarjetas** con borde, esquinas redondeadas y sombra idénticas; **borde de color a la izquierda** en tarjetas.
+- Muchos tonos de color al mismo tiempo (efecto confeti).
+- Tipografía por defecto de IA (Inter/Jakarta/Geist), cuerpo en semibold, títulos sin interletrado.
+- Texto de relleno, **subtítulos bajo cada título**, contadores en todas las secciones, microcopy genérico.
+- Dobles barras de progreso o gráficos sin significado; datos de ejemplo tipo "John Doe / Acme".
+- Cajas de ícono grandes junto a títulos de página (efecto portada).
 
-## 5. Navegación base (alternativa A)
-**Móvil — barra inferior (5), solo íconos** (como Instagram; el título de la sección se ve en la cabecera, y cada ícono tiene texto accesible):
-`Hoy` · `Clientes` · **`+ Vender`** (central, destacado) · `Inventario` · `Más`
-- **Más:** Dinero, Minibooks, Calendario completo, Hacer inventario, Ajustes (modo admin conmutable).
-**Escritorio — menú lateral con ícono + texto:** Hoy, Clientes, Vender, Inventario, **Dinero** (pantalla propia), Minibooks, Calendario, Hacer inventario, Ajustes/Admin.
-- **Cada sección necesita un ícono propio y reconocible** (pedir propuesta de set de íconos coherente).
-- **Pedir variantes B y C** que reorganicen (p. ej. Calendario o Dinero en la barra; un "Hoy" más denso como inicio).
+## 4. Color: dónde sí y dónde no
+- **Base:** neutros (fondo, superficie, borde, texto). Estados y categorías en **gris** (se distinguen por ícono o texto).
+- **Acento único** en acciones principales y elemento activo. Variante principal: casi negro (`#1F1E1D`). **Variante pedida: acento `#092e53` (azul marino profundo).**
+- **Rojo** solo para vencido, error y acciones destructivas.
+- **Microacentos de color — el único lugar con color de categoría:** un **ícono pequeño (solo el trazo, sin círculo ni fondo)** que distingue el **tipo de evento**: cobro, visita, capacitación. Tonos apagados y bien distinguibles (el primer diseño usó naranja / azul / morado y le gustó; en la variante marino cuidar que "visita" no choque con el acento, p. ej. verde azulado). Nada más lleva color de categoría.
 
-## 6. Pantallas (inventario completo)
-| # | Pantalla | Contenido clave | Flujo |
-|---|---|---|---|
-| 1 | **Hoy** (subtítulo "Pendientes del día") | Tarjeta **"Por entregar"** (subtítulo "Recaudado sin entregar al líder": **total** como cifra principal, **desglose** Efectivo/Transferencia como apoyo, **ojo** para ocultar montos; toca → Dinero), cobros de hoy y **vencidos**, visitas, capacitaciones, recordatorios activos, **barra de meta (sin cifras; ubicación sujeta a cambio, DT-02)**, accesos rápidos a Agregar y + Vender | F-20 |
-| 2 | **Clientes** | Buscador difuso grande, barra de vista (Recientes / Deudores / Todos / Archivados, selector de orden), interruptor "Incluir prospectos", **saldo pendiente por fila**, crear cliente sin libro. Opción de mostrar un total de deuda: decidir en diseño (DT-01) | F-11, F-23 |
-| 3 | **Ficha de cliente** | Datos, **llamar / WhatsApp**, información con fotos aparte, dirección (texto, **Abrir en Maps**, mapa que carga al tocar), libros con precio y diferencia, abonos con estado (**Cancelados** plegable), deuda / saldo / **saldo a favor** / "sin programar", **aviso persistente** de abonos que no cuadran, facturas, visitas, acciones (devolver, archivar) | F-12 |
-| 4 | **+ Vender** (asistente) | 1 Cliente (buscar/crear, aviso de duplicado) → 2 Ejemplares **uno por uno** (número + antigüedad) → 3 Cuota inicial y abonos programados (con aviso si exceden) → 4 Factura → 5 Confirmar | F-10 |
-| 5 | **Inventario / Libros en físico** | Por título con **icono de antigüedad**, minibooks **al final/aparte**, sección "Por resolver", acción en lote **Devolver al líder** | F-06, F-26 |
-| 6 | **Agregar a inventario** | **Lista** buscable + **favoritos** (estrella, máx. 6) + "+" por fila que se vuelve **pastilla numérica** (libros y minibooks igual), **chip de fecha "Hoy ▾"**, **Deshacer** | F-05 |
-| 7 | **Ejemplares** | Pestañas **Todos / En inventario / Vendidos / Con descuentos y aumentos**, orden y búsqueda (barra de vista común) | F-07 |
-| 8 | **Ejemplar (detalle)** | Número, título, estado, antigüedad, cliente, **precio acordado editable**, precio distinto y diferencia, **"Recibido el" editable en línea (discreto)**, historial, acciones (devolver, novedad, eliminar) | F-08, F-09, F-16 |
-| 9 | **Devolver a inventario** | Motivo (*El cliente lo devolvió* / *Me equivoqué de cliente o de registro*), aclaración "abonos y Abibonos no cambian", resultado, saldo a favor, **modal de abonos que no cuadran** | F-16, F-29 |
-| 10 | **Modal: abonos que no cuadran** | Saldo restante, total programado, sobrante, lista de abonos con casillas, botones *Recortar automáticamente / Cancelar los que marque / Dejar como está* | F-29 |
-| 11 | **Dinero** | Por cobrar (con vencidos), **Por entregar** (total, con desglose efectivo / transferencia), Entregado; lista de Abibonos; "Nuevo Abibono" | F-15 |
-| 12 | **Abibono** (tooltip: "Entrega al líder") | Vincular abonos y minibooks, efectivo/transferencia (auto, editables), total (no editable), **esperado vs entregado + diferencia**, nota, **recibo obligatorio** (una, "Añadir otra"), borrador → confirmado, **Reabrir** discreto | F-17 |
-| 13 | **Minibooks** | Ventas del día (cantidad · monto), stock, "+ / pastilla numérica" para agregar, totales propios, entrega por saldo a favor | F-21 |
-| 14 | **Calendario** | Mes y día, **semana desde domingo**, filtro por tipo (**abono / visita / capacitación**, distinguibles por forma+color+texto), crear visita/capacitación, recordatorios | F-18, F-19 |
-| 15 | **Hacer inventario** | Tabla por título (Recibidos, Vendidos, En físico, Con novedad, Perdidos, Devueltos, Compra, Venta), grupos Culturales/Religiosos/Minibooks, vistas **Inventario** (culturales) y **Todos**, 8 totalizadores con selector, **"Perdidos asumidos" y "A responder al líder"**, botón **Copiar resumen** | F-22 |
-| 16 | **Ajustes** | Modo administrador, **formato de hora 12 h/24 h**, favoritos, cerrar sesión | F-28 |
-| 17 | **Admin** | **Catálogo** (CRUD de Títulos con imagen, desactivar), Ajustes (meta, umbrales de antigüedad, favoritos máx.), **Usuarios** (lista, **Invitar** con enlace copiable, regenerar, enlace de restablecimiento, desactivar/reactivar), uso de almacenamiento | F-03, F-04, F-25 |
-| 18 | **Login / invitación** | Correo y contraseña; crear contraseña al abrir el enlace; sin registro público | F-01 |
-| 19 | **Archivados** | Lista de clientes archivados con restaurar | F-27 |
+## 5. Presupuesto de densidad (móvil)
+- Una **fila = 2 líneas máximo** y **una sola señal** de estado.
+- **Sin** subtítulos de página, **sin** contadores en secciones, **sin** explicaciones permanentes. La ayuda va en un **ⓘ** discreto que se abre solo al tocar.
+- Máximo **5 bloques** por pantalla en el primer vistazo; todo lo secundario se revela al tocar (**divulgación progresiva**).
+- Máximo **3 tamaños de texto** por pantalla; cuerpo ≥ 15 px.
+- **Más de 5 opciones → se dividen en grupos** (menús, sidebar, "Más", filtros, selectores).
 
-## 7. Estados y patrones a diseñar
-- **Abono:** Por cobrar → Cobrado → Entregado al líder, más **Cancelado** (tres estados principales claramente distintos, no solo por color).
-- **Prórroga:** fecha original tachada + nueva; historial accesible.
-- **Abono parcial:** sugerencia **no intrusiva** de programar el resto.
-- **Diferencia del Abibono:** faltante/sobrante visibles, nota obligatoria cuando ≠ 0.
-- **Antigüedad:** 4 etapas (Reciente / Normal / Envejeciendo / Antiguo), icono sobrio por etapas; solo en libros en físico y selector. **Pedir 3 propuestas.**
-- **Con novedad:** representación **abierta** (el dueño la ajustará al verla). Pedir 3 propuestas (DT-03). **Ningún texto sugiere que el líder pueda asumir una pérdida.**
-- **Saldo a favor:** nota en ficha + acción "Entregar un minibook".
-- **Prospecto:** distinción visual sutil en la lista cuando se incluyen.
-- **Vencido:** abono por cobrar con fecha pasada, resaltado.
-- **Sin conexión:** banner persistente; lectura disponible; botones de guardar deshabilitados con explicación.
-- **Vacíos, cargas, errores, éxito** (toasts con **Deshacer** al agregar ejemplares).
-- **Confirmaciones delicadas** claras (devolver libro, archivar cliente, reabrir Abibono con motivo).
-- **Propiedad editable en línea** (Notion) para "Recibido el" y precio acordado.
-
-## 8. Tooltips obligatorios (texto en español)
-| Concepto | Qué debe aclarar |
+## 6. Leyes de UX aplicadas
+| Ley | Cómo se aplica |
 |---|---|
-| Por cobrar / Cobrado / Entregado / Cancelado | Dónde está el dinero en cada estado |
-| Por entregar | Dinero que ya cobraste y aún no has entregado al líder; el total y cuánto es efectivo y cuánto transferencia |
-| Fecha acordada vs. real | Acordada = para cuándo prometió; real = cuándo pagó; la original se conserva si hay prórroga |
-| Diferencia (aumento / descuento) | Precio acordado − precio público; positivo = ganaste, negativo = descuento |
-| Abibono | **"Entrega al líder"**: dinero que le entregas |
-| Esperado vs. entregado | Esperado = suma de abonos vinculados; la diferencia exige una nota |
-| Con novedad | Marca un descuadre entre lo registrado y lo que tienes en físico (sin mencionar que el líder pueda asumir pérdidas) |
-| Saldo a favor | El cliente pagó más de lo que debe; no hay reembolsos; se puede dar un minibook |
-| Prospecto | Cliente sin libros vendidos |
-| Antigüedad | Días desde que recibiste el ejemplar |
-| Minibooks | Cuenta aparte; no suma a libros vendidos |
-| Título vs. ejemplar | Un título es un libro del catálogo; un ejemplar es cada copia física tuya |
-| A responder al líder | Mi compra de lo vendido + perdidos que asumes |
-| Alerta de abonos | Por qué lo programado supera lo que falta pagar |
+| **Hick** | Máximo 5 opciones visibles por grupo; el resto agrupado |
+| **Miller** | Listas cortas y agrupadas (~7 como límite) |
+| **Fitts** | Acción principal grande, abajo, a la altura del pulgar |
+| **Jakob** | Se comporta como lo conocido: sidebar de Notion, barra inferior de íconos como Instagram |
+| **Von Restorff** | Un solo elemento destacado por pantalla |
+| **Proximidad / región común** | Lo relacionado va junto; se agrupa con espacio y títulos de grupo, no con más tarjetas |
+| **Tesler** | La complejidad se absorbe en el sistema (autocálculos), no en la pantalla |
+| **Doherty (<400 ms)** | Respuesta inmediata, estados optimistas |
+| **Meta-gradiente / Zeigarnik** | Barra de meta sin cifras; Hoy muestra solo lo pendiente |
+| **Estético-usabilidad** | Lo cuidado se percibe más fácil |
+| **Nielsen #8 (minimalista)** | Quitar lo que distrae; lo secundario bajo demanda |
 
-## 9. Responsive
-- **Móvil (≥ 360 px):** barra inferior de íconos, tarjetas, formularios de un paso por pantalla, objetivos táctiles ≥ 44 px, **zona del pulgar** para acciones principales.
-- **Tablet/escritorio (≥ 1024 px):** menú lateral ícono+texto, tablas con orden/filtros, paneles lado a lado (lista + detalle), formularios en dos columnas; **Dinero** y **Hacer inventario** pensados para pantalla grande.
-- **Instalada como PWA:** pantalla completa, icono, splash, tema claro/oscuro.
+## 7. Navegación
+**Móvil — barra inferior, SOLO íconos** (como Instagram; el título va en la cabecera; cada ícono con texto accesible):
+`Hoy · Clientes · [ + Vender ] · Inventario · Más`
+**Más** = hoja con **grupos de máximo 4**: *Trabajo* (Calendario, Minibooks) · *Dinero* (Dinero, Hacer inventario) · *Cuenta* (Ajustes, Admin si aplica).
 
-## 10. Accesibilidad y visual
-Contraste suficiente a pleno sol; no depender solo del color (iconos + texto); texto accesible en todos los íconos; formato de dinero `$1.250.000`; fechas `dd/mm/aaaa`; hora 12 h/24 h según Ajustes; semana desde domingo.
+**Escritorio — sidebar muy parecido al de Notion** (≈240 px; filas de ≈30 px; secciones plegables con etiqueta tenue; "+" y "⋯" que aparecen al pasar el cursor; seleccionado y hover en gris suave; sin etiquetas de color):
+```
+┌──────────────────────────┐
+│ ◧ Colportor        ▾  HC │   ← perfil (como el selector de espacio de trabajo)
+│ ⌕ Buscar            ⌘K   │
+│ ☼ Hoy                    │
+│ ＋ Vender                │   ← ÚNICA acción principal de la app
+│                          │
+│ ▾ Trabajo                │
+│   ◔ Clientes          ＋ │
+│   ▤ Inventario           │
+│   ▢ Minibooks            │
+│   ▦ Calendario           │
+│ ▾ Dinero                 │
+│   ▭ Dinero               │
+│   ☑ Hacer inventario     │
+│                          │
+│ ⚙ Ajustes   ⛨ Admin      │
+└──────────────────────────┘
+```
 
-## 11. Decisiones que se toman durante el diseño (no son dudas abiertas)
-| ID | Tema | Qué decidir |
-|---|---|---|
-| DT-01 | Total de deuda en Clientes | Si se ofrece una opción para mostrar el **total de dinero en la calle** en la lista de Clientes (el dueño pidió "dar la opción"; por defecto oculto) |
-| DT-02 | Barra de meta | Ubicación (hoy: Hoy) y si se muestra; el dueño dijo "sujeto a cambios, puede que no la muestre si no me gusta". Pedir 2 propuestas |
-| DT-03 | "Con novedad" | Representación visual y flujo. Pedir 3 propuestas |
-| DT-04 | Set de íconos | Un ícono por sección, reconocible sin texto |
-| DT-05 | Icono de antigüedad | Metáfora por etapas, sobria |
-| DT-06 | Barra de vista | Diseño único reutilizado en todos los módulos |
+## 8. Una acción principal por pantalla; "Vender" una sola vez
+- **"Vender" existe una sola vez:** botón central de la barra (móvil) / entrada destacada del sidebar (escritorio). **Ninguna pantalla lo repite.** En la ficha de un cliente se usa un enlace de texto secundario **"Agregar libro"**.
+- Cada pantalla tiene como máximo **una** acción de contexto destacada: Inventario → **Agregar**; Dinero → **Nuevo Abibono**; Minibooks → **Nueva venta**; Clientes → **Nuevo** (en la barra de vista); Calendario → **+**; Hacer inventario → **Copiar resumen**. **Hoy no tiene botones.**
 
-## 12. Lo que NO diseñar ahora
-Vista de líder (F3), campañas, reembolsos, cortes históricos de inventario, exportar PDF/CSV, notificaciones push (F2), escritura sin conexión (F2).
+## 9. Pantallas
+| # | Pantalla | Contenido (lo mínimo) | Flujo |
+|---|---|---|---|
+| 1 | **Hoy** | Ver wireframe abajo | F-20 |
+| 2 | **Clientes** | Buscador, barra de vista (Recientes / Deudores / Todos / Archivados + orden), saldo pendiente por fila; "Incluir prospectos" | F-11, F-23 |
+| 3 | **Ficha de cliente** | Datos, llamar/WhatsApp, información y fotos, dirección (Abrir en Maps; mapa al tocar), libros, abonos, deuda/saldo/saldo a favor, "Agregar libro" (texto), acciones en "⋯" (devolver, archivar) | F-12 |
+| 4 | **+ Vender** | 5 pasos: cliente → ejemplares uno por uno → cuota inicial y abonos → factura → confirmar | F-10 |
+| 5 | **Inventario** | Libros en físico por título con ícono de antigüedad; minibooks al final; "Por resolver"; **Agregar** (principal); "Devolver al líder" en lote | F-06, F-26 |
+| 6 | **Agregar a inventario** | Lista buscable + favoritos; "+" por fila → pastilla numérica; chip de fecha "Hoy ▾"; Deshacer | F-05 |
+| 7 | **Ejemplares** | Pestañas Todos / En inventario / Vendidos / Con descuentos y aumentos | F-07 |
+| 8 | **Ejemplar** | Estado, antigüedad, cliente, precio acordado y "Recibido el" editables en línea, historial | F-08, F-09 |
+| 9 | **Devolver + modal de abonos** | Motivo (2 opciones) → modal con sobrante y abonos con casillas: Recortar / Cancelar los que marque / Dejar | F-16, F-29 |
+| 10 | **Dinero** | Por cobrar (vencidos filtrables) · Por entregar · Entregado; Abibonos | F-15 |
+| 11 | **Abibono** | Vincular, efectivo/transferencia, esperado vs entregado, recibo, Reabrir discreto | F-17 |
+| 12 | **Minibooks** | Ventas del día, stock, agregar con "+ / pastilla" | F-21 |
+| 13 | **Calendario** | Mes/día; tres tipos con ícono de color; crear visita/capacitación | F-18, F-19 |
+| 14 | **Hacer inventario** | Tabla por título, grupos, vistas Inventario/Todos, totalizadores, Perdidos asumidos / A responder al líder, Copiar resumen | F-22 |
+| 15 | **Admin** | Catálogo, Ajustes, Usuarios (Invitar con enlace copiable), almacenamiento | F-03, F-04, F-25 |
+| 16 | **Login / Ajustes** | Invitación; modo admin, formato de hora, favoritos | F-01, F-28 |
 
-## 13. Qué esperamos de Claude Design
-2–3 variantes de: navegación general, **Hoy**, **+ Vender**, **Agregar a inventario**, **Devolución + modal de abonos**, **Dinero/Abibono**, **Hacer inventario**; móvil y escritorio; set de íconos; barra de vista; icono de antigüedad (3 propuestas); "Con novedad" (3 propuestas); ubicación de la barra de meta (2 propuestas).
+### Hoy (móvil) — sin calendario, sin botones, sin subtítulos
+```
+Hoy                                   mié 28 oct      ← título + fecha pequeña, nada más
+┌───────────────────────────────────────┐
+│ Por entregar                       ◉  │   ← tarjeta ÚNICA de la pantalla; ◉ = ojo
+│ $385.000                              │   ← total grande
+│ Efectivo 265.000 · Transferencia 120.000   ← una línea gris pequeña
+└───────────────────────────────────────┘      (tocar → Dinero)
+⚠ 2 cobros vencidos                      ›     ← aviso ÚNICO en rojo; tocar → Dinero ▸ Por cobrar ▸ Vencidos
+▬▬▬▬▬▬▬▬▬▬▬▬▬▬░░░░░░░░░░                      ← meta: barra fina, sin números ni etiqueta
+ ◔ 9:40   María Camila Henao       $40.000     ← UNA lista cronológica de hoy:
+ ◍ 3:00   Gloria Inés Patiño       Visita        ícono de tipo (único color) · hora · nombre · detalle
+ ▣ 7:00   Capacitación de campaña  Salón…         (cobros + visitas + capacitaciones mezclados)
+──────────────────────────────────────────
+  ☼        ◔       [ ＋ ]       ▤        ⋯       ← barra inferior solo íconos
+```
+No hay semana, ni "agenda" aparte, ni lista de vencidos fila por fila, ni botón "Agregar inventario" (vive en Inventario). El aviso de vencidos solo aparece si hay alguno.
+
+## 10. Variantes (desde el principio; que sean realmente distintas)
+- **A · Tinta:** acento casi negro `#1F1E1D`; barra inferior de 5 íconos con **+ Vender** central.
+- **B · Marino:** **acento `#092e53`** en la acción principal y el elemento activo; misma estructura que A para poder comparar solo el color.
+- **C · Editorial:** estructura distinta para la densidad: **sin tarjetas** (cifras sobre fondo con líneas finas y espacio), barra inferior de **4 íconos + Vender como botón flotante** (sigue siendo la única acción principal).
+Cada variante en móvil y escritorio, claro y oscuro. En todas rigen las secciones 3–8.
+
+## 11. Estados y patrones
+- Estados de abono: Por cobrar → Cobrado → Entregado (+ Cancelado), por **ícono/texto en gris**, no por color.
+- Prórroga: fecha original tachada + nueva (solo en el detalle del abono).
+- **Con novedad:** 3 propuestas visuales (DT-03); salidas: Apareció / Perdido (lo asumo yo) / Eliminar. Ningún texto sugiere que el líder pueda asumir pérdidas.
+- Antigüedad: 4 etapas con ícono sobrio (3 propuestas; no una fruta).
+- Sin conexión: franja discreta y botones de guardar deshabilitados (se puede consultar).
+- Vacíos, carga, error y éxito (con **Deshacer** al agregar ejemplares).
+- Propiedades editables en línea (Notion): "Recibido el", precio acordado.
+- **Tooltips:** solo con **ⓘ**, bajo demanda; nunca texto explicativo permanente. Conceptos: Abibono = "Entrega al líder", Por entregar, estados de abono, fecha acordada vs real, diferencia, Esperado vs entregado, Con novedad, Saldo a favor, Prospecto, Antigüedad, Título vs Ejemplar, A responder al líder, alerta de abonos.
+
+## 12. Responsive
+- **Móvil (≥ 360 px):** barra inferior de íconos, listas en vez de tarjetas, formularios de un paso, objetivos ≥ 44 px, acciones en la zona del pulgar.
+- **Escritorio (≥ 1024 px):** sidebar Notion, tablas con orden/filtros, paneles lista + detalle; **Dinero** y **Hacer inventario** pensados para pantalla grande.
+- **PWA instalada:** pantalla completa, ícono, splash, claro/oscuro.
+
+## 13. Decisiones de diseño abiertas (se resuelven viendo propuestas)
+| ID | Tema |
+|---|---|
+| DT-01 | Opción discreta de mostrar el total de deuda en Clientes (oculto por defecto) |
+| DT-02 | Ubicación de la barra de meta (hoy: en Hoy) y si se muestra; 2 propuestas |
+| DT-03 | Representación de "Con novedad"; 3 propuestas |
+| DT-04 | Set de íconos: uno por sección, reconocible sin texto |
+| DT-05 | Ícono de antigüedad por etapas; 3 propuestas |
+| DT-06 | Barra de vista única reutilizada en todos los módulos |
+| DT-07 | Tres tonos de los microíconos de tipo de evento (cobro / visita / capacitación) en cada variante |
+
+## 14. No diseñar ahora
+Vista de líder, campañas, reembolsos, exportar PDF/CSV, notificaciones push, escritura sin conexión.
+
+## 15. Lista de revisión de un resultado (la usa el revisor antes de aceptarlo)
+- [ ] Ningún elemento de la lista negra (§3).
+- [ ] Color solo en: acento, rojo semántico y microíconos de tipo de evento.
+- [ ] Filas ≤ 2 líneas, una señal de estado; sin subtítulos ni contadores.
+- [ ] "Vender" una sola vez por pantalla/layout.
+- [ ] Hoy: una lista cronológica, aviso único de vencidos, sin semana, sin botones.
+- [ ] Más de 5 opciones agrupadas; sidebar tipo Notion.
+- [ ] Barra de vista idéntica en todos los módulos.
+- [ ] Móvil legible a 390 px; escritorio coherente; claro y oscuro.

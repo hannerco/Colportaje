@@ -35,7 +35,7 @@ Si aparece una duda nueva, se agrega aquí con ID `OQ-*` y un supuesto por defec
 | RV-04 | Orden de recorte de abonos programados (BR-PAY-13: más próximo tras abono extra, más lejano tras devolución) | Sugerencia modificable por el usuario en el modal | Si resulta incómodo |
 
 ## 3. Decisiones de diseño
-Ver `04-diseno/DESIGN-BRIEF.md` §11: DT-01 (total de deuda en Clientes), DT-02 (barra de meta), DT-03 ("Con novedad"), DT-04 (íconos), DT-05 (antigüedad), DT-06 (barra de vista).
+Ver `04-diseno/DESIGN-BRIEF.md` §13: DT-01 (total de deuda en Clientes), DT-02 (barra de meta), DT-03 ("Con novedad"), DT-04 (íconos), DT-05 (antigüedad), DT-06 (barra de vista), DT-07 (tonos de los microíconos de tipo de evento).
 
 ## 4. Backlog declarado (explícito por el dueño)
 - **Campañas** (tabla, filtros, metas por campaña, apartado de Metas ampliado: "en la nueva etapa tendrá muchas cosas").

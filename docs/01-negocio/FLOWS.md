@@ -24,7 +24,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 
 ## F-05 Agregar a inventario
 - **Contexto:** móvil, en la calle. **Mismo patrón para libros y minibooks.**
-- **Pasos:** Inventario → **Agregar** → lista de Títulos activos (buscable) con favoritos arriba. Cada fila tiene un **"+"**: un toque agrega **un** ejemplar ("Corazón tranquilo #13 agregado", **Deshacer** unos segundos). Tras agregar, el "+" se vuelve una **pastilla con el número** de esta sesión; tocarla permite **escribir la cantidad total** (el sistema ajusta). Un chip discreto **"Hoy ▾"** permite escoger un día pasado antes de agregar.
+- **Pasos:** Inventario → **Agregar** (acción principal de Inventario) → lista de Títulos activos (buscable) con favoritos arriba. Cada fila tiene un **"+"**: un toque agrega **un** ejemplar ("Corazón tranquilo #13 agregado", **Deshacer** unos segundos). Tras agregar, el "+" se vuelve una **pastilla con el número** de esta sesión; tocarla permite **escribir la cantidad total** (el sistema ajusta). Un chip discreto **"Hoy ▾"** permite escoger un día pasado antes de agregar.
 - **Favoritos:** estrella en cada fila (máx. 6); los favoritos aparecen como botones de un toque.
 - **Reglas:** BR-COPY-02..05, BR-INV-02, BR-MBK-01.
 - **Resultado:** ejemplar `in_stock` con snapshots de precio y `received_at` indicada.
@@ -107,9 +107,9 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 - **Reglas:** BR-CAL-03/04.
 
 ## F-20 Hoy (pendientes del día)
-- **Muestra:** tarjeta **"Por entregar"** (total, con desglose efectivo/transferencia y ojo para ocultar; toca → Dinero), cobros de hoy, **cobros vencidos**, visitas de hoy, capacitaciones de hoy, recordatorios activos, barra de meta (ubicación sujeta a cambio), accesos rápidos (Agregar a inventario, + Vender).
-- **Acciones:** tocar un cobro → F-13; tocar un evento → detalle; "Ver calendario" con el filtro adecuado.
-- **Reglas:** BR-CAL-05/06/07, BR-GOAL-01. Los abonos `canceled` no aparecen.
+- **Muestra (nada más):** tarjeta **"Por entregar"** (total grande, una línea gris con el desglose, ojo para ocultar; toca → Dinero) · **aviso único** "N cobros vencidos ›" solo si hay (toca → Dinero ▸ Por cobrar ▸ Vencidos) · barra de meta fina sin números (ubicación sujeta a cambio) · **una lista cronológica** de hoy con cobros, visitas, capacitaciones y recordatorios (ícono de tipo en color, hora, nombre, detalle). **Sin botones, sin subtítulos, sin semana.**
+- **Acciones:** tocar un cobro → F-13; tocar un evento → su detalle. El calendario es una sección aparte.
+- **Reglas:** BR-CAL-05..09, BR-GOAL-01, BR-GEN-10/11. Los abonos `canceled` no aparecen; los vencidos no se listan uno por uno.
 
 ## F-21 Minibooks
 - **Registrar venta:** Minibooks → "Nueva venta" → título (con stock), cantidad, monto (puede ser 0), método, fecha (hoy), nota → descuenta stock. Para varios títulos se repite.
