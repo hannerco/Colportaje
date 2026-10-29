@@ -1,6 +1,6 @@
 # Prompt para Claude Design (v3 — empieza por Clientes)
 
-**Qué adjuntar:** `04-diseno/DESIGN-BRIEF.md` (v2+), `00-contexto/CONTEXT.md`, `01-negocio/FLOWS.md`, y las **dos imágenes de referencia** de `04-diseno/referencias/` (`ref-1-escritorio-sidebar-y-tabla.png`, `ref-2-movil-barra-flotante-y-agenda.png`). Si no lee `.md`, pegar el brief como texto. **Pegar todo lo que sigue:**
+**Qué adjuntar:** `04-diseno/DESIGN-BRIEF.md` (v2+), `00-contexto/CONTEXT.md`, `01-negocio/FLOWS.md`, y las **tres imágenes de referencia** de `04-diseno/referencias/` (`ref-1-escritorio-sidebar-y-tabla.png`, `ref-2-movil-barra-flotante-y-agenda.png`, `ref-3-movil-lista-de-actividad.png`). Si no lee `.md`, pegar el brief como texto. **Pegar todo lo que sigue:**
 
 ````
 Diseña "Colportor": PWA mobile-first para colportores (venta de libros a cuotas, Colombia)
@@ -33,8 +33,14 @@ reproduzcas su contenido de ejemplo):
     su derecha, un BOTÓN CIRCULAR OSCURO con "+" (para "Vender");
   · en la pantalla de agenda: tira de semana con el día elegido en píldora y línea de tiempo
     por horas (solo para la sección Calendario más adelante, NUNCA en "Hoy").
+ Referencia 3 (móvil) — SOLO su LISTA INFERIOR ("Recent Activity"): cada fila = ícono/avatar
+  circular a la izquierda, NOMBRE (principal) con una segunda línea gris debajo, y el MONTO a la
+  derecha; filas aireadas sin tarjetas ni líneas; funciona en claro y en oscuro (en oscuro, filas
+  sobre fondo casi negro con avatares gris oscuro).
+  De la Referencia 3 NO tomes: la cabecera morada con gradiente, la tarjeta blanca con gráfico,
+  la bandera, ni los botones de acción en píldora (Add / Transfer / Request).
  No copies de las referencias: gráficos decorativos, tarjetas de "rendimiento", fotos de
- avatar, ni nada que sea relleno.
+ avatar, gradientes, ni nada que sea relleno.
 
 ESTILO: Notion + estas referencias; sobrio y minimalista. Neutros cálidos, mucho aire,
 FUENTE DEL SISTEMA (ui-sans-serif, -apple-system, Segoe UI), íconos de trazo. Menos
@@ -52,8 +58,8 @@ vencido/error/destructivo. Colores permitidos y SOLO en estos lugares:
  · microíconos (solo el trazo, sin círculo) que distinguen el tipo de evento: cobro, visita,
    capacitación;
  · ESTADO DEL CLIENTE como pequeña píldora suave con ícono: "Al día" (verde), "Con saldo"
-   (ámbar), "Vencido" (rojo). En móvil solo se muestra la píldora de "Vencido"; en la tabla de
-   escritorio, las tres. Ningún otro lugar usa verde/ámbar.
+   (ámbar), "Vencido" (rojo), SOLO en la tabla de escritorio. En MÓVIL no hay píldora: el saldo
+   se muestra en ROJO cuando el cliente tiene algo vencido. Ningún otro lugar usa verde/ámbar.
 Estados de abono y categorías de libro: en gris.
 
 TIPOGRAFÍA (el texto pequeño está PROHIBIDO): móvil: cifra 36 · título 28 · TEXTO PRINCIPAL 17
@@ -85,9 +91,11 @@ PANTALLA 1 — CLIENTES
   · pestañas de vista como píldoras desplazables: Recientes · Deudores · Todos · Archivados
     (con conteo tenue); selector de orden y el interruptor "Incluir prospectos" dentro del
     filtro, no sueltos en pantalla;
-  · lista (sin tarjetas por fila, solo separación y aire): avatar de iniciales neutro ·
-    nombre (17) · segunda línea gris (15) con "N libros" · a la derecha el SALDO PENDIENTE y,
-    solo si está vencido, la píldora roja "Vencido"; prospectos con una distinción sutil;
+  · lista como en la Referencia 3 (sin tarjetas por fila, solo separación y aire): avatar de
+    iniciales neutro a la izquierda · NOMBRE (17) · debajo, en gris (15), el LIBRO VENDIDO
+    (título del libro; si hay varios, el más reciente + "+2") · a la derecha el SALDO PENDIENTE
+    (17), en rojo si el cliente tiene algo vencido; los prospectos muestran "Prospecto" en gris
+    en lugar del libro y sin saldo. Una sola señal de estado por fila (el rojo del saldo);
   · barra inferior flotante (Hoy · Clientes · Inventario · Más) + botón circular "+" (Vender);
   · estados: vacío (sin clientes), cargando, sin resultados de búsqueda, sin conexión (franja
     discreta; se puede consultar).
@@ -95,8 +103,8 @@ PANTALLA 1 — CLIENTES
  ESCRITORIO (1440 px): sidebar + panel blanco con título "Clientes 48" y UN botón oscuro
   "+ Nuevo cliente"; pestañas de vista (píldoras con conteo); fila de herramientas con búsqueda
   y botones-píldora con ícono (Estado, Libros, Orden); tabla con columnas: Cliente (avatar
-  iniciales + nombre) · Teléfono · Libros · Saldo · Último abono · Estado (píldora verde/ámbar/
-  rojo con ícono); filas altas y aireadas; al elegir un cliente se abre un panel de detalle a
+  iniciales + nombre) · Teléfono · Libro(s) (título + "+N") · Saldo · Último abono · Estado
+  (píldora verde/ámbar/rojo con ícono); filas altas y aireadas; al elegir un cliente se abre un panel de detalle a
   la derecha (lista + detalle). NO añadas fila de tarjetas de métricas ni totales de dinero
   (el total de deuda no se muestra por defecto).
 
@@ -109,7 +117,8 @@ Todas con la barra flotante + botón circular "+" en móvil y el sidebar de la R
 
 DATOS DE EJEMPLO realistas: clientes colombianos (p. ej. Luz Marina Restrepo, Jhon Fredy
 Ospina, Carlos Andrés Gómez, Diana Patricia Cardona, María Camila Henao), 48 clientes, saldos
-entre $0 y $380.000, algunos vencidos, algunos prospectos sin libros.
+entre $0 y $380.000, con libros reales como "Un corazón tranquilo", "El poder de mis palabras"
+y "Bebidas saludables", algunos vencidos, algunos prospectos sin libros.
 
 ENTREGA: primero solo Clientes (móvil y escritorio, las 3 variantes, claro y oscuro) con los
 componentes comunes (barra de vista, píldoras de estado, sidebar, barra flotante, botón "+").

@@ -16,7 +16,7 @@
 | **Archivar** (cliente) | Reemplaza a "eliminar cliente" |
 | **Devolver a inventario** | Acción de devolución / quitar un libro de un cliente |
 | **Con novedad** | Antes "Sin resolver" |
-| Estado del cliente | `payment_standing`: Al día `current` / Con saldo `balance` / Vencido `overdue`; píldora suave con ícono (BR-CUS-13) |
+| Estado del cliente | `payment_standing`: Al día `current` / Con saldo `balance` / Vencido `overdue`; píldora suave con ícono **solo en escritorio**; en móvil, saldo en rojo si vencido (BR-CUS-13) |
 | Barra flotante | Barra inferior móvil tipo píldora con 4 íconos y botón circular "+" (Vender) aparte |
 | Aviso de vencidos | Fila única "N cobros vencidos ›" en Hoy; abre Dinero ▸ Por cobrar ▸ Vencidos |
 | Microícono de tipo | Único color de categoría: ícono pequeño (solo trazo) que distingue cobro / visita / capacitación |
