@@ -81,7 +81,7 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
   - *Dado* programados menores que el saldo, *entonces* no hay alerta, solo "sin programar".
 
 ## Dinero y Abibonos
-- **RQ-DEP-01 [F1]** Veo "En mi poder" separado en efectivo y transferencia.
+- **RQ-DEP-01 [F1]** Veo lo **"Por entregar"** en Dinero: el total y su desglose en efectivo y transferencia.
 - **RQ-DEP-02 [F1]** Armo un Abibono vinculando abonos `collected` y asignaciones de minibooks; efectivo/transferencia se autocalculan y son editables; el total no.
 - **RQ-DEP-03 [F1]** Esperado vs. entregado y diferencia siempre visibles; nota obligatoria si ≠ 0.
   - *Dado* abonos por 100.000 y entrega 95.000, *entonces* diferencia −5.000 y no se confirma sin nota.
@@ -104,6 +104,13 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
 - **RQ-CAL-04 [F1]** Recordatorios (inicio del día 07:00, 1 día, 1 semana, personalizado), sin valor por defecto, dentro de la app y descartables.
 - **RQ-CAL-05 [F1]** **Hoy** resume cobros (hoy y vencidos), visitas, capacitaciones, recordatorios y meta.
 - **RQ-CAL-06 [F2]** Push de recordatorios.
+- **RQ-CAL-07 [F1]** **Hoy** muestra la tarjeta **"Por entregar"** (BR-CAL-08).
+  - *Dado* abonos cobrados no entregados por 30.000 en efectivo y 20.000 por transferencia, *entonces* la cifra principal es **50.000** y el desglose muestra Efectivo 30.000 · Transferencia 20.000.
+  - *Dado* 10.000 de esos abonos en un Abibono **borrador**, *entonces* siguen contando; *dado* que el Abibono se **confirma**, *entonces* dejan de contar.
+  - *Dado* dinero de minibooks o abonos `canceled`, *entonces* **no** cuentan.
+  - *Cuando* toco el ojo, *entonces* los montos se ocultan y la preferencia persiste en el dispositivo.
+  - *Cuando* toco la tarjeta, *entonces* abre Dinero con el atajo a "Nuevo Abibono".
+  - *Dado* total 0, *entonces* muestra "Nada por entregar".
 
 ## Totalizadores, metas y cuadre
 - **RQ-TOT-01 [F1]** "Hacer inventario" con tabla por título, grupos y vistas Inventario/Todos.

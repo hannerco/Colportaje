@@ -26,7 +26,7 @@ El sistema original estaba en Notion y el dueño quiere **el mismo estilo visual
 2. **Un solo flujo de venta** (**+ Vender**, botón central).
 3. **Calle:** acciones de un toque, objetivos táctiles grandes, legible al sol, poco texto por escribir.
 4. **Noche/escritorio:** tablas con orden y filtros, paneles lista+detalle.
-5. **Cifras con mesura:** el dinero total no se exhibe en pantallas de uso diario (es parte de la emoción del "Hacer inventario" con el líder). La meta es una **barra sin números**. Dónde sí se ve dinero: Dinero, ficha del cliente, Abibono, Hacer inventario (BR-GOAL-06).
+5. **Cifras con mesura:** el dinero total no se exhibe en pantallas de uso diario (es parte de la emoción del "Hacer inventario" con el líder). La meta es una **barra sin números**. Dónde sí se ve dinero: Dinero, ficha del cliente, Abibono, Hacer inventario y, en Hoy, **solo** la tarjeta "Por entregar" (BR-GOAL-06, BR-CAL-08).
 6. **Tono:** sobrio, profesional, cálido. **Sin metáforas infantiles** (el icono de antigüedad no es una fruta).
 7. **Ayuda contextual:** tooltips en español (ver §8).
 8. **Rendimiento percibido:** estados de carga, UI optimista, miniaturas, mapa que carga al tocarlo.
@@ -43,7 +43,7 @@ El sistema original estaba en Notion y el dueño quiere **el mismo estilo visual
 ## 6. Pantallas (inventario completo)
 | # | Pantalla | Contenido clave | Flujo |
 |---|---|---|---|
-| 1 | **Hoy** (subtítulo "Pendientes del día") | Cobros de hoy y **vencidos**, visitas, capacitaciones, recordatorios activos, **barra de meta (sin cifras; ubicación sujeta a cambio, DT-02)**, accesos rápidos a Agregar y + Vender | F-20 |
+| 1 | **Hoy** (subtítulo "Pendientes del día") | Tarjeta **"Por entregar"** (subtítulo "Recaudado sin entregar al líder": **total** como cifra principal, **desglose** Efectivo/Transferencia como apoyo, **ojo** para ocultar montos; toca → Dinero), cobros de hoy y **vencidos**, visitas, capacitaciones, recordatorios activos, **barra de meta (sin cifras; ubicación sujeta a cambio, DT-02)**, accesos rápidos a Agregar y + Vender | F-20 |
 | 2 | **Clientes** | Buscador difuso grande, barra de vista (Recientes / Deudores / Todos / Archivados, selector de orden), interruptor "Incluir prospectos", **saldo pendiente por fila**, crear cliente sin libro. Opción de mostrar un total de deuda: decidir en diseño (DT-01) | F-11, F-23 |
 | 3 | **Ficha de cliente** | Datos, **llamar / WhatsApp**, información con fotos aparte, dirección (texto, **Abrir en Maps**, mapa que carga al tocar), libros con precio y diferencia, abonos con estado (**Cancelados** plegable), deuda / saldo / **saldo a favor** / "sin programar", **aviso persistente** de abonos que no cuadran, facturas, visitas, acciones (devolver, archivar) | F-12 |
 | 4 | **+ Vender** (asistente) | 1 Cliente (buscar/crear, aviso de duplicado) → 2 Ejemplares **uno por uno** (número + antigüedad) → 3 Cuota inicial y abonos programados (con aviso si exceden) → 4 Factura → 5 Confirmar | F-10 |
@@ -53,7 +53,7 @@ El sistema original estaba en Notion y el dueño quiere **el mismo estilo visual
 | 8 | **Ejemplar (detalle)** | Número, título, estado, antigüedad, cliente, **precio acordado editable**, precio distinto y diferencia, **"Recibido el" editable en línea (discreto)**, historial, acciones (devolver, novedad, eliminar) | F-08, F-09, F-16 |
 | 9 | **Devolver a inventario** | Motivo (*El cliente lo devolvió* / *Me equivoqué de cliente o de registro*), aclaración "abonos y Abibonos no cambian", resultado, saldo a favor, **modal de abonos que no cuadran** | F-16, F-29 |
 | 10 | **Modal: abonos que no cuadran** | Saldo restante, total programado, sobrante, lista de abonos con casillas, botones *Recortar automáticamente / Cancelar los que marque / Dejar como está* | F-29 |
-| 11 | **Dinero** | Por cobrar (con vencidos), **En mi poder: efectivo / transferencia**, Entregado; lista de Abibonos; "Nuevo Abibono" | F-15 |
+| 11 | **Dinero** | Por cobrar (con vencidos), **Por entregar** (total, con desglose efectivo / transferencia), Entregado; lista de Abibonos; "Nuevo Abibono" | F-15 |
 | 12 | **Abibono** (tooltip: "Entrega al líder") | Vincular abonos y minibooks, efectivo/transferencia (auto, editables), total (no editable), **esperado vs entregado + diferencia**, nota, **recibo obligatorio** (una, "Añadir otra"), borrador → confirmado, **Reabrir** discreto | F-17 |
 | 13 | **Minibooks** | Ventas del día (cantidad · monto), stock, "+ / pastilla numérica" para agregar, totales propios, entrega por saldo a favor | F-21 |
 | 14 | **Calendario** | Mes y día, **semana desde domingo**, filtro por tipo (**abono / visita / capacitación**, distinguibles por forma+color+texto), crear visita/capacitación, recordatorios | F-18, F-19 |
@@ -64,7 +64,7 @@ El sistema original estaba en Notion y el dueño quiere **el mismo estilo visual
 | 19 | **Archivados** | Lista de clientes archivados con restaurar | F-27 |
 
 ## 7. Estados y patrones a diseñar
-- **Abono:** Por cobrar → Cobrado (en mi poder) → Entregado al líder, más **Cancelado** (tres estados principales claramente distintos, no solo por color).
+- **Abono:** Por cobrar → Cobrado → Entregado al líder, más **Cancelado** (tres estados principales claramente distintos, no solo por color).
 - **Prórroga:** fecha original tachada + nueva; historial accesible.
 - **Abono parcial:** sugerencia **no intrusiva** de programar el resto.
 - **Diferencia del Abibono:** faltante/sobrante visibles, nota obligatoria cuando ≠ 0.
@@ -82,6 +82,7 @@ El sistema original estaba en Notion y el dueño quiere **el mismo estilo visual
 | Concepto | Qué debe aclarar |
 |---|---|
 | Por cobrar / Cobrado / Entregado / Cancelado | Dónde está el dinero en cada estado |
+| Por entregar | Dinero que ya cobraste y aún no has entregado al líder; el total y cuánto es efectivo y cuánto transferencia |
 | Fecha acordada vs. real | Acordada = para cuándo prometió; real = cuándo pagó; la original se conserva si hay prórroga |
 | Diferencia (aumento / descuento) | Precio acordado − precio público; positivo = ganaste, negativo = descuento |
 | Abibono | **"Entrega al líder"**: dinero que le entregas |

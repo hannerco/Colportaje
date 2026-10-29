@@ -152,12 +152,22 @@ Convención: **[D]** = decidido · **[A]** = asumido por defecto, pendiente de c
 
 ---
 
+## Ronda 10 — Dinero por entregar en Hoy (2026-10-28)
+
+| # | Tema | Resultado |
+|---|---|---|
+| Idea | El dueño: *"sería bueno que en 'hoy' el colportor supiera cuánto tiene recolectado o reclamado para posteriormente dárselo al líder."* | Propuesta aceptada con matices. |
+| Q1 | Mostrar en Hoy | **"Exacto. Eso no quita emoción, porque de hecho es un dato importante: saber cuánto dinero tengo que entregarle al líder en Abibonos. Pero no me gusta ese 'En mi poder'. Busca cómo lo diría una plataforma profesional."** [D] Nombre elegido: **"Por entregar"**; se retira "en mi poder" de toda la app. BR-GOAL-06 pasa a permitir esta única cifra en Hoy. |
+| Q2 | Desglose y privacidad | **"Correcto, debe poderse ocultar el monto. Pero además de separado debo poder ver el total; de hecho principalmente debería ver el total y como ayuda el desglose."** [D] Total como cifra principal, desglose Efectivo/Transferencia secundario, ojo para ocultar. |
+| Q3 | Minibooks | **"Vale, está bien. No incluyamos minibooks."** [D] |
+
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.
 2. **Repositorio de GitHub llamado `colportor`** (en vez de `colportaje`), coherente con el nombre de la app.
 3. **Estado `returned_to_leader`** y columna "Devueltos" en *Hacer inventario*; la identidad de control del inventario se actualiza.
 4. **Recorte automático de abonos**: tras abono extra, desde el más próximo; tras devolución/baja de precio/archivado, desde el más lejano (modificable en el modal).
 5. **Archivar** sustituye a "eliminar" cliente (conserva información, que el dueño quiere guardar).
+6. Los abonos de Abibonos en **borrador** siguen contando como "Por entregar" hasta confirmarse, y vuelven a contar si el Abibono se reabre (AF-105).
 
 ## Correcciones al propio asistente (para no repetir errores)
 1. Se afirmó que "Venta" era necesaria; el dueño la rechazó (Q5). No existe.

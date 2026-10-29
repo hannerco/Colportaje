@@ -80,7 +80,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 - **Reglas:** BR-PAY-06. **Caso:** AF-24.
 
 ## F-15 Dinero (cuadre nocturno, escritorio)
-- **Pasos:** Dinero → **Por cobrar** (con vencidos), **En mi poder** (efectivo / transferencia por separado), **Entregado**, lista de **Abibonos**. Desde "En mi poder" → "Nuevo Abibono".
+- **Pasos:** Dinero → **Por cobrar** (con vencidos), **Por entregar** (total, y desglose efectivo / transferencia), **Entregado**, lista de **Abibonos**. Desde "Por entregar" → "Nuevo Abibono".
 - **Reglas:** BR-PAY-02/08.
 
 ## F-16 Devolver un libro / quitar de un cliente
@@ -107,7 +107,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 - **Reglas:** BR-CAL-03/04.
 
 ## F-20 Hoy (pendientes del día)
-- **Muestra:** cobros de hoy, **cobros vencidos**, visitas de hoy, capacitaciones de hoy, recordatorios activos, barra de meta (ubicación sujeta a cambio), accesos rápidos (Agregar a inventario, + Vender).
+- **Muestra:** tarjeta **"Por entregar"** (total, con desglose efectivo/transferencia y ojo para ocultar; toca → Dinero), cobros de hoy, **cobros vencidos**, visitas de hoy, capacitaciones de hoy, recordatorios activos, barra de meta (ubicación sujeta a cambio), accesos rápidos (Agregar a inventario, + Vender).
 - **Acciones:** tocar un cobro → F-13; tocar un evento → detalle; "Ver calendario" con el filtro adecuado.
 - **Reglas:** BR-CAL-05/06/07, BR-GOAL-01. Los abonos `canceled` no aparecen.
 

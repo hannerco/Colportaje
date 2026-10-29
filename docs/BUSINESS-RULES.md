@@ -105,7 +105,7 @@ Notación: "colportor" = usuario con rol colportor. Fechas calendario en **Ameri
 ## 7. Abonos (pagos de clientes)
 
 - **BR-PAY-01** Tipos (`kind`): `down_payment` (Cuota inicial), `scheduled` (Abono programado), `extra` (Abono extra: pago **fuera del plan**, sin fecha acordada, que nace ya cobrado). Todos en una sola tabla `payment`.
-- **BR-PAY-02** Estados (`status`): `scheduled` (Por cobrar) → `collected` (Cobrado, en mi poder) → `delivered` (Entregado al líder); y `canceled` (Cancelado), solo para abonos que nunca se cobraron.
+- **BR-PAY-02** Estados (`status`): `scheduled` (Por cobrar) → `collected` (Cobrado: ya lo recibiste, falta entregarlo al líder) → `delivered` (Entregado al líder); y `canceled` (Cancelado), solo para abonos que nunca se cobraron.
 - **BR-PAY-03** Nacimiento:
   - Cuota inicial: nace `collected`; `paid_at` = fecha de pago; `due_date = original_due_date = fecha de pago`.
   - Abono programado: nace `scheduled`; requiere `agreed_amount` y `due_date`; `original_due_date = due_date`.
@@ -169,7 +169,9 @@ Notación: "colportor" = usuario con rol colportor. Fechas calendario en **Ameri
 - **BR-CAL-04** Recordatorios para visitas y capacitaciones: *a inicio del día*, *un día antes*, *una semana antes* o *personalizado* (minutos antes). Pueden ser varios por evento. **No hay recordatorio por defecto**: se ofrece al crear el evento. "Inicio del día" = **07:00** America/Bogota.
 - **BR-CAL-05** Los abonos por cobrar usan siempre el aviso de **inicio del día** (aparecen en "Hoy" el día de su `due_date` y como vencidos después).
 - **BR-CAL-06** En la v1 los recordatorios son **dentro de la app** (Hoy, insignia en el calendario). Un recordatorio está activo cuando `ahora ≥ momento de disparo` y el evento está pendiente; se puede descartar. **Push real es fase 2.**
-- **BR-CAL-07** **Hoy** (también llamado "Pendientes del día") muestra: cobros de hoy, cobros vencidos, visitas de hoy, capacitaciones de hoy, recordatorios activos y la barra de meta. Al tocar entra al calendario con el filtro adecuado. La semana del calendario empieza el **domingo**.
+- **BR-CAL-07** **Hoy** (también llamado "Pendientes del día") muestra: la tarjeta **"Por entregar"** (BR-CAL-08), cobros de hoy, cobros vencidos, visitas de hoy, capacitaciones de hoy, recordatorios activos y la barra de meta. Al tocar entra al calendario con el filtro adecuado. La semana del calendario empieza el **domingo**.
+
+- **BR-CAL-08** **Tarjeta "Por entregar" en Hoy** (subtítulo "Recaudado sin entregar al líder"): muestra el **total** `to_deliver_total` como cifra principal y, como ayuda secundaria, el **desglose** `cash_to_deliver` (Efectivo) y `transfer_to_deliver` (Transferencia). Reglas: (1) cuenta abonos `collected` aunque estén en un Abibono **borrador** (aún no entregados); (2) **excluye** el dinero de minibooks y los abonos `canceled`; (3) un **ícono de ojo** oculta/muestra los montos con un toque (por defecto visibles; la preferencia se recuerda **en el dispositivo**); (4) al tocarla abre **Dinero** con el atajo "Nuevo Abibono"; (5) si el total es 0 muestra "Nada por entregar". Es la **única cifra de dinero** que se permite en Hoy.
 
 ## 11. Valores derivados (resumen, nunca almacenados)
 
@@ -184,7 +186,7 @@ Notación: "colportor" = usuario con rol colportor. Fechas calendario en **Ameri
 | `total` del Abibono, `expected`, `difference` | BR-DEP-04/05 |
 | `first_sale_at`, `last_sale_at` | BR-CUS-04 |
 | `bonus_progress` | BR-GOAL-01 |
-| `cash_on_hand` / `transfer_on_hand` | Σ `paid_amount` de abonos `collected` (no `delivered`) por método |
+| `cash_to_deliver` / `transfer_to_deliver` / `to_deliver_total` | Σ `paid_amount` de abonos `collected` (no `delivered`) por método, y su suma ("**Por entregar**") |
 | `lost_assumed_value` y `owed_to_leader` | BR-GOAL-07 |
 
 ## 12. Metas y totalizadores
@@ -202,7 +204,7 @@ Notación: "colportor" = usuario con rol colportor. Fechas calendario en **Ameri
   8. **Total clientes** = BR-CUS-05.
 - **BR-GOAL-04** Selector **Todos | Culturales | Religiosos** (por defecto Todos = cultural + religioso). Aplica a los totalizadores 1, 4, 5, 6, 7. Los 2, 3 y 8 son globales y no se filtran por categoría.
 - **BR-GOAL-05** *Hacer inventario*: pantalla con tabla por título (BR-COPY-14), agrupada en **Culturales, Religiosos, Minibooks**, con subtotales y total. Dos vistas: **Inventario** (solo culturales) e **Inventario TODOS** (culturales + religiosos). Los minibooks siempre aparte. Es una vista en vivo. **Compartir:** botón **"Copiar resumen"** que deja un texto limpio para pegar (WhatsApp). **PDF y CSV quedan declarados como mejora futura** (backlog). **No** se guardan cortes históricos en la v1.
-- **BR-GOAL-06** Las cifras de dinero se muestran en: **Dinero**, **ficha del cliente**, **Abibono** y **Hacer inventario**. No se muestran en: **Hoy**, **Inventario**, **Agregar** ni **Calendario**. En la lista de **Clientes** solo aparece el saldo pendiente de cada cliente (BR-CUS-05).
+- **BR-GOAL-06** Las cifras de dinero se muestran en: **Dinero**, **ficha del cliente**, **Abibono** y **Hacer inventario**, y en **Hoy** únicamente la tarjeta **"Por entregar"** (BR-CAL-08), porque es el dato operativo de cuánto hay que entregar al líder. No se muestran en: **Inventario**, **Agregar** ni **Calendario**. En la lista de **Clientes** solo aparece el saldo pendiente de cada cliente (BR-CUS-05).
 - **BR-GOAL-07** **Pérdidas y "A responder al líder":** `lost_assumed_value = Σ colportor_price_snapshot de ejemplares lost`. `owed_to_leader = Mi compra (vendidos) + lost_assumed_value`. En *Hacer inventario* se muestran la línea **"Perdidos asumidos"** (cantidad y valor) y el total **"A responder al líder"**. "Mi compra" sigue siendo solo vendidos. No son parte de los 8 totalizadores originales.
 
 ## 13. Inventario: agregar, favoritos y vistas

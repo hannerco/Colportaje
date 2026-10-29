@@ -23,6 +23,7 @@ Un archivo por módulo en `src/domain/**/*.test.ts`. Cada prueba cita la regla.
 - **Pérdidas y devueltos al líder** (`BR-COPY-11/16`, `BR-GOAL-07`): resoluciones Apareció/Perdido/Eliminar; `lost_assumed_value` y `owed_to_leader`; `returned_to_leader` y su deshacer; la identidad `Recibidos = Vendidos + En físico + Con novedad + Perdidos + Devueltos`.
 - **Fecha de recibido** (`BR-COPY-04`): no futura, no posterior a la venta, cambio registrado en historial; antigüedad recalculada.
 - **Cantidad "+ / pastilla"** (`BR-COPY-02`): crear N, ajustar hacia arriba y hacia abajo solo sobre los ejemplares recién agregados, deshacer; igual para minibooks.
+- **"Por entregar"** (`BR-CAL-08`): total = efectivo + transferencia; cuenta abonos de Abibonos borrador; deja de contar al confirmar y vuelve a contar al reabrir; excluye minibooks y `canceled`; cero → "Nada por entregar".
 - **Formato regional** (`BR-GEN-07`): semana desde domingo; 12 h/24 h; fechas `dd/mm/aaaa`.
 - **Abibono** (`BR-DEP-*`): autocálculo por método, edición manual, total derivado, esperado/diferencia (faltante, sobrante, cero), nota obligatoria, **donación sin abonos**, recibo obligatorio (una o varias), un abono en un solo Abibono, minibooks parciales, `client_credit` excluido, **reabrir** con motivo (abonos a `collected`, historial).
 - **Minibooks** (`BR-MBK-*`): consumo FIFO de stock, bloqueo sin stock, monto 0, ingresos/costo/ganancia neta, no afecta totalizadores de libros.

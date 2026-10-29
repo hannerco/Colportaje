@@ -67,7 +67,7 @@
 | Perdido (lo asumo yo) | `lost` | `copy` |
 | Devuelto al líder | `returned_to_leader` | `copy` |
 | Por cobrar (antes "Sin reclamar") | `scheduled` | `payment` |
-| Cobrado — *en mi poder* (antes "Reclamado") | `collected` | `payment` |
+| Cobrado (antes "Reclamado"; tooltip: "ya lo recibiste, falta entregarlo al líder") | `collected` | `payment` |
 | Entregado al líder (antes "Entregado") | `delivered` | `payment` |
 | Cancelado | `canceled` | `payment` |
 | Borrador / Confirmado | `draft` / `confirmed` | `leader_deposit` |
@@ -129,7 +129,7 @@
 | Perdidos asumidos | `lost_assumed_value` | Σ precio colportor de ejemplares `lost` |
 | A responder al líder | `owed_to_leader` | Mi compra + perdidos asumidos |
 | Dinero en la calle | `street_money` | Σ saldos restantes (abonos `canceled` no cuentan) |
-| En mi poder (efectivo / transferencia) | `cash_on_hand` / `transfer_on_hand` | Σ abonos `collected` por método |
+| **Por entregar** (subtítulo "Recaudado sin entregar al líder") | `to_deliver_total` | Σ abonos `collected` no entregados; desglose Efectivo `cash_to_deliver` / Transferencia `transfer_to_deliver` |
 | Vencido | `overdue` | abono `scheduled` con `due_date < hoy` |
 | Fecha de la venta | `first_sale_at` / `last_sale_at` | |
 | Progreso de bonificación | `bonus_progress` | Σ precio colportor de culturales vendidos ÷ meta |

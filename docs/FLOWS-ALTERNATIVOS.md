@@ -17,10 +17,10 @@ Una sola acción —**"Devolver a inventario"** en la ficha del cliente (o en el
 - *App:* confirma la devolución; el cliente queda con deuda 0 y se convierte en **prospecto** (conserva su ficha).
 - *Resultado:* ejemplar en inventario; sin alertas.
 
-### AF-02 Devolución con pagos cobrados, aún en mi poder
+### AF-02 Devolución con pagos cobrados, aún por entregar
 - *Situación:* libro de 50.000, cliente pagó 30.000 (`collected`, sin entregar).
 - *App:* tras devolver, deuda = 0, abonos = 30.000 → **Saldo a favor 30.000**. Aviso con tooltip: "No hay reembolsos; puedes darle un minibook".
-- *Importante:* el dinero de esos 30.000 **sigue en tu poder** y sigue pudiéndose incluir en un Abibono (cuenta en "En mi poder"). Ver AF-10 para canjear por minibook.
+- *Importante:* el dinero de esos 30.000 **sigue en tu poder** y sigue pudiéndose incluir en un Abibono (cuenta en "Por entregar"). Ver AF-10 para canjear por minibook.
 
 ### AF-03 Devolución con pagos ya entregados al líder
 - *Situación:* igual a AF-02 pero los 30.000 ya están en un Abibono confirmado.
@@ -254,6 +254,13 @@ Una sola acción —**"Devolver a inventario"** en la ficha del cliente (o en el
 
 ### AF-103 Semana del calendario
 - *App:* empieza el **domingo**.
+
+### AF-104 Ocultar el monto "Por entregar"
+- *Situación:* el colportor muestra el celular a un cliente.
+- *App:* toca el **ojo** de la tarjeta "Por entregar" en Hoy: los montos se reemplazan por puntos. La preferencia se guarda en el dispositivo (no en el servidor) y se mantiene entre sesiones.
+
+### AF-105 "Por entregar" frente a un Abibono en borrador o reabierto
+- *App:* los abonos vinculados a un **borrador** siguen contando como por entregar. Al **confirmar**, salen. Al **reabrir** un Abibono, sus abonos vuelven a `collected` y **vuelven a contar**.
 
 ---
 

@@ -212,7 +212,8 @@ overdue(p)         = p.status = scheduled ∧ p.due_date < hoy
 deposit.total      = cash + transfer
 deposit.expected   = Σ paid_amount(payments vinculados) + Σ allocation.amount
 deposit.difference = total − expected
-cash_on_hand       = Σ paid_amount de payments collected con method = cash       (análogo transfer)
+cash_to_deliver    = Σ paid_amount de payments collected con method = cash       (análogo transfer_to_deliver)
+to_deliver_total   = cash_to_deliver + transfer_to_deliver   (tarjeta "Por entregar" en Hoy; excluye minibooks y canceled)
 bonus_progress     = Σ colportor_price_snapshot de copies culturales vendidas ÷ bonus_goal   (barra: min(1, ·))
 lost_assumed_value = Σ colportor_price_snapshot de copies lost
 owed_to_leader     = Mi compra (Σ colportor_price_snapshot de vendidos) + lost_assumed_value
