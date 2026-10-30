@@ -22,7 +22,7 @@ El dueño quiere un design system muy bien hecho y poder cambiar el tamaño de l
 ## Consecuencias
 - Claude Design debe entregar los tamaños y el acento **como variables**; el brief y el prompt lo piden.
 - El primer trabajo de UI es crear `tokens.css` y el mapeo de Tailwind; después, los componentes.
-- Se añade una prueba de arquitectura (`TESTING.md`).
+- Se añade una prueba de arquitectura (`03-arquitectura/TESTING.md`).
 
 ## Referencias
 BR-GEN-13 · 04-diseno/DESIGN-BRIEF.md §5b · 03-arquitectura/CONVENTIONS.md §4 · 03-arquitectura/ARCHITECTURE.md §4b · ADR-0029, ADR-0032 · OPEN-QUESTIONS RV-05
