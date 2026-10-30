@@ -222,6 +222,15 @@ El dueño envió la referencia 4 (guardada): *"Este me gustó para el Hoy, solo 
 | Acción | Un único botón **"Entregar"** abre **Nuevo Abibono precargado** con todos los abonos cobrados libres (BR-DEP-13). Cambia la regla anterior "Hoy no tiene botones" → "Hoy tiene un único botón, dentro de la tarjeta" (BR-GEN-10, BR-CAL-07/08). |
 | Propuestas del asistente (pendientes de confirmar) | (1) Un solo botón en vez de dos como en la referencia (minimalismo). (2) Tocar el resto de la tarjeta abre Dinero. (3) Con total 0 el botón no aparece. (4) El asistente no crea borrador hasta que el usuario guarda. (5) La idea del paso a paso conectado de la referencia (Recibido · En tránsito · Entregado) para los estados de abono queda anotada, no aplicada. |
 
+---
+
+## Ronda 14 — "+ Vender" y design system con tokens (2026-10-29)
+
+| Tema | Resultado |
+|---|---|
+| **"+ Vender"** | El dueño confesó que en Notion vendía *"creando un cliente y agregándole a este un libro"* y preguntó qué se había pensado. Se explicó el asistente de 5 pasos y se propuso la alternativa "ficha viva" (el "+" crea una ficha de cliente en blanco con secciones en línea). **Decisión: "No, tienes razón. Me voy a quedar con el + como lo habías pensado."** [D] Se mantiene **"+ Vender" como asistente de 5 pasos** (F-10). Anotado como RV-06 por si en uso real se siente pesado. |
+| **Tamaño de letra variable** | **"Quiero que pongas en el repo la regla de que el tamaño debe poderse cambiar por una variable. Quiero que esté muy bien hecho el design system y que si quiero cambiar el tamaño de la letra, se cambie muy fácilmente. Ahorita viendo los diseños siento que el de mobile tiene la letra muy grande, pero cuando pueda verlo en la vida real, quizá lo cambie o quizá no."** [D] → ADR-0033, BR-GEN-13: tokens en un solo archivo, `--font-scale` global, acento como variable, prohibidos los valores literales, prueba de arquitectura. Escala provisional (RV-05). |
+
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.
 2. **Repositorio de GitHub llamado `colportor`** (en vez de `colportaje`), coherente con el nombre de la app.

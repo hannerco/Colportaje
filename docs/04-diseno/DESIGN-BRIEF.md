@@ -60,6 +60,7 @@ Basada en lo que usan las apps de referencia (iOS: 17 / 15 / 13 pt; Material: cu
 | **Texto secundario** (hora, detalle, saldo) | **15** | **14** |
 | Leyendas y marcas cortas (solo si no son información clave) | 13 mínimo | 13 mínimo |
 
+- **Los tamaños son tokens (ADR-0033, BR-GEN-13):** variables por rol (figura, título, principal, secundario, leyenda) multiplicadas por **una variable global `--font-scale`**; cambiar la letra de toda la app es cambiar una variable. El acento (`#1F1E1D` / `#092e53`) también es una variable. **La escala de arriba es provisional:** el dueño siente que en móvil el texto se ve grande en los diseños, pero lo decidirá al verlo en un dispositivo real (RV-05).
 - **Nunca menos de 13 px**, y nada importante por debajo de 15 px en móvil.
 - Los **campos de texto en móvil, 16 px o más** (evita que iOS amplíe la pantalla al enfocar).
 - Interlineado 1.4–1.5; tamaños en `rem` para respetar el tamaño de texto del sistema; probar con texto del sistema aumentado.

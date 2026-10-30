@@ -33,6 +33,8 @@ Si aparece una duda nueva, se agrega aquí con ID `OQ-*` y un supuesto por defec
 | RV-02 | **Ubicación y existencia de la barra de meta** | En Hoy | Si no le gusta (DT-02) |
 | RV-03 | **Nombre "Abibono"** | Se conserva (chiste interno), tooltip "Entrega al líder" | Si confunde a nuevos colportores |
 | RV-04 | Orden de recorte de abonos programados (BR-PAY-13: más próximo tras abono extra, más lejano tras devolución) | Sugerencia modificable por el usuario en el modal | Si resulta incómodo |
+| RV-05 | **Tamaño de la letra en móvil** | Escala inicial: texto principal 17 px, secundario 15, mínimo 13 (basada en iOS/Material). El dueño siente que en los diseños el móvil se ve grande | Al ver la app en un dispositivo real: ajustar `--font-scale` o los tokens por rol (BR-GEN-13); cambiarlo es una sola variable |
+| RV-06 | **Flujo de venta: asistente de 5 pasos ("+ Vender")** | El dueño lo mantiene, pese a que en Notion vendía creando el cliente y agregándole un libro (alternativa evaluada: "ficha viva" con secciones en línea, `00-contexto/DECISION-LOG.md` ronda 14) | Si en uso real el asistente se siente pesado o rígido, reevaluar la ficha viva |
 
 ## 3. Decisiones de diseño
 Ver `04-diseno/DESIGN-BRIEF.md` §13: DT-01 (total de deuda en Clientes), DT-02 (barra de meta), DT-03 ("Con novedad"), DT-04 (íconos), DT-05 (antigüedad), DT-06 (barra de vista), DT-07 (tonos de los microíconos de tipo de evento).

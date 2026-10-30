@@ -19,6 +19,7 @@
 | Estado del cliente | `payment_standing`: Al día `current` / Con saldo `balance` / Vencido `overdue`; píldora suave con ícono **solo en escritorio**; en móvil, saldo en rojo si vencido (BR-CUS-13) |
 | Barra flotante | Barra inferior móvil tipo píldora con 4 íconos y botón circular "+" (Vender) aparte |
 | Entregar (botón de Hoy) | Abre Nuevo Abibono precargado con los abonos `collected` libres (BR-DEP-13) |
+| Token de diseño | Variable CSS con un valor visual (tamaño de letra por rol, color, radio…) definida en `src/ui/tokens/tokens.css`; `--font-scale` escala toda la tipografía (BR-GEN-13) |
 | Aviso de vencidos | Fila única "N cobros vencidos ›" en Hoy; abre Dinero ▸ Por cobrar ▸ Vencidos |
 | Microícono de tipo | Único color de categoría: ícono pequeño (solo trazo) que distingue cobro / visita / capacitación |
 | Iconos | Cada sección tiene un ícono propio; en móvil la barra inferior muestra solo íconos (como Instagram) y el título está en la cabecera |

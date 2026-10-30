@@ -66,6 +66,10 @@ TIPOGRAFÍA (el texto pequeño está PROHIBIDO): móvil: cifra 36 · título 28 
 (nombres, filas, botones, campos) · secundario 15 · leyendas 13 mínimo y nunca información
 clave. Campos ≥ 16. Escritorio: cifra 40 · título 32 · principal 16 (sidebar 15) · secundario 14
 · mínimo 13. Máximo 3 tamaños por pantalla, interlineado 1.4–1.5, unidades rem.
+ DESIGN SYSTEM: define los tamaños de texto como VARIABLES por rol (cifra, título, principal,
+ secundario, leyenda) en UN solo lugar, multiplicadas por un factor global de escala
+ (--font-scale), de modo que cambiar el tamaño de toda la letra sea cambiar una variable. El
+ color de acento también como variable. Ningún componente con tamaños o colores escritos a mano.
 
 DENSIDAD: fila = máximo 2 líneas y UNA señal de estado; sin subtítulos, sin explicaciones
 permanentes (ayuda en un ⓘ al tocar); máximo 5 bloques en el primer vistazo. Más de 5 opciones

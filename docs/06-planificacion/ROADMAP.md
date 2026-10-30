@@ -51,3 +51,4 @@ Plan sugerido (cada hito con pruebas; el orden es también el **orden de recorte
 - Invitaciones por correo (requiere dominio + SMTP propio).
 - Pasar a Supabase Pro cuando la app maneje dinero real de varios usuarios (SG-06).
 - Presentar la marca "Colportor" a Emprendum (SG-07).
+- Preferencia de usuario **"Tamaño del texto"** en Ajustes (Pequeño / Normal / Grande) que solo cambie `--font-scale` (ADR-0033).

@@ -39,6 +39,7 @@ Un ADR por decisión relevante. Formato: contexto → decisión → alternativas
 | 0030 | Formato regional y preferencias de usuario | Aceptado |
 | 0031 | Tarjeta "Por entregar" en Hoy | Aceptado (revisado) |
 | 0032 | Principios de diseño: minimalismo, color con propósito, anti-IA | Aceptado |
+| 0033 | Design system con tokens (tamaño de letra ajustable por una variable) | Aceptado |
 | 0033 | Recorte, motivos de cancelación, prórroga y signo del saldo a favor | Aceptado |
 
 ## Plantilla

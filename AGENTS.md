@@ -18,6 +18,7 @@
 - **No hay "parche sobre parche":** si una regla no encaja, corrige el diseño y escribe un ADR.
 - **Alcance:** no implementes fase 2/3 ni el backlog sin que se pida.
 - **Acciones externas** (crear recursos, borrar, publicar, gastar dinero): confirma con el dueño primero. El dueño crea las cuentas nuevas de Supabase y Vercel y hace `supabase login` / `vercel login` él mismo (ver `docs/05-operacion/GUIA-DESPLIEGUE-PASO-A-PASO.md`); **nunca** pidas ni pegues claves en el chat.
+- **Estilos solo con tokens (BR-GEN-13, ADR-0033):** nunca escribas tamaños de letra ni colores literales en un componente; usa los roles de `src/ui/tokens/tokens.css`. El tamaño de toda la letra se cambia con `--font-scale`.
 - **Regla de contenido:** ningún texto de la app menciona que el líder pueda asumir una pérdida (BR-COPY-11).
 - **Región:** Supabase **us-east-1** y Vercel **iad1** (medido desde Medellín; no uses São Paulo).
 

@@ -79,6 +79,26 @@ ui  ──►  features  ──►  repositories (interfaces)  ──►  domain
 - **Registro de totalizadores:** `features/totals/registry.ts` exporta un array de piezas `{ id, label, tooltip, compute(ctx), categoryAware }`; la pantalla itera. Quitar uno = borrar una entrada.
 - **Registro de reglas de antigüedad:** `domain/age.ts` recibe `thresholds` desde `app_settings` (nunca constantes enterradas).
 
+## 4b. Design system y tokens (ADR-0033)
+- **Un único archivo de tokens:** `src/ui/tokens/tokens.css` con variables CSS para **tipografía, color, radios, espaciado, sombras y breakpoints**. Es la **única** fuente de valores visuales.
+- **Tipografía por roles**, en `rem`, escalada por **`--font-scale`**:
+  ```css
+  :root {
+    --font-scale: 1;                                   /* ← el control único de tamaño */
+    --text-figure:    calc(2.25rem  * var(--font-scale));  /* 36 px móvil */
+    --text-title:     calc(1.75rem  * var(--font-scale));  /* 28 */
+    --text-body:      calc(1.0625rem* var(--font-scale));  /* 17 */
+    --text-secondary: calc(0.9375rem* var(--font-scale));  /* 15 */
+    --text-caption:   calc(0.8125rem* var(--font-scale));  /* 13 */
+    --accent: #1F1E1D;  --accent-contrast: #FFFFFF;      /* variante B: #092e53 */
+  }
+  @media (min-width: 1024px) { :root { --text-figure: calc(2.5rem*var(--font-scale)); --text-title: calc(2rem*var(--font-scale)); --text-body: calc(1rem*var(--font-scale)); --text-secondary: calc(0.875rem*var(--font-scale)); } }
+  ```
+  (valores iniciales de `04-diseno/DESIGN-BRIEF.md` §5b; provisionales, RV-05).
+- **Los componentes solo usan roles** (`text-body`, `text-secondary`…), nunca `px`, `rem` ni `#hex`. Si se usa Tailwind, su `theme` se mapea a estas variables y se **prohíben** clases con valores literales (`text-[17px]`, `bg-[#092e53]`).
+- **Cumplimiento automático:** una prueba de arquitectura/regla de lint falla si aparece un tamaño de fuente o un color literal en `src/` fuera de `tokens.css` (ver `03-arquitectura/TESTING.md`).
+- **Futuro:** una preferencia "Tamaño del texto" en Ajustes solo tendría que escribir `--font-scale` (0.9 / 1 / 1.1); fuera de la v1.
+
 ## 5. Datos y rendimiento percibido
 - Región Supabase **us-east-1** y Vercel **iad1** (misma zona; medido ~85 ms desde Medellín). La web es mayormente cliente y habla directo con Supabase, por lo que la latencia usuario→Supabase es la que importa.
 - TanStack Query con caché; **actualizaciones optimistas** al agregar ejemplares y registrar abonos (con rollback).

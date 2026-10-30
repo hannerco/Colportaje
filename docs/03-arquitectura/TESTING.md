@@ -65,6 +65,11 @@ Datos de prueba sembrados y reiniciables. Flujos mínimos:
 16. **Lectura sin conexión**: con la red cortada se consulta, y guardar muestra el mensaje de BR-GEN-08.
 17. **Copiar resumen** de Hacer inventario produce el texto esperado.
 
+## Pruebas de arquitectura (UI)
+- **Sin valores visuales literales (BR-GEN-13):** un test recorre `src/` (excluyendo `src/ui/tokens/tokens.css`) y falla si encuentra `font-size` con `px`/`rem` literales, clases de Tailwind con valores arbitrarios de tamaño o color (`text-[..]`, `bg-[#..]`) o colores `#hex`/`rgb()` fuera de los tokens.
+- **Escala cambiable:** un test de componente comprueba que cambiar `--font-scale` en la raíz cambia el tamaño calculado de los roles (`--text-body`, etc.).
+- Se mantienen las pruebas de límites entre capas (ESLint).
+
 ## Convenciones de pruebas
 - Nombre: `describe('<módulo>')` / `it('BR-XXX-NN: <comportamiento>')`.
 - Datos con **builders/fábricas** (`aCustomer()`, `aCopy()`, `aPayment()`), nunca JSON gigante copiado.
