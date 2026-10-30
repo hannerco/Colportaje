@@ -231,6 +231,20 @@ El dueño envió la referencia 4 (guardada): *"Este me gustó para el Hoy, solo 
 | **"+ Vender"** | El dueño confesó que en Notion vendía *"creando un cliente y agregándole a este un libro"* y preguntó qué se había pensado. Se explicó el asistente de 5 pasos y se propuso la alternativa "ficha viva" (el "+" crea una ficha de cliente en blanco con secciones en línea). **Decisión: "No, tienes razón. Me voy a quedar con el + como lo habías pensado."** [D] Se mantiene **"+ Vender" como asistente de 5 pasos** (F-10). Anotado como RV-06 por si en uso real se siente pesado. |
 | **Tamaño de letra variable** | **"Quiero que pongas en el repo la regla de que el tamaño debe poderse cambiar por una variable. Quiero que esté muy bien hecho el design system y que si quiero cambiar el tamaño de la letra, se cambie muy fácilmente. Ahorita viendo los diseños siento que el de mobile tiene la letra muy grande, pero cuando pueda verlo en la vida real, quizá lo cambie o quizá no."** [D] → ADR-0033, BR-GEN-13: tokens en un solo archivo, `--font-scale` global, acento como variable, prohibidos los valores literales, prueba de arquitectura. Escala provisional (RV-05). |
 
+---
+
+## Ronda 15 — Nombre del cliente sin deuda (2026-10-29)
+
+El dueño preguntó cómo llamar a los clientes que ya pagaron y no tienen deuda. Se propuso **"Saldado"** (descartados: "Pagado", que se confunde con "Cobrado"; "Cancelado", que choca con el estado de los abonos; "Al día", ambiguo; "Paz y salvo", correcto en Colombia pero largo para una píldora) y reordenar los estados porque "Con saldo" era una etiqueta torpe (el cliente "Vencido" también tiene saldo). **Decisión: "Sí, pongámoslo tal y como mencionas."** [D]
+
+| Estado | Código | Significado | Color |
+|---|---|---|---|
+| **Vencido** | `overdue` | tiene algún abono vencido | rojo |
+| **Al día** | `current` | debe algo, pero va cumpliendo | verde |
+| **Saldado** | `settled` | ya pagó todo, no debe nada | gris |
+
+Reemplaza a "Al día / Con saldo / Vencido" (BR-CUS-13). Desaparece el ámbar. En móvil, el cliente saldado muestra el texto gris "Saldado" en lugar de un saldo en cero. **Nota para quien implemente el dominio:** `payment_standing` aún no está en `src/` (usar `overdue` / `current` / `settled`).
+
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.
 2. **Repositorio de GitHub llamado `colportor`** (en vez de `colportaje`), coherente con el nombre de la app.

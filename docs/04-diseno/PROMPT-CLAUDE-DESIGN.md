@@ -24,7 +24,7 @@ reproduzcas su contenido de ejemplo):
     Orden…) blancos con borde y sombra mínimos;
   · tabla con cabecera en gris claro redondeada, filas altas y aireadas SIN líneas
     divisorias, nombre con subrayado discreto, avatar pequeño, y columna de estado con
-    píldora de color suave + ícono (verde / ámbar / rojo).
+    píldora de color suave + ícono (rojo / verde / gris).
  Referencia 2 (móvil) — me gusta:
   · fondo cálido muy suave, superficies casi translúcidas, esquinas muy redondeadas;
   · cabecera con título y botones circulares pequeños; barra de búsqueda con ícono de
@@ -57,9 +57,11 @@ COLOR: base neutra. Acento único en la acción principal y el elemento activo. 
 vencido/error/destructivo. Colores permitidos y SOLO en estos lugares:
  · microíconos (solo el trazo, sin círculo) que distinguen el tipo de evento: cobro, visita,
    capacitación;
- · ESTADO DEL CLIENTE como pequeña píldora suave con ícono: "Al día" (verde), "Con saldo"
-   (ámbar), "Vencido" (rojo), SOLO en la tabla de escritorio. En MÓVIL no hay píldora: el saldo
-   se muestra en ROJO cuando el cliente tiene algo vencido. Ningún otro lugar usa verde/ámbar.
+ · ESTADO DEL CLIENTE como pequeña píldora suave con ícono, SOLO en la tabla de escritorio:
+   "Vencido" (rojo), "Al día" (verde: debe algo pero va cumpliendo), "Saldado" (gris: ya pagó
+   todo). En MÓVIL no hay píldora: el saldo se muestra en ROJO si hay algo vencido y, si el
+   cliente está saldado, el texto gris "Saldado" en lugar de un monto en cero. Ningún otro
+   lugar usa verde.
 Estados de abono y categorías de libro: en gris.
 
 TIPOGRAFÍA (el texto pequeño está PROHIBIDO): móvil: cifra 36 · título 28 · TEXTO PRINCIPAL 17
@@ -98,8 +100,8 @@ PANTALLA 1 — CLIENTES
   · lista como en la Referencia 3 (sin tarjetas por fila, solo separación y aire): avatar de
     iniciales neutro a la izquierda · NOMBRE (17) · debajo, en gris (15), el LIBRO VENDIDO
     (título del libro; si hay varios, el más reciente + "+2") · a la derecha el SALDO PENDIENTE
-    (17), en rojo si el cliente tiene algo vencido; los prospectos muestran "Prospecto" en gris
-    en lugar del libro y sin saldo. Una sola señal de estado por fila (el rojo del saldo);
+    (17), en rojo si el cliente tiene algo vencido, o el texto gris "Saldado" si ya pagó todo; los
+    prospectos muestran "Prospecto" en gris en lugar del libro y nada a la derecha. Una sola señal de estado por fila (el rojo del saldo);
   · barra inferior flotante (Hoy · Clientes · Inventario · Más) + botón circular "+" (Vender);
   · estados: vacío (sin clientes), cargando, sin resultados de búsqueda, sin conexión (franja
     discreta; se puede consultar).
@@ -108,7 +110,7 @@ PANTALLA 1 — CLIENTES
   "+ Nuevo cliente"; pestañas de vista (píldoras con conteo); fila de herramientas con búsqueda
   y botones-píldora con ícono (Estado, Libros, Orden); tabla con columnas: Cliente (avatar
   iniciales + nombre) · Teléfono · Libro(s) (título + "+N") · Saldo · Último abono · Estado
-  (píldora verde/ámbar/rojo con ícono); filas altas y aireadas; al elegir un cliente se abre un panel de detalle a
+  (píldora roja/verde/gris con ícono: Vencido · Al día · Saldado); filas altas y aireadas; al elegir un cliente se abre un panel de detalle a
   la derecha (lista + detalle). NO añadas fila de tarjetas de métricas ni totales de dinero
   (el total de deuda no se muestra por defecto).
 

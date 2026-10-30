@@ -16,7 +16,7 @@
 | **Archivar** (cliente) | Reemplaza a "eliminar cliente" |
 | **Devolver a inventario** | Acción de devolución / quitar un libro de un cliente |
 | **Con novedad** | Antes "Sin resolver" |
-| Estado del cliente | `payment_standing`: Al día `current` / Con saldo `balance` / Vencido `overdue`; píldora suave con ícono **solo en escritorio**; en móvil, saldo en rojo si vencido (BR-CUS-13) |
+| Estado del cliente | `payment_standing`: **Vencido** `overdue` (rojo) / **Al día** `current` (verde; debe algo y va cumpliendo) / **Saldado** `settled` (gris; ya pagó todo); píldora suave con ícono **solo en escritorio**; en móvil, saldo en rojo si vencido (BR-CUS-13) |
 | Barra flotante | Barra inferior móvil tipo píldora con 4 íconos y botón circular "+" (Vender) aparte |
 | Entregar (botón de Hoy) | Abre Nuevo Abibono precargado con los abonos `collected` libres (BR-DEP-13) |
 | Token de diseño | Variable CSS con un valor visual (tamaño de letra por rol, color, radio…) definida en `src/ui/tokens/tokens.css`; `--font-scale` escala toda la tipografía (BR-GEN-13) |

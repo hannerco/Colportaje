@@ -39,7 +39,7 @@ Investigado en la web; **no usar nada de esto**:
 - **Base:** neutros (fondo, superficie, borde, texto). Estados y categorías en **gris** (se distinguen por ícono o texto).
 - **Acento único** en acciones principales y elemento activo. Variante principal: casi negro (`#1F1E1D`). **Variante pedida: acento `#092e53` (azul marino profundo).**
 - **Rojo** solo para vencido, error y acciones destructivas.
-- **Estado del cliente** (inspirado en la Referencia 1): pequeña **píldora suave con ícono** — *Al día* (verde), *Con saldo* (ámbar), *Vencido* (rojo) **solo en la tabla de escritorio**. **En móvil no hay píldora**: el saldo se muestra **en rojo** cuando hay algo vencido. Es el **único** lugar con verde/ámbar.
+- **Estado del cliente** (inspirado en la Referencia 1): pequeña **píldora suave con ícono** — *Vencido* (rojo), *Al día* (verde: debe algo pero va cumpliendo), *Saldado* (gris: ya pagó todo) **solo en la tabla de escritorio**. **En móvil no hay píldora**: el saldo se muestra **en rojo** cuando hay algo vencido y, si está saldado, el texto gris "Saldado". Es el **único** lugar con verde.
 - **Microacentos de color — el único lugar con color de categoría:** un **ícono pequeño (solo el trazo, sin círculo ni fondo)** que distingue el **tipo de evento**: cobro, visita, capacitación. Tonos apagados y bien distinguibles (el primer diseño usó naranja / azul / morado y le gustó; en la variante marino cuidar que "visita" no choque con el acento, p. ej. verde azulado). Nada más lleva color de categoría.
 
 ## 5. Presupuesto de densidad (móvil)
