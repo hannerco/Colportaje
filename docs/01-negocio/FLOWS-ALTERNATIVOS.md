@@ -109,11 +109,11 @@ Una sola acción —**"Devolver a inventario"** en la ficha del cliente (o en el
 ### AF-30 Subir el precio acordado
 - *App:* sube la deuda; aparece "sin programar $X" informativo (no es alerta).
 
-### AF-31 Venta sin cuota inicial ni abonos programados
+### AF-31 Libro sin cuota inicial ni abonos programados
 - *App:* válido. La ficha muestra saldo pendiente y "sin programar".
 
-### AF-32 En el asistente de venta, los abonos programados exceden el saldo
-- *App:* al confirmar, aviso con las mismas opciones (ajustar/cancelar/dejar). Si suman **menos** que el saldo, no hay alerta (solo "sin programar").
+### AF-32 En la ficha, los abonos programados exceden el saldo
+- *App:* franja informativa en línea "Lo programado supera el saldo en $X · **Revisar**"; al tocar Revisar se abre el modal (ajustar/cancelar/dejar). No bloquea. Si suman **menos** que el saldo, no hay aviso (solo "sin programar").
 
 ---
 
@@ -262,6 +262,14 @@ Una sola acción —**"Devolver a inventario"** en la ficha del cliente (o en el
 ### AF-106 Entregar desde Hoy
 - *Situación:* el colportor toca "Entregar" en la tarjeta de Hoy.
 - *App:* abre **Nuevo Abibono** con todos los abonos `collected` libres ya seleccionados y efectivo/transferencia autocalculados; puede desmarcar, ajustar, añadir minibooks y subir el recibo. **No se crea borrador hasta guardar**; si cierra sin guardar, no queda nada. Con total 0 el botón no existe. Abonos ya vinculados a **otro borrador** no se preseleccionan.
+
+### AF-107 Abonos antes de agregar el libro
+- *Situación:* en la ficha viva se programan abonos y todavía no hay libro.
+- *App:* franja informativa **"Aún no tiene libro"** (BR-PAY-14) y, si lo programado supera el saldo (que es 0), también el aviso de BR-PAY-13 con **Revisar**. **Nada se bloquea**: el usuario puede seguir. Al agregar el libro, los avisos se actualizan solos.
+
+### AF-108 Ficha nueva sin nombre
+- *Situación:* se abre "Nuevo cliente" y se sale sin escribir el nombre.
+- *App:* **no se crea nada**. Con nombre escrito, el cliente ya existe aunque no tenga libros (prospecto).
 
 ### AF-105 "Por entregar" frente a un Abibono en borrador o reabierto
 - *App:* los abonos vinculados a un **borrador** siguen contando como por entregar. Al **confirmar**, salen. Al **reabrir** un Abibono, sus abonos vuelven a `collected` y **vuelven a contar**.

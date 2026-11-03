@@ -58,11 +58,16 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
 - **RQ-CUS-07 [F1]** Al crear un cliente, un aviso **no bloqueante** si hay mismo teléfono o nombre casi idéntico.
 - **RQ-CUS-08 [F1]** La ficha ofrece **llamar** y **WhatsApp** cuando hay teléfono.
 
-## Vender
-- **RQ-SAL-01 [F1]** Flujo **+ Vender** de un solo camino (cliente buscar/crear → ejemplares uno por uno → cuota inicial y abonos programados → foto de factura).
-  - *Entonces* los ejemplares quedan `sold` con `customer_id`, `sold_at`, `agreed_price = precio público`; la cuota inicial `collected`; los programados `scheduled`.
-- **RQ-SAL-02 [F1]** Un cliente existente puede recomprar sobre el mismo registro; el saldo se recalcula.
-- **RQ-SAL-03 [F1]** Solo puedo vender ejemplares `in_stock`; desde la ficha puedo agregar y quitar ejemplares.
+## Nuevo cliente y libros de un cliente
+- **RQ-SAL-01 [F1]** **"Nuevo cliente"** (persona con "+") abre una **ficha viva** que se guarda sola; secciones en línea Libros → Abonos → Factura, sin orden obligatorio (BR-CUS-14).
+  - *Dado* que escribo el nombre "Luz Marina", *entonces* el cliente existe (prospecto si no tiene libros). *Dado* que salgo sin nombre, *entonces* no se crea nada.
+  - *Cuando* agrego un ejemplar, *entonces* queda `sold` con `customer_id`, `sold_at` y `agreed_price = precio público`; una cuota inicial queda `collected`; los programados `scheduled`.
+  - *Entonces* **"Vender" no aparece** en ninguna etiqueta, ruta ni botón.
+- **RQ-SAL-02 [F1]** Un cliente existente compra de nuevo: abro su ficha y uso "Agregar libro"; el saldo se recalcula.
+- **RQ-SAL-03 [F1]** Solo puedo agregar ejemplares `in_stock`; desde la ficha puedo agregar y quitar ejemplares.
+- **RQ-SAL-04 [F1]** Avisos informativos en línea, sin bloqueo.
+  - *Dado* abonos programados y ningún libro, *entonces* aparece "Aún no tiene libro" y el usuario puede seguir editando.
+  - *Dado* programados que superan el saldo, *entonces* aparece una franja con **Revisar**; el modal solo se abre con Revisar o ante devolución, abono extra o baja de precio.
 
 ## Abonos
 - **RQ-PAY-01 [F1]** Registro cuota inicial, abono programado y abono extra (pago fuera del plan, sin fecha acordada).
@@ -140,7 +145,7 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
 - **RQ-QLT-02 [F1]** PWA instalable; despliegue en us-east-1 (Supabase) e iad1 (Vercel), elegidas midiendo la latencia (ADR-0002).
 - **RQ-QLT-03 [F1]** Tooltips en: estados de abono, fecha acordada vs. real, diferencia, esperado vs. entregado, con novedad, saldo a favor, prospecto, antigüedad, Abibono ("Entrega al líder"), título vs. ejemplar.
 - **RQ-QLT-04 [F1]** Backups cada 2 días al inicio, luego semanales, con guía de restauración probada; ping anti-pausa cada 3 días.
-- **RQ-QLT-06 [F1]** Principios visuales (ADR-0032): **una sola acción principal** ("Vender" una vez), más de 5 opciones agrupadas, sidebar estilo Notion, color solo en acento/rojo semántico/microíconos de tipo de evento, sin elementos de la lista negra anti-IA, filas de máximo 2 líneas, tooltips solo con ⓘ.
+- **RQ-QLT-06 [F1]** Principios visuales (ADR-0032): **una sola acción principal global** ("Nuevo cliente", sin repetirse), más de 5 opciones agrupadas, sidebar estilo Notion, color solo en acento/rojo semántico/microíconos de tipo de evento, sin elementos de la lista negra anti-IA, filas de máximo 2 líneas, tooltips solo con ⓘ.
 - **RQ-QLT-05 [F1]** COP enteros `$1.250.000`, zona America/Bogota, español, `dd/mm/aaaa`, tema claro/oscuro automático.
 - **RQ-OFF-01 [F2]** Offline de escritura: base local, cola idempotente, cola de fotos, indicadores, número de ejemplar provisional.
 - **RQ-LDR-01 [F3]** Vista de líder y transferencia de libros con aceptación del colportor.

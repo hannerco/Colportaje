@@ -8,7 +8,7 @@
 | **Abonos** (de clientes) | Se queda "Abono" |
 | **Abibonos** | Se queda así (chiste interno que el dueño quiere conservar). El tooltip dice **"Entrega al líder"** |
 | **Minibooks** | Literalmente "Minibooks" |
-| **Dinero**, **Hacer inventario**, **+ Vender**, **Hoy** | Se quedan. "Hoy" lleva el subtítulo "Pendientes del día" |
+| **Dinero**, **Hacer inventario**, **Nuevo cliente**, **Hoy** | Se quedan ("Vender" ya no existe, ADR-0035). "Hoy" lleva el subtítulo "Pendientes del día" |
 | **Catálogo** | Sección del admin donde se gestionan los Títulos |
 | **Libros** | Lo que ve el colportor en listas y selectores ("Libros en físico", "¿Qué libro recibiste?") |
 | **Ejemplar** | Cada unidad física; aparece en detalles y tooltips |
@@ -17,7 +17,7 @@
 | **Devolver a inventario** | Acción de devolución / quitar un libro de un cliente |
 | **Con novedad** | Antes "Sin resolver" |
 | Estado del cliente | `payment_standing`: **Vencido** `overdue` (rojo) / **Al día** `current` (verde; debe algo y va cumpliendo) / **Saldado** `settled` (gris; ya pagó todo); píldora suave con ícono **solo en escritorio**; en móvil, saldo en rojo si vencido (BR-CUS-13) |
-| Barra flotante | Barra inferior móvil tipo píldora con 4 íconos y botón circular "+" (Vender) aparte |
+| Barra flotante | Barra inferior móvil tipo píldora con 4 íconos y botón de "Nuevo cliente" (persona con "+") aparte |
 | Entregar (botón de Hoy) | Abre Nuevo Abibono precargado con los abonos `collected` libres (BR-DEP-13) |
 | Token de diseño | Variable CSS con un valor visual (tamaño de letra por rol, color, radio…) definida en `src/ui/tokens/tokens.css`; `--font-scale` escala toda la tipografía (BR-GEN-13) |
 | Aviso de vencidos | Fila única "N cobros vencidos ›" en Hoy; abre Dinero ▸ Por cobrar ▸ Vencidos |
@@ -144,7 +144,7 @@
 | UI | Código / ruta | Notas |
 |---|---|---|
 | **Hoy** (alias "Pendientes del día", "Agenda del día") | `/hoy` | Resumen del día |
-| **+ Vender** | `/vender` | Flujo central de venta |
+| **Nuevo cliente** | `/clientes/nuevo` | Ficha viva: crea el cliente y permite agregarle libros, abonos y factura en línea |
 | **Hacer inventario** | `/hacer-inventario` | Cuadre con el líder; incluye totalizadores |
 | Inventario (vista de culturales) / Inventario TODOS (cultural + religioso) | `view = cultural` / `view = all` | Minibooks siempre aparte |
 | Libros en físico | `/inventario` | Ejemplares `in_stock` por título |

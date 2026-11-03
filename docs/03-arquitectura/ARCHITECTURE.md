@@ -51,7 +51,7 @@ ui  ──►  features  ──►  repositories (interfaces)  ──►  domain
 │  └─ config.toml
 ├─ scripts/                    (carga de catálogo, backup, utilidades)
 ├─ src/
-│  ├─ app/                     (rutas Next: (auth)/login, (app)/hoy, clientes, vender, inventario, dinero, minibooks, calendario, hacer-inventario, ajustes, admin)
+│  ├─ app/                     (rutas Next: (auth)/login, (app)/hoy, clientes (incl. clientes/nuevo), inventario, dinero, minibooks, calendario, hacer-inventario, ajustes, admin)
 │  ├─ domain/                  (entidades, reglas, derivaciones, time, money, glossary-types)
 │  ├─ repositories/            (interfaces + errores comunes)
 │  ├─ adapters/                (supabase/, storage/, local/ (F2), sync/ (F2))
@@ -79,7 +79,7 @@ ui  ──►  features  ──►  repositories (interfaces)  ──►  domain
 - **Registro de totalizadores:** `features/totals/registry.ts` exporta un array de piezas `{ id, label, tooltip, compute(ctx), categoryAware }`; la pantalla itera. Quitar uno = borrar una entrada.
 - **Registro de reglas de antigüedad:** `domain/age.ts` recibe `thresholds` desde `app_settings` (nunca constantes enterradas).
 
-## 4b. Design system y tokens (ADR-0033)
+## 4b. Design system y tokens (ADR-0034)
 - **Un único archivo de tokens:** `src/ui/tokens/tokens.css` con variables CSS para **tipografía, color, radios, espaciado, sombras y breakpoints**. Es la **única** fuente de valores visuales.
 - **Tipografía por roles**, en `rem`, escalada por **`--font-scale`**:
   ```css

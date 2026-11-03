@@ -17,7 +17,7 @@ Obligatorias para todo agente o persona que escriba código o documentación aqu
 - Archivos y carpetas: `kebab-case` (`leader-deposit.ts`); componentes React: `PascalCase.tsx`.
 - Tipos/interfaces: `PascalCase`; sin prefijo `I`. Funciones y variables: `camelCase`. Constantes: `SCREAMING_SNAKE_CASE`.
 - Base de datos: `snake_case`, tablas en **singular**, FK `<entidad>_id`, enums en minúscula (`in_stock`).
-- Rutas URL (Next): en español, `kebab-case` (`/clientes`, `/vender`, `/hacer-inventario`); los identificadores internos en inglés.
+- Rutas URL (Next): en español, `kebab-case` (`/clientes`, `/clientes/nuevo`, `/hacer-inventario`); los identificadores internos en inglés.
 - Booleanos: `is_`/`has_`/`can_` (`is_active`, `has_receipt`).
 - Dinero: sufijo o tipo explícito `COP` y enteros (`agreedPrice: COP`).
 - Fechas: `*_at` = instante (`timestamptz`), `*_date` = día calendario (`date`).
@@ -32,7 +32,7 @@ Obligatorias para todo agente o persona que escriba código o documentación aqu
 ## 4. UI
 - Mobile-first: se diseña y prueba primero a 360–390 px; escritorio ≥ 1024 px.
 - Objetivos táctiles ≥ 44×44 px; acciones principales en la zona del pulgar.
-- **Tokens, no valores literales (ADR-0033):** **prohibido** escribir `px`, `rem` o `#hex` de tamaño de letra o color en un componente; se usan los roles de `src/ui/tokens/tokens.css`. **El tamaño de la letra se cambia con `--font-scale`** (o con el token del rol); el acento, con `--accent`. Una prueba de arquitectura lo verifica.
+- **Tokens, no valores literales (ADR-0034):** **prohibido** escribir `px`, `rem` o `#hex` de tamaño de letra o color en un componente; se usan los roles de `src/ui/tokens/tokens.css`. **El tamaño de la letra se cambia con `--font-scale`** (o con el token del rol); el acento, con `--accent`. Una prueba de arquitectura lo verifica.
 - **Tipografía:** escala de `04-diseno/DESIGN-BRIEF.md` §5b (móvil: texto principal 17 px, secundario 15, mínimo 13; escritorio: 16 / 14 / 13); campos de texto ≥ 16 px; tamaños en `rem`; fuente del sistema.
 - Todo texto desde `src/copy/es.ts`. Todo dinero con `formatCOP`; toda fecha y hora con helpers de `domain/time` (zona Bogota, semana desde domingo, formato 12 h/24 h según el perfil).
 - **Estilo visual Notion.** Usa siempre el componente `ViewBar` para pestañas de vista, filtro, orden y búsqueda; no crees variantes por módulo. Cada sección tiene su ícono; la barra inferior móvil es solo íconos con texto accesible.

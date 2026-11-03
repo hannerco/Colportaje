@@ -5,7 +5,7 @@ Estado: Aceptado · Fecha: 2026-10-26
 El asistente propuso vender eligiendo "título + cantidad" y asignar automáticamente los más antiguos. El dueño lo rechazó: "cuando vendes escoges un ejemplar específico… los vas añadiendo uno por uno. Si quieres venderlo a un precio diferente debes entrar al ejemplar individual y cambiar su precio acordado."
 
 ## Decisión
-En **+ Vender**, el colportor elige **ejemplares concretos** de su stock físico, uno por uno (visible número y antigüedad). El precio acordado por defecto es el precio público del snapshot y se edita después en el ejemplar individual.
+En la sección **Libros** de la ficha del cliente (ADR-0035), el colportor elige **ejemplares concretos** de su stock físico, uno por uno (visible número y antigüedad). El precio acordado por defecto es el precio público del snapshot y se edita después en el ejemplar individual.
 
 ## Alternativas descartadas
 Asignación automática por cantidad (rechazada por el dueño).

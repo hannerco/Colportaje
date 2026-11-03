@@ -49,7 +49,7 @@ Carpeta `tests/rls/`. Con dos usuarios A y B sembrados:
 Datos de prueba sembrados y reiniciables. Flujos mínimos:
 1. **Invitación → login → Hoy.**
 2. **Agregar a inventario** (favorito y lista) y números consecutivos.
-3. **+ Vender** de punta a punta (cliente nuevo; cliente existente que recompra; con y sin cuota inicial) y verificación de saldo.
+3. **Nuevo cliente (ficha viva)** de punta a punta (cliente nuevo; cliente existente que recompra con "Agregar libro"; con y sin cuota inicial; avisos "Aún no tiene libro" y "Revisar") y verificación de saldo.
 4. **Cobrar** un abono, parcial, y **prórroga**.
 5. **Abibono** completo: autocálculo, diferencia con nota, recibo, confirmación y bloqueo.
 6. **Minibooks**: entrada, bloqueo sin stock, asignación parcial al Abibono, `client_credit`.

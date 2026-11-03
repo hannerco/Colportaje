@@ -18,7 +18,7 @@ Trabaja con la casa publicadora vía un **líder** (quien entrega libros y recib
 | **Esporádico** | Cualquiera | Totalizadores (cuánto vendió, de cuánto fue su compra, su venta), inventario por título |
 
 ## Problema que resuelve (y el error a no repetir)
-La versión de Notion recibió críticas por **tener demasiados apartados y ser difícil de entender**. La gente se perdía con "abonos" y "abibonos" y terminaba usando **solo Clientes**. La nueva app debe ser muy intuitiva: pocos apartados, un único flujo de venta (**+ Vender**) y **Dinero** como único lugar para lo que se cobra y se entrega.
+La versión de Notion recibió críticas por **tener demasiados apartados y ser difícil de entender**. La gente se perdía con "abonos" y "abibonos" y terminaba usando **solo Clientes**. La nueva app debe ser muy intuitiva: pocos apartados, un único punto de entrada (**Nuevo cliente**: la ficha del cliente es donde se agregan libros, abonos y factura) y **Dinero** como único lugar para lo que se cobra y se entrega.
 
 ## Conceptos del negocio (léelos antes de tocar el modelo)
 - **Título vs. Ejemplar.** El Título es el libro (1 registro por libro). El Ejemplar es cada unidad física (30 libros vendidos = 30 Ejemplares). Un Ejemplar **es de** un Título.

@@ -48,24 +48,25 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 - **Reglas:** BR-COPY-10/11. **Ninguna etiqueta o tooltip menciona que el líder pueda asumir una pérdida.** Representación visual abierta (DT-03).
 - **Casos:** AF-52, AF-53.
 
-## F-10 **+ Vender** (flujo central)
-- **Contexto:** botón central; cubre cliente nuevo, existente y prospecto.
-- **Paso 1 – Cliente:** buscar (difuso) o crear (nombre obligatorio; aviso de posible duplicado, AF-70).
-- **Paso 2 – Libros:** lista de ejemplares `in_stock` agrupados por título (número y antigüedad); se **eligen uno por uno**. Precio acordado = precio público del snapshot (se cambia después, F-08).
-- **Paso 3 – Dinero:** deuda total (derivada). **Cuota inicial** (monto, método) → `collected`. **Abonos programados** (monto, fecha) → `scheduled`. Se muestra el saldo restante y, si lo programado lo excede, el aviso de F-29 (AF-32).
-- **Paso 4 – Factura:** foto de la factura (una o varias; también después).
-- **Paso 5 – Confirmar:** crea todo de forma atómica.
-- **Reglas:** BR-COPY-06/08, BR-CUS-02/03, BR-PAY-01..03/13.
-- **Cliente que recompra:** mismos pasos sobre el cliente existente (saldo recalculado).
-- **Borde:** AF-31 (sin cuota ni programados).
+## F-10 Nuevo cliente (ficha viva)
+- **Contexto:** botón global **"Nuevo cliente"** (persona con "+"); cubre al cliente nuevo y al prospecto. Para uno existente: Clientes → ficha → "Agregar libro". Reemplaza al antiguo asistente "+ Vender" (ADR-0035).
+- **Pasos:** el botón abre una **ficha en blanco que se guarda sola**. Se escribe el **nombre** (obligatorio; aviso no bloqueante de posible duplicado, AF-70) y teléfono. Luego, en línea y en el orden habitual (no obligatorio):
+  1. **Libros:** "+ Agregar libro" → ejemplares `in_stock` agrupados por título (número y antigüedad), **uno por uno**; el precio acordado nace igual al precio público y se edita en el ejemplar (F-08).
+  2. **Abonos:** "+ Cuota inicial" (monto, método) → `collected`; "+ Programar" (monto, fecha) → `scheduled`; "+ Extra".
+  3. **Factura:** "+ Foto" (una o varias; también después).
+  4. Información, dirección y fotos: normalmente de noche.
+- **Avisos informativos en línea, sin bloqueo:** "Aún no tiene libro" si hay abonos sin libros (BR-PAY-14); "Lo programado supera el saldo en $X · **Revisar**" (BR-PAY-13; abre el modal F-29).
+- **Reglas:** BR-CUS-14, BR-COPY-06/08, BR-CUS-02/03, BR-PAY-01..03/13/14.
+- **Resultado:** un cliente con lo que se haya llenado; sin libros es prospecto.
+- **Borde:** sin nombre al salir → no queda nada (AF-108); AF-31 (sin cuota ni programados); AF-107 (abonos antes del libro).
 
-## F-11 Crear cliente sin libros (prospecto)
-- **Pasos:** Clientes → "+" → datos → guardar; opcionalmente programar una **visita** (F-18).
-- **Reglas:** BR-CUS-02/05/11.
+## F-11 Cliente sin libros (prospecto)
+- **Es la misma ficha de F-10** sin agregar libros: un cliente sin ejemplares vendidos es prospecto (derivado). Opcionalmente se programa una **visita** (F-18).
+- **Reglas:** BR-CUS-02/05/11/14.
 
 ## F-12 Ficha de cliente
 - **Muestra:** datos; teléfono con **llamar** y **WhatsApp**; información (texto + fotos); dirección (texto, **Abrir en Maps**, mapa al tocar); libros con precio y diferencia; abonos con estado (**Cancelados** plegable); deuda, saldo pendiente o **saldo a favor**, "sin programar"; facturas; visitas; aviso persistente si los programados exceden el saldo.
-- **Acciones:** agregar libro, registrar/programar/cobrar abono, factura/foto, visita, **devolver libro** (F-16), editar, **archivar** (F-27).
+- **Acciones:** **Agregar libro** (enlace de texto), registrar/programar/cobrar abono, factura/foto, visita, **devolver libro** (F-16), editar, **archivar** (F-27).
 - **Reglas:** BR-CUS-04..12.
 
 ## F-13 Registrar y cobrar abonos

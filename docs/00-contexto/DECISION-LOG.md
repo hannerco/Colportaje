@@ -229,7 +229,7 @@ El dueño envió la referencia 4 (guardada): *"Este me gustó para el Hoy, solo 
 | Tema | Resultado |
 |---|---|
 | **"+ Vender"** | El dueño confesó que en Notion vendía *"creando un cliente y agregándole a este un libro"* y preguntó qué se había pensado. Se explicó el asistente de 5 pasos y se propuso la alternativa "ficha viva" (el "+" crea una ficha de cliente en blanco con secciones en línea). **Decisión: "No, tienes razón. Me voy a quedar con el + como lo habías pensado."** [D] Se mantiene **"+ Vender" como asistente de 5 pasos** (F-10). Anotado como RV-06 por si en uso real se siente pesado. |
-| **Tamaño de letra variable** | **"Quiero que pongas en el repo la regla de que el tamaño debe poderse cambiar por una variable. Quiero que esté muy bien hecho el design system y que si quiero cambiar el tamaño de la letra, se cambie muy fácilmente. Ahorita viendo los diseños siento que el de mobile tiene la letra muy grande, pero cuando pueda verlo en la vida real, quizá lo cambie o quizá no."** [D] → ADR-0033, BR-GEN-13: tokens en un solo archivo, `--font-scale` global, acento como variable, prohibidos los valores literales, prueba de arquitectura. Escala provisional (RV-05). |
+| **Tamaño de letra variable** | **"Quiero que pongas en el repo la regla de que el tamaño debe poderse cambiar por una variable. Quiero que esté muy bien hecho el design system y que si quiero cambiar el tamaño de la letra, se cambie muy fácilmente. Ahorita viendo los diseños siento que el de mobile tiene la letra muy grande, pero cuando pueda verlo en la vida real, quizá lo cambie o quizá no."** [D] → ADR-0034, BR-GEN-13: tokens en un solo archivo, `--font-scale` global, acento como variable, prohibidos los valores literales, prueba de arquitectura. Escala provisional (RV-05). |
 
 ---
 
@@ -244,6 +244,23 @@ El dueño preguntó cómo llamar a los clientes que ya pagaron y no tienen deuda
 | **Saldado** | `settled` | ya pagó todo, no debe nada | gris |
 
 Reemplaza a "Al día / Con saldo / Vencido" (BR-CUS-13). Desaparece el ámbar. En móvil, el cliente saldado muestra el texto gris "Saldado" en lugar de un saldo en cero. **Nota para quien implemente el dominio:** `payment_standing` aún no está en `src/` (usar `overdue` / `current` / `settled`).
+
+---
+
+## Ronda 16 — "Nuevo cliente" reemplaza a "+ Vender" (2026-11-03)
+
+El dueño **habló con quienes usaron el Notion**: *"sí estuvieron de acuerdo que no debería haber un 'Vender' diferente a Crear cliente nuevo, así que creo que mejor convierto el botón flotante '+ Vender' en uno que sea generar nuevo cliente."* Se opinó a favor (modelo mental de los usuarios, encaja con el modelo de datos, menos pantallas) y se preguntó lo necesario.
+
+| # | Tema | Resultado |
+|---|---|---|
+| Q1 | Cuándo existe el cliente | **"Correcto."** [D] Ficha que se guarda sola; el nombre es lo único obligatorio; sin nombre no queda nada. |
+| Q2 | Avisos | **"No voy a programar abonos antes de agregarle un libro, y si lo hago, es un problema, así que debería aparecer la alerta."** [D] El aviso aparece de inmediato (no al salir de la ficha). |
+| Q3 | Orden | **"El orden que usarán será Libros, abonos y luego la factura. Pero si programa abonos sin haber puesto el libro, debería marcarle al menos una alerta que diga que aún no tiene libro. Todo este tipo de alertas son informativas, pero el usuario va a poder seguir haciendo lo que quiera."** [D] Sin orden obligatorio; avisos informativos, sin bloqueo (BR-PAY-14). |
+| Q4 | Ícono | **"Lo más lógico es la persona con el +."** [D] |
+| Q5/Q6 | Ubicación en escritorio | **Pendiente.** El dueño descartó tres opciones por sus defectos (ítem en el sidebar junto a "Clientes", solo en Clientes por poco accesible, flotante por Jakob) y **no aceptó aún** la propuesta del asistente (ícono en la cabecera del sidebar + `⌘N`). **Pidió 4 diseños** a Claude Design basados en el estilo actual, considerando que en móvil hoy conviven un botón en la cabecera y el flotante. → **DT-08** + prompt «4 ubicaciones». |
+| Q7 | Modal | **"Sí, de acuerdo."** [D] Los avisos son franjas en línea sin bloqueo; el modal solo se abre con "Revisar" o ante devolución, abono extra o baja de precio. |
+
+Consecuencias: ADR-0035; "Vender" desaparece (acción, ruta `/vender` → `/clientes/nuevo`, etiqueta); F-10 y F-11 se fusionan; se cierra RV-06. **Aviso para quien implemente la UI:** no crear nada llamado "vender" en rutas ni textos.
 
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.

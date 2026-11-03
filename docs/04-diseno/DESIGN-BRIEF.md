@@ -7,7 +7,7 @@
 
 | Momento | Dispositivo | Usa |
 |---|---|---|
-| Calle (día) | Móvil, una mano, poca señal | Hoy, Clientes, Libros en físico, Agregar al inventario, Vender |
+| Calle (día) | Móvil, una mano, poca señal | Hoy, Clientes, Libros en físico, Agregar al inventario, Nuevo cliente |
 | Cuadre (noche) | Escritorio | Clientes (completar), Dinero (por entregar), Abibonos, Hacer inventario |
 
 ## 1b. Referencias visuales del dueño (2026-10-29)
@@ -60,7 +60,7 @@ Basada en lo que usan las apps de referencia (iOS: 17 / 15 / 13 pt; Material: cu
 | **Texto secundario** (hora, detalle, saldo) | **15** | **14** |
 | Leyendas y marcas cortas (solo si no son información clave) | 13 mínimo | 13 mínimo |
 
-- **Los tamaños son tokens (ADR-0033, BR-GEN-13):** variables por rol (figura, título, principal, secundario, leyenda) multiplicadas por **una variable global `--font-scale`**; cambiar la letra de toda la app es cambiar una variable. El acento (`#1F1E1D` / `#092e53`) también es una variable. **La escala de arriba es provisional:** el dueño siente que en móvil el texto se ve grande en los diseños, pero lo decidirá al verlo en un dispositivo real (RV-05).
+- **Los tamaños son tokens (ADR-0034, BR-GEN-13):** variables por rol (figura, título, principal, secundario, leyenda) multiplicadas por **una variable global `--font-scale`**; cambiar la letra de toda la app es cambiar una variable. El acento (`#1F1E1D` / `#092e53`) también es una variable. **La escala de arriba es provisional:** el dueño siente que en móvil el texto se ve grande en los diseños, pero lo decidirá al verlo en un dispositivo real (RV-05).
 - **Nunca menos de 13 px**, y nada importante por debajo de 15 px en móvil.
 - Los **campos de texto en móvil, 16 px o más** (evita que iOS amplíe la pantalla al enfocar).
 - Interlineado 1.4–1.5; tamaños en `rem` para respetar el tamaño de texto del sistema; probar con texto del sistema aumentado.
@@ -82,7 +82,7 @@ Basada en lo que usan las apps de referencia (iOS: 17 / 15 / 13 pt; Material: cu
 | **Nielsen #8 (minimalista)** | Quitar lo que distrae; lo secundario bajo demanda |
 
 ## 7. Navegación
-**Móvil — barra inferior flotante tipo píldora, SOLO íconos** (Referencia 2; el título va en la cabecera; cada ícono con texto accesible): **4 íconos** `Hoy · Clientes · Inventario · Más` y, **aparte a su derecha, un botón circular oscuro "+" = Vender**.
+**Móvil — barra inferior flotante tipo píldora, SOLO íconos** (Referencia 2; el título va en la cabecera; cada ícono con texto accesible): **4 íconos** `Hoy · Clientes · Inventario · Más` y, **aparte a su derecha, un botón circular oscuro con el ícono de persona con "+" = Nuevo cliente**.
 **Más** = hoja con **grupos de máximo 4**: *Trabajo* (Calendario, Minibooks) · *Dinero* (Dinero, Hacer inventario) · *Cuenta* (Ajustes, Admin si aplica).
 
 **Escritorio — sidebar estilo Notion + Referencia 1** (≈260 px; tarjeta de perfil arriba con selector; secciones plegables con etiqueta tenue; "+" y "⋯" al pasar el cursor; **ítem activo = píldora blanca elevada**; sin etiquetas de color):
@@ -91,7 +91,7 @@ Basada en lo que usan las apps de referencia (iOS: 17 / 15 / 13 pt; Material: cu
 │ ◧ Colportor        ▾  HC │   ← perfil (como el selector de espacio de trabajo)
 │ ⌕ Buscar            ⌘K   │
 │ ☼ Hoy                    │
-│ ＋ Vender                │   ← ÚNICA acción principal de la app
+│ (Nuevo cliente: ubicación = DT-08) │  ← acción global; 4 opciones por decidir
 │                          │
 │ ▾ Trabajo                │
 │   ◔ Clientes          ＋ │
@@ -106,8 +106,8 @@ Basada en lo que usan las apps de referencia (iOS: 17 / 15 / 13 pt; Material: cu
 └──────────────────────────┘
 ```
 
-## 8. Una acción principal por pantalla; "Vender" una sola vez
-- **"Vender" existe una sola vez:** botón central de la barra (móvil) / entrada destacada del sidebar (escritorio). **Ninguna pantalla lo repite.** En la ficha de un cliente se usa un enlace de texto secundario **"Agregar libro"**.
+## 8. Una acción principal global: "Nuevo cliente" (antes "Vender")
+- **"Vender" ya no existe** (ADR-0035). La acción global es **"Nuevo cliente"** (ícono de **persona con "+"**), que abre la **ficha viva**. En **móvil**: botón flotante. En **escritorio**: ubicación pendiente (**DT-08**, se decide comparando 4 opciones). El mismo botón **no se repite** de forma redundante; para un cliente existente se usa el enlace de texto secundario **"Agregar libro"** en su ficha.
 - Cada pantalla tiene como máximo **una** acción de contexto destacada: Inventario → **Agregar**; Dinero → **Nuevo Abibono**; Minibooks → **Nueva venta**; Clientes → **Nuevo** (en la barra de vista); Calendario → **+**; Hacer inventario → **Copiar resumen**. **Hoy tiene un único botón: "Entregar", dentro de la tarjeta "Por entregar".**
 
 ## 9. Pantallas
@@ -116,7 +116,7 @@ Basada en lo que usan las apps de referencia (iOS: 17 / 15 / 13 pt; Material: cu
 | 1 | **Clientes** (se diseña primero) | Móvil: búsqueda con filtro, pestañas-píldora con conteo tenue (Recientes / Deudores / Todos / Archivados), lista aireada (Referencia 3): avatar de iniciales · **nombre** · **libro vendido** debajo · **saldo** a la derecha (rojo si vencido); escritorio: panel blanco "Clientes 48", filtros-píldora y tabla (Cliente · Teléfono · Libro(s) · Saldo · Último abono · Estado); orden e "Incluir prospectos" dentro del filtro | F-11, F-23 |
 | 2 | **Hoy** | Ver wireframe abajo | F-20 |
 | 3 | **Ficha de cliente** | Datos, llamar/WhatsApp, información y fotos, dirección (Abrir en Maps; mapa al tocar), libros, abonos, deuda/saldo/saldo a favor, "Agregar libro" (texto), acciones en "⋯" (devolver, archivar) | F-12 |
-| 4 | **+ Vender** | 5 pasos: cliente → ejemplares uno por uno → cuota inicial y abonos → factura → confirmar | F-10 |
+| 4 | **Nuevo cliente (ficha viva)** | Ficha que se guarda sola (nombre obligatorio); secciones en línea Libros → Abonos → Factura sin orden obligatorio; avisos informativos en línea ("Aún no tiene libro", "Revisar") | F-10 |
 | 5 | **Inventario** | Libros en físico por título con ícono de antigüedad; minibooks al final; "Por resolver"; **Agregar** (principal); "Devolver al líder" en lote | F-06, F-26 |
 | 6 | **Agregar a inventario** | Lista buscable + favoritos; "+" por fila → pastilla numérica; chip de fecha "Hoy ▾"; Deshacer | F-05 |
 | 7 | **Ejemplares** | Pestañas Todos / En inventario / Vendidos / Con descuentos y aumentos | F-07 |
@@ -156,7 +156,7 @@ Todas comparten la navegación de las Referencias (barra flotante + botón "+" c
 - **C · Editorial:** **sin superficies elevadas ni sombras**, solo líneas finas y espacio.
 Cada variante en móvil y escritorio, claro y oscuro. En todas rigen las secciones 3–8.
 
-**Orden de pantallas:** se empieza por **Clientes** (lista móvil + tabla de escritorio con el sidebar); **no** por Hoy. Después: ficha de cliente → Hoy → + Vender → Inventario y Agregar → Devolver + modal → Dinero y Abibono → Minibooks → Calendario (con tira de semana y línea de tiempo) → Hacer inventario → Admin → Login y Ajustes.
+**Orden de pantallas:** se empieza por **Clientes** (lista móvil + tabla de escritorio con el sidebar); **no** por Hoy. Después: ficha de cliente → Hoy → Inventario y Agregar → Devolver + modal → Dinero y Abibono → Minibooks → Calendario (con tira de semana y línea de tiempo) → Hacer inventario → Admin → Login y Ajustes.
 
 ## 11. Estados y patrones
 - Estados de abono: Por cobrar → Cobrado → Entregado (+ Cancelado), por **ícono/texto en gris**, no por color.
@@ -183,6 +183,7 @@ Cada variante en móvil y escritorio, claro y oscuro. En todas rigen las seccion
 | DT-05 | Ícono de antigüedad por etapas; 3 propuestas |
 | DT-06 | Barra de vista única reutilizada en todos los módulos |
 | DT-07 | Tres tonos de los microíconos de tipo de evento (cobro / visita / capacitación) en cada variante |
+| DT-08 | **Ubicación de "Nuevo cliente" en escritorio** — 4 opciones: A navegación global (ítem del sidebar), B solo en Clientes, C flotante, D ícono en la cabecera del sidebar + botón en Clientes. Y su equivalente móvil (cabecera / flotante). Ver `04-diseno/PROMPT-CLAUDE-DESIGN.md` («4 ubicaciones») |
 
 ## 14. No diseñar ahora
 Vista de líder, campañas, reembolsos, exportar PDF/CSV, notificaciones push, escritura sin conexión.
@@ -191,7 +192,7 @@ Vista de líder, campañas, reembolsos, exportar PDF/CSV, notificaciones push, e
 - [ ] Ningún elemento de la lista negra (§3).
 - [ ] Color solo en: acento, rojo semántico y microíconos de tipo de evento.
 - [ ] Filas ≤ 2 líneas, una señal de estado; sin subtítulos ni contadores.
-- [ ] "Vender" una sola vez por pantalla/layout.
+- [ ] "Nuevo cliente" como única acción global (sin "Vender" en ningún lugar) y sin repetirse de forma redundante.
 - [ ] Hoy: una lista cronológica, aviso único de vencidos, sin semana; el único botón es "Entregar" dentro de la tarjeta "Por entregar".
 - [ ] Más de 5 opciones agrupadas; sidebar tipo Notion.
 - [ ] Barra de vista idéntica en todos los módulos.

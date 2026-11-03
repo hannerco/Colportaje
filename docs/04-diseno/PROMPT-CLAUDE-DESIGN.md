@@ -30,7 +30,7 @@ reproduzcas su contenido de ejemplo):
   · cabecera con título y botones circulares pequeños; barra de búsqueda con ícono de
     filtro a la derecha;
   · BARRA INFERIOR FLOTANTE tipo píldora con 4 íconos (activo = píldora clara) y, aparte a
-    su derecha, un BOTÓN CIRCULAR OSCURO con "+" (para "Vender");
+    su derecha, un BOTÓN de "Nuevo cliente" (ícono de persona con "+") (antes "Vender");
   · en la pantalla de agenda: tira de semana con el día elegido en píldora y línea de tiempo
     por horas (solo para la sección Calendario más adelante, NUNCA en "Hoy").
  Referencia 3 (móvil) — SOLO su LISTA INFERIOR ("Recent Activity"): cada fila = ícono/avatar
@@ -83,7 +83,7 @@ destacada del sidebar (escritorio). Ninguna pantalla lo repite. Cada pantalla ti
 UNA acción de contexto destacada (en Clientes: "Nuevo cliente").
 
 SIDEBAR DE ESCRITORIO (estilo Notion + Referencia 1; ~260 px): tarjeta de perfil arriba ·
-Buscar ⌘K · Hoy · + Vender (acción principal) · sección "Trabajo" (Clientes, Inventario,
+Buscar ⌘K · Hoy · (el botón "Nuevo cliente": ubicación por decidir, ver «4 ubicaciones») · sección "Trabajo" (Clientes, Inventario,
 Minibooks, Calendario) · sección "Dinero" (Dinero, Hacer inventario) · abajo Ajustes y Admin.
 Etiquetas de sección tenues y plegables, íconos de trazo, activo = píldora blanca elevada.
 Como son más de 5 ítems, ya están agrupados; no los pongas en una sola lista plana.
@@ -102,7 +102,7 @@ PANTALLA 1 — CLIENTES
     (título del libro; si hay varios, el más reciente + "+2") · a la derecha el SALDO PENDIENTE
     (17), en rojo si el cliente tiene algo vencido, o el texto gris "Saldado" si ya pagó todo; los
     prospectos muestran "Prospecto" en gris en lugar del libro y nada a la derecha. Una sola señal de estado por fila (el rojo del saldo);
-  · barra inferior flotante (Hoy · Clientes · Inventario · Más) + botón circular "+" (Vender);
+  · barra inferior flotante (Hoy · Clientes · Inventario · Más) + botón de "Nuevo cliente" (persona con "+");
   · estados: vacío (sin clientes), cargando, sin resultados de búsqueda, sin conexión (franja
     discreta; se puede consultar).
 
@@ -128,7 +128,7 @@ y "Bebidas saludables", algunos vencidos, algunos prospectos sin libros.
 
 ENTREGA: primero solo Clientes (móvil y escritorio, las 3 variantes, claro y oscuro) con los
 componentes comunes (barra de vista, píldoras de estado, sidebar, barra flotante, botón "+").
-Espera mi elección antes de seguir con ficha de cliente, Hoy, Vender, Inventario, Dinero, etc.
+Espera mi elección antes de seguir con ficha de cliente, Hoy, Inventario, Dinero, etc.
 
 NO DISEÑAR AHORA: Hoy, vista de líder, campañas, reembolsos, exportar PDF/CSV, notificaciones
 push, escritura sin conexión.
@@ -144,10 +144,56 @@ Transferencia 120.000" y UN SOLO BOTÓN en píldora clara "Entregar" (abre Nuevo
 dinero). Sin subtítulo, sin barra de colores. Debajo: UN aviso rojo discreto "2 cobros vencidos ›"
 solo si hay; una barra de meta fina sin números; y UNA lista cronológica de hoy (cobros, visitas,
 capacitaciones con su microícono de color · hora · nombre · detalle). Sin semana ni calendario,
-sin otros botones. Barra flotante + botón circular "+" (Vender). En C (editorial) la cifra va
+sin otros botones. Barra flotante + botón "Nuevo cliente" (persona con "+"). En C (editorial) la cifra va
 sobre el fondo con línea fina y el botón de acento, sin tarjeta elevada.
 No copies de la Referencia 4: tracking de envíos, líneas de progreso, saludo con avatar.
 ```
 
 ## Orden de las siguientes pantallas (cuando se elija Clientes)
-2 Ficha de cliente · 3 Hoy · 4 + Vender · 5 Inventario y Agregar · 6 Devolver + modal de abonos · 7 Dinero y Abibono · 8 Minibooks · 9 Calendario (aquí sí tira de semana y línea de tiempo, estilo Referencia 2) · 10 Hacer inventario · 11 Admin · 12 Login y Ajustes. En cada paso se reutiliza el prompt base (estilo, lista negra, color, tipografía, densidad) cambiando solo la pantalla.
+2 Ficha de cliente (viva: sirve para crear y para editar) · 3 Hoy · 4 Agregar libro y abonos dentro de la ficha · 5 Inventario y Agregar · 6 Devolver + modal de abonos · 7 Dinero y Abibono · 8 Minibooks · 9 Calendario (aquí sí tira de semana y línea de tiempo, estilo Referencia 2) · 10 Hacer inventario · 11 Admin · 12 Login y Ajustes. En cada paso se reutiliza el prompt base (estilo, lista negra, color, tipografía, densidad) cambiando solo la pantalla.
+
+## Prompt — 4 ubicaciones de "Nuevo cliente" (ronda 16)
+Pegar en el **mismo proyecto de Claude Design** donde ya está Clientes (para que parta de lo que ya diseñó). **Pegar todo lo que sigue:**
+
+````
+CONTEXTO: ya diseñaste el módulo "Clientes" (móvil y escritorio) en este proyecto. NO lo rediseñes.
+Mantén EXACTAMENTE el estilo actual: acento #092e53, tipografía, tamaños, tarjeta de perfil,
+pestañas-píldora, tabla, avatares, barra inferior flotante y todos los componentes tal como están.
+
+CAMBIO DE CONCEPTO: la acción "Vender" DESAPARECE por completo. La única acción global pasa a ser
+"Nuevo cliente" (ícono de persona con "+"), que abre una ficha de cliente en blanco (no la
+diseñes ahora). Hoy el diseño tiene dos cosas: un botón "Nuevo cliente" propio de la pantalla
+Clientes y un botón/ítem "Vender" global. Quiero comparar 4 formas de ubicar "Nuevo cliente".
+
+ENTREGA: las 4 opciones, cada una con 4 láminas, en modo claro:
+ · Clientes en escritorio (1440) · Inventario en escritorio (1440; para ver cómo se comporta
+   la acción fuera de Clientes) · Clientes en móvil (390) · Inventario en móvil (390).
+Rotula solo "Opción A/B/C/D" y su nombre en una línea. SIN párrafos explicativos. Al final, una
+lámina de comparación con las cuatro versiones móviles de Clientes lado a lado.
+
+OPCIÓN A — "Todo en la navegación global":
+ · Escritorio: "Nuevo cliente" es un ítem destacado del sidebar (icono persona+), arriba de la
+   sección Trabajo; la cabecera de Clientes NO tiene botón.
+ · Móvil: botón flotante tipo píldora "persona+ Nuevo cliente" sobre la barra inferior, visible
+   en todas las pantallas; la cabecera de Clientes NO tiene botón.
+OPCIÓN B — "Solo dentro de Clientes":
+ · Escritorio: solo el botón "Nuevo cliente" arriba a la derecha de Clientes; no existe en el
+   sidebar ni en otras pantallas.
+ · Móvil: solo el botón circular persona+ en la cabecera de Clientes; SIN botón flotante; la
+   barra inferior queda solo con sus 4 ítems.
+OPCIÓN C — "Flotante":
+ · Escritorio: botón flotante extendido ("persona+ Nuevo cliente") anclado abajo a la derecha del
+   panel, visible en todas las pantallas; sin botón en la cabecera ni ítem en el sidebar.
+ · Móvil: botón flotante como el actual (ícono persona+), en todas las pantallas; sin botón en la
+   cabecera.
+OPCIÓN D — "Ícono en la cabecera del sidebar" (convención de Notion/Linear/Slack):
+ · Escritorio: botón de ícono (persona+) en la cabecera del sidebar, junto a la tarjeta de perfil
+   (tooltip "Nuevo cliente  ⌘N"), visible en toda pantalla, MÁS el botón "Nuevo cliente" propio de
+   la cabecera de Clientes.
+ · Móvil: botón flotante persona+ en todas las pantallas y SIN botón en la cabecera de Clientes.
+
+REGLAS COMUNES: se llama "Nuevo cliente"; ícono de persona con "+"; "Vender" no aparece en ningún
+lado (ni sidebar, ni flotante, ni etiquetas); no repitas el mismo botón de forma redundante en
+una misma pantalla (máximo dos apariciones y solo en la opción D en escritorio); conserva "Hoy",
+"Clientes", "Inventario", "Más" y todo lo demás sin cambios; mismos datos de ejemplo.
+````

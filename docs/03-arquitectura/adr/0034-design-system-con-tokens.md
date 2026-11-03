@@ -1,4 +1,4 @@
-# ADR-0033: Design system con tokens (tamaño de letra ajustable por una variable)
+# ADR-0034: Design system con tokens (tamaño de letra ajustable por una variable)
 Estado: Aceptado · Fecha: 2026-10-29
 
 ## Contexto
