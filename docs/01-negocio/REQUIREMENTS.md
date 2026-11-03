@@ -53,7 +53,13 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
 - **RQ-CUS-03 [F1]** Listas Recientes (por **fecha de creación** desc.), Deudores (saldo > 0), Todos, Archivados; selector de orden (Recientes, Última actividad, Nombre, Saldo pendiente); interruptor "Incluir prospectos"; cada fila muestra el saldo pendiente del cliente.
 - **RQ-CUS-04 [F1]** Búsqueda local difusa sobre nombre, teléfono, información, dirección.
   - *Dado* "María Gómez" guardada, *cuando* busco "maria gomes", *entonces* aparece.
-- **RQ-CUS-05 [F1]** Dirección con texto + enlace Maps + "Abrir en Maps" + mapa embebido que carga al tocar.
+- **RQ-CUS-05 [F1]** Dirección en texto (manual) + ubicación con coordenadas + enlace de Maps opcional; **"Abrir en Maps"** lleva las coordenadas a la app de mapas del celular.
+  - *Dado* un cliente con coordenadas, *entonces* "Abrir en Maps" abre `…/maps/search/?api=1&query=<lat>,<lng>`; *dado* solo enlace pegado, abre ese enlace; *dado* solo dirección en texto, busca esa dirección; *dado* nada, el botón no aparece.
+- **RQ-CUS-09 [F1]** Elegir la ubicación con **"Usar mi ubicación actual"** y un **selector con pin al centro** (ADR-0036).
+  - *Entonces* el permiso se pide solo al tocar el botón; el mapa muestra el pin fijo al centro y el círculo de precisión; **Confirmar** guarda las coordenadas del centro.
+  - *Dado* precisión > 50 m, *entonces* aparece "Ubicación aproximada" y se puede repetir.
+  - *Dado* permiso negado, *entonces* se ofrece "Elegir en el mapa".
+  - *Entonces* en la ficha el mapa con pin carga **al tocar**, no al abrir la ficha.
 - **RQ-CUS-06 [F1]** **Archivo** un cliente solo si no tiene ejemplares vendidos; sus abonos programados se cancelan con confirmación; sus abonos cobrados siguen en Dinero; lo restauro desde Archivados.
 - **RQ-CUS-07 [F1]** Al crear un cliente, un aviso **no bloqueante** si hay mismo teléfono o nombre casi idéntico.
 - **RQ-CUS-08 [F1]** La ficha ofrece **llamar** y **WhatsApp** cuando hay teléfono.

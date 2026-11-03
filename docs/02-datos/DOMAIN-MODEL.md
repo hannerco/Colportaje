@@ -105,7 +105,10 @@ Se escribe en la misma transacción que el cambio.
 | `phone` | `text` | |
 | `info` | `text` | texto libre; indexado para la búsqueda local |
 | `address` | `text` | |
-| `maps_url` | `text` | opcional |
+| `maps_url` | `text` | opcional (enlace pegado a mano) |
+| `latitude` | `numeric(9,6) null` | −90..90; **ambas coordenadas o ninguna** (BR-CUS-08) |
+| `longitude` | `numeric(9,6) null` | −180..180 |
+| `location_accuracy_m` | `integer null` | precisión del GPS al capturar (metros); > 50 muestra "Ubicación aproximada" |
 | `archived_at` | `timestamptz null` | archivado (BR-CUS-09); no es borrado lógico |
 
 Fotos de información y facturas: tabla `photo`. Todo lo demás se **deriva** (BR-CUS-04).

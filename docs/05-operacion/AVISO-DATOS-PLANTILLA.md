@@ -8,7 +8,7 @@
 **Contacto para consultas y reclamos:** [CORREO DE CONTACTO] · [TELÉFONO OPCIONAL]
 **Aplicación:** Colportor
 
-**Qué datos tratamos.** Los que cada colportor registra sobre sus clientes y su actividad: nombre, teléfono, dirección, notas de información, fotografías (de información, facturas y recibos) y datos de ventas y abonos. Del colportor: nombre, correo y preferencias.
+**Qué datos tratamos.** Los que cada colportor registra sobre sus clientes y su actividad: nombre, teléfono, dirección, **ubicación (coordenadas del domicilio)**, notas de información, fotografías (de información, facturas y recibos) y datos de ventas y abonos. Del colportor: nombre, correo y preferencias.
 
 **Para qué los usamos.** Únicamente para que el colportor lleve el control de sus clientes, libros, abonos y entregas, y para operar la aplicación. No se venden ni se ceden a terceros.
 

@@ -197,3 +197,18 @@ lado (ni sidebar, ni flotante, ni etiquetas); no repitas el mismo botón de form
 una misma pantalla (máximo dos apariciones y solo en la opción D en escritorio); conserva "Hoy",
 "Clientes", "Inventario", "Más" y todo lo demás sin cambios; mismos datos de ejemplo.
 ````
+
+## Prompt — pantalla "Elegir ubicación" (ronda 17)
+Pegar en el mismo proyecto de Claude Design. **Pegar todo lo que sigue:**
+
+````
+Diseña la pantalla "Elegir ubicación" del cliente (móvil 390 y escritorio 1440), con el mismo estilo del
+proyecto. Mapa a pantalla completa en estilo neutro y claro (sin colores llamativos). PIN FIJO al centro
+de la pantalla (el mapa se mueve por debajo, como al pedir un carro en Didi). Círculo de precisión del
+GPS alrededor del punto. Un botón secundario "Usar mi ubicación actual" que recentra el mapa. Un solo
+botón principal "Confirmar". Un aviso discreto "Ubicación aproximada" cuando la precisión es baja (no
+bloquea). Muestra también: (1) en la ficha de cliente, la sección Dirección con el campo de texto, un
+botón "Usar mi ubicación actual", y el mapa pequeño con pin que se carga al tocarlo, con el botón
+"Abrir en Maps" (lleva las coordenadas a la app de mapas); (2) estado de permiso negado con la opción
+"Elegir en el mapa". Sin textos explicativos. Un solo botón principal por pantalla.
+````

@@ -23,6 +23,7 @@ Si aparece una duda nueva, se agrega aquí con ID `OQ-*` y un supuesto por defec
 | SG-05 | **Aviso de tratamiento de datos (Ley 1581)**: el agente redacta la **plantilla con huecos** (responsable y correo de contacto) en `docs/05-operacion/AVISO-DATOS-PLANTILLA.md`; el dueño define responsable y alguien con criterio legal la revisa antes de abrir a otros colportores | Agente / dueño | Antes del piloto con otros |
 | SG-06 | **Decidir el paso a Supabase Pro (~25 USD/mes)** cuando el equipo use la app con dinero real (copias diarias, sin pausa) | Dueño | Tras validar con los colportores |
 | SG-07 | **Presentar la app a Emprendum** (marca "Colportor") cuando se valide con los colportores | Dueño | Tras validar |
+| SG-09 | **Elegir el proveedor de teselas del mapa** (plan gratuito; **no** el servidor público de OpenStreetMap) y **probar la geolocalización en un iPhone real** (el permiso puede repetirse en cada apertura) | Agente + dueño | Al implementar la ficha de cliente |
 | SG-08 | Nombre de dominio propio y correo SMTP para enviar invitaciones por correo (hoy: enlace por WhatsApp) | Dueño | Opcional, futuro |
 
 ## 2. Cosas por revisar con uso real

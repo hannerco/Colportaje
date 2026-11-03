@@ -48,6 +48,7 @@ Plan sugerido (cada hito con pruebas; el orden es también el **orden de recorte
 - Eliminar totalizadores que ya no se usen (cada uno es una pieza registrada).
 - Migrar fotos a Cloudflare R2 al 70 % del almacenamiento.
 - Vista de clientes vencidos.
+- **Sugerencia automática de la dirección en texto** a partir de las coordenadas (geocodificación inversa; hoy la dirección es manual).
 - Invitaciones por correo (requiere dominio + SMTP propio).
 - Pasar a Supabase Pro cuando la app maneje dinero real de varios usuarios (SG-06).
 - Presentar la marca "Colportor" a Emprendum (SG-07).

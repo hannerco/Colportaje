@@ -271,6 +271,16 @@ Una sola acción —**"Devolver a inventario"** en la ficha del cliente (o en el
 - *Situación:* se abre "Nuevo cliente" y se sale sin escribir el nombre.
 - *App:* **no se crea nada**. Con nombre escrito, el cliente ya existe aunque no tenga libros (prospecto).
 
+### AF-109 Sin permiso de ubicación o sin señal de GPS
+- *Situación:* el usuario niega el permiso, o está en un lugar donde el GPS no responde.
+- *App:* mensaje breve y la opción **"Elegir en el mapa"** (mueve el pin a mano). El permiso se pide solo al tocar el botón. En iPhone el aviso puede repetirse en cada apertura (ADR-0036).
+
+### AF-110 Ubicación aproximada
+- *App:* si la precisión del GPS es peor de ~50 m, aviso discreto **"Ubicación aproximada"**; el usuario puede repetir la captura o mover el pin antes de confirmar.
+
+### AF-111 Sin conexión al elegir o ver la ubicación
+- *App:* el GPS funciona pero el mapa no carga sus imágenes; en F1 guardar exige conexión. Si ya hay coordenadas guardadas, **"Abrir en Maps"** sigue disponible (lo resuelve la app de mapas del celular). En F2 se podrá capturar el punto sin señal y ajustar el pin después.
+
 ### AF-105 "Por entregar" frente a un Abibono en borrador o reabierto
 - *App:* los abonos vinculados a un **borrador** siguen contando como por entregar. Al **confirmar**, salen. Al **reabrir** un Abibono, sus abonos vuelven a `collected` y **vuelven a contar**.
 

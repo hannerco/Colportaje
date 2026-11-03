@@ -84,6 +84,10 @@ create table customer (
   info text,
   address text,
   maps_url text,
+  latitude numeric(9,6) check (latitude between -90 and 90),
+  longitude numeric(9,6) check (longitude between -180 and 180),
+  location_accuracy_m integer check (location_accuracy_m >= 0),
+  check ((latitude is null) = (longitude is null)),   -- ambas o ninguna (BR-CUS-08)
   archived_at timestamptz,            -- archivar (BR-CUS-09); distinto de deleted_at
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),

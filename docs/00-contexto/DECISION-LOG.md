@@ -262,6 +262,24 @@ El dueño **habló con quienes usaron el Notion**: *"sí estuvieron de acuerdo q
 
 Consecuencias: ADR-0035; "Vender" desaparece (acción, ruta `/vender` → `/clientes/nuevo`, etiqueta); F-10 y F-11 se fusionan; se cierra RV-06. **Aviso para quien implemente la UI:** no crear nada llamado "vender" en rutas ni textos.
 
+---
+
+## Ronda 17 — Ubicación del cliente (2026-11-03)
+
+El dueño preguntó si una PWA puede tener un botón "agregar ubicación actual" que cargue la ubicación en Maps automáticamente. Se investigó (geolocalización del navegador, comportamiento en iPhone, política de teselas de OpenStreetMap).
+
+| # | Tema | Resultado |
+|---|---|---|
+| Q1 | Guardar latitud y longitud con el botón "Usar mi ubicación actual" | **"Sí."** [D] |
+| Q2 | Dirección en texto manual | **"Sí."** [D] Sin rellenado automático (backlog: geocodificación inversa). |
+| Q3 | Aviso "Ubicación aproximada" si la precisión es baja | **"Sí."** [D] (~50 m) |
+| — | Selector de pin | El dueño: *"¿no es posible que aparezca un mapa y él escoja dónde se pone el pin? como en Didi cuando pides un carro."* → **Sí**, selector con pin al centro (mapa interactivo propio; el iframe de Google no sirve para esto). |
+| Q4 | Mapa interactivo para elegir y para ver | **"O sea sí, pero necesito que haya una opción que lleve esas coordenadas a Maps para que el colportor pueda verlo mejor."** [D] Botón "Abrir en Maps" con las coordenadas. |
+| Q5 | Proveedor de mapas | **"Sí."** [D] Se decide al implementar (SG-09); no el servidor público de OSM. |
+| Q6 | Flujo | **"Yes."** [D] "Usar mi ubicación actual" → mapa con pin al centro y círculo de precisión → Confirmar; también "Elegir en el mapa". |
+
+Consecuencias: ADR-0036 (reemplaza en parte a ADR-0014: el iframe de Google ya no se usa); campos `latitude`, `longitude`, `location_accuracy_m` en `customer`; BR-CUS-08 reescrita; F-30; AF-109..AF-111. **Aviso para quien implemente el dominio:** funciones puras para validar coordenadas y construir el enlace de "Abrir en Maps" (prioridad coordenadas → enlace pegado → dirección en texto).
+
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.
 2. **Repositorio de GitHub llamado `colportor`** (en vez de `colportaje`), coherente con el nombre de la app.

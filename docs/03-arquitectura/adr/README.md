@@ -41,6 +41,7 @@ Un ADR por decisión relevante. Formato: contexto → decisión → alternativas
 | 0032 | Principios de diseño: minimalismo, color con propósito, anti-IA | Aceptado |
 | 0034 | Design system con tokens (tamaño de letra ajustable por una variable) | Aceptado |
 | 0035 | "Nuevo cliente" con ficha viva (reemplaza al asistente "+ Vender") | Aceptado |
+| 0036 | Ubicación del cliente: coordenadas, selector con pin y mapa interactivo | Aceptado |
 | 0033 | Recorte, motivos de cancelación, prórroga y signo del saldo a favor | Aceptado |
 
 ## Plantilla

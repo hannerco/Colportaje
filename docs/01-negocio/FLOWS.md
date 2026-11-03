@@ -65,7 +65,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 - **Reglas:** BR-CUS-02/05/11/14.
 
 ## F-12 Ficha de cliente
-- **Muestra:** datos; teléfono con **llamar** y **WhatsApp**; información (texto + fotos); dirección (texto, **Abrir en Maps**, mapa al tocar); libros con precio y diferencia; abonos con estado (**Cancelados** plegable); deuda, saldo pendiente o **saldo a favor**, "sin programar"; facturas; visitas; aviso persistente si los programados exceden el saldo.
+- **Muestra:** datos; teléfono con **llamar** y **WhatsApp**; información (texto + fotos); dirección (texto) y **ubicación** (mapa con pin que carga al tocar, **Abrir en Maps**, "Usar mi ubicación actual"); libros con precio y diferencia; abonos con estado (**Cancelados** plegable); deuda, saldo pendiente o **saldo a favor**, "sin programar"; facturas; visitas; aviso persistente si los programados exceden el saldo.
 - **Acciones:** **Agregar libro** (enlace de texto), registrar/programar/cobrar abono, factura/foto, visita, **devolver libro** (F-16), editar, **archivar** (F-27).
 - **Reglas:** BR-CUS-04..12.
 
@@ -153,3 +153,8 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 - **Pasos:** modal con saldo restante, total programado, **sobrante** y lista con casillas → **Recortar automáticamente** (desde el más próximo tras un abono extra; desde el más lejano tras devolución/baja de precio/archivado) / **Cancelar los que marque** / **Dejar como está** (aviso persistente en la ficha).
 - **Resultado:** abonos `canceled` conservados en "Cancelados"; no cuentan en calendario ni totales.
 - **Reglas:** BR-PAY-13. **Casos:** AF-05, AF-20, AF-21, AF-25, AF-29, AF-32.
+
+## F-30 Elegir la ubicación de un cliente
+- **Contexto:** ficha de cliente (nueva o existente), sección de dirección.
+- **Pasos:** **"Usar mi ubicación actual"** (o **"Elegir en el mapa"**) → el celular pide permiso **solo ahora** → se abre el **selector**: mapa a pantalla completa con el pin fijo al centro y el círculo de precisión → el usuario mueve el mapa hasta poner el pin donde quiere (o toca el botón para recentrar en el GPS) → **Confirmar**. En la ficha queda un mapa con pin (carga al tocar) y el botón **"Abrir en Maps"**, que abre la app de mapas del celular en ese punto.
+- **Reglas:** BR-CUS-08, BR-CUS-14. **Casos:** AF-109..AF-111.

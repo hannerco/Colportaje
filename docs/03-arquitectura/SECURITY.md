@@ -15,7 +15,7 @@ Los datos incluyen nombres, teléfonos, direcciones, fotos de clientes y dinero.
 | Fotos privadas expuestas | Bucket `user-photos` privado, políticas por prefijo `owner_id/`, **URLs firmadas** de corta duración |
 | Registro abusivo / agotar almacenamiento | **Solo invitación**; sin registro público; alerta de uso |
 | XSS por campos libres (información, notas) | Render como texto, nunca `dangerouslySetInnerHTML`; React escapa por defecto |
-| Inyección de URL de mapa | `maps_url` solo se usa en `href`/iframe tras validar dominio `google.com/maps`/`maps.app.goo.gl`; iframe con `sandbox` y CSP `frame-src` restringida |
+| URL de mapa y ubicación | `maps_url` solo se usa en `href` tras validar dominio (`google.com/maps`, `maps.app.goo.gl`); las **coordenadas** se validan (numéricas, en rango) y el enlace de "Abrir en Maps" se construye **solo con números**; ya **no hay iframe de Google**; CSP `img-src`/`connect-src` limitadas al proveedor de mapas elegido (SG-09) |
 | Pérdida de datos | Backups cada 2 días al inicio y luego semanales, keep-alive, paso futuro a Supabase Pro (`05-operacion/DEPLOYMENT.md` §7–8); borrado lógico; bloqueo de abonos entregados |
 | Sesión robada | Cookies `httpOnly`/`secure` (Supabase SSR), expiración razonable, cierre de sesión |
 | Dependencias vulnerables | `pnpm audit` y Dependabot en CI |
@@ -42,10 +42,11 @@ Se validan al arrancar con Zod (`src/lib/env.ts`); la app falla rápido si falta
 El correo integrado de Supabase está limitado (2 mensajes/hora y solo a miembros de la organización), por lo que **no se usa** para invitaciones ni restablecimientos (ADR-0027). El flujo es: el admin genera un **enlace** (`auth.admin.generateLink` de tipo `invite` o `recovery`) desde un endpoint de servidor y lo entrega por WhatsApp. Consecuencias de seguridad: (1) el enlace equivale a una credencial temporal, tratarlo como secreto; (2) el admin es el único canal de recuperación de contraseñas; (3) el registro público está desactivado en Supabase Auth.
 
 ## Cabeceras recomendadas (Next)
-`Content-Security-Policy` estricta (`default-src 'self'`; `img-src 'self' data: blob: <supabase>`; `frame-src https://www.google.com`), `Referrer-Policy: strict-origin-when-cross-origin`, `X-Content-Type-Options: nosniff`, `Permissions-Policy` mínima (cámara solo si se usa la captura nativa).
+`Content-Security-Policy` estricta (`default-src 'self'`; `img-src 'self' data: blob: <supabase>`; `frame-src 'none'`), `Referrer-Policy: strict-origin-when-cross-origin`, `X-Content-Type-Options: nosniff`, `Permissions-Policy` mínima (cámara solo si se usa la captura nativa).
 
 ## Privacidad
 - Datos personales de terceros (clientes del colportor): minimizar; las fotos de "información" son opcionales.
+- La **ubicación (coordenadas) del domicilio de un cliente** es un dato personal: se captura solo al tocar el botón, sin seguimiento en segundo plano, y se declara en el aviso de la Ley 1581.
 - El admin **no** ve datos de negocio de otros colportores (BR-GEN-01).
 - Mostrar al usuario cómo eliminar sus datos (borrado lógico + eliminación definitiva por el admin bajo petición, documentado).
 - Cumplir la ley colombiana de protección de datos (Ley 1581 de 2012): aviso de tratamiento, finalidad y contacto. Plantilla con huecos en `05-operacion/AVISO-DATOS-PLANTILLA.md`; el responsable y su contacto los define el dueño y debe revisarlo alguien con criterio legal antes de abrir a otros colportores (SG-05).

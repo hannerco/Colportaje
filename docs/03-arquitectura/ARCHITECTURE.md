@@ -16,6 +16,7 @@ Principios: **escalable, probada, sin "parche sobre parche", decisiones lógicas
 | Formularios | React Hook Form + **Zod** | Zod también valida en el límite de los repositorios |
 | Fechas | `date-fns` + `date-fns-tz` (America/Bogota) | Todo "hoy" pasa por `domain/time` |
 | Búsqueda | **Fuse.js** o MiniSearch (local, difusa, sin acentos) | Elegir en el scaffolding con una prueba de aceptación (RQ-CUS-04) |
+| Mapas y ubicación | **Leaflet** (mapa interactivo y selector con pin) + API de geolocalización del navegador; **proveedor de teselas por decidir (SG-09)**, no el servidor público de OSM | ADR-0036. El iframe de Google ya no se usa. El mapa carga solo al tocar |
 | PWA | Serwist (service worker + manifest) | F1: instalable + caché del shell + **lectura sin conexión**; F2: offline de escritura |
 | Pruebas | Vitest (unitarias/integración), Playwright (E2E), Testing Library | Ver `03-arquitectura/TESTING.md` |
 | Calidad | ESLint (+ reglas de límites entre capas), Prettier, `tsc --noEmit` | |
@@ -102,7 +103,7 @@ ui  ──►  features  ──►  repositories (interfaces)  ──►  domain
 ## 5. Datos y rendimiento percibido
 - Región Supabase **us-east-1** y Vercel **iad1** (misma zona; medido ~85 ms desde Medellín). La web es mayormente cliente y habla directo con Supabase, por lo que la latencia usuario→Supabase es la que importa.
 - TanStack Query con caché; **actualizaciones optimistas** al agregar ejemplares y registrar abonos (con rollback).
-- Listas con **miniaturas**; imágenes completas solo al abrir; mapa embebido solo al tocar.
+- Listas con **miniaturas**; imágenes completas solo al abrir; mapa interactivo solo al tocar.
 - Los clientes (cientos) se cargan completos para búsqueda local; paginar solo ejemplares/abonos si crecen.
 - Medir con dispositivos reales antes de lanzar (objetivo: primera interacción < 2 s en 4G; acciones de un toque < 300 ms percibidos).
 
