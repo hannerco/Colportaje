@@ -55,6 +55,9 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
   - *Dado* "María Gómez" guardada, *cuando* busco "maria gomes", *entonces* aparece.
 - **RQ-CUS-05 [F1]** Dirección en texto (manual) + ubicación con coordenadas + enlace de Maps opcional; **"Abrir en Maps"** lleva las coordenadas a la app de mapas del celular.
   - *Dado* un cliente con coordenadas, *entonces* "Abrir en Maps" abre `…/maps/search/?api=1&query=<lat>,<lng>`; *dado* solo enlace pegado, abre ese enlace; *dado* solo dirección en texto, busca esa dirección; *dado* nada, el botón no aparece.
+- **RQ-CUS-10 [F1]** Avatar con **emoji** opcional por cliente (ADR-0037).
+  - *Dado* un cliente sin emoji, *entonces* se ve el avatar por defecto sobre fondo neutro; *dado* un emoji, *entonces* se ve en la lista, la tabla y la ficha.
+  - *Entonces* el selector carga solo al abrirse y permite **quitar** el emoji; solo se acepta **un** emoji; no afecta la búsqueda.
 - **RQ-CUS-09 [F1]** Elegir la ubicación con **"Usar mi ubicación actual"** y un **selector con pin al centro** (ADR-0036).
   - *Entonces* el permiso se pide solo al tocar el botón; el mapa muestra el pin fijo al centro y el círculo de precisión; **Confirmar** guarda las coordenadas del centro.
   - *Dado* precisión > 50 m, *entonces* aparece "Ubicación aproximada" y se puede repetir.

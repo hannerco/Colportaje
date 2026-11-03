@@ -105,6 +105,7 @@ Se escribe en la misma transacción que el cambio.
 | `phone` | `text` | |
 | `info` | `text` | texto libre; indexado para la búsqueda local |
 | `address` | `text` | |
+| `avatar_emoji` | `text null` | un solo emoji (BR-CUS-15); sin valor = avatar por defecto derivado |
 | `maps_url` | `text` | opcional (enlace pegado a mano) |
 | `latitude` | `numeric(9,6) null` | −90..90; **ambas coordenadas o ninguna** (BR-CUS-08) |
 | `longitude` | `numeric(9,6) null` | −180..180 |

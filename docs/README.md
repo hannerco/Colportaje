@@ -13,7 +13,8 @@ docs/
 │  ├─ CONTEXT.md                  producto, usuarios, conceptos del negocio, restricciones
 │  ├─ SPEC-ORIGINAL.md            texto original del dueño (sin editar) + tabla de reemplazos
 │  ├─ DECISION-LOG.md             todas las preguntas y respuestas de la entrevista de diseño
-│  └─ GLOSSARY.md                 nombres: español ↔ código (fuente única de nombres)
+│  ├─ GLOSSARY.md                 nombres: español ↔ código (fuente única de nombres)
+│  └─ PROMPT-CONTEXTO-SESION-DISENO.md   prompt para abrir una conversación nueva de diseño/docs con todo el contexto y los pendientes
 ├─ 01-negocio/                    CÓMO se comporta (reglas y flujos)
 │  ├─ BUSINESS-RULES.md           reglas numeradas BR-*  ← fuente normativa
 │  ├─ FLOWS.md                    flujos principales F-*
@@ -27,7 +28,7 @@ docs/
 │  ├─ CONVENTIONS.md              idioma, nombres, TypeScript, UI, git, cómo trabaja un agente
 │  ├─ TESTING.md                  estrategia y casos de prueba
 │  ├─ SECURITY.md                 amenazas, secretos, políticas
-│  └─ adr/                        decisiones de arquitectura (ADR-0001 … ADR-0036) + README con índice
+│  └─ adr/                        decisiones de arquitectura (ADR-0001 … ADR-0037) + README con índice
 ├─ 04-diseno/
 │  ├─ DESIGN-BRIEF.md             brief v2 para Claude Design (estilo Notion, lista negra anti-IA, densidad, wireframes)
 │  ├─ PROMPT-CLAUDE-DESIGN.md     prompt v3 listo para pegar (empieza por Clientes)

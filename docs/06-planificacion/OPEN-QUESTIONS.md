@@ -24,6 +24,7 @@ Si aparece una duda nueva, se agrega aquí con ID `OQ-*` y un supuesto por defec
 | SG-06 | **Decidir el paso a Supabase Pro (~25 USD/mes)** cuando el equipo use la app con dinero real (copias diarias, sin pausa) | Dueño | Tras validar con los colportores |
 | SG-07 | **Presentar la app a Emprendum** (marca "Colportor") cuando se valide con los colportores | Dueño | Tras validar |
 | SG-09 | **Elegir el proveedor de teselas del mapa** (plan gratuito; **no** el servidor público de OpenStreetMap) y **probar la geolocalización en un iPhone real** (el permiso puede repetirse en cada apertura) | Agente + dueño | Al implementar la ficha de cliente |
+| SG-10 | **Elegir y probar el selector de emojis** (candidato `frimousse`; verificar mantenimiento activo), asegurar que sus datos queden guardados para funcionar **sin conexión** y revisar cómo se ve cada emoji en Android e iPhone | Agente | Al implementar el avatar |
 | SG-08 | Nombre de dominio propio y correo SMTP para enviar invitaciones por correo (hoy: enlace por WhatsApp) | Dueño | Opcional, futuro |
 
 ## 2. Cosas por revisar con uso real
@@ -97,4 +98,5 @@ No bloquean nada y el código ya los aplica; se anotan aquí para que el dueño 
 | OQ-34 | La fecha de una entrada de minibooks acepta cualquier día válido (no se restringe a no futura) y una venta normal ignora el cliente que se envíe | `minibook.ts` | Por confirmar |
 | OQ-35 | Al borrar una entrada de minibooks, el historial de cada ejemplar registra `returned` con motivo `wrong_registration` (no cuenta como devolución de un cliente) | `minibook.ts` (`deleteMinibookSale`) | Por confirmar |
 | OQ-36 | Borrar un abono cobrado se trata como disparador de BR-PAY-13 con orden "más próximo" y motivo `manual` | `schedule-excess.ts` | Por confirmar |
+| OQ-38 | **Avatar por defecto sin emoji:** ¿**iniciales** del nombre (recomendado) o **ícono de persona** (lo que mostró el diseño actual)? Hasta confirmar, el dominio no lo almacena (es derivado) | `BR-CUS-15` | **Por confirmar con el dueño** |
 | OQ-37 | Pendiente de pedir: la cantidad "+ / pastilla" (BR-COPY-02), el calendario (visitas, capacitaciones y recordatorios) y la validación de Títulos (BR-TIT-02/04) aún no están en el dominio | — | Pendiente |

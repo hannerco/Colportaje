@@ -21,6 +21,7 @@
 | Entregar (botón de Hoy) | Abre Nuevo Abibono precargado con los abonos `collected` libres (BR-DEP-13) |
 | Token de diseño | Variable CSS con un valor visual (tamaño de letra por rol, color, radio…) definida en `src/ui/tokens/tokens.css`; `--font-scale` escala toda la tipografía (BR-GEN-13) |
 | Ubicación (del cliente) | `latitude` / `longitude` + `location_accuracy_m`; se elige con el **selector de ubicación** (pin al centro) o con "Usar mi ubicación actual" (BR-CUS-08) |
+| Avatar (del cliente) | `avatar_emoji`: emoji opcional; sin él, avatar por defecto derivado sobre fondo neutro (BR-CUS-15) |
 | Aviso de vencidos | Fila única "N cobros vencidos ›" en Hoy; abre Dinero ▸ Por cobrar ▸ Vencidos |
 | Microícono de tipo | Único color de categoría: ícono pequeño (solo trazo) que distingue cobro / visita / capacitación |
 | Iconos | Cada sección tiene un ícono propio; en móvil la barra inferior muestra solo íconos (como Instagram) y el título está en la cabecera |

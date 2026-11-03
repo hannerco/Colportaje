@@ -83,6 +83,7 @@ create table customer (
   phone text,
   info text,
   address text,
+  avatar_emoji text check (char_length(avatar_emoji) <= 16),   -- un solo emoji; validación fina en el dominio (BR-CUS-15)
   maps_url text,
   latitude numeric(9,6) check (latitude between -90 and 90),
   longitude numeric(9,6) check (longitude between -180 and 180),

@@ -24,6 +24,7 @@ Un archivo por módulo en `src/domain/**/*.test.ts`. Cada prueba cita la regla.
 - **Fecha de recibido** (`BR-COPY-04`): no futura, no posterior a la venta, cambio registrado en historial; antigüedad recalculada.
 - **Cantidad "+ / pastilla"** (`BR-COPY-02`): crear N, ajustar hacia arriba y hacia abajo solo sobre los ejemplares recién agregados, deshacer; igual para minibooks.
 - **"Por entregar"** (`BR-CAL-08`): total = efectivo + transferencia; cuenta abonos de Abibonos borrador; deja de contar al confirmar y vuelve a contar al reabrir; excluye minibooks y `canceled`; cero → "Nada por entregar".
+- **Avatar** (`BR-CUS-15`): `isValidAvatarEmoji` acepta exactamente un emoji (incluidos los compuestos con tono de piel o variantes) y rechaza vacío, texto, varios emojis o emoji + texto.
 - **Ubicación** (`BR-CUS-08`): validar coordenadas (rango, numéricas, ambas o ninguna); construir el enlace de "Abrir en Maps" con la prioridad coordenadas → enlace pegado → búsqueda por dirección → nada; "Ubicación aproximada" cuando la precisión supera 50 m.
 - **Formato regional** (`BR-GEN-07`): semana desde domingo; 12 h/24 h; fechas `dd/mm/aaaa`.
 - **Abibono** (`BR-DEP-*`): autocálculo por método, edición manual, total derivado, esperado/diferencia (faltante, sobrante, cero), nota obligatoria, **donación sin abonos**, recibo obligatorio (una o varias), un abono en un solo Abibono, minibooks parciales, `client_credit` excluido, **reabrir** con motivo (abonos a `collected`, historial).

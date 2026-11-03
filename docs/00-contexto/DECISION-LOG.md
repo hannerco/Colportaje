@@ -280,6 +280,17 @@ El dueño preguntó si una PWA puede tener un botón "agregar ubicación actual"
 
 Consecuencias: ADR-0036 (reemplaza en parte a ADR-0014: el iframe de Google ya no se usa); campos `latitude`, `longitude`, `location_accuracy_m` en `customer`; BR-CUS-08 reescrita; F-30; AF-109..AF-111. **Aviso para quien implemente el dominio:** funciones puras para validar coordenadas y construir el enlace de "Abrir en Maps" (prioridad coordenadas → enlace pegado → dirección en texto).
 
+---
+
+## Ronda 18 — Avatar del cliente con emoji (2026-11-03)
+
+Tras comparar alternativas (iniciales, íconos de Lucide, emoji; el emoji es más sencillo de construir y da más variedad a costa de coherencia visual), el dueño decidió: **"el cliente nuevo puede tener un emoji como avatar, eso ya está decidido."** [D]
+
+| Decisión | Resultado |
+|---|---|
+| Avatar | Emoji opcional por cliente (`avatar_emoji`), fondo neutro, selector que carga al abrirse, "Quitar" para volver al valor por defecto. Sin íconos propios en la v1; fotos en el backlog (ADR-0037, BR-CUS-15). |
+| Pendiente | **Avatar por defecto** sin emoji: ¿iniciales (recomendado) o ícono de persona (lo que mostró el diseño)? → OQ-38. **Selector de emojis:** elegir y probar la librería, y asegurar el funcionamiento sin conexión → SG-10. |
+
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.
 2. **Repositorio de GitHub llamado `colportor`** (en vez de `colportaje`), coherente con el nombre de la app.
