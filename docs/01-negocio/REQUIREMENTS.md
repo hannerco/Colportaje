@@ -32,7 +32,7 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
 - **RQ-INV-02 [F1]** Marco/desmarco favoritos (máx. 6). *Dado* 6 favoritos, *cuando* marco el séptimo, *entonces* se rechaza con aviso.
 - **RQ-INV-03 [F1]** Veo mis libros en físico por título con cantidad e icono de antigüedad; minibooks al final; "Por resolver" aparte.
   - *Dado* un ejemplar recibido hace 0/2/3/6/7/12/13 días, *entonces* su etapa es reciente/reciente/normal/normal/envejeciendo/envejeciendo/antiguo (umbrales por defecto).
-- **RQ-INV-04 [F1]** Veo todos los ejemplares en 4 vistas (Todos, En inventario, Vendidos, Con descuentos y aumentos) con orden y búsqueda, usando la barra de vista común.
+- **RQ-INV-04 [F1]** Veo todos los ejemplares en 4 vistas (Todos, En físico, Vendidos, Con descuentos y aumentos) con orden y búsqueda, usando la barra de vista común.
 - **RQ-INV-05 [F1]** Edito el precio acordado de un ejemplar vendido y veo Precio distinto y Diferencia.
   - *Dado* público 50.000 y acordado 45.000, *entonces* diferencia −5.000 (descuento); *dado* 55.000, *entonces* +5.000 (aumento).
 - **RQ-INV-06 [F1]** Marco "Con novedad" (nota obligatoria) y resuelvo: **Apareció**, **Perdido (lo asumo yo)** o **Eliminar**.
@@ -50,18 +50,21 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
 - **RQ-CUS-01 [F1]** Creo clientes con o sin libros (prospectos).
   - *Dado* un cliente sin ejemplares, *entonces* es prospecto: no aparece en listas por defecto ni en "Total clientes".
 - **RQ-CUS-02 [F1]** La ficha muestra deuda, abonos (con Cancelados plegable), saldo pendiente/a favor, sin programar, fechas de venta derivadas, facturas, fotos, visitas.
-- **RQ-CUS-03 [F1]** Listas Recientes (por **fecha de creación** desc.), Deudores (saldo > 0), Todos, Archivados; selector de orden (Recientes, Última actividad, Nombre, Saldo pendiente); interruptor "Incluir prospectos"; cada fila muestra el saldo pendiente del cliente.
+- **RQ-CUS-03 [F1]** Pestañas Todos, Deudores, Saldados y Archivados; selector de orden (Más recientes por fecha de creación, Última modificación, Nombre, Mayor deuda, Próximo abono) con sentido ascendente/descendente invertible; interruptor "Incluir prospectos"; cada fila muestra el saldo pendiente del cliente.
 - **RQ-CUS-04 [F1]** Búsqueda local difusa sobre nombre, teléfono, información, dirección.
   - *Dado* "María Gómez" guardada, *cuando* busco "maria gomes", *entonces* aparece.
 - **RQ-CUS-05 [F1]** Dirección en texto (manual) + ubicación con coordenadas + enlace de Maps opcional; **"Abrir en Maps"** lleva las coordenadas a la app de mapas del celular.
   - *Dado* un cliente con coordenadas, *entonces* "Abrir en Maps" abre `…/maps/search/?api=1&query=<lat>,<lng>`; *dado* solo enlace pegado, abre ese enlace; *dado* solo dirección en texto, busca esa dirección; *dado* nada, el botón no aparece.
+- **RQ-CUS-11 [F1]** Búsqueda de clientes por nombre, teléfono, información, dirección y libros (BR-CUS-07); "Crear «texto»" desde un resultado vacío abre Nuevo cliente con ese nombre.
+- **RQ-CUS-12 [F1]** Orden por Última modificación (BR-CUS-16) y sentido invertible en todos los criterios (BR-CUS-05).
+- **RQ-CUS-13 [F1]** Factura con N.º opcional y fecha automática editable (BR-CUS-17); barra "Abonado el N % de la deuda" derivada (BR-CUS-10).
 - **RQ-CUS-10 [F1]** Avatar con **emoji** opcional por cliente (ADR-0037).
   - *Dado* un cliente sin emoji, *entonces* se ve el avatar por defecto sobre fondo neutro; *dado* un emoji, *entonces* se ve en la lista, la tabla y la ficha.
   - *Entonces* el selector carga solo al abrirse y permite **quitar** el emoji; solo se acepta **un** emoji; no afecta la búsqueda.
-- **RQ-CUS-09 [F1]** Elegir la ubicación con **"Usar mi ubicación actual"** y un **selector con pin al centro** (ADR-0036).
+- **RQ-CUS-09 [F1]** Elegir la ubicación con el botón **"Elegir en mapa"**, que abre un **selector con pin al centro** centrado en la ubicación actual (ADR-0036).
   - *Entonces* el permiso se pide solo al tocar el botón; el mapa muestra el pin fijo al centro y el círculo de precisión; **Confirmar** guarda las coordenadas del centro.
   - *Dado* precisión > 50 m, *entonces* aparece "Ubicación aproximada" y se puede repetir.
-  - *Dado* permiso negado, *entonces* se ofrece "Elegir en el mapa".
+  - *Dado* permiso negado o sin GPS, *entonces* el selector se abre igual (último punto elegido o vista de Colombia) con un aviso discreto para ubicar el pin a mano.
   - *Entonces* en la ficha el mapa con pin carga **al tocar**, no al abrir la ficha.
 - **RQ-CUS-06 [F1]** **Archivo** un cliente solo si no tiene ejemplares vendidos; sus abonos programados se cancelan con confirmación; sus abonos cobrados siguen en Dinero; lo restauro desde Archivados.
 - **RQ-CUS-07 [F1]** Al crear un cliente, un aviso **no bloqueante** si hay mismo teléfono o nombre casi idéntico.
@@ -72,6 +75,11 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
   - *Dado* que escribo el nombre "Luz Marina", *entonces* el cliente existe (prospecto si no tiene libros). *Dado* que salgo sin nombre, *entonces* no se crea nada.
   - *Cuando* agrego un ejemplar, *entonces* queda `sold` con `customer_id`, `sold_at` y `agreed_price = precio público`; una cuota inicial queda `collected`; los programados `scheduled`.
   - *Entonces* **"Vender" no aparece** en ninguna etiqueta, ruta ni botón.
+- **RQ-SAL-05 [F1]** Cierre de la ficha nueva (BR-CUS-14, AF-112): cabecera con **Descartar** y **Guardar cliente**; pantalla **Resumen** con **Guardar cliente** y **Seguir editando**.
+  - *Dado* que toco Descartar, *entonces* se pide confirmación con lo que se perderá y, al confirmar, el cliente desaparece y sus libros vuelven al inventario.
+  - *Dado* que ya toqué Guardar cliente, *entonces* Descartar ya no existe; Archivar sí.
+  - *Dado* que cierro la app sin tocar ningún botón, *entonces* el cliente queda guardado como estaba.
+- **RQ-SAL-06 [F1]** Plan de abonos automático (BR-PAY-15): *Dado* saldo $140.000 y abonos de $30.000, *entonces* se crean $50.000, $30.000, $30.000, $30.000 (el sobrante va al más próximo) y la fila mayor no lleva marca. Editar un abono a mano acepta cualquier entero.
 - **RQ-SAL-02 [F1]** Un cliente existente compra de nuevo: abro su ficha y uso "Agregar libro"; el saldo se recalcula.
 - **RQ-SAL-03 [F1]** Solo puedo agregar ejemplares `in_stock`; desde la ficha puedo agregar y quitar ejemplares.
 - **RQ-SAL-04 [F1]** Avisos informativos en línea, sin bloqueo.

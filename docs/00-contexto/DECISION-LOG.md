@@ -289,7 +289,53 @@ Tras comparar alternativas (iniciales, íconos de Lucide, emoji; el emoji es má
 | Decisión | Resultado |
 |---|---|
 | Avatar | Emoji opcional por cliente (`avatar_emoji`), fondo neutro, selector que carga al abrirse, "Quitar" para volver al valor por defecto. Sin íconos propios en la v1; fotos en el backlog (ADR-0037, BR-CUS-15). |
-| Pendiente | **Avatar por defecto** sin emoji: ¿iniciales (recomendado) o ícono de persona (lo que mostró el diseño)? → OQ-38. **Selector de emojis:** elegir y probar la librería, y asegurar el funcionamiento sin conexión → SG-10. |
+| Pendiente → resuelto en la ronda 19 | **Avatar por defecto** sin emoji: **ícono de persona** (OQ-38 cerrada). **Selector de emojis:** elegir y probar la librería, y asegurar el funcionamiento sin conexión → SG-10. |
+
+## Ronda 19 — Revisión del diseño de Clientes (lectura y creación) (2026-11-04)
+
+El dueño exportó el módulo Clientes de Claude Design (lista, ficha, Crear, dirección y Elegir ubicación, escritorio y móvil, claro y oscuro) y se hizo el inventario de diferencias con los docs, pregunta por pregunta.
+
+| # | Tema | Decisión |
+|---|---|---|
+| 1 | Estados | **Vencido** (rojo) / **Pagando** (gris) / **Saldado** (verde, el único verde). "Pagando" reemplaza a "Al día" por no ser ambiguo. Reemplaza lo decidido en la ronda 15 (Saldado gris) y en BR-CUS-13. |
+| 2 | Etiqueta "Debe" | **Se conserva** en móvil, sobre el monto, con el ícono del estado: sin ella el número no decía a qué se refería; el dueño probó otras formas y todas eran ambiguas. (El asistente había recomendado quitarla.) |
+| 3 | Pestañas | Todos / Deudores / **Saldados** / Archivados; se solapan con el filtro de estado pero son más sencillas y visuales → RV-07. |
+| 4 | Orden | Más recientes, **Última modificación** (reemplaza a "Última actividad"), Nombre, Mayor deuda, Próximo abono; con **sentido ascendente/descendente** invertible. "Última modificación" = cualquier cambio de la ficha, nunca los automáticos (BR-CUS-16). |
+| 5 | Barra inferior móvil | **Íconos con su nombre** (revierte "solo íconos"). |
+| 6 | Avatar por defecto | **Ícono de persona** (cierra OQ-38); emoji opcional (ADR-0037). |
+| 7 | Guardado de la ficha | Se guarda sola; se conservan **Descartar** y **Guardar cliente** (cabecera) y **Guardar cliente / Seguir editando** en la pantalla **Resumen** (antes "Antes de guardar"). "Descartar" elimina al cliente recién creado con confirmación que resume lo que se pierde; "Archivar" no aparece al crear (ADR-0038). |
+| 8 | Plan de abonos automático | Frecuencia + valor de cada abono + primer abono; abonos = saldo ÷ valor hacia abajo; el sobrante lo suma el **abono más próximo**; múltiplos de $1.000 solo en el cálculo automático, no al editar a mano (ADR-0039, BR-PAY-15). |
+| 9 | Factura | N.º de factura opcional; fecha opcional que se llena sola con el día en que se agrega la foto (BR-CUS-17). |
+| 10 | Barra "Abonado el N %" | Aceptada como valor derivado (BR-CUS-10). |
+| 11 | DT-08 | **Cerrada:** "Nuevo cliente" como ítem del sidebar bajo Hoy + botón en Clientes. |
+| 12 | Ubicación | Un solo botón **"Elegir en mapa"**: abre el selector centrado en la ubicación actual y deja moverla; sin GPS/permiso abre en el último punto elegido o en Colombia (BR-CUS-08). |
+| 13 | Ficha en escritorio | Se abre **Centrada, Lateral o Página completa** (patrón Notion). |
+| 14 | Modo oscuro | El diseño trae claro y oscuro; la v1 sigue la preferencia del sistema, sin interruptor; se implementa después del claro. |
+| 15 | Búsqueda | Nombre, teléfono, información, dirección y **libros** (títulos que el cliente tiene hoy); "Crear «texto»" desde un resultado vacío; "Buscar en Archivados". Filtro por libro → backlog. |
+| 16 | Sin conexión | "Nuevo cliente" visible pero deshabilitado ("Necesita conexión"). |
+
+Pendientes anotados: buscador "Agregar libro del inventario" (datos, agotados, precio de inventario, orden) se define al diseñar Inventario; el diseño no pinta el monto en rojo cuando está vencido (lo marca el ícono) → por confirmar. **Aviso para quien implemente el dominio:** `buildPaymentPlan` (BR-PAY-15), `updated_at` por cambios de ficha (BR-CUS-16), "descartar cliente nuevo" atómico (AF-112), `invoice_number`/`invoice_date`, búsqueda por títulos, orden con sentido y `payment_standing` con `current` = Pagando.
+
+---
+
+## Ronda 20 — Módulo Inventario: qué contiene (2026-11-04)
+
+Antes de diseñar Inventario se cruzaron las tres secciones de Notion del dueño (Libros en físico + Agregar, Inventario y Libros individuales) con los docs.
+
+| # | Tema | Decisión |
+|---|---|---|
+| 1 | Hoy | El dueño quiere que Hoy sea un **resumen general** (calendario de hoy, cobro rápido de abonos, resumen de libros en físico, más por definir) → DT-09; no se define aún. **"Agregar al inventario" NO va en Hoy**, va en Inventario. Inventario sin cifras de dinero por ahora. |
+| 2 | Nombre | **"En físico"** reemplaza a "En inventario" (estado, vista y columnas). |
+| 3 | Ejemplares | La lista muestra Estado, cliente, fechas (recibido/vendido), **precio acordado, diferencia y marca de precio distinto**, **sin sumas de dinero al pie**. Enmienda BR-GOAL-06 (solo esa lista muestra precio acordado y diferencia). Dónde vive la lista (pestaña de Inventario u otra): en debate. |
+| 4 | Variantes | Design debe mostrar variantes de Agregar (cuadrícula vs lista agrupada), de "Por resolver" (DT-03) y de la antigüedad (DT-05) antes de decidir. |
+| 5 | Alcance del chat de diseño | Inventario, Agregar, Ejemplares, Ejemplar, Devolver al líder en lote y el buscador "Agregar libro" de la ficha. "Hacer inventario" y "Devolver + modal de abonos" van aparte. |
+| 6 | Pestañas de Inventario | Inventario tiene **Libros en físico** (por título) y **Ejemplares** (una fila por unidad, con vistas Todos / En físico / Vendidos / Descuentos y aumentos). Es la opción A. |
+| 7 | Identificador del título | Sin decidir (DT-10): ícono de un color por admin, portada o emoji; se ve en variantes cuando las listas estén listas. |
+| 8 | Buscador "Agregar libro" | Tocar un título asigna el **ejemplar más antiguo**; se puede expandir y elegir por número; agotados al final, atenuados y sin tocar. |
+| 9 | Devolver al líder en lote | Por **cantidad por título** (principal) y "Elegir unidades" (secundaria); nota al final. |
+| 10 | Orden de trabajo de diseño | Las exploraciones (Agregar, "Por resolver", antigüedad) en **móvil claro**, luego **escritorio claro**; el oscuro al final. |
+
+---
 
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.
@@ -300,6 +346,7 @@ Tras comparar alternativas (iniciales, íconos de Lucide, emoji; el emoji es má
 6. Los abonos de Abibonos en **borrador** siguen contando como "Por entregar" hasta confirmarse, y vuelven a contar si el Abibono se reabre (AF-105).
 
 ## Correcciones al propio asistente (para no repetir errores)
+0. **(Ronda 19)** Se recomendó quitar la etiqueta "Debe" y renombrar "Pagando" como verde sin conocer el motivo del dueño (el número era ambiguo); además se pasó por alto que el generador de plan de abonos tenía que ser solo del cálculo automático. Se verificó con el dueño antes de editar.
 1. Se afirmó que "Venta" era necesaria; el dueño la rechazó (Q5). No existe.
 2. Se propuso "título + cantidad" al vender; el dueño exige elegir ejemplares uno por uno (Q35).
 3. Se afirmó que el mapa embebido necesitaba clave de pago; se corrigió: el iframe de "Compartir → Insertar mapa" funciona sin clave (Q34/Q38).

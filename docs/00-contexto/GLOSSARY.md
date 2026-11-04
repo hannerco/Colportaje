@@ -16,15 +16,15 @@
 | **Archivar** (cliente) | Reemplaza a "eliminar cliente" |
 | **Devolver a inventario** | Acción de devolución / quitar un libro de un cliente |
 | **Con novedad** | Antes "Sin resolver" |
-| Estado del cliente | `payment_standing`: **Vencido** `overdue` (rojo) / **Al día** `current` (verde; debe algo y va cumpliendo) / **Saldado** `settled` (gris; ya pagó todo); píldora suave con ícono **solo en escritorio**; en móvil, saldo en rojo si vencido (BR-CUS-13) |
+| Estado del cliente | `payment_standing`: **Vencido** `overdue` (rojo) / **Pagando** `current` (gris; debe algo y va cumpliendo) / **Saldado** `settled` (verde, el único; ya pagó todo); píldora suave con ícono en escritorio; en móvil, ícono del estado + etiqueta "Debe" sobre el saldo (BR-CUS-13) |
 | Barra flotante | Barra inferior móvil tipo píldora con 4 íconos y botón de "Nuevo cliente" (persona con "+") aparte |
 | Entregar (botón de Hoy) | Abre Nuevo Abibono precargado con los abonos `collected` libres (BR-DEP-13) |
 | Token de diseño | Variable CSS con un valor visual (tamaño de letra por rol, color, radio…) definida en `src/ui/tokens/tokens.css`; `--font-scale` escala toda la tipografía (BR-GEN-13) |
-| Ubicación (del cliente) | `latitude` / `longitude` + `location_accuracy_m`; se elige con el **selector de ubicación** (pin al centro) o con "Usar mi ubicación actual" (BR-CUS-08) |
-| Avatar (del cliente) | `avatar_emoji`: emoji opcional; sin él, avatar por defecto derivado sobre fondo neutro (BR-CUS-15) |
+| Ubicación (del cliente) | `latitude` / `longitude` + `location_accuracy_m`; se elige con el **selector de ubicación** (pin al centro) que se abre con el botón **"Elegir en mapa"**, centrado en la ubicación actual (BR-CUS-08) |
+| Avatar (del cliente) | `avatar_emoji`: emoji opcional; sin él, avatar por defecto derivado: ícono de persona sobre fondo neutro (BR-CUS-15) |
 | Aviso de vencidos | Fila única "N cobros vencidos ›" en Hoy; abre Dinero ▸ Por cobrar ▸ Vencidos |
 | Microícono de tipo | Único color de categoría: ícono pequeño (solo trazo) que distingue cobro / visita / capacitación |
-| Iconos | Cada sección tiene un ícono propio; en móvil la barra inferior muestra solo íconos (como Instagram) y el título está en la cabecera |
+| Iconos | Cada sección tiene un ícono propio; en móvil la barra inferior muestra íconos con su nombre (label) y el título está en la cabecera |
 
 ## Roles
 | UI / docs | Código | Notas |
@@ -69,7 +69,7 @@
 ## Estados
 | UI | Código | Entidad |
 |---|---|---|
-| En inventario | `in_stock` | `copy` |
+| En físico | `in_stock` | `copy` (antes "En inventario"; renombrado en la ronda 20 para no confundirse con el módulo Inventario) |
 | Vendido | `sold` | `copy` |
 | **Con novedad** (antes "Sin resolver") | `flagged` | `copy` |
 | Perdido (lo asumo yo) | `lost` | `copy` |

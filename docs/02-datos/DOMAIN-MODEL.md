@@ -191,6 +191,8 @@ Efecto: consume `quantity` copies `in_stock` del título (FIFO por `received_at`
 | `path` | `text` | `{owner_id}/{kind}/{uuid}.webp` |
 | `thumb_path` | `text` | miniatura ~15 KB |
 | `bytes` | `integer` | para medir uso (BR-PHO-04) |
+| `invoice_number` | `text null` | solo `customer_invoice`; N.º de factura opcional (BR-CUS-17) |
+| `invoice_date` | `date null` | solo `customer_invoice`; opcional; por defecto el día (America/Bogota) en que se agrega la foto, editable (BR-CUS-17) |
 
 ---
 

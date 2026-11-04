@@ -16,7 +16,7 @@ trabajo de otra conversación; no empieces de cero.
    Supabase (us-east-1) y Vercel (iad1), Tailwind + shadcn/ui, Vitest y Playwright.
 
 3) ESTADO ACTUAL
-   - Documentación completa, en carpetas docs/00-contexto … 06-planificacion, con 37 ADRs.
+   - Documentación completa, en carpetas docs/00-contexto … 06-planificacion, con 39 ADRs.
    - La capa de dominio (src/domain, TypeScript puro con pruebas) la hace OTRA sesión de Claude en la
      misma rama (feat/dominio). NO toques src/. Para commits usa SIEMPRE rutas explícitas
      (git add docs AGENTS.md), nunca git add -A.
@@ -30,8 +30,14 @@ trabajo de otra conversación; no empieces de cero.
      VIVA que se guarda sola (nombre obligatorio; Libros → Abonos → Factura sin orden obligatorio;
      avisos informativos en línea, sin bloqueo). ADR-0035. Un cliente existente compra de nuevo con
      "Agregar libro" en su ficha.
-   - Estados del cliente: Vencido (rojo), Al día (verde), Saldado (gris). Píldora solo en la tabla de
-     escritorio; en móvil, saldo en rojo si vencido y texto gris "Saldado", sin etiqueta "Debe".
+   - Estados del cliente: Vencido (rojo), Pagando (gris), Saldado (verde, el único verde). Píldora
+     en la tabla de escritorio; en móvil, etiqueta "Debe" con ícono del estado sobre el saldo.
+     Pestañas Todos / Deudores / Saldados / Archivados; orden con "Última modificación" y sentido
+     invertible. Barra inferior móvil con íconos y nombre.
+   - Crear cliente (ronda 19, ADR-0038/0039): se guarda solo; "Descartar" y "Guardar cliente" en la
+     cabecera; pantalla "Resumen" con "Guardar cliente" / "Seguir editando"; plan de abonos
+     automático (BR-PAY-15); factura con N.º opcional y fecha automática; DT-08 cerrada (ítem de
+     sidebar bajo Hoy + botón en Clientes); ubicación con un solo botón "Elegir en mapa".
    - Hoy: tarjeta "Por entregar" en color de acento (total, ojo, desglose en una línea) con UN botón
      "Entregar" que abre Nuevo Abibono precargado; una lista cronológica; aviso único de cobros
      vencidos; sin semana ni calendario. "Abibono" se conserva (tooltip "Entrega al líder").
@@ -42,31 +48,24 @@ trabajo de otra conversación; no empieces de cero.
    - Ubicación del cliente: coordenadas + selector con pin al centro (estilo Didi) + "Abrir en Maps"
      con las coordenadas; mapa interactivo propio (Leaflet), sin iframe de Google (ADR-0036).
      Dirección en texto siempre manual.
-   - Avatar del cliente: emoji opcional (DECIDIDO, ADR-0037); sin set de íconos propios en la v1.
+   - Avatar del cliente: emoji opcional (ADR-0037); por defecto, ícono de persona; sin set de íconos
+     propios en la v1.
 
 5) PENDIENTES (todo lo que sigue abierto)
    A. Esperando resultados de Claude Design:
-      1. Módulo Clientes (lectura) exportado: revisarlo y hacer inventario de diferencias. Ya vi en
-         capturas que el diseño cambió cosas respecto a lo decidido: "Pagando" en vez de "Al día",
-         "Saldado" en verde (decidido gris), etiqueta "Debe" sobre el monto en móvil, pestaña
-         "Saldados" y "Recientes" movido a "Orden", barra inferior con texto en todos los ítems
-         (decidido solo íconos) y avatar por defecto con ícono de persona. El dueño dijo que varió
-         wording, arquitectura, convenciones y datos mientras diseñaba: revisa TODO y hazle las
-         preguntas necesarias (cada una con tu recomendación) antes de editar docs.
-      2. DT-08: ubicación de "Nuevo cliente" en escritorio, 4 opciones (A navegación global, B solo en
-         Clientes, C flotante, D ícono en cabecera del sidebar + botón en Clientes) y su equivalente
-         móvil. El dueño NO aceptó aún mi recomendación (D); decide viendo los 4 diseños.
-      3. Pantalla "Elegir ubicación" (pin al centro) y sección dirección de la ficha.
-      4. Siguientes pantallas, en orden: ficha de cliente (viva), Hoy (la spec está lista en el prompt),
-         Inventario y Agregar ("+ / pastilla numérica"), Devolver + modal de abonos, Dinero y Abibono,
-         Minibooks, Calendario (tira de semana y línea de tiempo), Hacer inventario, Admin,
-         Login y Ajustes.
-      5. Decisiones de diseño abiertas: DT-01 a DT-08 (docs/04-diseno/DESIGN-BRIEF.md §13).
+      1. Módulo Clientes revisado en la ronda 19. Falta que Design aplique los prompts de
+         docs/04-diseno/PROMPT-CLAUDE-DESIGN.md «Ronda 19» (orden, botones de Crear, "Elegir en mapa",
+         búsqueda por libros) y revisar el resultado.
+      2. Siguientes pantallas, en orden: Hoy (la spec está lista en el prompt), Inventario y Agregar
+         ("+ / pastilla numérica"; ahí se define el buscador "Agregar libro del inventario"),
+         Devolver + modal de abonos, Dinero y Abibono, Minibooks, Calendario (tira de semana y línea
+         de tiempo), Hacer inventario, Admin, Login y Ajustes.
+      3. Decisiones de diseño abiertas: DT-01 a DT-07 (DT-08 cerrada; docs/04-diseno/DESIGN-BRIEF.md §13).
    B. Por confirmar con el dueño:
-      - OQ-38: avatar por defecto sin emoji (iniciales, recomendado, o ícono de persona).
+      - OQ-39: el diseño no pinta el monto en rojo cuando está vencido (lo marca el ícono).
       - OQ-30..37: supuestos que tomó la sesión del dominio (OPEN-QUESTIONS §6).
-      - RV-01..05: nombres Catálogo/Libros/Ejemplar/Título, barra de meta, "Abibono", orden de recorte
-        de abonos, tamaño de letra en móvil.
+      - RV-01..05 y RV-07: nombres Catálogo/Libros/Ejemplar/Título, barra de meta, "Abibono", orden de
+        recorte de abonos, tamaño de letra en móvil, pestañas solapadas con el filtro de estado.
    C. Seguimientos:
       - SG-01 repetir la medición de latencia desde un celular con datos móviles (us-east-1 vs otras).
       - SG-02 cuentas nuevas de Supabase y Vercel (el dueño las crea; guía en docs/05-operacion/).
@@ -86,7 +85,9 @@ trabajo de otra conversación; no empieces de cero.
       coordenadas y construir el enlace de "Abrir en Maps", BR-CUS-08), isValidAvatarEmoji
       (BR-CUS-15), regla de existencia de la ficha viva (nombre obligatorio, BR-CUS-14), y los ya
       anotados: cantidad "+ / pastilla" (BR-COPY-02), calendario/recordatorios y validación de
-      Títulos.
+      Títulos. Nuevos de la ronda 19: buildPaymentPlan (BR-PAY-15), updated_at por cambios de
+      ficha (BR-CUS-16), descartar cliente nuevo de forma atómica (AF-112), invoice_number/invoice_date
+      (BR-CUS-17), búsqueda por títulos (BR-CUS-07), orden con sentido y `current` = Pagando.
 
 6) CÓMO TRABAJAR CONMIGO
    - Cuando te traiga un diseño (HTML exportado de Claude Design, normalmente en ~/Downloads), ábrelo,

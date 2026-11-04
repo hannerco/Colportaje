@@ -5,7 +5,7 @@ Estado: Aceptado · Fecha: 2026-11-03
 El dueño quiere que el colportor pueda personalizar a cada cliente con un ícono, con un valor por defecto. Se compararon tres tipos (iniciales, ícono de un set propio, emoji) y se concluyó que el emoji es lo más sencillo de construir (se guarda un texto y el selector ya existe hecho) y da mucha más variedad, a costa de cierta coherencia visual. El primer diseño de Claude Design ya mostraba clientes con emoji. Decisión del dueño: **"el cliente nuevo puede tener un emoji como avatar, eso ya está decidido."**
 
 ## Decisión
-- Cada cliente puede tener un **emoji** como avatar (`customer.avatar_emoji`, un solo emoji). Sin emoji, se muestra el **avatar por defecto**, que es un valor **derivado** y no se guarda (iniciales o ícono de persona: **por confirmar, OQ-38**).
+- Cada cliente puede tener un **emoji** como avatar (`customer.avatar_emoji`, un solo emoji). Sin emoji, se muestra el **avatar por defecto**, que es un valor **derivado** y no se guarda (**ícono de persona** sobre fondo neutro; decidido por el dueño en la ronda 19, cierra OQ-38).
 - **No** hay set de íconos propios para clientes en la v1 (Lucide queda para la interfaz). **Fotos de perfil**: backlog.
 - El emoji se elige con un **selector** (candidato: `frimousse`, sin estilos propios y ligero; SG-10) que **se carga solo al abrirse**; se puede **quitar** para volver al avatar por defecto.
 - Se dibuja con los **emojis del sistema** (cero peso y funciona sin conexión); que se vean distinto entre iPhone, Android y Windows es **aceptado**. El fondo del avatar es **neutro**: el color del emoji es contenido del usuario, no decoración de la interfaz (no contradice la lista negra anti-IA).
@@ -23,4 +23,4 @@ El dueño quiere que el colportor pueda personalizar a cada cliente con un ícon
 - Los datos del selector deben quedar guardados tras la primera apertura para que funcione sin conexión (SG-10).
 
 ## Referencias
-BR-CUS-15 · RQ-CUS-10 · DECISION-LOG ronda 18 · OPEN-QUESTIONS OQ-38, SG-10 · ADR-0029, ADR-0032
+BR-CUS-15 · RQ-CUS-10 · DECISION-LOG ronda 18 · OPEN-QUESTIONS SG-10 (OQ-38 cerrada) · ADR-0029, ADR-0032

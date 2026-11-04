@@ -258,9 +258,11 @@ create table photo (
   kind photo_kind not null,
   customer_id uuid references customer, leader_deposit_id uuid references leader_deposit,
   path text not null, thumb_path text, bytes integer,
+  invoice_number text, invoice_date date,   -- solo kind = 'customer_invoice' (BR-CUS-17)
   created_at timestamptz not null default now(), deleted_at timestamptz,
   check ((kind = 'deposit_receipt') = (leader_deposit_id is not null)),
-  check ((kind <> 'deposit_receipt') = (customer_id is not null))
+  check ((kind <> 'deposit_receipt') = (customer_id is not null)),
+  check (kind = 'customer_invoice' or (invoice_number is null and invoice_date is null))
 );
 ```
 

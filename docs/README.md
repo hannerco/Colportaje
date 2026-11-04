@@ -28,11 +28,12 @@ docs/
 │  ├─ CONVENTIONS.md              idioma, nombres, TypeScript, UI, git, cómo trabaja un agente
 │  ├─ TESTING.md                  estrategia y casos de prueba
 │  ├─ SECURITY.md                 amenazas, secretos, políticas
-│  └─ adr/                        decisiones de arquitectura (ADR-0001 … ADR-0037) + README con índice
+│  └─ adr/                        decisiones de arquitectura (ADR-0001 … ADR-0039) + README con índice
 ├─ 04-diseno/
 │  ├─ DESIGN-BRIEF.md             brief v2 para Claude Design (estilo Notion, lista negra anti-IA, densidad, wireframes)
 │  ├─ PROMPT-CLAUDE-DESIGN.md     prompt v3 listo para pegar (empieza por Clientes)
-│  └─ referencias/                imágenes de referencia del dueño (inspiración, no copiar)
+│  ├─ HOY-BORRADOR.md             lo que el dueño quiere en Hoy (sin definir, DT-09)
+│  └─ referencias/                imágenes de referencia del dueño (inspiración, no copiar); portadas/ = portadas de ejemplo de libros (DT-10)
 ├─ 05-operacion/                  PUESTA EN MARCHA
 │  ├─ DEPLOYMENT.md               plataformas, entornos, migraciones, backups, confiabilidad
 │  ├─ GUIA-DESPLIEGUE-PASO-A-PASO.md   guía explicada para el dueño (Supabase, Vercel, GitHub)

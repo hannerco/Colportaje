@@ -58,10 +58,9 @@ vencido/error/destructivo. Colores permitidos y SOLO en estos lugares:
  · microíconos (solo el trazo, sin círculo) que distinguen el tipo de evento: cobro, visita,
    capacitación;
  · ESTADO DEL CLIENTE como pequeña píldora suave con ícono, SOLO en la tabla de escritorio:
-   "Vencido" (rojo), "Al día" (verde: debe algo pero va cumpliendo), "Saldado" (gris: ya pagó
-   todo). En MÓVIL no hay píldora: el saldo se muestra en ROJO si hay algo vencido y, si el
-   cliente está saldado, el texto gris "Saldado" en lugar de un monto en cero. Ningún otro
-   lugar usa verde.
+   "Vencido" (rojo), "Pagando" (gris: debe algo pero va cumpliendo), "Saldado" (verde: ya pagó
+   todo). En MÓVIL no hay píldora: sobre el saldo va la etiqueta gris "Debe" con el ícono del
+   estado (Pagando gris, Vencido rojo, Saldado verde). Saldado es el único uso de verde.
 Estados de abono y categorías de libro: en gris.
 
 TIPOGRAFÍA (el texto pequeño está PROHIBIDO): móvil: cifra 36 · título 28 · TEXTO PRINCIPAL 17
@@ -97,8 +96,8 @@ PANTALLA 1 — CLIENTES
   · pestañas de vista como píldoras desplazables: Recientes · Deudores · Todos · Archivados
     (con conteo tenue); selector de orden y el interruptor "Incluir prospectos" dentro del
     filtro, no sueltos en pantalla;
-  · lista como en la Referencia 3 (sin tarjetas por fila, solo separación y aire): avatar de
-    iniciales neutro a la izquierda · NOMBRE (17) · debajo, en gris (15), el LIBRO VENDIDO
+  · lista como en la Referencia 3 (sin tarjetas por fila, solo separación y aire): avatar
+    (emoji o ícono de persona) a la izquierda · NOMBRE (17) · debajo, en gris (15), el LIBRO VENDIDO
     (título del libro; si hay varios, el más reciente + "+2") · a la derecha el SALDO PENDIENTE
     (17), en rojo si el cliente tiene algo vencido, o el texto gris "Saldado" si ya pagó todo; los
     prospectos muestran "Prospecto" en gris en lugar del libro y nada a la derecha. Una sola señal de estado por fila (el rojo del saldo);
@@ -109,8 +108,8 @@ PANTALLA 1 — CLIENTES
  ESCRITORIO (1440 px): sidebar + panel blanco con título "Clientes 48" y UN botón oscuro
   "+ Nuevo cliente"; pestañas de vista (píldoras con conteo); fila de herramientas con búsqueda
   y botones-píldora con ícono (Estado, Libros, Orden); tabla con columnas: Cliente (avatar
-  iniciales + nombre) · Teléfono · Libro(s) (título + "+N") · Saldo · Último abono · Estado
-  (píldora roja/verde/gris con ícono: Vencido · Al día · Saldado); filas altas y aireadas; al elegir un cliente se abre un panel de detalle a
+  + nombre) · Teléfono · Libro(s) (título + "+N") · Saldo · Último abono · Estado
+  (píldora con ícono: Vencido rojo · Pagando gris · Saldado verde); filas altas y aireadas; al elegir un cliente se abre un panel de detalle a
   la derecha (lista + detalle). NO añadas fila de tarjetas de métricas ni totales de dinero
   (el total de deuda no se muestra por defecto).
 
@@ -205,10 +204,118 @@ Pegar en el mismo proyecto de Claude Design. **Pegar todo lo que sigue:**
 Diseña la pantalla "Elegir ubicación" del cliente (móvil 390 y escritorio 1440), con el mismo estilo del
 proyecto. Mapa a pantalla completa en estilo neutro y claro (sin colores llamativos). PIN FIJO al centro
 de la pantalla (el mapa se mueve por debajo, como al pedir un carro en Didi). Círculo de precisión del
-GPS alrededor del punto. Un botón secundario "Usar mi ubicación actual" que recentra el mapa. Un solo
+GPS alrededor del punto. Un botón circular que recentra el mapa en la ubicación actual. Un solo
 botón principal "Confirmar". Un aviso discreto "Ubicación aproximada" cuando la precisión es baja (no
 bloquea). Muestra también: (1) en la ficha de cliente, la sección Dirección con el campo de texto, un
-botón "Usar mi ubicación actual", y el mapa pequeño con pin que se carga al tocarlo, con el botón
-"Abrir en Maps" (lleva las coordenadas a la app de mapas); (2) estado de permiso negado con la opción
-"Elegir en el mapa". Sin textos explicativos. Un solo botón principal por pantalla.
+botón único "Elegir en mapa" (se abre centrado en la ubicación actual), y el mapa pequeño con pin que se carga al tocarlo, con el botón
+"Abrir en Maps" (lleva las coordenadas a la app de mapas); (2) estado de permiso negado: el mapa se abre igual con un aviso discreto. Sin textos explicativos. Un solo botón principal por pantalla.
+````
+
+
+## Ronda 19 — ajustes tras revisar Clientes (2026-11-04)
+Prompts ya entregados a Claude Design, en este orden. Dejan el diseño alineado con ADR-0038, ADR-0039 y BR-CUS-05/07/08/13/14. (El "Resumen" y el generador de plan de abonos no necesitan prompt: el título ya quedó como "Resumen" y el cálculo es de código.)
+
+### 19.1 Orden: "Última modificación" y sentido
+````
+En la lista de Clientes (escritorio y móvil, claro y oscuro), cambia el selector "Ordenar por":
+opciones Más recientes (por fecha de creación), Última modificación (NUEVA), Nombre (A–Z), Mayor deuda
+y Próximo abono. Junto al criterio, un control de ícono con flecha arriba/abajo (aria-label "Invertir
+orden") para alternar ascendente/descendente. Sentidos por defecto: Más recientes y Última modificación
+descendente, Nombre ascendente, Mayor deuda descendente, Próximo abono ascendente. El botón de la barra
+muestra criterio y sentido (p. ej. "Orden: Última modificación ↓") y el sentido es legible también en
+texto accesible. Escritorio: dentro del menú "Ordenar por". Móvil: en la hoja "Filtrar y ordenar".
+Si el orden difiere del predeterminado, aparece el chip de filtros activos con "Restablecer".
+Solo tokens del design system; un solo botón principal por pantalla.
+````
+
+### 19.2 Botones de Crear cliente
+````
+En Crear cliente (escritorio y móvil; llena y vacía; claro y oscuro): todo se guarda solo.
+Cabecera: "Descartar" (secundario) y "Guardar cliente" (el único botón principal, deshabilitado sin
+nombre); conserva el indicador "Borrador guardado". Reemplaza el actual "Cancelar" por "Descartar".
+Pantalla "Resumen": "Guardar cliente" (principal) y "Seguir editando". "Descartar" abre SIEMPRE una
+confirmación (modal en escritorio, hoja inferior en móvil): título "¿Descartar a <nombre>?", lista
+corta de lo que se perderá solo con lo que exista (p. ej. "Se quitarán 2 libros y 1 abono"; sin nada:
+"Se quitará este cliente."), botones "Seguir editando" (principal) y "Descartar" (destructivo, rojo
+semántico existente). "Archivar" no aparece en la creación; después de "Guardar cliente" la ficha
+normal lo tiene en "Más acciones" y "Descartar" ya no existe. Diseña la confirmación con y sin contenido
+a perder, móvil y escritorio, claro y oscuro. Solo tokens.
+````
+
+### 19.3 Un solo botón "Elegir en mapa"
+````
+En la sección Dirección de la ficha (Crear y ficha existente; móvil y escritorio; claro y oscuro) y en
+"Elegir ubicación": deja UN SOLO botón secundario "Elegir en mapa" y elimina "Mi ubicación". Al tocarlo
+se abre "Elegir ubicación" centrado en la ubicación actual; el permiso se pide solo en ese toque; el
+usuario puede mover el mapa bajo el pin fijo y "Confirmar". Se conserva el botón circular para recentrar.
+Estados: buscando ("Buscando tu ubicación…" con el mapa ya abierto y el pin movible), encontrada,
+aproximada (>50 m, "Ubicación aproximada" + "Repetir"), permiso negado (mapa en vista general con aviso
+discreto "Sin permiso de ubicación. Ubica el pin a mano."; sin botón "Elegir en el mapa"), sin señal
+("No hay señal de GPS. Ubica el pin a mano." + "Reintentar") y sin conexión ("Sin conexión. Guardar
+necesita conexión."). Con ubicación guardada, "Cambiar" abre el selector centrado en el punto guardado;
+"Quitar" y "Abrir en Maps" no cambian. Vista inicial sin GPS: último punto elegido o, si no hay, Colombia.
+Un solo botón principal: "Confirmar". Solo tokens.
+````
+
+### 19.4 Búsqueda por libros
+````
+En el estado "sin resultados" de Clientes (escritorio y móvil, claro y oscuro), cambia el texto
+secundario por "Busqué por nombre, teléfono, información, dirección y libros." y ajusta el placeholder
+del buscador si menciona los campos. No cambies nada más.
+````
+
+## Prompt — módulo Inventario (ronda 20)
+Pegar en el chat nuevo de diseño (con la skill `colportor-diseno`, que ya trae el estilo). Adjuntar `04-diseno/referencias/portadas/` solo para la exploración del identificador (DT-10), cuando toque. **Pegar todo lo que sigue:**
+
+````
+Diseña el módulo INVENTARIO de Colportor, en el mismo proyecto y con el mismo sistema de diseño de
+Clientes (tokens, sin tamaños ni colores literales). Primero MÓVIL (390) en CLARO; después ESCRITORIO
+(1440) en CLARO; el modo oscuro se hace al final, cuando todo esté resuelto. Sin textos explicativos y un
+solo botón principal por pantalla. No inventes reglas: lo que no esté aquí, déjalo como placeholder.
+
+PANTALLAS
+1) INVENTARIO. Dos vistas arriba: "Libros en físico" (principal, por título) y "Ejemplares".
+   Acción principal única: "Agregar". Acción secundaria: "Devolver al líder".
+   - "Libros en físico": una fila por Título con la CANTIDAD de ejemplares en físico, con el indicador de
+     antigüedad. Los minibooks van al final, aparte. Sección "Por resolver" para los ejemplares con novedad.
+     SIN cifras de dinero en esta pantalla. Sin título ni subtítulos decorativos.
+   - Cada Título necesita un identificador visual a la izquierda. Aún NO está decidido (ícono, portada o
+     emoji): usa un cuadrado neutro de tamaño fijo como espacio reservado. No uses emojis.
+2) EJEMPLARES (una fila por unidad física). Vistas: Todos / En físico / Vendidos / Con descuentos y
+   aumentos. Orden y búsqueda con la barra de vista común (orden: recibido, vendido, título, precio
+   acordado, diferencia). Cada fila: título, número (#12, con poca prominencia), estado, cliente, fechas
+   (recibido y vendido), precio acordado, diferencia y marca de "precio distinto". SIN sumas de dinero al
+   pie. En escritorio es una tabla; en móvil, filas de máximo 2 líneas con una señal de estado.
+3) EJEMPLAR (detalle): título, número, estado, antigüedad, cliente, precio acordado (editable),
+   precio distinto y diferencia, "Recibido el" (propiedad editable en línea, DISCRETA, no un botón
+   destacado), historial. Acciones: editar precio, devolver, marcar con novedad (nota obligatoria),
+   eliminar (con nota).
+4) AGREGAR AL INVENTARIO. Búsqueda arriba, favoritos (estrella, máximo 6) como botones de un toque,
+   lista de títulos activos con "+" al final de cada fila; tras tocar, el "+" se vuelve una pastilla con el
+   número agregado en esa sesión; tocarla permite escribir la cantidad total. Aviso con "Deshacer" unos
+   segundos. Chip discreto "Hoy ▾" para indicar un día pasado. Mismo patrón para libros y minibooks.
+5) DEVOLVER AL LÍDER (en lote). Forma principal: cantidad por título con la misma pastilla numérica (se
+   devuelven los más antiguos). Opción secundaria: "Elegir unidades" (casillas por ejemplar). Nota al
+   final, antes de confirmar. Se puede deshacer desde el historial con una nota.
+6) BUSCADOR "AGREGAR LIBRO" DE LA FICHA DE CLIENTE (reemplaza el aviso "Definir al diseñar Inventario").
+   Una fila por título con "N en mano", categoría y precio de inventario. Tocar un título asigna el
+   ejemplar MÁS ANTIGUO y muestra su antigüedad; un control para expandir el título y elegir otro por
+   número. Los agotados van AL FINAL, atenuados y sin poder tocarse. Muestra cómo se marca un descuento
+   o aumento sobre el precio de inventario ("Inventario $85.000 · Descuento $5.000 · Restaurar").
+
+EXPLORACIONES (sin decidir; hazlas SOLO en móvil y claro primero, luego escritorio claro). Para CADA una
+de estas tres decisiones, diseña 2 CONCEPTOS distintos y, de cada concepto, 2 FORMAS VISUALES (4
+propuestas por decisión; imagínalas tú). Márcalas con una etiqueta de nombre, no con texto explicativo.
+ A) Pantalla AGREGAR: cuadrícula de botones por título (como en Notion, con "Religiosos" plegado)
+    vs. lista buscable agrupada por categoría (Culturales, Religiosos plegado, Minibooks al final).
+ B) "POR RESOLVER" (ejemplares con novedad): dos conceptos de cómo se ve y se resuelve. Salidas
+    permitidas: "Apareció", "Perdido (lo asumo yo)" y "Eliminar". NINGÚN texto, tooltip ni etiqueta
+    puede insinuar que el líder pueda asumir una pérdida.
+ C) ANTIGÜEDAD: dos conceptos de indicador. Etapas: Reciente (0–2 días), Normal (3–6), Envejeciendo
+    (7–12), Antiguo (13 o más). Ícono sobrio de trazo, NO una fruta ni un color de categoría.
+Cuando el dueño elija, se completan escritorio y oscuro. El identificador visual del título (ícono,
+portada o emoji) se explora después, con las listas ya diseñadas.
+
+REGLAS DE COPY: "En físico" (nunca "En inventario") para el estado de un ejemplar en tu poder.
+"Ejemplar" = unidad; "Título" = el libro como producto. Dinero en COP sin decimales.
 ````

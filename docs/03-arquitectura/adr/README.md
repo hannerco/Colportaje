@@ -43,6 +43,8 @@ Un ADR por decisión relevante. Formato: contexto → decisión → alternativas
 | 0035 | "Nuevo cliente" con ficha viva (reemplaza al asistente "+ Vender") | Aceptado |
 | 0036 | Ubicación del cliente: coordenadas, selector con pin y mapa interactivo | Aceptado |
 | 0037 | Avatar del cliente con emoji opcional | Aceptado |
+| 0038 | Guardado, resumen y descarte de la ficha de cliente nueva | Aceptado |
+| 0039 | Plan de abonos automático | Aceptado |
 | 0033 | Recorte, motivos de cancelación, prórroga y signo del saldo a favor | Aceptado |
 
 ## Plantilla

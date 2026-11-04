@@ -6,7 +6,7 @@ El dueño pidió un botón "agregar ubicación actual" que cargue la ubicación 
 
 ## Decisión
 - El cliente guarda **coordenadas** (`latitude`, `longitude`) y la **precisión** del GPS al capturarlas. La **dirección en texto sigue siendo manual** (no se rellena sola); el enlace de Maps pegado a mano sigue siendo opcional.
-- **"Usar mi ubicación actual"** (API de geolocalización del navegador, solo HTTPS) pide el permiso **solo al tocar el botón** y abre el **selector de ubicación**; **"Elegir en el mapa"** abre el mismo selector sin GPS.
+- **"Elegir en mapa"** es el **único botón** (ronda 19; antes "Usar mi ubicación actual" + "Elegir en el mapa"): usa la API de geolocalización del navegador (solo HTTPS), pide el permiso **solo al tocar el botón** y abre el **selector de ubicación** centrado en la ubicación actual, donde el usuario puede moverla. Sin permiso o sin GPS, el selector se abre igual (último punto elegido o vista de Colombia).
 - **Selector con pin al centro** (patrón Didi/Uber): mapa interactivo a pantalla completa, pin fijo y mapa que se mueve; círculo de precisión; botón para recentrar en el GPS; **Confirmar** guarda las coordenadas del centro. Si la precisión es peor de ~50 m, aviso "Ubicación aproximada" y opción de repetir.
 - **Un solo mapa interactivo** (Leaflet; proveedor de teselas por decidir) sirve para elegir y para **ver** la ubicación en la ficha (carga al tocar). El **iframe de Google ya no se usa**.
 - **"Abrir en Maps"** lleva las coordenadas a la app de mapas del celular (`https://www.google.com/maps/search/?api=1&query=lat,lng`). Prioridad: coordenadas → enlace pegado → búsqueda por la dirección en texto.

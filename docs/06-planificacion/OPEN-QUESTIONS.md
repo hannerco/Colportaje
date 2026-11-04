@@ -37,9 +37,14 @@ Si aparece una duda nueva, se agrega aquí con ID `OQ-*` y un supuesto por defec
 | RV-04 | Orden de recorte de abonos programados (BR-PAY-13: más próximo tras abono extra, más lejano tras devolución) | Sugerencia modificable por el usuario en el modal | Si resulta incómodo |
 | RV-05 | **Tamaño de la letra en móvil** | Escala inicial: texto principal 17 px, secundario 15, mínimo 13 (basada en iOS/Material). El dueño siente que en los diseños el móvil se ve grande | Al ver la app en un dispositivo real: ajustar `--font-scale` o los tokens por rol (BR-GEN-13); cambiarlo es una sola variable |
 | RV-06 | ~~Flujo de venta: asistente vs ficha viva~~ | **Resuelto (2026-11-03):** el dueño habló con usuarios del Notion y decidió **ficha viva** ("Nuevo cliente"); ya no hay "Vender" (ADR-0035) | — |
+| RV-07 | **Pestañas del cliente solapadas con el filtro de estado** (Todos / Deudores / Saldados / Archivados vs. filtro Pagando / Vencido / Saldado) | Se conservan por ser lo más sencillo y visual (ronda 19) | Si resultan redundantes o confusas en la siguiente versión |
 
 ## 3. Decisiones de diseño
-Ver `04-diseno/DESIGN-BRIEF.md` §13: DT-01 (total de deuda en Clientes), DT-02 (barra de meta), DT-03 ("Con novedad"), DT-04 (íconos), DT-05 (antigüedad), DT-06 (barra de vista), DT-07 (tonos de los microíconos de tipo de evento), **DT-08 (ubicación de "Nuevo cliente" en escritorio: 4 opciones)**.
+Ver `04-diseno/DESIGN-BRIEF.md` §13: DT-01 (total de deuda en Clientes), DT-02 (barra de meta), DT-03 ("Con novedad"), DT-04 (íconos), DT-05 (antigüedad), DT-06 (barra de vista), DT-07 (tonos de los microíconos de tipo de evento), **DT-09 (redefinir "Hoy": ver abajo)**, **DT-10 (identificador visual del Título)**. **DT-08 cerrada** (ronda 19): ítem del sidebar bajo Hoy + botón en Clientes.
+
+**DT-09 · Redefinir "Hoy" (2026-11-04).** El dueño quiere que Hoy sea un **resumen general**. A grandes rasgos debe tener: (1) lo que hay en el **calendario para hoy**; (2) una **vista fácil de abonos** para chequearlos y **cobrarlos rápido**; (3) un **resumen de los libros en físico**; (4) otras cosas **sin definir**. Esto **reemplaza en parte** la spec minimalista de BR-CAL-07/08 y del prompt («Spec de HOY»); no está decidido el detalle, se define cuando se diseñe Hoy. **Agregar al inventario NO va en Hoy**: vive en Inventario. Detalle y preguntas pendientes: `04-diseno/HOY-BORRADOR.md`.
+
+**DT-10 · Identificador visual del Título (2026-11-04).** Cada título debe poder reconocerse en las listas. Candidatos: **ícono** de un solo color gestionado por el admin (la inclinación del dueño), **portada** (BR-TIT-02 ya tiene `imagen`) o **emoji** (lo que usaba en Notion). Se decide **cuando las listas ya estén diseñadas**, viendo variantes de Claude Design con las tres opciones. Las portadas de ejemplo están en `04-diseno/referencias/portadas/` y tienen proporciones distintas (673×995, 600×600, 500×667, 373×551), así que cualquier uso de la portada exige recorte a una proporción fija.
 
 ## 4. Backlog declarado (explícito por el dueño)
 - **Campañas** (tabla, filtros, metas por campaña, apartado de Metas ampliado: "en la nueva etapa tendrá muchas cosas").
@@ -52,6 +57,8 @@ Ver `04-diseno/DESIGN-BRIEF.md` §13: DT-01 (total de deuda en Clientes), DT-02 
 - Posible eliminación de totalizadores (cada uno es una pieza registrada).
 - Migración de fotos a Cloudflare R2 al 70 % de uso.
 - Vista de clientes vencidos.
+- **Filtro de clientes por libro** (hoy la búsqueda ya encuentra por título, BR-CUS-07).
+- Buscador "Agregar libro del inventario" de la ficha: definir con el diseño de Inventario (datos por libro, agotados, precio de inventario, búsqueda y orden).
 - Invitaciones por correo automáticas (con dominio + SMTP propio).
 - Offline de escritura y push (**fase 2**) y vista de líder (**fase 3**).
 
@@ -98,5 +105,6 @@ No bloquean nada y el código ya los aplica; se anotan aquí para que el dueño 
 | OQ-34 | La fecha de una entrada de minibooks acepta cualquier día válido (no se restringe a no futura) y una venta normal ignora el cliente que se envíe | `minibook.ts` | Por confirmar |
 | OQ-35 | Al borrar una entrada de minibooks, el historial de cada ejemplar registra `returned` con motivo `wrong_registration` (no cuenta como devolución de un cliente) | `minibook.ts` (`deleteMinibookSale`) | Por confirmar |
 | OQ-36 | Borrar un abono cobrado se trata como disparador de BR-PAY-13 con orden "más próximo" y motivo `manual` | `schedule-excess.ts` | Por confirmar |
-| OQ-38 | **Avatar por defecto sin emoji:** ¿**iniciales** del nombre (recomendado) o **ícono de persona** (lo que mostró el diseño actual)? Hasta confirmar, el dominio no lo almacena (es derivado) | `BR-CUS-15` | **Por confirmar con el dueño** |
+| OQ-38 | **Avatar por defecto sin emoji:** ícono de persona (es derivado, el dominio no lo almacena) | `BR-CUS-15` | **Resuelto (ronda 19)** |
+| OQ-39 | El diseño no pinta el monto en rojo cuando el cliente está vencido (lo marca el ícono de estado); BR-CUS-13 lo anota como pendiente | `BR-CUS-13` | **Por confirmar con el dueño** |
 | OQ-37 | Pendiente de pedir: la cantidad "+ / pastilla" (BR-COPY-02), el calendario (visitas, capacitaciones y recordatorios) y la validación de Títulos (BR-TIT-02/04) aún no están en el dominio | — | Pendiente |

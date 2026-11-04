@@ -271,9 +271,17 @@ Una sola acción —**"Devolver a inventario"** en la ficha del cliente (o en el
 - *Situación:* se abre "Nuevo cliente" y se sale sin escribir el nombre.
 - *App:* **no se crea nada**. Con nombre escrito, el cliente ya existe aunque no tenga libros (prospecto).
 
+### AF-112 Descartar un cliente recién creado
+- *Situación:* el usuario toca **"Descartar"** en la cabecera de la ficha nueva (antes de tocar "Guardar cliente").
+- *App:* pide confirmación con lo que se perderá ("Se quitarán 2 libros y 1 abono"; sin nada, "Se quitará este cliente"). Si confirma: elimina al cliente, sus libros vuelven a `in_stock` (como en BR-COPY-06), se quitan sus abonos y fotos. Si elige "Seguir editando", no pasa nada. Tras "Guardar cliente" ya no existe "Descartar": se usa Archivar (BR-CUS-09). "Archivar" no aparece mientras se crea.
+
+### AF-113 Plan automático que no divide exacto
+- *Situación:* el saldo no es múltiplo del valor de cada abono, o el saldo no es múltiplo de $1.000.
+- *App:* número de abonos = saldo ÷ valor hacia abajo; el sobrante lo suma el abono más próximo (BR-PAY-15). Si el saldo es menor que el valor, se crea un solo abono por el saldo. La fila del abono mayor no lleva marca.
+
 ### AF-109 Sin permiso de ubicación o sin señal de GPS
 - *Situación:* el usuario niega el permiso, o está en un lugar donde el GPS no responde.
-- *App:* mensaje breve y la opción **"Elegir en el mapa"** (mueve el pin a mano). El permiso se pide solo al tocar el botón. En iPhone el aviso puede repetirse en cada apertura (ADR-0036).
+- *App:* el selector se abre igual (último punto elegido o vista de Colombia) con un aviso breve; el usuario ubica el pin a mano. El permiso se pide solo al tocar el botón. En iPhone el aviso puede repetirse en cada apertura (ADR-0036).
 
 ### AF-110 Ubicación aproximada
 - *App:* si la precisión del GPS es peor de ~50 m, aviso discreto **"Ubicación aproximada"**; el usuario puede repetir la captura o mover el pin antes de confirmar.

@@ -35,7 +35,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 - **Reglas:** BR-INV-03, BR-COPY-13.
 
 ## F-07 Lista de ejemplares con vistas
-- **Pasos:** Inventario → Ejemplares → pestañas **Todos / En inventario / Vendidos / Con descuentos y aumentos**; orden y búsqueda con la **barra de vista común**.
+- **Pasos:** Inventario → Ejemplares → pestañas **Todos / En físico / Vendidos / Con descuentos y aumentos**; orden y búsqueda con la **barra de vista común**.
 - **Reglas:** BR-COPY-12.
 
 ## F-08 Detalle de un ejemplar
@@ -52,11 +52,12 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 - **Contexto:** botón global **"Nuevo cliente"** (persona con "+"); cubre al cliente nuevo y al prospecto. Para uno existente: Clientes → ficha → "Agregar libro". Reemplaza al antiguo asistente "+ Vender" (ADR-0035).
 - **Pasos:** el botón abre una **ficha en blanco que se guarda sola**. Se escribe el **nombre** (obligatorio; aviso no bloqueante de posible duplicado, AF-70) y teléfono. Luego, en línea y en el orden habitual (no obligatorio):
   1. **Libros:** "+ Agregar libro" → ejemplares `in_stock` agrupados por título (número y antigüedad), **uno por uno**; el precio acordado nace igual al precio público y se edita en el ejemplar (F-08).
-  2. **Abonos:** "+ Cuota inicial" (monto, método) → `collected`; "+ Programar" (monto, fecha) → `scheduled`; "+ Extra".
-  3. **Factura:** "+ Foto" (una o varias; también después).
-  4. Información, dirección y fotos: normalmente de noche.
+  2. **Abonos:** "+ Cuota inicial" (monto, método) → `collected`; **plan automático** (frecuencia, valor de cada abono, primer abono → tabla "Así quedan los abonos", BR-PAY-15) o "+ Programar" uno a uno (monto, fecha) → `scheduled`; "+ Extra". Las fechas se cambian con un calendario y "Correr también los siguientes".
+  3. **Factura:** N.º de factura (opcional) y "+ Foto" (una o varias; también después); la fecha se llena sola con el día en que se agrega la foto (BR-CUS-17).
+  4. Visitas, información, dirección y fotos: normalmente de noche.
+  5. **Cierre:** la pantalla **Resumen** muestra qué se metió y qué falta; **"Guardar cliente"** cierra la ficha y **"Seguir editando"** vuelve a ella. **"Descartar"** (cabecera) elimina al cliente recién creado tras una confirmación que resume lo que se pierde (AF-112).
 - **Avisos informativos en línea, sin bloqueo:** "Aún no tiene libro" si hay abonos sin libros (BR-PAY-14); "Lo programado supera el saldo en $X · **Revisar**" (BR-PAY-13; abre el modal F-29).
-- **Reglas:** BR-CUS-14, BR-COPY-06/08, BR-CUS-02/03, BR-PAY-01..03/13/14.
+- **Reglas:** BR-CUS-14/16/17, BR-COPY-06/08, BR-CUS-02/03, BR-PAY-01..03/13/14/15.
 - **Resultado:** un cliente con lo que se haya llenado; sin libros es prospecto.
 - **Borde:** sin nombre al salir → no queda nada (AF-108); AF-31 (sin cuota ni programados); AF-107 (abonos antes del libro).
 
@@ -65,7 +66,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 - **Reglas:** BR-CUS-02/05/11/14.
 
 ## F-12 Ficha de cliente
-- **Muestra:** datos; teléfono con **llamar** y **WhatsApp**; información (texto + fotos); dirección (texto) y **ubicación** (mapa con pin que carga al tocar, **Abrir en Maps**, "Usar mi ubicación actual"); libros con precio y diferencia; abonos con estado (**Cancelados** plegable); deuda, saldo pendiente o **saldo a favor**, "sin programar"; facturas; visitas; aviso persistente si los programados exceden el saldo.
+- **Muestra:** datos; teléfono con **llamar** y **WhatsApp**; información (texto + fotos); dirección (texto) y **ubicación** (mapa con pin que carga al tocar, **Abrir en Maps**, "Elegir en mapa", "Cambiar", "Quitar"); libros con precio y diferencia; abonos con estado (**Cancelados** plegable); deuda, saldo pendiente o **saldo a favor**, "sin programar"; facturas; visitas; aviso persistente si los programados exceden el saldo.
 - **Acciones:** **Agregar libro** (enlace de texto), registrar/programar/cobrar abono, factura/foto, visita, **devolver libro** (F-16), editar, **archivar** (F-27).
 - **Reglas:** BR-CUS-04..12.
 
@@ -137,7 +138,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 - **Reglas:** BR-USR-05. **Casos:** AF-80, AF-82.
 
 ## F-26 Devolver libros al líder (lote)
-- **Pasos:** Inventario → Libros en físico → **Devolver al líder** → elegir ejemplares `in_stock` (cualquier antigüedad) → nota → confirmar. **Deshacer** desde el historial con nota.
+- **Pasos:** Inventario → Libros en físico → **Devolver al líder** → elegir **cantidad por título** (los más antiguos) o, con "Elegir unidades", ejemplares concretos `in_stock` (cualquier antigüedad) → nota → confirmar. **Deshacer** desde el historial con nota.
 - **Reglas:** BR-COPY-16. **Caso:** AF-54.
 
 ## F-27 Archivar y restaurar un cliente
@@ -156,5 +157,5 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 
 ## F-30 Elegir la ubicación de un cliente
 - **Contexto:** ficha de cliente (nueva o existente), sección de dirección.
-- **Pasos:** **"Usar mi ubicación actual"** (o **"Elegir en el mapa"**) → el celular pide permiso **solo ahora** → se abre el **selector**: mapa a pantalla completa con el pin fijo al centro y el círculo de precisión → el usuario mueve el mapa hasta poner el pin donde quiere (o toca el botón para recentrar en el GPS) → **Confirmar**. En la ficha queda un mapa con pin (carga al tocar) y el botón **"Abrir en Maps"**, que abre la app de mapas del celular en ese punto.
+- **Pasos:** **"Elegir en mapa"** → el celular pide permiso **solo ahora** → se abre el **selector** centrado en la ubicación actual: mapa a pantalla completa con el pin fijo al centro y el círculo de precisión → el usuario mueve el mapa hasta poner el pin donde quiere (o toca el botón para recentrar en el GPS) → **Confirmar**. En la ficha queda un mapa con pin (carga al tocar) y el botón **"Abrir en Maps"**, que abre la app de mapas del celular en ese punto.
 - **Reglas:** BR-CUS-08, BR-CUS-14. **Casos:** AF-109..AF-111.
