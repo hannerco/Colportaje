@@ -17,9 +17,8 @@ trabajo de otra conversación; no empieces de cero.
 
 3) ESTADO ACTUAL
    - Documentación completa, en carpetas docs/00-contexto … 06-planificacion, con 39 ADRs.
-   - La capa de dominio (src/domain, TypeScript puro con pruebas) la hace OTRA sesión de Claude en la
-     misma rama (feat/dominio). NO toques src/. Para commits usa SIEMPRE rutas explícitas
-     (git add docs AGENTS.md), nunca git add -A.
+   - Todavía NO hay código: el dueño decidió (2026-11-04) no programar nada hasta cerrar el diseño.
+     Para commits usa SIEMPRE rutas explícitas (git add docs AGENTS.md), nunca git add -A.
    - Estoy diseñando en Claude Design (claude.ai/design) y te traigo los resultados para revisarlos.
      Empezamos por el módulo Clientes. Prompts vigentes: docs/04-diseno/PROMPT-CLAUDE-DESIGN.md;
      referencias visuales: docs/04-diseno/referencias/.

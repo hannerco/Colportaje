@@ -80,7 +80,7 @@ docs/
 Si encuentras una contradicción, **arréglala** en el mismo cambio y anótala en `00-contexto/DECISION-LOG.md`.
 
 ## Estado del proyecto
-- Documentación: **completa y sin preguntas abiertas** (fase 0, revisada el 2026-10-28). **Código: solo la capa de dominio** (`src/domain`, TypeScript puro con pruebas Vitest; 2026-10-29). Falta todo lo demás (repositories, adapters, features, UI).
+- Documentación: **completa y sin preguntas abiertas** (fase 0, revisada el 2026-10-28). **Aún no hay código**: el dueño decidió (2026-11-04) no programar nada hasta cerrar el diseño visual, porque las decisiones cambian al diseñar.
 - **Plazo: 14 días** para la fase 1 completa (`06-planificacion/ROADMAP.md`). Siguiente paso: diseño en **Claude Design** (2–3 variantes, días 1–3) → elección del dueño → scaffolding por capas con pruebas del dominio primero.
 - Pendientes con el dueño: crear el repo `colportor` (SG-03), cuentas nuevas de Supabase y Vercel (SG-02, guía paso a paso; **pospuesto: primero el diseño**), diseño (SG-04).
 - Dueño del producto: colportor-desarrollador, primer usuario y admin. Idioma de trabajo: español.

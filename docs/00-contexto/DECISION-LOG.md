@@ -186,7 +186,7 @@ El dueño revisó `Colportor.html` (8 tableros de Claude Design) y lo rechazó c
 | Q8 | "Agregar libro" en la ficha | **"Correcto"** [D] |
 | 9 | Tamaño de letra | **"Creo que la letra que pediste es muy pequeña, mira cuál es la letra que usan otras apps."** Se midió el diseño (mayoría 13 px) y se comparó con iOS (17/15/13 pt) y Material (cuerpo 16 sp). [D] Escala nueva en el brief §5b: móvil principal **17**, secundario **15**, mínimo 13; campos ≥ 16. |
 
-## Ronda 12 — Implementación del dominio (2026-10-29)
+## Ronda 11b — Reglas de abonos y perdidos (2026-10-29)
 
 | # | Tema | Resultado |
 |---|---|---|
@@ -194,7 +194,6 @@ El dueño revisó `Colportor.html` (8 tableros de Claude Design) y lo rechazó c
 | Q2 | Motivo de cancelación | **"opción A"** [D] Según el disparador: extra/sobrepago/edición → `overpaid`; devolución → `book_returned`; archivar → `customer_archived`; baja de precio, borrar un cobro y asistente → `manual`. |
 | Q3 | Prórroga | **"A. Si la fecha está después de 2 meses se genera una alerta al usuario para que confirme la fecha"** [D] Debe ser posterior a la actual; más de 2 meses desde hoy pide confirmación. |
 | Q4 | Minibooks perdidos | **"No, no cuenta. Opcion A."** [D] Perdidos y "A responder al líder" tienen el alcance de "Mi compra". |
-| — | Orden de trabajo y calidad | **"Vale, haz lo que te pedí hasta ahora, pero hazlo bien. Es la parte más importante del proyecto. Confío en que uses buenas prácticas de arquitectura y revises varias veces todo."** Dominio en TypeScript puro con pruebas por regla `BR-*`, propiedades con `fast-check` y revisión por mutaciones. Ver ADR-0033. |
 
 ---
 
@@ -337,6 +336,13 @@ Antes de diseñar Inventario se cruzaron las tres secciones de Notion del dueño
 
 ---
 
+## Ronda 21 — Sin código hasta cerrar el diseño (2026-11-04)
+
+| # | Tema | Resultado |
+|---|---|---|
+| Q1 | Código adelantado | **"Preferí seguir creando la visual y no adelantar absolutamente nada de código, porque me di cuenta que al crear visual, las decisiones iban cambiando. Así que elimina todo lo adelantado."** [D] Se descartó todo el código escrito (capa de dominio y scaffolding de pnpm/TypeScript/Vitest/ESLint). El repositorio vuelve a contener solo documentación; el código se reescribe cuando el diseño esté cerrado. Las reglas de la ronda 11b siguen vigentes como documentación. |
+| Q2 | Remoto | **"Enfócate en subir las cosas a GitHub. Veo que los commits están en local, pero nada en remoto."** [D] Se sube solo la documentación. |
+
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.
 2. **Repositorio de GitHub llamado `colportor`** (en vez de `colportaje`), coherente con el nombre de la app.
@@ -360,4 +366,4 @@ Antes de diseñar Inventario se cruzaron las tres secciones de Notion del dueño
 11. Se propuso invitar por correo con el SMTP de Supabase; está limitado a 2/hora y solo a miembros de la organización; se cambió a enlace por WhatsApp.
 13. **Brief v1:** pedía subtítulos, desglose permanente, una variante "Hoy denso" con semana, botones de acción repetidos y 7 colores de etiqueta; Claude Design lo siguió y el resultado fue recargado. Corregido en el brief v2.
 12. Se propuso el botón "×N" para cantidades; el dueño lo rechazó por poco estético; se cambió a "+ / pastilla numérica" estilo Notion.
-14. **Fórmula del saldo (2026-10-29):** la documentación decía `balance = debt − paid_total − credit_applied`, lo que hacía que entregar un minibook con saldo a favor *aumentara* el saldo a favor, contra BR-MBK-07 y AF-10. Lo detectó una prueba de propiedades al implementar el dominio. El signo correcto es `+ credit_applied` (ADR-0033); se corrigió en BR-CUS-04, DOMAIN-MODEL y GLOSSARY.
+14. **Fórmula del saldo (2026-10-29):** la documentación decía `balance = debt − paid_total − credit_applied`, lo que hacía que entregar un minibook con saldo a favor *aumentara* el saldo a favor, contra BR-MBK-07 y AF-10. Lo detectó una prueba ejecutable al preparar el dominio (ese código se descartó el 2026-11-04; la corrección sigue vigente). El signo correcto es `+ credit_applied` (ADR-0033); se corrigió en BR-CUS-04, DOMAIN-MODEL y GLOSSARY.

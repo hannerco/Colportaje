@@ -1,6 +1,6 @@
 # AGENTS.md — Instrucciones para agentes de IA y colaboradores
 
-**Colportor** (marca de Emprendum) es una PWA mobile-first para colportores (venta de libros a cuotas). **Hoy el repositorio contiene la documentación y la capa de dominio** (`src/domain`, TypeScript puro con pruebas): el resto del código empieza después del diseño en Claude Design. **Plazo: 14 días** para la fase 1 completa (`docs/06-planificacion/ROADMAP.md`).
+**Colportor** (marca de Emprendum) es una PWA mobile-first para colportores (venta de libros a cuotas). **Hoy el repositorio contiene solo documentación**: el código empieza después del diseño en Claude Design (decisión del dueño, 2026-11-04: no adelantar código mientras el diseño siga cambiando). **Plazo: 14 días** para la fase 1 completa (`docs/06-planificacion/ROADMAP.md`).
 
 ## Antes de hacer cualquier cosa
 1. Lee `docs/README.md` y sigue su orden de lectura. Es obligatorio leer `docs/00-contexto/CONTEXT.md`, `docs/01-negocio/BUSINESS-RULES.md`, `docs/00-contexto/GLOSSARY.md`, `docs/02-datos/DOMAIN-MODEL.md` y `docs/03-arquitectura/CONVENTIONS.md`.
@@ -26,7 +26,7 @@
 - Fase 0: ver `docs/06-planificacion/ROADMAP.md` y `docs/05-operacion/DEPLOYMENT.md` §2 (repo, cuentas y diseño pendientes).
 - Siguiente: el dueño lleva `docs/04-diseno/DESIGN-BRIEF.md` a Claude Design (días 1–3) y elige variante. Luego, scaffolding Next.js+TS por capas y pruebas del dominio primero.
 
-## Comandos (`lint`, `typecheck` y `test` ya funcionan sobre `src/domain`; el resto, cuando exista el código)
+## Comandos (cuando exista el código)
 ```bash
 pnpm install        # dependencias
 pnpm dev            # desarrollo

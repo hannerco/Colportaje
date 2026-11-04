@@ -34,8 +34,6 @@ Un archivo por módulo en `src/domain/**/*.test.ts`. Cada prueba cita la regla.
 - **Máquinas de estado**: transiciones válidas e inválidas de `copy`, `payment`, `leader_deposit`, `visit`.
 - **Propiedades (property-based, `fast-check`)**: nunca saldo derivado inconsistente con la suma de piezas; `total = cash + transfer`; reorden de pagos no cambia el saldo.
 
-**Estado de la Prioridad 1 (2026-10-29):** implementado y probado en `src/domain` (cobertura ≥ 99 %) todo lo anterior **salvo**: la cantidad "+ / pastilla" (BR-COPY-02), el calendario (visitas, capacitaciones y recordatorios: BR-CAL-02..06) y las máquinas de estado de `visit`. Quedan pendientes y se harán cuando se pidan.
-
 ## Prioridad 2 — RLS y base de datos (obligatorio antes de producción)
 Carpeta `tests/rls/`. Con dos usuarios A y B sembrados:
 - A no puede `select/insert/update/delete` filas de B en **ninguna** tabla con `owner_id`.
