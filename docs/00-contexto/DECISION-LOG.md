@@ -336,7 +336,7 @@ Antes de diseñar Inventario se cruzaron las tres secciones de Notion del dueño
 
 ---
 
-## Ronda 21 — Sin código hasta cerrar el diseño (2026-11-04)
+## Ronda 22 — Sin código hasta cerrar el diseño (2026-11-04)
 
 | # | Tema | Resultado |
 |---|---|---|
