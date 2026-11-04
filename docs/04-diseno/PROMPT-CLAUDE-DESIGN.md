@@ -276,8 +276,7 @@ solo botón principal por pantalla. No inventes reglas: lo que no esté aquí, d
 PANTALLAS
 1) INVENTARIO. Dos vistas arriba: "Libros en físico" (principal, por título) y "Ejemplares".
    Acción principal única: "Agregar". Acción secundaria: "Devolver al líder".
-   - "Libros en físico": una fila por Título con la CANTIDAD de ejemplares en físico, con el indicador de
-     antigüedad. Los minibooks van al final, aparte. Sección "Por resolver" para los ejemplares con novedad.
+   - "Libros en físico": una fila por Título con la CANTIDAD de ejemplares en físico. Los minibooks van al final, aparte. Sección "Por resolver" para los ejemplares con novedad.
      SIN cifras de dinero en esta pantalla. Sin título ni subtítulos decorativos.
    - Cada Título necesita un identificador visual a la izquierda. Aún NO está decidido (ícono, portada o
      emoji): usa un cuadrado neutro de tamaño fijo como espacio reservado. No uses emojis.
@@ -286,7 +285,7 @@ PANTALLAS
    acordado, diferencia). Cada fila: título, número (#12, con poca prominencia), estado, cliente, fechas
    (recibido y vendido), precio acordado, diferencia y marca de "precio distinto". SIN sumas de dinero al
    pie. En escritorio es una tabla; en móvil, filas de máximo 2 líneas con una señal de estado.
-3) EJEMPLAR (detalle): título, número, estado, antigüedad, cliente, precio acordado (editable),
+3) EJEMPLAR (detalle): título, número, estado, cliente, precio acordado (editable),
    precio distinto y diferencia, "Recibido el" (propiedad editable en línea, DISCRETA, no un botón
    destacado), historial. Acciones: editar precio, devolver, marcar con novedad (nota obligatoria),
    eliminar (con nota).
@@ -299,20 +298,18 @@ PANTALLAS
    final, antes de confirmar. Se puede deshacer desde el historial con una nota.
 6) BUSCADOR "AGREGAR LIBRO" DE LA FICHA DE CLIENTE (reemplaza el aviso "Definir al diseñar Inventario").
    Una fila por título con "N en mano", categoría y precio de inventario. Tocar un título asigna el
-   ejemplar MÁS ANTIGUO y muestra su antigüedad; un control para expandir el título y elegir otro por
+   ejemplar con la fecha de recibido MÁS ANTIGUA y muestra su número y su fecha de recibido; un control para expandir el título y elegir otro por
    número. Los agotados van AL FINAL, atenuados y sin poder tocarse. Muestra cómo se marca un descuento
    o aumento sobre el precio de inventario ("Inventario $85.000 · Descuento $5.000 · Restaurar").
 
 EXPLORACIONES (sin decidir; hazlas SOLO en móvil y claro primero, luego escritorio claro). Para CADA una
-de estas tres decisiones, diseña 2 CONCEPTOS distintos y, de cada concepto, 2 FORMAS VISUALES (4
+de estas dos decisiones, diseña 2 CONCEPTOS distintos y, de cada concepto, 2 FORMAS VISUALES (4
 propuestas por decisión; imagínalas tú). Márcalas con una etiqueta de nombre, no con texto explicativo.
  A) Pantalla AGREGAR: cuadrícula de botones por título (como en Notion, con "Religiosos" plegado)
     vs. lista buscable agrupada por categoría (Culturales, Religiosos plegado, Minibooks al final).
  B) "POR RESOLVER" (ejemplares con novedad): dos conceptos de cómo se ve y se resuelve. Salidas
     permitidas: "Apareció", "Perdido (lo asumo yo)" y "Eliminar". NINGÚN texto, tooltip ni etiqueta
     puede insinuar que el líder pueda asumir una pérdida.
- C) ANTIGÜEDAD: dos conceptos de indicador. Etapas: Reciente (0–2 días), Normal (3–6), Envejeciendo
-    (7–12), Antiguo (13 o más). Ícono sobrio de trazo, NO una fruta ni un color de categoría.
 Cuando el dueño elija, se completan escritorio y oscuro. El identificador visual del título (ícono,
 portada o emoji) se explora después, con las listas ya diseñadas.
 

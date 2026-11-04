@@ -6,7 +6,7 @@ El texto original ponía en el Cliente: teléfono, libros, suma de abonos, deuda
 
 ## Decisión
 - **No hay entidad Venta.** El Cliente es el agregado raíz: tiene ejemplares vendidos, abonos, facturas y visitas.
-- **Deuda, suma de abonos, saldo, saldo a favor, fecha de venta, prospecto, precio distinto, diferencia, total del Abibono y antigüedad son valores derivados**; nunca columnas editables. Se calculan en el dominio (TypeScript puro) y, opcionalmente, en vistas SQL.
+- **Deuda, suma de abonos, saldo, saldo a favor, fecha de venta, prospecto, precio distinto, diferencia, total del Abibono son valores derivados**; nunca columnas editables. Se calculan en el dominio (TypeScript puro) y, opcionalmente, en vistas SQL.
 - "Fecha de la venta" se deriva de las fechas de venta de los ejemplares (primera y última). "Factura inicial" admite **varias fotos**.
 
 ## Alternativas descartadas

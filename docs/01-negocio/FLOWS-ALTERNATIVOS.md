@@ -10,7 +10,7 @@ Convención de ejemplos: precios en COP.
 
 Una sola acción —**"Devolver a inventario"** en la ficha del cliente (o en el detalle del ejemplar)— cubre dos situaciones, distinguidas por el **motivo** que pregunta la app: *El cliente lo devolvió* (`customer_returned`) y *Me equivoqué de cliente / de registro* (`wrong_registration`). Con el segundo motivo, la acción **no cuenta** como devolución en estadísticas. Reglas base: BR-COPY-09, BR-PAY-13, BR-CUS-06, BR-CUS-09.
 
-**Efecto común** (todos los casos): el ejemplar vuelve a `in_stock`, pierde cliente, precio acordado y fecha de venta, **conserva `received_at`** (es el mismo libro físico, la antigüedad sigue corriendo) y se registra el evento con el motivo. Los abonos `collected`/`delivered` y los Abibonos **no se tocan**.
+**Efecto común** (todos los casos): el ejemplar vuelve a `in_stock`, pierde cliente, precio acordado y fecha de venta, **conserva `received_at`** (es el mismo libro físico) y se registra el evento con el motivo. Los abonos `collected`/`delivered` y los Abibonos **no se tocan**.
 
 ### AF-01 Devolución simple (sin pagos)
 - *Situación:* cliente con un libro de 50.000, sin abonos.
@@ -54,7 +54,7 @@ Una sola acción —**"Devolver a inventario"** en la ficha del cliente (o en el
 - *App:* al devolver se limpia el precio acordado. La diferencia desaparece de los totales (porque el ejemplar deja de estar vendido). Al revenderse, empieza otra vez con el precio público.
 
 ### AF-08 Revender el ejemplar devuelto a otro cliente
-- *App:* vuelve a la lista de ejemplares en inventario con su **antigüedad original** (puede salir "Envejeciendo/Antiguo"). Se vende normalmente (BR-COPY-06).
+- *App:* vuelve a la lista de ejemplares en inventario con su **fecha de recibido original**. Se vende normalmente (BR-COPY-06).
 
 ### AF-09 El cliente se queda sin libros
 - *App:* pasa a ser **prospecto** (derivado): sale de las listas por defecto y del "Total clientes", pero conserva abonos, visitas y fotos. Puede **archivarse** (AF-71). Sus abonos `collected` no entregados siguen en **Dinero**.
@@ -163,7 +163,7 @@ Una sola acción —**"Devolver a inventario"** en la ficha del cliente (o en el
 - *App:* se agrega un ejemplar normalmente (con la fecha real de recibido si aplica). Puede dejarse una nota en el historial.
 
 ### AF-54 Devolver libros al líder (fin de campaña o libros viejos)
-- *App:* en Libros en físico → **Devolver al líder** (lote): se eligen ejemplares `in_stock` (cualquier antigüedad) y una nota. Pasan a `returned_to_leader`; salen del físico; no cuentan en "Mi compra" ni "A responder"; columna **Devueltos** en *Hacer inventario*. **Deshacer** con nota si fue un error.
+- *App:* en Libros en físico → **Devolver al líder** (lote): se eligen ejemplares `in_stock` (cualquier fecha de recibido) y una nota. Pasan a `returned_to_leader`; salen del físico; no cuentan en "Mi compra" ni "A responder"; columna **Devueltos** en *Hacer inventario*. **Deshacer** con nota si fue un error.
 
 ### AF-55 Título desactivado con stock
 - *App:* los ejemplares existentes se siguen pudiendo vender y devolver; no se pueden agregar nuevos de ese título.

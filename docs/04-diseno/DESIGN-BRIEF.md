@@ -119,10 +119,10 @@ Basada en lo que usan las apps de referencia (iOS: 17 / 15 / 13 pt; Material: cu
 | 3c | **Avatar del cliente** | Avatar circular neutro con el emoji elegido o el avatar por defecto; selector de emoji en una hoja (se abre al tocar el avatar en la ficha) con "Quitar"; sin set de íconos propios (ADR-0037) | — |
 | 3b | **Elegir ubicación** | Mapa a pantalla completa en estilo neutro y claro; **pin fijo al centro** con el mapa moviéndose por debajo; círculo de precisión del GPS; botón para recentrar en la ubicación actual (se abre ya centrado en ella); un solo botón principal **"Confirmar"**; aviso discreto "Ubicación aproximada" | F-30 |
 | 4 | **Nuevo cliente (ficha viva)** | Ficha que se guarda sola (nombre obligatorio); secciones en línea Libros → Abonos → Factura sin orden obligatorio; avisos informativos en línea ("Aún no tiene libro", "Revisar") | F-10 |
-| 5 | **Inventario** | Libros en físico por título con ícono de antigüedad; minibooks al final; "Por resolver"; **Agregar** (principal); "Devolver al líder" en lote | F-06, F-26 |
+| 5 | **Inventario** | Libros en físico por título; minibooks al final; "Por resolver"; **Agregar** (principal); "Devolver al líder" en lote | F-06, F-26 |
 | 6 | **Agregar a inventario** | Lista buscable + favoritos; "+" por fila → pastilla numérica; chip de fecha "Hoy ▾"; Deshacer | F-05 |
 | 7 | **Ejemplares** | Pestañas Todos / En físico / Vendidos / Con descuentos y aumentos (cada fila: título, número, estado, cliente, fechas, precio acordado, diferencia y marca de precio distinto; sin sumas de dinero al pie) | F-07 |
-| 8 | **Ejemplar** | Estado, antigüedad, cliente, precio acordado y "Recibido el" editables en línea, historial | F-08, F-09 |
+| 8 | **Ejemplar** | Estado, cliente, precio acordado y "Recibido el" editables en línea, historial | F-08, F-09 |
 | 9 | **Devolver + modal de abonos** | Motivo (2 opciones) → modal con sobrante y abonos con casillas: Recortar / Cancelar los que marque / Dejar | F-16, F-29 |
 | 10 | **Dinero** | Por cobrar (vencidos filtrables) · Por entregar · Entregado; Abibonos | F-15 |
 | 11 | **Abibono** | Vincular, efectivo/transferencia, esperado vs entregado, recibo, Reabrir discreto | F-17 |
@@ -164,11 +164,10 @@ Cada variante en móvil y escritorio, claro y oscuro. En todas rigen las seccion
 - Estados de abono: Por cobrar → Cobrado → Entregado (+ Cancelado), por **ícono/texto en gris**, no por color.
 - Prórroga: fecha original tachada + nueva (solo en el detalle del abono).
 - **Con novedad:** 3 propuestas visuales (DT-03); salidas: Apareció / Perdido (lo asumo yo) / Eliminar. Ningún texto sugiere que el líder pueda asumir pérdidas.
-- Antigüedad: 4 etapas con ícono sobrio (3 propuestas; no una fruta).
 - Sin conexión: franja discreta y botones de guardar deshabilitados (se puede consultar).
 - Vacíos, carga, error y éxito (con **Deshacer** al agregar ejemplares).
 - Propiedades editables en línea (Notion): "Recibido el", precio acordado.
-- **Tooltips:** solo con **ⓘ**, bajo demanda; nunca texto explicativo permanente. Conceptos: Abibono = "Entrega al líder", Por entregar, estados de abono, fecha acordada vs real, diferencia, Esperado vs entregado, Con novedad, Saldo a favor, Prospecto, Antigüedad, Título vs Ejemplar, A responder al líder, alerta de abonos.
+- **Tooltips:** solo con **ⓘ**, bajo demanda; nunca texto explicativo permanente. Conceptos: Abibono = "Entrega al líder", Por entregar, estados de abono, fecha acordada vs real, diferencia, Esperado vs entregado, Con novedad, Saldo a favor, Prospecto, Título vs Ejemplar, A responder al líder, alerta de abonos.
 
 ## 12. Responsive
 - **Móvil (≥ 360 px):** barra inferior de íconos, listas en vez de tarjetas, formularios de un paso, objetivos ≥ 44 px, acciones en la zona del pulgar.
@@ -182,7 +181,7 @@ Cada variante en móvil y escritorio, claro y oscuro. En todas rigen las seccion
 | DT-02 | Ubicación de la barra de meta (hoy: en Hoy) y si se muestra; 2 propuestas |
 | DT-03 | Representación de "Con novedad"; 3 propuestas |
 | DT-04 | Set de íconos: uno por sección, reconocible sin texto |
-| DT-05 | Ícono de antigüedad por etapas; 3 propuestas |
+| DT-05 | ~~Ícono de antigüedad por etapas~~ **Cancelada (ronda 21)**: ya no hay antigüedad |
 | DT-06 | Barra de vista única reutilizada en todos los módulos |
 | DT-07 | Tres tonos de los microíconos de tipo de evento (cobro / visita / capacitación) en cada variante |
 | DT-08 | ✅ **Cerrada (ronda 19):** ítem del sidebar debajo de Hoy + botón en Clientes. *Ubicación de "Nuevo cliente" en escritorio* — 4 opciones evaluadas: A navegación global (ítem del sidebar), B solo en Clientes, C flotante, D ícono en la cabecera del sidebar + botón en Clientes. Y su equivalente móvil (cabecera / flotante). Ver `04-diseno/PROMPT-CLAUDE-DESIGN.md` («4 ubicaciones») |

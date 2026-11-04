@@ -54,9 +54,6 @@ create table user_role (
 create table app_settings (
   id smallint primary key default 1 check (id = 1),
   bonus_goal integer not null default 4000000 check (bonus_goal > 0),
-  age_thresholds integer[] not null default '{2,6,12}'
-    check (array_length(age_thresholds,1) = 3
-       and age_thresholds[1] > 0 and age_thresholds[1] < age_thresholds[2] and age_thresholds[2] < age_thresholds[3]),
   max_favorites smallint not null default 6 check (max_favorites > 0)
 );
 insert into app_settings default values;

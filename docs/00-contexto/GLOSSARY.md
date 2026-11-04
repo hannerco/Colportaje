@@ -55,7 +55,7 @@
 | Evento de ejemplar | `copy_event` | Historial (recibido, vendido, devuelto…) |
 | Favorito | `title_favorite` | Título marcado para agregar a inventario con un toque |
 | Foto | `photo` | Imagen de info de cliente, factura o recibo |
-| Ajustes | `app_settings` | Meta de bonificación, umbrales de antigüedad, máx. favoritos |
+| Ajustes | `app_settings` | Meta de bonificación, máx. favoritos |
 | Meta (de bonificación) | `bonus_goal` | 4.000.000 por defecto, editable por admin |
 | Perfil / Rol | `profile` / `user_role` | El perfil guarda el formato de hora (12 h/24 h) y si está activo |
 
@@ -121,7 +121,6 @@
 | Fecha vendido | `sold_at` |
 | Precio distinto | `price_differs` (derivado) |
 | Diferencia (aumento / descuento) | `price_delta` (derivado) |
-| Antigüedad | `age_stage` (derivado): Reciente `fresh`, Normal `normal`, Envejeciendo `aging`, Antiguo `old` |
 
 ## Valores derivados (nunca almacenados editables)
 | UI | Código | Definición |

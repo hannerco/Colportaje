@@ -53,7 +53,6 @@ Se crea automáticamente (trigger sobre `auth.users`) al aceptar una invitación
 |---|---|---|
 | `id` | `smallint` PK | `1` (check `= 1`) |
 | `bonus_goal` | `integer` | `4000000` |
-| `age_thresholds` | `integer[3]` | `{2,6,12}` (límites superiores de reciente / normal / envejeciendo; mayor = antiguo). Check: estrictamente creciente, > 0 |
 | `max_favorites` | `smallint` | `6` |
 
 ## `title` (catálogo compartido; sin `owner_id`)
@@ -87,7 +86,7 @@ Lectura: todo autenticado. Escritura: admin.
 Checks: `status <> 'sold' ⇒ customer_id, agreed_price, sold_at, minibook_sale_id nulos`. `customer_id not null ⇒ status = 'sold'`.
 Índices: `(owner_id,status)`, `(owner_id,title_id,status)`, `(customer_id)`.
 
-Derivados por consulta/dominio: `price_differs`, `price_delta`, `age_stage`.
+Derivados por consulta/dominio: `price_differs`, `price_delta`.
 
 ## `copy_event` (solo inserción, historial)
 `copy_id`, `type enum('received','sold','returned','flagged','resolved','price_changed','received_date_changed','minibook_sold','returned_to_leader','undo_returned_to_leader')`, `data jsonb`, `at timestamptz`.
@@ -212,8 +211,6 @@ street_money       = Σ remaining(c)                (global; excluye clientes ar
 is_prospect(c)     = ¬∃ copy vendida
 price_differs(k)   = k.agreed_price ≠ k.public_price_snapshot
 price_delta(k)     = k.agreed_price − k.public_price_snapshot
-age_days(k)        = días calendario (Bogota) entre received_at y hoy
-age_stage(k)       = fresh si ≤ t0; normal si ≤ t1; aging si ≤ t2; old si > t2   (t = age_thresholds)
 overdue(p)         = p.status = scheduled ∧ p.due_date < hoy
 deposit.total      = cash + transfer
 deposit.expected   = Σ paid_amount(payments vinculados) + Σ allocation.amount

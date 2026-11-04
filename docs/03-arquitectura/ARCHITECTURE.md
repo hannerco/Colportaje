@@ -69,7 +69,7 @@ ui  ──►  features  ──►  repositories (interfaces)  ──►  domain
 ```
 
 ## 4. Convenciones de diseño del código
-- **Dominio inmutable y puro.** Funciones `(estado) → valor`. Ej.: `balanceOf(customer, copies, payments, creditEntries)`, `ageStage(copy, thresholds, today)`, `depositSummary(deposit, payments, allocations)`.
+- **Dominio inmutable y puro.** Funciones `(estado) → valor`. Ej.: `balanceOf(customer, copies, payments, creditEntries)`, `depositSummary(deposit, payments, allocations)`.
 - **Errores como valores en el dominio**: `Result<T, DomainError>` para reglas que pueden fallar (p. ej. "no hay stock suficiente", "falta recibo"); excepciones solo para fallos inesperados.
 - **Una fuente por regla.** Toda regla de `01-negocio/BUSINESS-RULES.md` existe en **un** módulo del dominio y se referencia con su ID (`// BR-DEP-06`). La base de datos refuerza con checks/triggers las que protegen el dinero, pero el dominio es la fuente.
 - **Mapeo explícito** fila ↔ dominio (Zod) en los adapters; nunca se filtran tipos de `supabase-js` fuera de `adapters/`.
@@ -78,7 +78,6 @@ ui  ──►  features  ──►  repositories (interfaces)  ──►  domain
 - **Textos de UI** solo desde `copy/es.ts` (facilita tooltips y futura revisión); **sin** cadenas en español sueltas en componentes.
 - **Dinero:** `type COP = number` (entero) con helpers `formatCOP`, `parseCOP`; nunca decimales.
 - **Registro de totalizadores:** `features/totals/registry.ts` exporta un array de piezas `{ id, label, tooltip, compute(ctx), categoryAware }`; la pantalla itera. Quitar uno = borrar una entrada.
-- **Registro de reglas de antigüedad:** `domain/age.ts` recibe `thresholds` desde `app_settings` (nunca constantes enterradas).
 
 ## 4b. Design system y tokens (ADR-0034)
 - **Un único archivo de tokens:** `src/ui/tokens/tokens.css` con variables CSS para **tipografía, color, radios, espaciado, sombras y breakpoints**. Es la **única** fuente de valores visuales.

@@ -23,7 +23,7 @@ Un ADR por decisión relevante. Formato: contexto → decisión → alternativas
 | 0014 | Búsqueda y dirección | Aceptado |
 | 0015 | Totalizadores en Hacer inventario | Aceptado |
 | 0016 | Meta de bonificación | Aceptado |
-| 0017 | Antigüedad, favoritos y agregar a inventario | Aceptado (revisado) |
+| 0017 | Favoritos y agregar a inventario (antigüedad cancelada, ronda 21) | Aceptado (revisado) |
 | 0018 | Navegación base | Aceptado (base; el diseño decide) |
 | 0019 | Arquitectura en capas y pruebas | Aceptado |
 | 0020 | Copias de seguridad | Aceptado |

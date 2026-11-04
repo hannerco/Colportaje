@@ -16,12 +16,11 @@ Un archivo por módulo en `src/domain/**/*.test.ts`. Cada prueba cita la regla.
 
 - **Saldo** (`BR-CUS-04`): sin pagos; con parciales; con prórroga; con precio acordado distinto; tras devolución; **saldo a favor**; con `client_credit`; varios ejemplares.
 - **Precio** (`BR-PRC-*`): igual / mayor / menor; precio público nulo (minibook) no aplica.
-- **Antigüedad** (`BR-COPY-13`): límites exactos 0,2,3,6,7,12,13 días; umbrales personalizados; cambio de zona horaria (medianoche Bogota ≠ UTC).
 - **Abonos** (`BR-PAY-*`): nacimiento por tipo, cobrar, parcial (sugerencia, no creación), sobrepago, prórroga (la original no cambia; historial), vencido, bloqueo por entrega, **cancelado** (no cuenta en calendario/Hoy/totales).
 - **Alerta de abonos que no cuadran** (`BR-PAY-13`): `excess` con y sin sobrante; disparadores (abono extra, sobrepago, devolución, baja de precio, edición/borrado de abono, archivar, asistente de venta); **recorte más próximo** tras abono extra y **más lejano** tras devolución; reducción parcial del último abono con registro en `payment_event`; "dejar como está" mantiene el aviso; saldo sin programar **no** alerta.
 - **Devoluciones** (`BR-COPY-09`, `FLOWS-ALTERNATIVOS` AF-01..AF-12): cada caso A, con ambos motivos; se conserva `received_at`; abonos cobrados y Abibonos intactos; saldo a favor; cliente sin libros = prospecto; `wrong_registration` no cuenta como devolución.
 - **Pérdidas y devueltos al líder** (`BR-COPY-11/16`, `BR-GOAL-07`): resoluciones Apareció/Perdido/Eliminar; `lost_assumed_value` y `owed_to_leader`; `returned_to_leader` y su deshacer; la identidad `Recibidos = Vendidos + En físico + Con novedad + Perdidos + Devueltos`.
-- **Fecha de recibido** (`BR-COPY-04`): no futura, no posterior a la venta, cambio registrado en historial; antigüedad recalculada.
+- **Fecha de recibido** (`BR-COPY-04`): no futura, no posterior a la venta, cambio registrado en historial.
 - **Cantidad "+ / pastilla"** (`BR-COPY-02`): crear N, ajustar hacia arriba y hacia abajo solo sobre los ejemplares recién agregados, deshacer; igual para minibooks.
 - **"Por entregar"** (`BR-CAL-08`): total = efectivo + transferencia; cuenta abonos de Abibonos borrador; deja de contar al confirmar y vuelve a contar al reabrir; excluye minibooks y `canceled`; cero → "Nada por entregar".
 - **Avatar** (`BR-CUS-15`): `isValidAvatarEmoji` acepta exactamente un emoji (incluidos los compuestos con tono de piel o variantes) y rechaza vacío, texto, varios emojis o emoji + texto.

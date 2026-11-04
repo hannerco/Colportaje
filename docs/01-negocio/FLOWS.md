@@ -19,7 +19,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 - **Borde:** AF-55, AF-56.
 
 ## F-04 Ajustes de admin y usuarios
-- **Pasos:** Admin → **Ajustes**: meta de bonificación, umbrales de antigüedad (valores por defecto 2/6/12), máximo de favoritos. Admin → **Usuarios**: lista (nombre, correo, rol, estado), **Invitar** (F-25), generar enlace de restablecimiento, **desactivar/reactivar**.
+- **Pasos:** Admin → **Ajustes**: meta de bonificación, máximo de favoritos. Admin → **Usuarios**: lista (nombre, correo, rol, estado), **Invitar** (F-25), generar enlace de restablecimiento, **desactivar/reactivar**.
 - **Reglas:** BR-GOAL-01, BR-COPY-13, BR-USR-05/07.
 
 ## F-05 Agregar a inventario
@@ -31,7 +31,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 - **Borde:** AF-50 (fecha pasada), AF-51 (agregué de más); sin títulos activos → estado vacío.
 
 ## F-06 Ver libros en físico
-- **Pasos:** Inventario → lista de Títulos con cantidad `in_stock` e icono de antigüedad; detalle por título con ejemplares (número, antigüedad). Minibooks al final/aparte. Sección **"Por resolver"** (`flagged`). Desde aquí: **Devolver al líder** (F-26).
+- **Pasos:** Inventario → lista de Títulos con cantidad `in_stock`; detalle por título con ejemplares (número y fecha de recibido). Minibooks al final/aparte. Sección **"Por resolver"** (`flagged`). Desde aquí: **Devolver al líder** (F-26).
 - **Reglas:** BR-INV-03, BR-COPY-13.
 
 ## F-07 Lista de ejemplares con vistas
@@ -39,7 +39,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 - **Reglas:** BR-COPY-12.
 
 ## F-08 Detalle de un ejemplar
-- **Muestra:** título, número, estado, antigüedad, cliente, **precio acordado** (editable), precio distinto y diferencia, **"Recibido el"** (propiedad editable en línea, discreta), historial.
+- **Muestra:** título, número, estado, cliente, **precio acordado** (editable), precio distinto y diferencia, **"Recibido el"** (propiedad editable en línea, discreta), historial.
 - **Acciones:** editar precio acordado (recalcula saldo; puede disparar F-29), editar "Recibido el" (BR-COPY-04), devolver (F-16), marcar con novedad (F-09), eliminar (con nota).
 - **Reglas:** BR-COPY-04/07, BR-PRC-01/02.
 
@@ -51,7 +51,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 ## F-10 Nuevo cliente (ficha viva)
 - **Contexto:** botón global **"Nuevo cliente"** (persona con "+"); cubre al cliente nuevo y al prospecto. Para uno existente: Clientes → ficha → "Agregar libro". Reemplaza al antiguo asistente "+ Vender" (ADR-0035).
 - **Pasos:** el botón abre una **ficha en blanco que se guarda sola**. Se escribe el **nombre** (obligatorio; aviso no bloqueante de posible duplicado, AF-70) y teléfono. Luego, en línea y en el orden habitual (no obligatorio):
-  1. **Libros:** "+ Agregar libro" → ejemplares `in_stock` agrupados por título (número y antigüedad), **uno por uno**; el precio acordado nace igual al precio público y se edita en el ejemplar (F-08).
+  1. **Libros:** "+ Agregar libro" → ejemplares `in_stock` agrupados por título (número y fecha de recibido), **uno por uno**; el precio acordado nace igual al precio público y se edita en el ejemplar (F-08).
   2. **Abonos:** "+ Cuota inicial" (monto, método) → `collected`; **plan automático** (frecuencia, valor de cada abono, primer abono → tabla "Así quedan los abonos", BR-PAY-15) o "+ Programar" uno a uno (monto, fecha) → `scheduled`; "+ Extra". Las fechas se cambian con un calendario y "Correr también los siguientes".
   3. **Factura:** N.º de factura (opcional) y "+ Foto" (una o varias; también después); la fecha se llena sola con el día en que se agrega la foto (BR-CUS-17).
   4. Visitas, información, dirección y fotos: normalmente de noche.
@@ -138,7 +138,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 - **Reglas:** BR-USR-05. **Casos:** AF-80, AF-82.
 
 ## F-26 Devolver libros al líder (lote)
-- **Pasos:** Inventario → Libros en físico → **Devolver al líder** → elegir **cantidad por título** (los más antiguos) o, con "Elegir unidades", ejemplares concretos `in_stock` (cualquier antigüedad) → nota → confirmar. **Deshacer** desde el historial con nota.
+- **Pasos:** Inventario → Libros en físico → **Devolver al líder** → elegir **cantidad por título** (los más antiguos) o, con "Elegir unidades", ejemplares concretos `in_stock` (cualquier fecha de recibido) → nota → confirmar. **Deshacer** desde el historial con nota.
 - **Reglas:** BR-COPY-16. **Caso:** AF-54.
 
 ## F-27 Archivar y restaurar un cliente

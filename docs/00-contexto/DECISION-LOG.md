@@ -326,13 +326,13 @@ Antes de diseñar Inventario se cruzaron las tres secciones de Notion del dueño
 | 1 | Hoy | El dueño quiere que Hoy sea un **resumen general** (calendario de hoy, cobro rápido de abonos, resumen de libros en físico, más por definir) → DT-09; no se define aún. **"Agregar al inventario" NO va en Hoy**, va en Inventario. Inventario sin cifras de dinero por ahora. |
 | 2 | Nombre | **"En físico"** reemplaza a "En inventario" (estado, vista y columnas). |
 | 3 | Ejemplares | La lista muestra Estado, cliente, fechas (recibido/vendido), **precio acordado, diferencia y marca de precio distinto**, **sin sumas de dinero al pie**. Enmienda BR-GOAL-06 (solo esa lista muestra precio acordado y diferencia). Dónde vive la lista (pestaña de Inventario u otra): en debate. |
-| 4 | Variantes | Design debe mostrar variantes de Agregar (cuadrícula vs lista agrupada), de "Por resolver" (DT-03) y de la antigüedad (DT-05) antes de decidir. |
+| 4 | Variantes | Design debe mostrar variantes de Agregar (cuadrícula vs lista agrupada), y de "Por resolver" (DT-03) antes de decidir (la antigüedad se canceló en la ronda 21). |
 | 5 | Alcance del chat de diseño | Inventario, Agregar, Ejemplares, Ejemplar, Devolver al líder en lote y el buscador "Agregar libro" de la ficha. "Hacer inventario" y "Devolver + modal de abonos" van aparte. |
 | 6 | Pestañas de Inventario | Inventario tiene **Libros en físico** (por título) y **Ejemplares** (una fila por unidad, con vistas Todos / En físico / Vendidos / Descuentos y aumentos). Es la opción A. |
 | 7 | Identificador del título | Sin decidir (DT-10): ícono de un color por admin, portada o emoji; se ve en variantes cuando las listas estén listas. |
 | 8 | Buscador "Agregar libro" | Tocar un título asigna el **ejemplar más antiguo**; se puede expandir y elegir por número; agotados al final, atenuados y sin tocar. |
 | 9 | Devolver al líder en lote | Por **cantidad por título** (principal) y "Elegir unidades" (secundaria); nota al final. |
-| 10 | Orden de trabajo de diseño | Las exploraciones (Agregar, "Por resolver", antigüedad) en **móvil claro**, luego **escritorio claro**; el oscuro al final. |
+| 10 | Orden de trabajo de diseño | Las exploraciones (Agregar y "Por resolver") en **móvil claro**, luego **escritorio claro**; el oscuro al final. |
 
 ---
 
@@ -343,6 +343,19 @@ Antes de diseñar Inventario se cruzaron las tres secciones de Notion del dueño
 | Q1 | Código adelantado | **"Preferí seguir creando la visual y no adelantar absolutamente nada de código, porque me di cuenta que al crear visual, las decisiones iban cambiando. Así que elimina todo lo adelantado."** [D] Se descartó todo el código escrito (capa de dominio y scaffolding de pnpm/TypeScript/Vitest/ESLint). El repositorio vuelve a contener solo documentación; el código se reescribe cuando el diseño esté cerrado. Las reglas de la ronda 11b siguen vigentes como documentación. |
 | Q2 | Remoto | **"Enfócate en subir las cosas a GitHub. Veo que los commits están en local, pero nada en remoto."** [D] Se sube solo la documentación. |
 | Q3 | Visibilidad y nombre del repo | El repo `hannerco/Colportaje` es **público**; el dueño eligió **dejarlo público pero sin las imágenes de referencia** (portadas y capturas de otras apps: se quedan solo en su computador, fuera de git) y **"cambia todo a Colportaje"**. Antes de subir código o datos se pasa a privado. |
+
+## Ronda 21 — Se cancela la antigüedad (2026-11-04)
+
+El dueño decidió: **"se cancela todo lo de antigüedad, no tiene sentido, no me gustó."** Reemplaza la decisión de Q45 (etapas Reciente/Normal/Envejeciendo/Antiguo) y a DT-05.
+
+| Qué | Resultado |
+|---|---|
+| Se elimina | Etapas, ícono, `age_thresholds` en `app_settings` (y su edición por el admin), `age_days` / `age_stage` derivados, `domain/age.ts`, la regla BR-COPY-13 (número reservado, no se reutiliza), DT-05 y las pruebas de antigüedad. |
+| Se conserva | `received_at` y "Recibido el" (BR-COPY-04). El buscador de la ficha sigue asignando el ejemplar con la **fecha de recibido más antigua** y "Devolver al líder" por cantidad sigue tomando los de fecha más antigua; solo se muestran número y fecha, nunca una etapa. |
+| Históricos | Q45 y los ADR antiguos conservan su texto original; ADR-0017 queda marcado como revisado. SPEC-ORIGINAL no se toca. |
+| Aviso al dominio | Si `src/` llegó a implementar `ageStage`, `age_thresholds` o sus pruebas, hay que quitarlos (al momento de esta ronda no se encontró nada). |
+
+---
 
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.

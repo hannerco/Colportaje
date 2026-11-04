@@ -6,7 +6,7 @@ Un cliente puede devolver un libro que ya empezó a pagar, y ese dinero segurame
 
 ## Decisión
 - Una sola acción **"Devolver a inventario"** (también para "quitar de un cliente") con **motivo**: *El cliente lo devolvió* o *Me equivoqué de cliente / de registro* (este no cuenta como devolución en estadísticas). No existe "cambiar de cliente".
-- El ejemplar vuelve a `in_stock` **conservando `received_at`** (misma antigüedad); pierde cliente, precio y fecha de venta.
+- El ejemplar vuelve a `in_stock` **conservando `received_at`** (misma fecha de recibido); pierde cliente, precio y fecha de venta.
 - **No toca** abonos cobrados ni Abibonos.
 - Los abonos **programados** se revisan con la **alerta de abonos que no cuadran** (ADR-0009): recorte sugerido desde el más lejano; los cancelados se conservan.
 - Si lo pagado excede lo que ahora debe, aparece **Saldo a favor** con nota; **sin flujo de reembolso**; se puede canjear por un **minibook** (ADR-0011), con tope en el saldo a favor.

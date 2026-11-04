@@ -7,7 +7,7 @@ Normalmente el colportor asume la pérdida de un libro (se le sigue cobrando). U
 ## Decisión
 - Salidas de "Con novedad": *Apareció*, *Perdido (lo asumo yo)* y *Eliminar* (con nota opcional). **Ningún texto, tooltip ni etiqueta menciona que el líder pueda asumir una pérdida.**
 - *Hacer inventario* muestra **"Perdidos asumidos"** (cantidad y valor al precio colportor) y **"A responder al líder" = Mi compra + perdidos asumidos**. "Mi compra" sigue siendo solo vendidos.
-- Nuevo estado **`returned_to_leader`**: acción **en lote** sobre `in_stock`, de **cualquier antigüedad**, con nota y **deshacer**; no cuenta en "Mi compra" ni en "A responder"; columna "Devueltos" en *Hacer inventario*.
+- Nuevo estado **`returned_to_leader`**: acción **en lote** sobre `in_stock`, sin importar su **fecha de recibido**, con nota y **deshacer**; no cuenta en "Mi compra" ni en "A responder"; columna "Devueltos" en *Hacer inventario*.
 - Identidad: `Recibidos = Vendidos + En físico + Con novedad + Perdidos + Devueltos`.
 
 ## Alternativas descartadas

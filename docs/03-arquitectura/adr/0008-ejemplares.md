@@ -11,7 +11,7 @@ Los ejemplares son unidades físicas. Hay que distinguirlos, congelar precios, m
 - **Precio acordado** editable por ejemplar individual.
 - **`received_at`:** hoy por defecto; fecha pasada al agregar; editable en línea después (no futura, no posterior a la venta), con historial.
 - **Con novedad:** nota obligatoria; no cuenta como físico. Salidas que ofrece la app: *Apareció*, *Perdido (lo asumo yo)*, *Eliminar*. **Ningún texto sugiere que el líder pueda asumir pérdidas** (es un acto de bondad que el colportor no debe ver como opción); *Eliminar* sirve igualmente si ocurre.
-- **Devolver al líder:** acción en lote sobre `in_stock` de cualquier antigüedad, con nota y deshacer.
+- **Devolver al líder:** acción en lote sobre `in_stock` sin importar su fecha de recibido, con nota y deshacer.
 - Identidad en *Hacer inventario*: `Recibidos = Vendidos + En físico + Con novedad + Perdidos + Devueltos`.
 - Historial en `copy_event` (solo inserción).
 

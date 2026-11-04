@@ -22,7 +22,7 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
   - *Dado* un título minibook, *entonces* el precio público es opcional; *dado* cultural/religioso, *entonces* es obligatorio y > 0.
   - *Cuando* desactivo un título con ejemplares, *entonces* no aparece al agregar a inventario y sus ejemplares siguen intactos y vendibles.
 - **RQ-TIT-02 [F1]** Existe un script idempotente de carga inicial del catálogo.
-- **RQ-TIT-03 [F1]** Edito meta de bonificación, umbrales de antigüedad y máximo de favoritos (por defecto 4.000.000, `[2,6,12]`, 6).
+- **RQ-TIT-03 [F1]** Edito meta de bonificación y máximo de favoritos (por defecto 4.000.000 y 6).
 
 ## Inventario y ejemplares
 - **RQ-INV-01 [F1]** Agrego ejemplares con "+" (un toque = un ejemplar) desde lista o favoritos, **igual para libros y minibooks**.
@@ -30,8 +30,7 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
   - *Entonces* tras el primer toque el "+" es una **pastilla numérica**; si escribo 5, el total agregado en la sesión pasa a 5 (se crean o retiran los ejemplares recién agregados que sobren).
   - *Entonces* aparece **Deshacer** unos segundos.
 - **RQ-INV-02 [F1]** Marco/desmarco favoritos (máx. 6). *Dado* 6 favoritos, *cuando* marco el séptimo, *entonces* se rechaza con aviso.
-- **RQ-INV-03 [F1]** Veo mis libros en físico por título con cantidad e icono de antigüedad; minibooks al final; "Por resolver" aparte.
-  - *Dado* un ejemplar recibido hace 0/2/3/6/7/12/13 días, *entonces* su etapa es reciente/reciente/normal/normal/envejeciendo/envejeciendo/antiguo (umbrales por defecto).
+- **RQ-INV-03 [F1]** Veo mis libros en físico por título con cantidad; minibooks al final; "Por resolver" aparte.
 - **RQ-INV-04 [F1]** Veo todos los ejemplares en 4 vistas (Todos, En físico, Vendidos, Con descuentos y aumentos) con orden y búsqueda, usando la barra de vista común.
 - **RQ-INV-05 [F1]** Edito el precio acordado de un ejemplar vendido y veo Precio distinto y Diferencia.
   - *Dado* público 50.000 y acordado 45.000, *entonces* diferencia −5.000 (descuento); *dado* 55.000, *entonces* +5.000 (aumento).
@@ -43,7 +42,7 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
   - *Dado* ese cliente con otro ejemplar de 20.000, *cuando* se devuelve el de 50.000, *entonces* deuda 20.000, abonos 30.000, saldo a favor 10.000.
   - *Entonces* con motivo *me equivoqué*, no cuenta como devolución en estadísticas.
 - **RQ-INV-08 [F1]** Agrego ejemplares con una **fecha de recibido pasada** (chip "Hoy ▾") y puedo **editar "Recibido el"** después (no futura, no posterior a la venta); el cambio queda en el historial.
-- **RQ-INV-09 [F1]** **Devuelvo al líder** ejemplares `in_stock` en lote, de cualquier antigüedad, con nota; puedo deshacerlo con nota.
+- **RQ-INV-09 [F1]** **Devuelvo al líder** ejemplares `in_stock` en lote, sin importar su fecha de recibido, con nota; puedo deshacerlo con nota.
   - *Entonces* no cuentan en "Mi compra" ni en "A responder al líder" y salen en la columna "Devueltos".
 
 ## Clientes
@@ -160,7 +159,7 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
 - **RQ-OFF-00 [F1]** **Lectura sin conexión:** sin internet la app abre y permite consultar lo último sincronizado; para registrar exige conexión con mensaje claro.
 - **RQ-QLT-01 [F1]** Mobile-first y legible en escritorio (menú lateral, tablas), estilo visual **Notion**, barra de vista idéntica en todos los módulos, íconos propios por sección (barra inferior solo con íconos en móvil).
 - **RQ-QLT-02 [F1]** PWA instalable; despliegue en us-east-1 (Supabase) e iad1 (Vercel), elegidas midiendo la latencia (ADR-0002).
-- **RQ-QLT-03 [F1]** Tooltips en: estados de abono, fecha acordada vs. real, diferencia, esperado vs. entregado, con novedad, saldo a favor, prospecto, antigüedad, Abibono ("Entrega al líder"), título vs. ejemplar.
+- **RQ-QLT-03 [F1]** Tooltips en: estados de abono, fecha acordada vs. real, diferencia, esperado vs. entregado, con novedad, saldo a favor, prospecto, Abibono ("Entrega al líder"), título vs. ejemplar.
 - **RQ-QLT-04 [F1]** Backups cada 2 días al inicio, luego semanales, con guía de restauración probada; ping anti-pausa cada 3 días.
 - **RQ-QLT-06 [F1]** Principios visuales (ADR-0032): **una sola acción principal global** ("Nuevo cliente", sin repetirse), más de 5 opciones agrupadas, sidebar estilo Notion, color solo en acento/rojo semántico/microíconos de tipo de evento, sin elementos de la lista negra anti-IA, filas de máximo 2 líneas, tooltips solo con ⓘ.
 - **RQ-QLT-05 [F1]** COP enteros `$1.250.000`, zona America/Bogota, español, `dd/mm/aaaa`, tema claro/oscuro automático.

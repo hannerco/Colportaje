@@ -25,7 +25,7 @@ Un **resumen general de todo**. A grandes rasgos, debe tener:
 ## Preguntas para cuando se diseñe Hoy (no se contestan ahora)
 - ¿Qué significa «cobrar rápido»? Hoy cobrar pide monto, fecha y método (BR-PAY-05): ¿se cobra con un toque con valores por defecto o abre un formulario corto?
 - ¿La vista de abonos muestra solo los de hoy, o también los vencidos (BR-CAL-09)?
-- ¿Qué muestra el «resumen de libros en físico»: total de ejemplares, los que están envejeciendo, o los «Por resolver»?
+- ¿Qué muestra el «resumen de libros en físico»: total de ejemplares o los «Por resolver»?
 - ¿Hoy conserva «Por entregar» y la barra de meta (DT-02)?
 - ¿El calendario del día es la lista cronológica actual (cobros, visitas, capacitaciones, recordatorios) o algo más?
 - ¿Cuáles son esas «otras cosas»?

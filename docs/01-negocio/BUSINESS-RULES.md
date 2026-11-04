@@ -55,7 +55,7 @@ Notación: "colportor" = usuario con rol colportor. Fechas calendario en **Ameri
 - **BR-COPY-03** Al crearse, el ejemplar **copia** (snapshot) el precio público y el precio colportor del Título vigentes. Todos los cálculos históricos usan los snapshots.
 - **BR-COPY-04** `received_at` = fecha de recepción. Por defecto **hoy**; se puede indicar **otra fecha pasada** al agregar (BR-COPY-02) y **editarla después** como propiedad en línea en el ejemplar (clic → selector de fecha), de forma **discreta**: no es un botón destacado, porque la idea es que normalmente no se cambie. Restricciones: no puede ser futura ni posterior a `sold_at`. Todo cambio queda en el historial del ejemplar. (Motivo: un día sin internet o sin celular impide registrar a tiempo.) Edición masiva → backlog.
 - **BR-COPY-05** `number`: consecutivo por (colportor, título), asignado por el sistema, **nunca reutilizado**, visible en el selector ("Corazón tranquilo #12") y en el detalle; sin prominencia en listas generales. En fase 2, sin conexión, se muestra un **número provisional** (con marca) que puede cambiar al sincronizar.
-- **BR-COPY-06** **Agregar (vender) un ejemplar a un cliente**, desde la sección *Libros* de su ficha (BR-CUS-14): solo ejemplares `in_stock`. El colportor los elige **uno por uno** de su stock físico: en el buscador "Agregar libro" de la ficha, tocar un título asigna **el ejemplar más antiguo** (se muestra su antigüedad) y, si quiere otro, expande el título y elige por número; los títulos agotados salen **al final, atenuados y sin poder tocarse**; desde la ficha del cliente puede **agregar y quitar** ejemplares, y eso cambia el estado del ejemplar. Al asignar: `customer_id`, `sold_at = ahora`, `status = sold`, `agreed_price = public_price_snapshot` (por defecto).
+- **BR-COPY-06** **Agregar (vender) un ejemplar a un cliente**, desde la sección *Libros* de su ficha (BR-CUS-14): solo ejemplares `in_stock`. El colportor los elige **uno por uno** de su stock físico: en el buscador "Agregar libro" de la ficha, tocar un título asigna **el ejemplar con la fecha de recibido más antigua** (se muestra su número y su fecha de recibido) y, si quiere otro, expande el título y elige por número; los títulos agotados salen **al final, atenuados y sin poder tocarse**; desde la ficha del cliente puede **agregar y quitar** ejemplares, y eso cambia el estado del ejemplar. Al asignar: `customer_id`, `sold_at = ahora`, `status = sold`, `agreed_price = public_price_snapshot` (por defecto).
 - **BR-COPY-07** El **precio acordado** de un ejemplar vendido se edita entrando al ejemplar individual. Puede ser mayor o menor que el precio público. Editarlo recalcula el saldo del cliente y puede disparar la **alerta de abonos que no cuadran** (BR-PAY-13).
 - **BR-COPY-08** Un ejemplar `in_stock` **no tiene cliente ni precio acordado**.
 - **BR-COPY-09** **Devolución / quitar un libro de un cliente** (acción única, ver `01-negocio/FLOWS-ALTERNATIVOS.md` AF-01..AF-12):
@@ -73,10 +73,10 @@ Notación: "colportor" = usuario con rol colportor. Fechas calendario en **Ameri
   - *Eliminar* (nota opcional) → el ejemplar se borra lógicamente y no cuenta en nada. Sirve para errores de registro y para el caso en que el líder acepte la pérdida.
   - **Regla de contenido:** **ningún texto, tooltip ni etiqueta** de la app menciona que el líder pueda asumir una pérdida. Esa es una decisión de bondad del líder que el colportor no debe ver como opción.
 - **BR-COPY-12** Vistas de la lista de ejemplares: **Todos**, **En físico**, **Vendidos**, **Con descuentos y aumentos** (los que tienen precio distinto). Cada fila muestra título, número, estado, cliente, fechas (recibido y vendido), **precio acordado, diferencia** y la marca de precio distinto, **sin sumas de dinero al pie** (los totales viven en Hacer inventario). Todas con **orden** y **búsqueda**, usando la misma barra de vista que el resto de módulos.
-- **BR-COPY-13** **Antigüedad** (derivada): días calendario completos desde `received_at` hasta hoy. Etapas por defecto: `fresh` (Reciente) 0–2, `normal` (Normal) 3–6, `aging` (Envejeciendo) 7–12, `old` (Antiguo) ≥ 13. Los límites superiores son **configurables por el admin** (`age_thresholds = [2, 6, 12]`). Solo se muestra en libros en físico y en el selector de ejemplares. Icono sobrio, **no una fruta**.
+- **BR-COPY-13** *(Eliminada en la ronda 21: el dueño canceló la antigüedad —etapas, ícono y umbrales—. El número no se reutiliza.)*
 - **BR-COPY-14** *Hacer inventario*, columnas por título: Recibidos, Vendidos, En físico (`in_stock`), Con novedad, Perdidos, Devueltos al líder, Compra, Venta al público. Identidad siempre cierta: `Recibidos = Vendidos + En físico + Con novedad + Perdidos + Devueltos al líder` (los ejemplares eliminados no cuentan).
 - **BR-COPY-15** Fase 3 (no v1): el líder transferirá ejemplares y el colportor los **aceptará en el sistema**; solo firma cuando (1) los recibió en físico y (2) los aceptó en el sistema. Habrá un estado previo a `in_stock` (`pending_receipt`).
-- **BR-COPY-16** **Devolver al líder** (`returned_to_leader`): acción **en lote** en Inventario ("Devolver al líder": se eligen ejemplares `in_stock` y una nota). Aplica a **cualquier ejemplar en inventario, sin importar su antigüedad** (fin de campaña o libros viejos que el líder acepta). No cuenta en "Mi compra" ni en "A responder al líder"; tiene su columna en *Hacer inventario*. Se elige **por cantidad por título** (pastilla numérica, se devuelven los más antiguos) como forma principal, o con **"Elegir unidades"** (casillas por ejemplar) como opción secundaria; la nota se pide al final, antes de confirmar. Se puede **deshacer** (vuelve a `in_stock`) con una nota; queda en el historial.
+- **BR-COPY-16** **Devolver al líder** (`returned_to_leader`): acción **en lote** en Inventario ("Devolver al líder": se eligen ejemplares `in_stock` y una nota). Aplica a **cualquier ejemplar en inventario, sin importar su fecha de recibido** (fin de campaña o libros viejos que el líder acepta). No cuenta en "Mi compra" ni en "A responder al líder"; tiene su columna en *Hacer inventario*. Se elige **por cantidad por título** (pastilla numérica, se devuelven los más antiguos) como forma principal, o con **"Elegir unidades"** (casillas por ejemplar) como opción secundaria; la nota se pide al final, antes de confirmar. Se puede **deshacer** (vuelve a `in_stock`) con una nota; queda en el historial.
 
 ## 5. Precio acordado, diferencia y precio distinto (derivados)
 
@@ -204,7 +204,6 @@ Notación: "colportor" = usuario con rol colportor. Fechas calendario en **Ameri
 | `excess` (abonos que no cuadran) | BR-PAY-13 |
 | `price_differs`, `price_delta` | BR-PRC-01/02 |
 | `is_prospect` | cliente sin ejemplares `sold` |
-| `age_stage` | BR-COPY-13 |
 | `overdue` | abono `scheduled` con `due_date < hoy` |
 | `total` del Abibono, `expected`, `difference` | BR-DEP-04/05 |
 | `first_sale_at`, `last_sale_at` | BR-CUS-04 |
@@ -234,7 +233,7 @@ Notación: "colportor" = usuario con rol colportor. Fechas calendario en **Ameri
 
 - **BR-INV-01** *Agregar a inventario*: ver BR-COPY-02.
 - **BR-INV-02** Favoritos: por usuario, máximo **6** (`app_settings.max_favorites`, editable por el admin).
-- **BR-INV-03** *Libros en físico*: Títulos con la cantidad de ejemplares `in_stock`, con el icono de antigüedad. Minibooks al final/aparte. Los `flagged` se muestran en una sección "Por resolver". Desde aquí se accede a "Devolver al líder" en lote (BR-COPY-16).
+- **BR-INV-03** *Libros en físico*: Títulos con la cantidad de ejemplares `in_stock`. Minibooks al final/aparte. Los `flagged` se muestran en una sección "Por resolver". Desde aquí se accede a "Devolver al líder" en lote (BR-COPY-16).
 
 ## 14. Fotos
 

@@ -16,8 +16,8 @@ Plan sugerido (cada hito con pruebas; el orden es también el **orden de recorte
 | Días | Hito | Contenido |
 |---|---|---|
 | 1–2 | **Cimientos** | Cuentas, scaffolding Next+TS por capas, linter de límites, CI, Supabase local, migraciones del esquema (`02-datos/DATABASE.md`), RLS + `tests/rls`, auth por invitación, PWA instalable. En paralelo (dueño): **diseño** |
-| 3–4 | **Dominio y admin** | Reglas `BR-*` con pruebas unitarias (saldo, precio, antigüedad, abonos, alerta BR-PAY-13, Abibono, minibooks, totalizadores); `/admin` (Catálogo, ajustes, usuarios, invitar por enlace, restablecer, desactivar); script de carga del catálogo |
-| 5–6 | **Inventario y clientes** | Agregar (lista, favoritos, "+" y pastilla numérica, fecha pasada, deshacer), libros en físico, antigüedad, vistas de ejemplares, "Con novedad", devolver al líder, clientes/prospectos, búsqueda difusa, ficha, archivar, duplicados, llamar/WhatsApp, fotos (compresión + miniaturas) |
+| 3–4 | **Dominio y admin** | Reglas `BR-*` con pruebas unitarias (saldo, precio, abonos, alerta BR-PAY-13, Abibono, minibooks, totalizadores); `/admin` (Catálogo, ajustes, usuarios, invitar por enlace, restablecer, desactivar); script de carga del catálogo |
+| 5–6 | **Inventario y clientes** | Agregar (lista, favoritos, "+" y pastilla numérica, fecha pasada, deshacer), libros en físico, vistas de ejemplares, "Con novedad", devolver al líder, clientes/prospectos, búsqueda difusa, ficha, archivar, duplicados, llamar/WhatsApp, fotos (compresión + miniaturas) |
 | 7–8 | **Vender y abonos** | **Nuevo cliente (ficha viva)**, abonos (cuota inicial, programado, extra, cobrar, parcial, prórroga), **alerta de abonos que no cuadran**, devolución con motivo, saldo a favor |
 | 9–10 | **Dinero y minibooks** | Dinero (por entregar, por método), Abibono (autocálculo, diferencia, recibo, confirmar, **reabrir**), minibooks (ventas, stock, asignación, `client_credit`) |
 | 11 | **Hoy y calendario** | Hoy (tarjeta **Por entregar**, aviso único de vencidos, lista cronológica), calendario (abonos, visitas, capacitaciones), recordatorios en app, semana desde domingo, formato 12/24 h |
