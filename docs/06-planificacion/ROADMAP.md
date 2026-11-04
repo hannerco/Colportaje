@@ -5,7 +5,7 @@
 ## Fase 0 — Preparación (esta etapa)
 - [x] Entrevista de diseño y decisiones (`00-contexto/DECISION-LOG.md`).
 - [x] Documentación base y revisión de cabos sueltos (`docs/`).
-- [ ] **SG-03** Repositorio GitHub privado `colportor` con el commit inicial.
+- [x] **SG-03** Repositorio GitHub `Colportaje` creado y con la documentación subida (público por ahora; privado antes de subir código).
 - [ ] **SG-04** Diseño en Claude Design (2–3 variantes) y elección del dueño (días 1–3).
 - [ ] **SG-02** Cuentas nuevas de Supabase y Vercel (`05-operacion/GUIA-DESPLIEGUE-PASO-A-PASO.md`).
 - [ ] **SG-01** Repetir la medición de latencia desde un celular.

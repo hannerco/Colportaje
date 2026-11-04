@@ -18,7 +18,7 @@ Si aparece una duda nueva, se agrega aquí con ID `OQ-*` y un supuesto por defec
 |---|---|---|---|
 | SG-01 | Repetir la **medición de latencia desde un celular con datos móviles** para confirmar us-east-1 (medido ~85 ms vs ~146 ms de São Paulo, desde Medellín, línea fija) | Agente + dueño | Antes de crear los proyectos |
 | SG-02 | **Crear las cuentas nuevas** de Supabase y Vercel y hacer login por CLI (`supabase login`, `vercel login`) siguiendo `05-operacion/GUIA-DESPLIEGUE-PASO-A-PASO.md` | Dueño | Cuando llegue el momento de desplegar |
-| SG-03 | **Crear el repositorio GitHub** (privado, nombre `colportor`) y subir el commit inicial (el modo automático bloqueó el comando; lo corre el dueño con `! `) | Dueño | Antes de comenzar a programar |
+| SG-03 | **Repositorio GitHub `Colportaje`**: creado y con la documentación subida (2026-11-04). Es **público** (sin las imágenes de referencia); pasarlo a **privado** antes de subir código, claves o datos | Dueño | Antes de comenzar a programar |
 | SG-04 | **Fecha de diseño en Claude Design**: el diseño debe estar elegido en los primeros 2–3 días del plazo de 14 | Dueño | Día 1–3 |
 | SG-05 | **Aviso de tratamiento de datos (Ley 1581)**: el agente redacta la **plantilla con huecos** (responsable y correo de contacto) en `docs/05-operacion/AVISO-DATOS-PLANTILLA.md`; el dueño define responsable y alguien con criterio legal la revisa antes de abrir a otros colportores | Agente / dueño | Antes del piloto con otros |
 | SG-06 | **Decidir el paso a Supabase Pro (~25 USD/mes)** cuando el equipo use la app con dinero real (copias diarias, sin pausa) | Dueño | Tras validar con los colportores |

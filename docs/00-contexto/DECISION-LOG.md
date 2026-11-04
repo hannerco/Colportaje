@@ -342,10 +342,11 @@ Antes de diseñar Inventario se cruzaron las tres secciones de Notion del dueño
 |---|---|---|
 | Q1 | Código adelantado | **"Preferí seguir creando la visual y no adelantar absolutamente nada de código, porque me di cuenta que al crear visual, las decisiones iban cambiando. Así que elimina todo lo adelantado."** [D] Se descartó todo el código escrito (capa de dominio y scaffolding de pnpm/TypeScript/Vitest/ESLint). El repositorio vuelve a contener solo documentación; el código se reescribe cuando el diseño esté cerrado. Las reglas de la ronda 11b siguen vigentes como documentación. |
 | Q2 | Remoto | **"Enfócate en subir las cosas a GitHub. Veo que los commits están en local, pero nada en remoto."** [D] Se sube solo la documentación. |
+| Q3 | Visibilidad y nombre del repo | El repo `hannerco/Colportaje` es **público**; el dueño eligió **dejarlo público pero sin las imágenes de referencia** (portadas y capturas de otras apps: se quedan solo en su computador, fuera de git) y **"cambia todo a Colportaje"**. Antes de subir código o datos se pasa a privado. |
 
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.
-2. **Repositorio de GitHub llamado `colportor`** (en vez de `colportaje`), coherente con el nombre de la app.
+2. **Repositorio de GitHub: `Colportaje`** (2026-11-04). Se pensó en `colportor`, pero el dueño ya había creado `hannerco/Colportaje` y pidió dejar todo con ese nombre.
 3. **Estado `returned_to_leader`** y columna "Devueltos" en *Hacer inventario*; la identidad de control del inventario se actualiza.
 4. **Recorte automático de abonos**: tras abono extra, desde el más próximo; tras devolución/baja de precio/archivado, desde el más lejano (modificable en el modal).
 5. **Archivar** sustituye a "eliminar" cliente (conserva información, que el dueño quiere guardar).

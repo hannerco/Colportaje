@@ -61,7 +61,7 @@ Obligatorias para todo agente o persona que escriba código o documentación aqu
 - Los nombres marcados 🔶 en el glosario siguen abiertos a discusión con el dueño.
 
 ## 8. Cómo debe trabajar un agente en este repo
-1. Lee `AGENTS.md` y `docs/README.md` antes de actuar. **La app se llama "Colportor"**; el repositorio es `colportor`.
+1. Lee `AGENTS.md` y `docs/README.md` antes de actuar. **La app se llama "Colportor"**; el repositorio es `Colportaje`.
 2. **No inventes reglas de negocio.** Si algo no está en `01-negocio/BUSINESS-RULES.md`, `01-negocio/FLOWS-ALTERNATIVOS.md` o `00-contexto/DECISION-LOG.md`, **pregunta al dueño** y regístralo en `06-planificacion/OPEN-QUESTIONS.md` (`OQ-*`) con un supuesto.
 3. No implementes lo que está en backlog, fase 2 o fase 3 salvo que se pida.
 4. Mantén las capas (`03-arquitectura/ARCHITECTURE.md` §2). La UI no habla con Supabase.

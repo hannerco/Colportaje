@@ -68,9 +68,8 @@ trabajo de otra conversación; no empieces de cero.
    C. Seguimientos:
       - SG-01 repetir la medición de latencia desde un celular con datos móviles (us-east-1 vs otras).
       - SG-02 cuentas nuevas de Supabase y Vercel (el dueño las crea; guía en docs/05-operacion/).
-      - SG-03 crear el repo privado "colportor" en GitHub (el comando fue bloqueado; lo corre el
-        dueño con "! gh repo create colportor --private --source=. --remote=origin --push"; la rama
-        feat/dominio no tiene remoto todavía).
+      - SG-03 repo GitHub "Colportaje" (hannerco/Colportaje): ya existe y tiene la documentación.
+        Es público; las imágenes de docs/04-diseno/referencias/ NO se suben (están en .gitignore).
       - SG-04 fecha de diseño (elegir variante en los primeros días del plazo de 14).
       - SG-05 aviso de datos (Ley 1581): definir responsable y correo y revisión legal.
       - SG-06 pasar a Supabase Pro cuando haya dinero real de varios usuarios.

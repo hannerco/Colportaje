@@ -11,7 +11,7 @@ Esta guía está pensada para alguien que **no conoce Supabase ni Vercel**. Sigu
 ## Qué vas a tener al final
 | Cosa | Para qué |
 |---|---|
-| Repositorio de GitHub `colportor` (privado) | Guardar el código |
+| Repositorio de GitHub `Colportaje` | Guardar el código |
 | Cuenta de Supabase con 2 proyectos: `colportor-prod` y `colportor-staging` | Base de datos, usuarios y fotos |
 | Cuenta de Vercel con un proyecto | Publicar la web (la dirección que abren los colportores) |
 
@@ -24,13 +24,12 @@ Esta guía está pensada para alguien que **no conoce Supabase ni Vercel**. Sigu
 
 ---
 
-## PARTE 1 — GitHub: crear el repositorio (SG-03)
-Ya tienes sesión de GitHub en el computador (`hannerco`). Solo falta subir el proyecto.
+## PARTE 1 — GitHub: el repositorio (SG-03)
+El repositorio ya existe: `https://github.com/hannerco/Colportaje` (cuenta `hannerco`) y la carpeta local ya está conectada a él.
 
-1. Abre la terminal en la carpeta del proyecto (`Colportaje`).
-2. Ejecuta: `! gh repo create colportor --private --source=. --remote=origin --push`
-3. Abre `https://github.com/hannerco/colportor`. Debes ver los archivos y `docs/`.
-- [ ] El repositorio existe y es **privado** (candado junto al nombre).
+1. Abre `https://github.com/hannerco/Colportaje`. Debes ver los archivos y `docs/`.
+2. **Antes de subir código, claves o datos reales**, hazlo privado: *Settings* → *General* → *Danger Zone* → *Change visibility* → *Make private*.
+- [ ] El repositorio existe y (antes de subir código) es **privado** (candado junto al nombre).
 
 ---
 
@@ -98,11 +97,11 @@ Crea el archivo `.env.local` en la carpeta del proyecto (copiando `.env.example`
 ### 3.2 Dar acceso al repositorio
 1. En Vercel: **Add New…** → **Project**.
 2. Pulsa **Adjust GitHub App Permissions** (o **Configure**) y, en GitHub, elige **Only select repositories** → marca **colportor** → **Save**.
-- [ ] Vercel ve el repositorio `colportor`.
+- [ ] Vercel ve el repositorio `Colportaje`.
 
 ### 3.3 Importar el proyecto
 > Este paso se hace **cuando ya exista la primera versión de la app** (hasta entonces no hay nada que publicar). El agente te avisa.
-1. **Add New…** → **Project** → junto a `colportor` pulsa **Import**.
+1. **Add New…** → **Project** → junto a `Colportaje` pulsa **Import**.
 2. **Framework Preset:** Next.js (lo detecta solo). No cambies nada más.
 3. Abre **Environment Variables** y agrega (nombre → valor), copiando los valores desde Supabase (Project Settings → API) de **producción**:
    - `NEXT_PUBLIC_SUPABASE_URL`

@@ -35,3 +35,6 @@ playwright/.cache/
 *.dump
 *.sql.gz
 backups/
+
+# Imágenes de referencia del diseño (portadas y capturas de otras apps): solo en el equipo del dueño
+docs/04-diseno/referencias/
