@@ -232,7 +232,7 @@ Solo tokens del design system; un solo botón principal por pantalla.
 ````
 En Crear cliente (escritorio y móvil; llena y vacía; claro y oscuro): todo se guarda solo.
 Cabecera: "Descartar" (secundario) y "Guardar cliente" (el único botón principal, deshabilitado sin
-nombre); conserva el indicador "Borrador guardado". Reemplaza el actual "Cancelar" por "Descartar".
+nombre); no hay indicador de "Borrador guardado" (un cliente con nombre ya existe). Reemplaza el actual "Cancelar" por "Descartar". Salir de la ficha de cualquier forma (atrás, menú, Resumen) sin "Guardar cliente" abre esa misma confirmación.
 Pantalla "Resumen": "Guardar cliente" (principal) y "Seguir editando". "Descartar" abre SIEMPRE una
 confirmación (modal en escritorio, hoja inferior en móvil): título "¿Descartar a <nombre>?", lista
 corta de lo que se perderá solo con lo que exista (p. ej. "Se quitarán 2 libros y 1 abono"; sin nada:
