@@ -82,7 +82,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 - **Reglas:** BR-PAY-06. **Caso:** AF-24.
 
 ## F-15 Dinero (cuadre nocturno, escritorio)
-- **Pasos:** Dinero → **Por cobrar** (con vencidos), **Por entregar** (total, y desglose efectivo / transferencia), **Entregado**, lista de **Abibonos**. Desde "Por entregar" → "Nuevo Abibono".
+- **Pasos:** Dinero → tarjeta fija **Por entregar** (total, efectivo, transferencia, "Nuevo Abibono"). Vista **Abonos de clientes**: óvalos Todos / Por cobrar (con vencidos y "Cobrar" por fila) / Por entregar / Entregados, filtro Método y barra de progreso tocable. Vista **Abibonos**: lista. Si hay deuda sin programar, la línea "Sin programar $X · N clientes" lleva a corregirla. Reglas: BR-DEP-14.
 - **Reglas:** BR-PAY-02/08.
 
 ## F-16 Devolver un libro / quitar de un cliente

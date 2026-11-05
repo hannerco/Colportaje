@@ -135,7 +135,8 @@
 | Sin programar | `unscheduled` | Saldo aún sin abonos programados (informativo) |
 | Perdidos asumidos | `lost_assumed_value` | Σ precio colportor de ejemplares `lost` (libros; sin minibooks) |
 | A responder al líder | `owed_to_leader` | Mi compra + perdidos asumidos |
-| Dinero en la calle | `street_money` | Σ saldos restantes (abonos `canceled` no cuentan) |
+| Por cobrar (total) | `to_collect_total` (antes `street_money` / «Dinero en la calle») | Σ saldos restantes = programado + sin programar (abonos `canceled` no cuentan) |
+| Total de venta | `sales_total` | Σ precio acordado de los libros vendidos (= Venta al público + Diferencia) |
 | **Por entregar** (sin subtítulo; ⓘ: "dinero que ya cobraste y aún no has entregado al líder") | `to_deliver_total` | Σ abonos `collected` no entregados; desglose Efectivo `cash_to_deliver` / Transferencia `transfer_to_deliver` |
 | Vencido | `overdue` | abono `scheduled` con `due_date < hoy` |
 | Fecha de la venta | `first_sale_at` / `last_sale_at` | |

@@ -207,7 +207,10 @@ remaining(c)       = max(0, balance)
 scheduled_total(c) = Σ payment.agreed_amount       donde status = scheduled          (canceled NO cuenta)
 excess(c)          = scheduled_total − remaining   → alerta BR-PAY-13 si > 0
 unscheduled(c)     = max(0, remaining − scheduled_total)   (informativo)
-street_money       = Σ remaining(c)                (global; excluye clientes archivados con saldo 0)
+to_collect_total   = Σ remaining(c)                (global; excluye clientes archivados con saldo 0)
+unscheduled_total  = Σ_c max(0, remaining(c) − scheduled_total(c))     (sin programar; BR-DEP-14)
+scheduled_to_collect = to_collect_total − unscheduled_total             (programado)
+sales_total        = Σ agreed_price de ejemplares sold no-minibook          (Total de venta)
 is_prospect(c)     = ¬∃ copy vendida
 price_differs(k)   = k.agreed_price ≠ k.public_price_snapshot
 price_delta(k)     = k.agreed_price − k.public_price_snapshot

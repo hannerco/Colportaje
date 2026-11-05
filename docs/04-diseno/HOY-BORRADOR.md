@@ -5,7 +5,7 @@
 ## Lo que el dueño quiere que sea Hoy
 Un **resumen general de todo**. A grandes rasgos, debe tener:
 1. Lo que hay en el **calendario para hoy**.
-2. Una **vista fácil de abonos** para **chequearlos** y **cobrarlos rápidamente**.
+2. Una **vista fácil de abonos** para **chequearlos** y **cobrarlos rápidamente** (el cobro se podrá hacer desde la ficha, Hoy y Dinero, BR-PAY-05).
 3. Un **resumen de los libros en físico**.
 4. Otras cosas **sin definir** («cuando lleguemos allá, sabremos»).
 

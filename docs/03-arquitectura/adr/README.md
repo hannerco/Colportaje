@@ -45,6 +45,7 @@ Un ADR por decisión relevante. Formato: contexto → decisión → alternativas
 | 0037 | Avatar del cliente con emoji opcional | Aceptado |
 | 0038 | Guardado, resumen y descarte de la ficha de cliente nueva | Aceptado |
 | 0039 | Plan de abonos automático | Aceptado |
+| 0040 | Dinero: vistas, estados con color y deuda sin programar | Aceptado |
 | 0033 | Recorte, motivos de cancelación, prórroga y signo del saldo a favor | Aceptado |
 
 ## Plantilla

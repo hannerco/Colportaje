@@ -98,13 +98,15 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
 - **RQ-PAY-06 [F1]** **Alerta de abonos que no cuadran** (BR-PAY-13).
   - *Dado* saldo restante 20.000 y programados 40.000 (4 × 10.000), *cuando* el cliente da un abono extra de 20.000, *entonces* aparece el modal con sobrante 20.000; **Recortar** cancela los **2 más próximos**.
   - *Dado* una devolución con el mismo sobrante, *entonces* **Recortar** cancela los **2 más lejanos**.
-  - *Entonces* los cancelados quedan `canceled` con motivo, visibles en "Cancelados", y **no** cuentan en calendario, Hoy ni dinero en la calle.
+  - *Entonces* los cancelados quedan `canceled` con motivo, visibles en "Cancelados", y **no** cuentan en calendario, Hoy ni por cobrar.
   - *Cuando* el sobrante es menor que un abono, *entonces* se reduce su `agreed_amount` y el valor anterior queda en `payment_event`.
   - *Cuando* elijo "Dejar como está", *entonces* la ficha muestra un aviso persistente.
   - *Dado* programados menores que el saldo, *entonces* no hay alerta, solo "sin programar".
 
 ## Dinero y Abibonos
-- **RQ-DEP-01 [F1]** Veo lo **"Por entregar"** en Dinero: el total y su desglose en efectivo y transferencia.
+- **RQ-DEP-01 [F1]** Veo lo **"Por entregar"** en una tarjeta fija de Dinero (total y desglose en efectivo y transferencia) con "Nuevo Abibono" (BR-DEP-14).
+- **RQ-DEP-09 [F1]** En Abonos de clientes uso las vistas Todos / Por cobrar / Por entregar / Entregados, el filtro de método y una barra de progreso de 3 tramos que, al tocarla, filtra. En Por cobrar veo los vencidos, los totales programado y sin programar y puedo cobrar desde la fila.
+- **RQ-DEP-10 [F1]** Puedo cobrar un abono desde la ficha, Hoy y Dinero (BR-PAY-05).
 - **RQ-DEP-02 [F1]** Armo un Abibono vinculando abonos `collected` y asignaciones de minibooks; efectivo/transferencia se autocalculan y son editables; el total no.
 - **RQ-DEP-03 [F1]** Esperado vs. entregado y diferencia siempre visibles; nota obligatoria si ≠ 0.
   - *Dado* abonos por 100.000 y entrega 95.000, *entonces* diferencia −5.000 y no se confirma sin nota.
@@ -118,7 +120,7 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
 
 ## Minibooks
 - **RQ-MBK-01 [F1]** Registro ventas (título, cantidad, monto ≥ 0, método, fecha, nota) sin cliente; descuentan stock; sin stock se bloquea con atajo.
-- **RQ-MBK-02 [F1]** No afectan libros vendidos, compra, venta al público, diferencia, dinero en la calle ni saldos.
+- **RQ-MBK-02 [F1]** No afectan libros vendidos, compra, venta al público, diferencia, por cobrar ni saldos.
 - **RQ-MBK-03 [F1]** Asigno parte del dinero de una entrada a un Abibono; solo lo asignado suma a "Total abonado".
 - **RQ-MBK-04 [F1]** Entrego un minibook con origen `client_credit`: reduce saldo a favor (monto ≤ saldo a favor), no es ingreso, no va a Abibono, descuenta stock.
 - **RQ-MBK-05 [F1]** Totalizadores propios: vendidos, ingresos, costo, ganancia neta, entregado, stock.

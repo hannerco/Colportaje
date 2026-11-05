@@ -124,7 +124,7 @@ Basada en lo que usan las apps de referencia (iOS: 17 / 15 / 13 pt; Material: cu
 | 7 | **Ejemplares** | Pestañas Todos / En físico / Vendidos / Con descuentos y aumentos (cada fila: título, número, estado, cliente, fechas, precio acordado, diferencia y marca de precio distinto; sin sumas de dinero al pie) | F-07 |
 | 8 | **Ejemplar** | Estado, cliente, precio acordado y "Recibido el" editables en línea, historial | F-08, F-09 |
 | 9 | **Devolver + modal de abonos** | Motivo (2 opciones) → modal con sobrante y abonos con casillas: Recortar / Cancelar los que marque / Dejar | F-16, F-29 |
-| 10 | **Dinero** | Por cobrar (vencidos filtrables) · Por entregar · Entregado; Abibonos | F-15 |
+| 10 | **Dinero** | Dos vistas (Abonos de clientes · Abibonos); tarjeta fija Por entregar con Nuevo Abibono; vistas Todos / Por cobrar / Por entregar / Entregados, filtro Método, barra de progreso de 3 tramos tocable; sin programar | F-15, BR-DEP-14 |
 | 11 | **Abibono** | Vincular, efectivo/transferencia, esperado vs entregado, recibo, Reabrir discreto | F-17 |
 | 12 | **Minibooks** | Ventas del día, stock, agregar con "+ / pastilla" | F-21 |
 | 13 | **Calendario** | Mes/día; tres tipos con ícono de color; crear visita/capacitación | F-18, F-19 |
@@ -184,6 +184,7 @@ Cada variante en móvil y escritorio, claro y oscuro. En todas rigen las seccion
 | DT-05 | ~~Ícono de antigüedad por etapas~~ **Cancelada (ronda 21)**: ya no hay antigüedad |
 | DT-06 | Barra de vista única reutilizada en todos los módulos |
 | DT-07 | Tres tonos de los microíconos de tipo de evento (cobro / visita / capacitación) en cada variante |
+| DT-11 | **Color de «Entregado»**: dorado o azul (tono «prime»), explorados en variantes; Por cobrar gris, Cobrado verde, Cancelado gris tachado |
 | DT-08 | ✅ **Cerrada (ronda 19):** ítem del sidebar debajo de Hoy + botón en Clientes. *Ubicación de "Nuevo cliente" en escritorio* — 4 opciones evaluadas: A navegación global (ítem del sidebar), B solo en Clientes, C flotante, D ícono en la cabecera del sidebar + botón en Clientes. Y su equivalente móvil (cabecera / flotante). Ver `04-diseno/PROMPT-CLAUDE-DESIGN.md` («4 ubicaciones») |
 
 ## 14. No diseñar ahora

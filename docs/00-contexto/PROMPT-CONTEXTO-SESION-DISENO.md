@@ -16,7 +16,7 @@ trabajo de otra conversación; no empieces de cero.
    Supabase (us-east-1) y Vercel (iad1), Tailwind + shadcn/ui, Vitest y Playwright.
 
 3) ESTADO ACTUAL
-   - Documentación completa, en carpetas docs/00-contexto … 06-planificacion, con 39 ADRs.
+   - Documentación completa, en carpetas docs/00-contexto … 06-planificacion, con 40 ADRs.
    - Todavía NO hay código: el dueño decidió (2026-11-04) no programar nada hasta cerrar el diseño.
      Para commits usa SIEMPRE rutas explícitas (git add docs AGENTS.md), nunca git add -A.
    - Estoy diseñando en Claude Design (claude.ai/design) y te traigo los resultados para revisarlos.

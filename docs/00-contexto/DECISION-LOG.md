@@ -363,6 +363,29 @@ El dueño decidió: en la ficha de **Crear cliente**, quitar un libro agregado s
 
 ---
 
+## Ronda 23 — Módulo Dinero (2026-11-05)
+
+Se cruzaron las dos tablas de Notion (Abonos de clientes y Abibonos) con los docs, pregunta por pregunta.
+
+| # | Tema | Decisión |
+|---|---|---|
+| 1 | Estructura | Dos vistas, **Abonos de clientes** y **Abibonos**, con el mismo patrón que Inventario (rectángulo junto al título; óvalos debajo). Tarjeta fija **Por entregar** (total, efectivo, transferencia) con **Nuevo Abibono**; si no convence, se piden variantes. |
+| 2 | Vistas de Abonos | Todos · Por cobrar · Por entregar · Entregados + filtro **Método**; se eliminan las vistas Nequi/Efectivo. Sin herramienta de «contar». |
+| 3 | Barra de progreso | Una barra de 3 tramos (Entregado, Cobrado, Por cobrar), tocable para filtrar; sobre todos los abonos no cancelados. |
+| 4 | Vencido | **No es un estado**: marca derivada del abono (Por cobrar con fecha pasada, «Vencido · hace N días»); el cliente deriva su Vencido de sus abonos. |
+| 5 | Colores | Por cobrar gris, **Cobrado verde**, **Entregado «prime»** (dorado o azul, DT-11), Cancelado gris tachado. El verde pasa a significar «dinero recibido» (ya no es único de Saldado). |
+| 6 | «En la calle» | Desaparece como nombre: es **Por cobrar** (estado, vista y totalizador). El totalizador = programado + sin programar. |
+| 7 | Deuda sin programar | Se avisa con «Sin programar $X · N clientes» para corregirla. |
+| 8 | Total de venta | Nuevo totalizador = Σ precio acordado de lo vendido (confirmado). |
+| 9 | Cobrar | Desde la ficha, Hoy y Dinero (repetido a propósito). |
+| 10 | Diseño | Escritorio claro primero; móvil claro después; oscuro al final. |
+| 11 | Totales de Por cobrar | «Programado» y «Sin programar» van en la vista Por cobrar, no en la tarjeta fija (a probar así por ahora). |
+| 12 | Abibonos | Sin subvistas: solo la lista de lo entregado al líder (como en Notion). |
+
+Corrección al asistente: se recomendó que todos los estados del abono fueran grises sin considerar que no se distinguirían; el dueño pidió colores con significado.
+
+---
+
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.
 2. **Repositorio de GitHub: `Colportaje`** (2026-11-04). Se pensó en `colportor`, pero el dueño ya había creado `hannerco/Colportaje` y pidió dejar todo con ese nombre.

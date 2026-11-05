@@ -41,8 +41,8 @@ Una sola acción —**"Devolver a inventario"** en la ficha del cliente (o en el
   1. **Recortar automáticamente** (sugerido): tras una devolución se consume desde el **más lejano** → se cancelan los dos últimos de 10.000.
   2. **Cancelar los que marque.**
   3. **Dejar como está** (queda un aviso persistente en la ficha hasta resolverlo).
-- *Resultado:* los abonos cancelados pasan a `canceled` (motivo `book_returned`), se **conservan** en "Cancelados" y **no cuentan** en el calendario, Hoy, dinero en la calle ni totales.
-- *Por qué:* el dinero en la calle debe reflejar solo lo que el cliente realmente va a pagar.
+- *Resultado:* los abonos cancelados pasan a `canceled` (motivo `book_returned`), se **conservan** en "Cancelados" y **no cuentan** en el calendario, Hoy, por cobrar ni totales.
+- *Por qué:* lo por cobrar debe reflejar solo lo que el cliente realmente va a pagar.
 
 ### AF-06 Me equivoqué de cliente
 - *Situación:* le agregué el libro al cliente A y era del cliente B.

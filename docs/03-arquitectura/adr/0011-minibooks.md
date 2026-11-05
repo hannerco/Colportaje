@@ -7,7 +7,7 @@ Los minibooks son libros pequeños que se ofrecen cuando un cliente rechaza uno 
 ## Decisión
 - Un minibook es un **Título** con `category = minibook`; sus unidades son **Ejemplares** que entran al inventario normalmente, mostrados **aparte, al final**.
 - La venta se registra como **entrada** (`minibook_sale`): título, cantidad ≥ 1, monto ≥ 0, **método** (`cash`/`transfer`), fecha, nota; **sin cliente**. Consume ejemplares `in_stock` (más antiguos primero); sin stock se **bloquea** con atajo a "Agregar al inventario".
-- **Cuenta aparte:** no afecta libros vendidos, compra, venta al público, diferencia, dinero en la calle ni saldos. Su única conexión: **Total abonado** cuando se asigna a un Abibono.
+- **Cuenta aparte:** no afecta libros vendidos, compra, venta al público, diferencia, por cobrar ni saldos. Su única conexión: **Total abonado** cuando se asigna a un Abibono.
 - **Asignación a Abibono** (`leader_deposit_minibook_allocation`): se elige cuánto de cada entrada se entrega (parcial permitido).
 - **Entrega por saldo a favor:** entrada con `customer_id` y `payment_source = client_credit`; reduce el saldo a favor, no es ingreso, no va a Abibono, sí descuenta stock.
 - Totalizadores propios: vendidos, ingresos, costo, ganancia neta, entregado al líder, stock.

@@ -316,3 +316,61 @@ portada o emoji) se explora después, con las listas ya diseñadas.
 REGLAS DE COPY: "En físico" (nunca "En inventario") para el estado de un ejemplar en tu poder.
 "Ejemplar" = unidad; "Título" = el libro como producto. Dinero en COP sin decimales.
 ````
+
+
+## Prompt — módulo Dinero (ronda 23)
+Pegar en el chat de diseño (con la skill `colportor-diseno`), en el mismo proyecto. Primero **ESCRITORIO claro**; después móvil claro; el oscuro al final. **Pegar todo lo que sigue:**
+
+````
+Diseña el módulo DINERO de Colportor, en el mismo proyecto y con el mismo sistema de diseño (tokens, sin
+tamaños ni colores literales). Primero ESCRITORIO (1440) en CLARO. Sin textos explicativos (tooltips con ⓘ
+bajo demanda) y un solo botón principal por pantalla. No inventes reglas: lo que no esté aquí, déjalo como
+placeholder. Dinero en COP sin decimales ($1.250.000), fechas dd/mm/aaaa.
+
+ESTRUCTURA (reutiliza el patrón de Inventario): junto al título "Dinero", un control en rectángulo con
+dos vistas y su conteo: "Abonos de clientes" y "Abibonos". Debajo, en óvalos, las vistas de la vista
+elegida (como en Ejemplares de Inventario).
+Arriba, FIJA en las dos vistas, la tarjeta "Por entregar": total en cifra grande, desglose "Efectivo" y
+"Transferencia", y dentro de ella el único botón principal "Nuevo Abibono". Esta tarjeta es la opción A;
+si no convence, el dueño pedirá otras variantes.
+
+1) ABONOS DE CLIENTES. Óvalos: Todos · Por cobrar · Por entregar · Entregados. Un filtro "Método" (Todos /
+   Efectivo / Transferencia) que se combina con cualquiera. Orden y búsqueda con la barra de vista común.
+   - BARRA DE PROGRESO de 3 tramos (Entregado, Cobrado, Por cobrar) con monto y porcentaje por tramo,
+     calculada sobre todos los abonos no cancelados. Al TOCAR un tramo se filtra la lista a ese estado
+     (el tramo activo se ve seleccionado; tocarlo de nuevo quita el filtro). Solo en esta vista.
+   - Columnas de la tabla: Cliente (avatar + nombre), Estado, Fecha acordada, Valor acordado, Fecha real,
+     Valor real, Método.
+   - ESTADOS Y COLOR del abono: "Por cobrar" gris; "Cobrado" verde (tooltip "Ya lo recibiste, falta
+     entregarlo al líder"); "Entregado" en un tono "prime"; "Cancelado" gris con el texto tachado.
+     "Vencido" NO es un estado: es una marca roja derivada que se suma a un abono "Por cobrar" cuya fecha
+     ya pasó, con el texto "Vencido · hace N días".
+   - VISTA "POR COBRAR": arriba, dos totales "Programado" y "Sin programar", y, SOLO si hay deuda sin
+     programar, una línea discreta "Sin programar $X · N clientes" que abre una lista de esos clientes
+     (cada uno lleva a su ficha para programar el abono). Cada fila tiene un botón secundario "Cobrar" que
+     abre un formulario corto (modal en escritorio): valor real (precargado con el acordado), fecha (hoy
+     por defecto, no futura) y método (Efectivo / Transferencia). Un solo botón principal "Cobrar" dentro
+     del formulario.
+   - Vistas "Por entregar" y "Entregados": la misma tabla filtrada. "Por entregar" = abonos Cobrados que
+     aún no están en un Abibono confirmado.
+2) ABIBONOS (tooltip del nombre: "Entrega al líder"). Lista con: nombre, fecha, total, efectivo,
+   transferencia, estado (Borrador / Confirmado) y miniatura del recibo. Muestra el "Total abonado al
+   líder". Sin subvistas en óvalos. Orden y búsqueda.
+3) NUEVO ABIBONO (precargado desde la tarjeta o desde Hoy): título automático "Abibono – dd/mm/aaaa" y
+   fecha automática, ambos editables. Lista de abonos Cobrados libres, TODOS preseleccionados, con casillas;
+   asignaciones de minibooks (opcionales). Efectivo y transferencia se autocalculan y son editables; el
+   Total es derivado y NO editable. "Esperado" vs "Entregado" y "Diferencia" siempre visibles; si la
+   diferencia no es cero, la nota es obligatoria. Foto del recibo: una por defecto y "Añadir otra". Un solo
+   botón principal "Confirmar" (el recibo es obligatorio); acción secundaria "Guardar borrador". Un Abibono
+   sin abonos vinculados (donación) es válido, con nota.
+4) ABIBONO CONFIRMADO (detalle): mismos datos en lectura, con nota y fotos editables; un botón DISCRETO
+   "Reabrir" que pide un motivo obligatorio. Los abonos vinculados se ven bloqueados.
+5) ESTADOS de las listas: cargando, vacío y sin conexión (se puede consultar, no guardar).
+
+EXPLORACIÓN (sin decidir): el color de "Entregado". Muestra DOS variantes, una en DORADO y otra en AZUL
+(distinto del acento de botones), aplicadas a la barra de progreso y a la lista. Rojo, verde y el tono
+"prime" deben distinguirse también por luminosidad, no solo por tono (daltonismo).
+
+REGLAS DE COPY: "Por cobrar", "Cobrado", "Entregado" (nunca "Sin reclamar", "Reclamado" ni "En la calle").
+"Abibono" se conserva, con tooltip "Entrega al líder".
+````

@@ -2,7 +2,7 @@
 Estado: Aceptado · Fecha: 2026-10-26 · Revisado: 2026-10-28
 
 ## Contexto
-Un cliente puede devolver un libro que ya empezó a pagar, y ese dinero seguramente ya se entregó al líder. No hay forma de reembolsar. Los abonos programados de ese libro no se van a pagar y no deben contar como dinero en la calle. A veces el colportor también se equivoca de cliente al registrar un libro.
+Un cliente puede devolver un libro que ya empezó a pagar, y ese dinero seguramente ya se entregó al líder. No hay forma de reembolsar. Los abonos programados de ese libro no se van a pagar y no deben contar como por cobrar. A veces el colportor también se equivoca de cliente al registrar un libro.
 
 ## Decisión
 - Una sola acción **"Devolver a inventario"** (también para "quitar de un cliente") con **motivo**: *El cliente lo devolvió* o *Me equivoqué de cliente / de registro* (este no cuenta como devolución en estadísticas). No existe "cambiar de cliente".
