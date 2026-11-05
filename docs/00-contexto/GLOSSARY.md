@@ -8,7 +8,7 @@
 | **Abonos** (de clientes) | Se queda "Abono" |
 | **Abibonos** | Se queda así (chiste interno que el dueño quiere conservar). El tooltip dice **"Entrega al líder"** |
 | **Minibooks** | Literalmente "Minibooks" |
-| **Dinero**, **Hacer inventario**, **Nuevo cliente**, **Hoy** | Se quedan ("Vender" ya no existe, ADR-0035). "Hoy" lleva el subtítulo "Pendientes del día" |
+| **Dinero**, **Hacer inventario**, **Nuevo cliente**, **Hoy** | Se quedan ("Vender" ya no existe, ADR-0035). "Hoy" no lleva subtítulos (BR-GEN-12); "Pendientes del día" es solo un alias |
 | **Catálogo** | Sección del admin donde se gestionan los Títulos |
 | **Libros** | Lo que ve el colportor en listas y selectores ("Libros en físico", "¿Qué libro recibiste?") |
 | **Ejemplar** | Cada unidad física; aparece en detalles y tooltips |

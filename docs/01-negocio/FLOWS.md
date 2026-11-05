@@ -20,7 +20,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 
 ## F-04 Ajustes de admin y usuarios
 - **Pasos:** Admin → **Ajustes**: meta de bonificación, máximo de favoritos. Admin → **Usuarios**: lista (nombre, correo, rol, estado), **Invitar** (F-25), generar enlace de restablecimiento, **desactivar/reactivar**.
-- **Reglas:** BR-GOAL-01, BR-COPY-13, BR-USR-05/07.
+- **Reglas:** BR-GOAL-01, BR-USR-05/07.
 
 ## F-05 Agregar a inventario
 - **Contexto:** móvil, en la calle. **Mismo patrón para libros y minibooks.**
@@ -32,7 +32,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 
 ## F-06 Ver libros en físico
 - **Pasos:** Inventario → lista de Títulos con cantidad `in_stock`; detalle por título con ejemplares (número y fecha de recibido). Minibooks al final/aparte. Sección **"Por resolver"** (`flagged`). Desde aquí: **Devolver al líder** (F-26).
-- **Reglas:** BR-INV-03, BR-COPY-13.
+- **Reglas:** BR-INV-03.
 
 ## F-07 Lista de ejemplares con vistas
 - **Pasos:** Inventario → Ejemplares → pestañas **Todos / En físico / Vendidos / Con descuentos y aumentos**; orden y búsqueda con la **barra de vista común**.
@@ -127,7 +127,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 - **Control:** `Recibidos = Vendidos + En físico + Con novedad + Perdidos + Devueltos`.
 
 ## F-23 Buscar clientes
-- **Pasos:** Clientes → campo de búsqueda → resultados al teclear (tolerante a errores y acentos) sobre nombre, teléfono, información y dirección → vistas **Recientes / Deudores / Todos**, selector de orden, interruptor "Incluir prospectos", opción "Archivados".
+- **Pasos:** Clientes → campo de búsqueda → resultados al teclear (tolerante a errores y acentos) sobre nombre, teléfono, información, dirección y libros → pestañas **Todos / Deudores / Saldados / Archivados**, selector de orden, interruptor "Incluir prospectos".
 - **Reglas:** BR-CUS-05/07.
 
 ## F-24 Fotos
@@ -151,7 +151,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 - **Reglas:** BR-GEN-07, BR-USR-08.
 
 ## F-29 Alerta de abonos programados que no cuadran
-- **Disparadores:** abono extra o mayor al acordado, devolución, bajar precio, editar/borrar abono cobrado, archivar, confirmar la venta.
+- **Disparadores:** abono extra o mayor al acordado, devolución, bajar precio, editar/borrar abono cobrado, archivar, agregar o editar libros y abonos programados en la ficha (BR-PAY-13).
 - **Pasos:** modal con saldo restante, total programado, **sobrante** y lista con casillas → **Recortar automáticamente** (desde el más próximo tras un abono extra; desde el más lejano tras devolución/baja de precio/archivado) / **Cancelar los que marque** / **Dejar como está** (aviso persistente en la ficha; solo si el cliente aún debe algo).
 - **Resultado:** abonos `canceled` conservados en "Cancelados"; no cuentan en calendario ni totales.
 - **Reglas:** BR-PAY-13. **Casos:** AF-05, AF-20, AF-21, AF-25, AF-29, AF-32.

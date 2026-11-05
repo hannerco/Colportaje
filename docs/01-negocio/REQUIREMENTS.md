@@ -38,7 +38,7 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
   - *Entonces* un ejemplar `flagged` no cuenta como físico; "Perdido" lo deja `lost` y suma a "A responder al líder"; "Eliminar" lo borra sin contar en nada.
   - *Entonces* ningún texto de la app menciona que el líder pueda asumir una pérdida.
 - **RQ-INV-07 [F1]** **Devuelvo** un ejemplar vendido (motivo: *cliente lo devolvió* / *me equivoqué*) sin alterar abonos cobrados ni Abibonos.
-  - *Dado* un cliente con un solo ejemplar a 50.000 que pagó 30.000 (ya entregados en un Abibono confirmado), *cuando* se devuelve, *entonces* deuda 0, abonos 30.000, Abibono intacto, **Saldo a favor 30.000**, el ejemplar conserva su `received_at` y su antigüedad.
+  - *Dado* un cliente con un solo ejemplar a 50.000 que pagó 30.000 (ya entregados en un Abibono confirmado), *cuando* se devuelve, *entonces* deuda 0, abonos 30.000, Abibono intacto, **Saldo a favor 30.000**, el ejemplar conserva su `received_at`.
   - *Dado* ese cliente con otro ejemplar de 20.000, *cuando* se devuelve el de 50.000, *entonces* deuda 20.000, abonos 30.000, saldo a favor 10.000.
   - *Entonces* con motivo *me equivoqué*, no cuenta como devolución en estadísticas.
 - **RQ-INV-08 [F1]** Agrego ejemplares con una **fecha de recibido pasada** (chip "Hoy ▾") y puedo **editar "Recibido el"** después (no futura, no posterior a la venta); el cambio queda en el historial.
@@ -50,7 +50,7 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
   - *Dado* un cliente sin ejemplares, *entonces* es prospecto: no aparece en listas por defecto ni en "Total clientes".
 - **RQ-CUS-02 [F1]** La ficha muestra deuda, abonos (con Cancelados plegable), saldo pendiente/a favor, sin programar, fechas de venta derivadas, facturas, fotos, visitas.
 - **RQ-CUS-03 [F1]** Pestañas Todos, Deudores, Saldados y Archivados; selector de orden (Más recientes por fecha de creación, Última modificación, Nombre, Mayor deuda, Próximo abono) con sentido ascendente/descendente invertible; interruptor "Incluir prospectos"; cada fila muestra el saldo pendiente del cliente.
-- **RQ-CUS-04 [F1]** Búsqueda local difusa sobre nombre, teléfono, información, dirección.
+- **RQ-CUS-04 [F1]** Búsqueda local difusa sobre nombre, teléfono, información, dirección y libros (BR-CUS-07).
   - *Dado* "María Gómez" guardada, *cuando* busco "maria gomes", *entonces* aparece.
 - **RQ-CUS-05 [F1]** Dirección en texto (manual) + ubicación con coordenadas + enlace de Maps opcional; **"Abrir en Maps"** lleva las coordenadas a la app de mapas del celular.
   - *Dado* un cliente con coordenadas, *entonces* "Abrir en Maps" abre `…/maps/search/?api=1&query=<lat>,<lng>`; *dado* solo enlace pegado, abre ese enlace; *dado* solo dirección en texto, busca esa dirección; *dado* nada, el botón no aparece.
@@ -133,7 +133,7 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
 - **RQ-CAL-03 [F1]** Capacitaciones con fecha y hora, lugar, notas.
 - **RQ-CAL-04 [F1]** Recordatorios (inicio del día 07:00, 1 día, 1 semana, personalizado), sin valor por defecto, dentro de la app y descartables.
 - **RQ-CAL-05 [F1]** **Hoy** muestra: tarjeta "Por entregar", aviso único de vencidos (si hay), barra de meta y **una lista cronológica** de cobros, visitas, capacitaciones y recordatorios de hoy.
-  - *Entonces* **no** hay semana ni agenda aparte, ni botones, ni subtítulos; cada fila tiene máximo 2 líneas y un ícono de tipo (único color de categoría).
+  - *Entonces* **no** hay semana ni agenda aparte, ni subtítulos, y el **único botón** es «Entregar» de la tarjeta «Por entregar»; cada fila tiene máximo 2 líneas y un ícono de tipo (único color de categoría).
   - *Dado* 2 abonos vencidos, *entonces* se ve **una** fila "2 cobros vencidos ›" y no hay filas individuales de vencidos; *dado* 0, *entonces* no aparece.
   - *Cuando* toco el aviso, *entonces* abre Dinero ▸ Por cobrar filtrado a Vencidos.
 - **RQ-CAL-06 [F2]** Push de recordatorios.
@@ -162,7 +162,7 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
 - **RQ-PHO-01 [F1]** Compresión obligatoria (WebP ≤1280 px ~150 KB) + miniatura; bucket privado con URLs firmadas.
 - **RQ-PHO-02 [F1]** Alerta de uso al admin al 70 %.
 - **RQ-OFF-00 [F1]** **Lectura sin conexión:** sin internet la app abre y permite consultar lo último sincronizado; para registrar exige conexión con mensaje claro.
-- **RQ-QLT-01 [F1]** Mobile-first y legible en escritorio (menú lateral, tablas), estilo visual **Notion**, barra de vista idéntica en todos los módulos, íconos propios por sección (barra inferior solo con íconos en móvil).
+- **RQ-QLT-01 [F1]** Mobile-first y legible en escritorio (menú lateral, tablas), estilo visual **Notion**, barra de vista idéntica en todos los módulos, íconos propios por sección (barra inferior en móvil con ícono y nombre, ronda 19).
 - **RQ-QLT-02 [F1]** PWA instalable; despliegue en us-east-1 (Supabase) e iad1 (Vercel), elegidas midiendo la latencia (ADR-0002).
 - **RQ-QLT-03 [F1]** Tooltips en: estados de abono, fecha acordada vs. real, diferencia, esperado vs. entregado, con novedad, saldo a favor, prospecto, Abibono ("Entrega al líder"), título vs. ejemplar.
 - **RQ-QLT-04 [F1]** Backups cada 2 días al inicio, luego semanales, con guía de restauración probada; ping anti-pausa cada 3 días.
