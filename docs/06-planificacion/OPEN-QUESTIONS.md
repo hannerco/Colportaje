@@ -1,6 +1,6 @@
 # Preguntas abiertas, supuestos y seguimientos
 
-**Estado actual: no queda ninguna pregunta abierta de producto ni de arquitectura.** Todas las dudas del documento original se resolvieron en la entrevista (ver `00-contexto/DECISION-LOG.md`, rondas 7–9). Este archivo conserva:
+**Estado actual: no queda ninguna pregunta abierta de producto ni de arquitectura, salvo las decisiones de diseño (§3) y los supuestos OQ-30..36 por confirmar (§6).** Todas las dudas del documento original se resolvieron en la entrevista (ver `00-contexto/DECISION-LOG.md`, rondas 7–9). Este archivo conserva:
 
 1. **Seguimientos (SG-*)** — cosas ya decididas que requieren una acción concreta, con responsable.
 2. **Cosas por revisar (RV-*)** — decisiones que el dueño quiere reevaluar con uso real.
@@ -56,7 +56,7 @@ Ver `04-diseno/DESIGN-BRIEF.md` §13: DT-01 (total de deuda en Clientes), DT-02 
 - Recordatorios/seguimiento de personas interesadas en minibooks.
 - Posible eliminación de totalizadores (cada uno es una pieza registrada).
 - Migración de fotos a Cloudflare R2 al 70 % de uso.
-- Vista de clientes vencidos.
+- ~~Vista de clientes vencidos~~ (ya cubierta por el filtro de Estado «Vencido», BR-CUS-13).
 - **Filtro de clientes por libro** (hoy la búsqueda ya encuentra por título, BR-CUS-07).
 - Buscador "Agregar libro del inventario" de la ficha: definir con el diseño de Inventario (datos por libro, agotados, precio de inventario, búsqueda y orden).
 - Invitaciones por correo automáticas (con dominio + SMTP propio).

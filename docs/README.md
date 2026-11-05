@@ -56,7 +56,7 @@ docs/
 10. [`03-arquitectura/adr/`](03-arquitectura/adr/README.md) — decisiones de arquitectura.
 11. [`04-diseno/DESIGN-BRIEF.md`](04-diseno/DESIGN-BRIEF.md) — brief v2 para Claude Design · [`04-diseno/PROMPT-CLAUDE-DESIGN.md`](04-diseno/PROMPT-CLAUDE-DESIGN.md) — prompt listo para pegar.
 12. [`05-operacion/DEPLOYMENT.md`](05-operacion/DEPLOYMENT.md) y [`05-operacion/GUIA-DESPLIEGUE-PASO-A-PASO.md`](05-operacion/GUIA-DESPLIEGUE-PASO-A-PASO.md) (para el dueño, explicada) · [`05-operacion/AVISO-DATOS-PLANTILLA.md`](05-operacion/AVISO-DATOS-PLANTILLA.md).
-13. [`06-planificacion/ROADMAP.md`](06-planificacion/ROADMAP.md) — plan de 14 días, fases y backlog · [`06-planificacion/OPEN-QUESTIONS.md`](06-planificacion/OPEN-QUESTIONS.md) — **no hay preguntas abiertas**; seguimientos (SG), cosas por revisar (RV) y decisiones de diseño (DT).
+13. [`06-planificacion/ROADMAP.md`](06-planificacion/ROADMAP.md) — plan de 14 días, fases y backlog · [`06-planificacion/OPEN-QUESTIONS.md`](06-planificacion/OPEN-QUESTIONS.md) — **sin preguntas de producto abiertas**, salvo las decisiones de diseño (DT) y los supuestos OQ-30..36 por confirmar; también seguimientos (SG) y cosas por revisar (RV).
 
 ## Si buscas algo concreto
 | Quiero… | Ve a |

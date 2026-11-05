@@ -5,7 +5,7 @@
 ## Antes de hacer cualquier cosa
 1. Lee `docs/README.md` y sigue su orden de lectura. Es obligatorio leer `docs/00-contexto/CONTEXT.md`, `docs/01-negocio/BUSINESS-RULES.md`, `docs/00-contexto/GLOSSARY.md`, `docs/02-datos/DOMAIN-MODEL.md` y `docs/03-arquitectura/CONVENTIONS.md`.
 2. Respeta la jerarquía de la verdad de `docs/README.md`.
-3. Mira `docs/06-planificacion/OPEN-QUESTIONS.md`: **no hay preguntas abiertas**; contiene seguimientos, cosas por revisar y decisiones de diseño. Si surge una duda nueva, añádela allí con un supuesto y **pregunta al dueño**.
+3. Mira `docs/06-planificacion/OPEN-QUESTIONS.md`: **no hay preguntas de producto abiertas**, salvo las decisiones de diseño (DT) y los supuestos OQ-30..36 por confirmar; contiene además seguimientos y cosas por revisar. Si surge una duda nueva, añádela allí con un supuesto y **pregunta al dueño**.
 
 ## Reglas inquebrantables
 - **No inventes reglas de negocio.** Si no está en `01-negocio/BUSINESS-RULES.md`/`00-contexto/DECISION-LOG.md`, pregunta.
@@ -24,7 +24,7 @@
 
 ## Estado y siguientes pasos
 - Fase 0: ver `docs/06-planificacion/ROADMAP.md` y `docs/05-operacion/DEPLOYMENT.md` §2 (repo, cuentas y diseño pendientes).
-- Siguiente: el dueño lleva `docs/04-diseno/DESIGN-BRIEF.md` a Claude Design (días 1–3) y elige variante. Luego, scaffolding Next.js+TS por capas y pruebas del dominio primero.
+- Siguiente: el dueño sigue el diseño en Claude Design (tomó más días de los previstos) y, al cerrarlo, programa con apoyo de William. Luego, scaffolding Next.js+TS por capas y pruebas del dominio primero.
 
 ## Comandos (cuando exista el código)
 ```bash

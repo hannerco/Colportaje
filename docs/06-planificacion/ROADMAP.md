@@ -45,7 +45,7 @@ Plan sugerido (cada hito con pruebas; el orden es también el **orden de recorte
 - Seguimiento de personas interesadas en minibooks (hoy basta la nota).
 - Eliminar totalizadores que ya no se usen (cada uno es una pieza registrada).
 - Migrar fotos a Cloudflare R2 al 70 % del almacenamiento.
-- Vista de clientes vencidos.
+- ~~Vista de clientes vencidos~~ (ya cubierta por el filtro de Estado «Vencido», BR-CUS-13).
 - **Sugerencia automática de la dirección en texto** a partir de las coordenadas (geocodificación inversa; hoy la dirección es manual).
 - Invitaciones por correo (requiere dominio + SMTP propio).
 - Pasar a Supabase Pro cuando la app maneje dinero real de varios usuarios (SG-06).
