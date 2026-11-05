@@ -89,7 +89,7 @@ create table customer (
   archived_at timestamptz,            -- archivar (BR-CUS-09); distinto de deleted_at
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  deleted_at timestamptz
+  deleted_at timestamptz              -- también "Descartar" un cliente recién creado (BR-CUS-14); sin campo de "guardado" (ADR-0038)
 );
 
 create table leader_deposit (

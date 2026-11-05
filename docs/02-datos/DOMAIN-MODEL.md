@@ -212,6 +212,10 @@ unscheduled_total  = Σ_c max(0, remaining(c) − scheduled_total(c))     (sin p
 scheduled_to_collect = to_collect_total − unscheduled_total             (programado)
 sales_total        = Σ agreed_price de ejemplares sold no-minibook          (Total de venta)
 is_prospect(c)     = ¬∃ copy vendida
+payment_standing(c) = (prospecto → sin estado)
+                      | balance ≤ 0 → settled        (gana siempre, BR-CUS-13)
+                      | ∃ overdue(p) → overdue
+                      | si no → current
 price_differs(k)   = k.agreed_price ≠ k.public_price_snapshot
 price_delta(k)     = k.agreed_price − k.public_price_snapshot
 overdue(p)         = p.status = scheduled ∧ p.due_date < hoy
