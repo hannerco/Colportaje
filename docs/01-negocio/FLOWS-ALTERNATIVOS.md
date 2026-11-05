@@ -12,6 +12,10 @@ Una sola acción —**"Devolver a inventario"** en la ficha del cliente (o en el
 
 **Efecto común** (todos los casos): el ejemplar vuelve a `in_stock`, pierde cliente, precio acordado y fecha de venta, **conserva `received_at`** (es el mismo libro físico) y se registra el evento con el motivo. Los abonos `collected`/`delivered` y los Abibonos **no se tocan**.
 
+### AF-114 Quitar un libro mientras se crea la ficha
+- *Situación:* en la ficha de un cliente **nuevo** (antes de tocar "Guardar cliente") se quita un libro que se acababa de agregar.
+- *App:* se asume que fue un **error**: el ejemplar vuelve a `in_stock` **sin preguntar motivo y sin modal**; no cuenta como devolución en estadísticas (en el historial del ejemplar queda como `wrong_registration`). Los avisos informativos en línea (BR-PAY-13/14) se actualizan solos. Si el cliente **ya existe** (ya se guardó), quitar un libro es una **devolución** y sigue el flujo de AF-01..AF-12.
+
 ### AF-01 Devolución simple (sin pagos)
 - *Situación:* cliente con un libro de 50.000, sin abonos.
 - *App:* confirma la devolución; el cliente queda con deuda 0 y se convierte en **prospecto** (conserva su ficha).

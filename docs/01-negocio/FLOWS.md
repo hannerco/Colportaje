@@ -86,6 +86,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 - **Reglas:** BR-PAY-02/08.
 
 ## F-16 Devolver un libro / quitar de un cliente
+- **Cuándo:** solo si el cliente **ya existe**. Mientras se crea la ficha, quitar un libro se asume un error y no activa este flujo (AF-114).
 - **Pasos:** ficha del cliente (o detalle del ejemplar) → **"Devolver a inventario"** → motivo (*El cliente lo devolvió* / *Me equivoqué de cliente o de registro*) → confirmación que aclara "los abonos y los Abibonos no cambian" → ejemplar a `in_stock` → si quedan abonos programados que ya no cuadran, **modal F-29** (sugerido: recortar desde el más lejano). Si queda **saldo a favor**, nota y acceso a "Entregar un minibook" (F-21).
 - **Reglas:** BR-COPY-09, BR-PAY-13, BR-CUS-06. **Todos los casos:** `01-negocio/FLOWS-ALTERNATIVOS.md` A (AF-01..AF-12).
 

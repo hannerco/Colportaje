@@ -78,6 +78,7 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
   - *Dado* que toco Descartar, *entonces* se pide confirmación con lo que se perderá y, al confirmar, el cliente desaparece y sus libros vuelven al inventario.
   - *Dado* que ya toqué Guardar cliente, *entonces* Descartar ya no existe; Archivar sí.
   - *Dado* que cierro la app sin tocar ningún botón, *entonces* el cliente queda guardado como estaba.
+- **RQ-SAL-07 [F1]** Quitar un libro: *Dado* una ficha **en creación** (antes de "Guardar cliente"), *entonces* el ejemplar vuelve al inventario sin preguntas ni modal (AF-114). *Dado* un cliente **ya guardado**, *entonces* se activa el flujo de devolución (F-16).
 - **RQ-SAL-06 [F1]** Plan de abonos automático (BR-PAY-15): *Dado* saldo $140.000 y abonos de $30.000, *entonces* se crean $50.000, $30.000, $30.000, $30.000 (el sobrante va al más próximo) y la fila mayor no lleva marca. Editar un abono a mano acepta cualquier entero.
 - **RQ-SAL-02 [F1]** Un cliente existente compra de nuevo: abro su ficha y uso "Agregar libro"; el saldo se recalcula.
 - **RQ-SAL-03 [F1]** Solo puedo agregar ejemplares `in_stock`; desde la ficha puedo agregar y quitar ejemplares.

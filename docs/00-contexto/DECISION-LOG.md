@@ -357,6 +357,12 @@ El dueño decidió: **"se cancela todo lo de antigüedad, no tiene sentido, no m
 
 ---
 
+## Ronda 22 — Quitar un libro: error o devolución (2026-11-05)
+
+El dueño decidió: en la ficha de **Crear cliente**, quitar un libro agregado se asume un **error** y no debe salir nada; si el cliente **ya existe**, quitar un libro se asume que fue **devuelto** y se activa el flujo de devolución (F-16). Consecuencias: BR-COPY-09, BR-CUS-14, F-16, AF-114, RQ-SAL-07. Confirmado: (1) en el flujo de devolución **se mantiene la pregunta del motivo**, con "El cliente lo devolvió" marcado por defecto (un toque; "Me equivoqué de cliente" sigue evitando contar una devolución falsa); (2) durante la creación solo se omite el modal: el **aviso en línea de BR-PAY-13 se conserva**.
+
+---
+
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.
 2. **Repositorio de GitHub: `Colportaje`** (2026-11-04). Se pensó en `colportor`, pero el dueño ya había creado `hannerco/Colportaje` y pidió dejar todo con ese nombre.
