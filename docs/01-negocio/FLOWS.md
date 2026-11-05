@@ -152,7 +152,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 
 ## F-29 Alerta de abonos programados que no cuadran
 - **Disparadores:** abono extra o mayor al acordado, devolución, bajar precio, editar/borrar abono cobrado, archivar, confirmar la venta.
-- **Pasos:** modal con saldo restante, total programado, **sobrante** y lista con casillas → **Recortar automáticamente** (desde el más próximo tras un abono extra; desde el más lejano tras devolución/baja de precio/archivado) / **Cancelar los que marque** / **Dejar como está** (aviso persistente en la ficha).
+- **Pasos:** modal con saldo restante, total programado, **sobrante** y lista con casillas → **Recortar automáticamente** (desde el más próximo tras un abono extra; desde el más lejano tras devolución/baja de precio/archivado) / **Cancelar los que marque** / **Dejar como está** (aviso persistente en la ficha; solo si el cliente aún debe algo).
 - **Resultado:** abonos `canceled` conservados en "Cancelados"; no cuentan en calendario ni totales.
 - **Reglas:** BR-PAY-13. **Casos:** AF-05, AF-20, AF-21, AF-25, AF-29, AF-32.
 

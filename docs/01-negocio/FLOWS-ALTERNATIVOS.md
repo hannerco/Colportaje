@@ -40,7 +40,7 @@ Una sola acción —**"Devolver a inventario"** en la ficha del cliente (o en el
 - *App:* **modal** (BR-PAY-13) con: saldo restante 10.000, programado 30.000, **sobrante 20.000** y la lista de abonos con casillas. Opciones:
   1. **Recortar automáticamente** (sugerido): tras una devolución se consume desde el **más lejano** → se cancelan los dos últimos de 10.000.
   2. **Cancelar los que marque.**
-  3. **Dejar como está** (queda un aviso persistente en la ficha hasta resolverlo).
+  3. **Dejar como está** (queda un aviso persistente en la ficha hasta resolverlo). **Solo se ofrece si el cliente aún debe algo**; con saldo 0 o a favor hay que recortar o cancelar (BR-PAY-13).
 - *Resultado:* los abonos cancelados pasan a `canceled` (motivo `book_returned`), se **conservan** en "Cancelados" y **no cuentan** en el calendario, Hoy, por cobrar ni totales.
 - *Por qué:* lo por cobrar debe reflejar solo lo que el cliente realmente va a pagar.
 
@@ -276,8 +276,9 @@ Una sola acción —**"Devolver a inventario"** en la ficha del cliente (o en el
 - *App:* **no se crea nada**. Con nombre escrito, el cliente ya existe aunque no tenga libros (prospecto).
 
 ### AF-112 Descartar un cliente recién creado
-- *Situación:* el usuario toca **"Descartar"** en la cabecera de la ficha nueva (antes de tocar "Guardar cliente").
-- *App:* pide confirmación con lo que se perderá ("Se quitarán 2 libros y 1 abono"; sin nada, "Se quitará este cliente"). Si confirma: elimina al cliente, sus libros vuelven a `in_stock` (como en BR-COPY-06), se quitan sus abonos y fotos. Si elige "Seguir editando", no pasa nada. Tras "Guardar cliente" ya no existe "Descartar": se usa Archivar (BR-CUS-09). "Archivar" no aparece mientras se crea.
+- *Situación:* el usuario toca **"Descartar"** en la cabecera de la ficha nueva, **o sale de la creación de cualquier forma** (atrás, menú, otra sección, el Resumen) sin tocar "Guardar cliente". Salir equivale a "Descartar".
+- *App:* pide confirmación con lo que se perderá ("Se quitarán 2 libros y 1 abono"; sin nada, "Se quitará este cliente") y los botones **"Seguir editando"** y **"Descartar"**. Si no hay nombre, no hay nada que descartar y sale directo. Si confirma: borra **lógicamente** al cliente (`deleted_at`), sus libros vuelven a `in_stock` (como en BR-COPY-06) y se quitan sus abonos y fotos, todo de forma atómica. Si elige "Seguir editando", no pasa nada. Tras "Guardar cliente" ya no existe "Descartar": se usa Archivar (BR-CUS-09). "Archivar" no aparece mientras se crea.
+- *Cierre inesperado:* si la app se cierra por un fallo (batería, navegador, conexión) no puede preguntar: el cliente queda guardado como estaba. Al reabrirlo es un cliente existente, sin "Descartar"; se gestiona devolviendo sus libros y archivando.
 
 ### AF-113 Plan automático que no divide exacto
 - *Situación:* el saldo no es múltiplo del valor de cada abono, o el saldo no es múltiplo de $1.000.

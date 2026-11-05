@@ -9,7 +9,7 @@ Cuota inicial, programado y extra solo se diferencian por cómo nacen. El client
 - **Abono extra:** pago fuera del plan, nace cobrado, sin fecha acordada.
 - **Prórroga:** `original_due_date` inmutable + `due_date` + `payment_reschedule`.
 - **Parcial:** queda cobrado por lo pagado; el faltante vive en el saldo; la app **sugiere**, no crea.
-- **Alerta de abonos que no cuadran (BR-PAY-13):** si `scheduled_total > remaining`, un modal ofrece *Recortar automáticamente* (desde el más próximo tras abono extra/sobrepago; desde el más lejano tras devolución/baja de precio/archivado), *Cancelar los que marque* o *Dejar como está* (aviso persistente). Recortar cancela o reduce `agreed_amount`, registrando `payment_event`.
+- **Alerta de abonos que no cuadran (BR-PAY-13):** si `scheduled_total > remaining`, un modal ofrece *Recortar automáticamente* (desde el más próximo tras abono extra/sobrepago; desde el más lejano tras devolución/baja de precio/archivado), *Cancelar los que marque* o *Dejar como está* (aviso persistente; solo si `balance > 0`, ronda 24). Recortar cancela o reduce `agreed_amount`, registrando `payment_event`.
 - **`canceled`**: se conserva (sección Cancelados) pero **no cuenta** en calendario, Hoy ni totales.
 - **Bloqueo:** un abono entregado no se edita ni se borra salvo reabriendo su Abibono (ADR-0010).
 

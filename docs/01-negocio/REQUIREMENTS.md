@@ -76,6 +76,7 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
   - *Entonces* **"Vender" no aparece** en ninguna etiqueta, ruta ni botón.
 - **RQ-SAL-05 [F1]** Cierre de la ficha nueva (BR-CUS-14, AF-112): cabecera con **Descartar** y **Guardar cliente**; pantalla **Resumen** con **Guardar cliente** y **Seguir editando**.
   - *Dado* que toco Descartar, *entonces* se pide confirmación con lo que se perderá y, al confirmar, el cliente desaparece y sus libros vuelven al inventario.
+  - *Dado* que salgo de la creación de cualquier forma sin tocar Guardar cliente, *entonces* se abre la misma confirmación (Seguir editando / Descartar); sin nombre, salgo directo.
   - *Dado* que ya toqué Guardar cliente, *entonces* Descartar ya no existe; Archivar sí.
   - *Dado* que cierro la app sin tocar ningún botón, *entonces* el cliente queda guardado como estaba.
 - **RQ-SAL-07 [F1]** Quitar un libro: *Dado* una ficha **en creación** (antes de "Guardar cliente"), *entonces* el ejemplar vuelve al inventario sin preguntas ni modal (AF-114). *Dado* un cliente **ya guardado**, *entonces* se activa el flujo de devolución (F-16).
@@ -100,7 +101,8 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
   - *Dado* una devolución con el mismo sobrante, *entonces* **Recortar** cancela los **2 más lejanos**.
   - *Entonces* los cancelados quedan `canceled` con motivo, visibles en "Cancelados", y **no** cuentan en calendario, Hoy ni por cobrar.
   - *Cuando* el sobrante es menor que un abono, *entonces* se reduce su `agreed_amount` y el valor anterior queda en `payment_event`.
-  - *Cuando* elijo "Dejar como está", *entonces* la ficha muestra un aviso persistente.
+  - *Cuando* elijo "Dejar como está" (solo disponible si el cliente aún debe algo), *entonces* la ficha muestra un aviso persistente.
+  - *Cuando* el saldo es 0 o a favor, *entonces* "Dejar como está" no se ofrece.
   - *Dado* programados menores que el saldo, *entonces* no hay alerta, solo "sin programar".
 
 ## Dinero y Abibonos
