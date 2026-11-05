@@ -7,7 +7,7 @@ El sistema original estaba en Notion y el dueño quiere **el mismo estilo visual
 ## Decisión
 - Estética **Notion**: neutra, bordes finos, mucho aire, etiquetas suaves, tablas tipo base de datos con pestañas de vista, propiedades editables en línea, modo oscuro automático.
 - **Un único componente `ViewBar`** (pestañas de vista, filtro, orden, búsqueda) reutilizado por todos los módulos.
-- **Un ícono propio por sección**; barra inferior móvil **solo con íconos** (título en la cabecera y texto accesible); menú lateral de escritorio con ícono y texto.
+- **Un ícono propio por sección**; barra inferior móvil con **ícono y su nombre** (ronda 19; antes solo íconos, ver ADR-0018); menú lateral de escritorio con ícono y texto.
 - Stack de UI: Tailwind + shadcn/ui (Radix). La implementación sigue el diseño elegido en Claude Design.
 
 ## Alternativas descartadas

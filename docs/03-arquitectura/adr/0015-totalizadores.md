@@ -15,7 +15,7 @@ El texto original pedía los 8 totalizadores "cada uno en su propio apartado". E
 - *Mostrarlos en Hoy*: exhibe dinero todo el tiempo.
 
 ## Consecuencias
-Identidad de control `Recibidos = Vendidos + En físico + Con novedad + Perdidos`.
+Identidad de control `Recibidos = Vendidos + En físico + Con novedad + Perdidos + Devueltos` (se añadió «Devueltos» al líder, ADR-0028).
 
 ## Referencias
 BR-GOAL-02..06, BR-COPY-14 · FLOWS F-22 · RQ-TOT-01..04 · DECISION-LOG Q41, Q43, Q48

@@ -5,7 +5,7 @@ Estado: Aceptado · Fecha: 2026-10-26
 El dueño quiere un buscador "lo más dinámico que se pueda", no solo por nombre sino por la información del cliente. La dirección puede ser texto o URL de Maps embebida (como en Notion).
 
 ## Decisión
-- **Búsqueda local y difusa** (tolera errores y acentos) sobre nombre, teléfono, información y dirección, con los clientes cargados en el dispositivo. Reutilizable sin cambios en offline (F2).
+- **Búsqueda local y difusa** (tolera errores y acentos) sobre nombre, teléfono, información, dirección y libros (BR-CUS-07, ronda 19), con los clientes cargados en el dispositivo. Reutilizable sin cambios en offline (F2).
 - **(Reemplazado en parte por ADR-0036: la ubicación usa coordenadas y un mapa interactivo; el iframe de Google ya no se usa.)** **Dirección:** texto + enlace opcional de Maps + botón **"Abrir en Maps"** (en el celular abre la app) + **mapa embebido** (iframe) que **solo se carga al tocarlo**. Sin conexión, el error del mapa lo muestra Google (aceptado por el dueño).
 - Validar `maps_url` contra dominios permitidos; `sandbox` y CSP `frame-src` restringida.
 

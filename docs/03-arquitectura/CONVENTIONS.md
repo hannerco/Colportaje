@@ -35,7 +35,7 @@ Obligatorias para todo agente o persona que escriba código o documentación aqu
 - **Tokens, no valores literales (ADR-0034):** **prohibido** escribir `px`, `rem` o `#hex` de tamaño de letra o color en un componente; se usan los roles de `src/ui/tokens/tokens.css`. **El tamaño de la letra se cambia con `--font-scale`** (o con el token del rol); el acento, con `--accent`. Una prueba de arquitectura lo verifica.
 - **Tipografía:** escala de `04-diseno/DESIGN-BRIEF.md` §5b (móvil: texto principal 17 px, secundario 15, mínimo 13; escritorio: 16 / 14 / 13); campos de texto ≥ 16 px; tamaños en `rem`; fuente del sistema.
 - Todo texto desde `src/copy/es.ts`. Todo dinero con `formatCOP`; toda fecha y hora con helpers de `domain/time` (zona Bogota, semana desde domingo, formato 12 h/24 h según el perfil).
-- **Estilo visual Notion.** Usa siempre el componente `ViewBar` para pestañas de vista, filtro, orden y búsqueda; no crees variantes por módulo. Cada sección tiene su ícono; la barra inferior móvil es solo íconos con texto accesible.
+- **Estilo visual Notion.** Usa siempre el componente `ViewBar` para pestañas de vista, filtro, orden y búsqueda; no crees variantes por módulo. Cada sección tiene su ícono; la barra inferior móvil lleva el ícono **con su nombre** (ronda 19).
 - **Contenido:** nunca insinúes en textos que el líder pueda asumir una pérdida (BR-COPY-11). "Abibono" se conserva; su tooltip dice "Entrega al líder".
 - Tooltips para conceptos de `04-diseno/DESIGN-BRIEF.md` §7; accesibles por teclado y táctiles.
 - Estados obligatorios en cada vista: carga, vacío, error, éxito.
