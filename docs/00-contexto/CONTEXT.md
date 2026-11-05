@@ -38,7 +38,7 @@ La versión de Notion recibió críticas por **tener demasiados apartados y ser 
 - **Arquitectura escalable, con pruebas, sin "parche sobre parche".** Decisiones lógicas y documentadas.
 
 ## Calendario de entrega
-La **próxima campaña** (~3 meses) empieza pronto; **la fase 1 completa debe estar lista en 14 días** (se construye con IA). Las **campañas** como entidad quedan para después.
+La **próxima campaña** (~3 meses) empieza pronto; **la fase 1 completa debe estar lista en 14 días** (se construye con IA). El diseño tomó más días de los previstos; para programar en tiempo récord cuando la visual esté definida ayudará **William**, otro programador (ronda 24). Las **campañas** como entidad quedan para después.
 
 ## Estilo visual
 El sistema original estaba en Notion y el dueño quiere **el mismo estilo visual** (neutro, sutil, bases de datos con pestañas de vista, propiedades editables en línea). Ver `04-diseno/DESIGN-BRIEF.md`.

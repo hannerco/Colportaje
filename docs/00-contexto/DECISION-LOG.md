@@ -336,7 +336,7 @@ Antes de diseñar Inventario se cruzaron las tres secciones de Notion del dueño
 
 ---
 
-## Ronda 22 — Sin código hasta cerrar el diseño (2026-11-04)
+## Ronda 21b — Sin código hasta cerrar el diseño (2026-11-04)
 
 | # | Tema | Resultado |
 |---|---|---|
@@ -383,6 +383,25 @@ Se cruzaron las dos tablas de Notion (Abonos de clientes y Abibonos) con los doc
 | 12 | Abibonos | Sin subvistas: solo la lista de lo entregado al líder (como en Notion). |
 
 Corrección al asistente: se recomendó que todos los estados del abono fueran grises sin considerar que no se distinguirían; el dueño pidió colores con significado.
+
+---
+
+## Ronda 24 — Contradicciones: borrador, Descartar y estado Saldado (2026-11-05)
+
+Revisión de contradicciones entre documentos. Preguntas con la técnica de entrevista; respuestas del dueño:
+
+| # | Tema | Resultado |
+|---|---|---|
+| Q1 | "Borrador guardado" | **"Si un cliente tiene nombre, ya es un cliente; borrador no tiene sentido que exista. Si no tiene libros, es prospecto."** [D] Se quita el indicador "Borrador guardado" (BR-CUS-14, ADR-0038). Un cliente con nombre y sin libros es un prospecto y sigue BR-CUS-05: oculto en las listas salvo "Incluir prospectos", visible en la búsqueda. |
+| Q2 | Salir de la creación | **"Si el usuario intenta salir de un cliente de cualquier forma, es como si le diera en Descartar."** [D] Salir de la creación (atrás, menú, otra sección, Resumen) sin "Guardar cliente" abre la confirmación de Descartar con "Seguir editando" / "Descartar"; sin nombre sale directo. "Guardar cliente" es la única forma de conservar al cliente. Si la app se cierra por un fallo y no puede preguntar, el cliente queda guardado como estaba y se gestiona devolviendo libros y archivando. |
+| Q3 | Campo de "guardado" | **"Opción A."** [D] No se guarda ningún campo: "Descartar" vive solo mientras la pantalla de creación esté abierta. El dominio no necesita saber si el cliente fue "guardado". |
+| Q5 | Descartar | **"A"** [D] Borrado **lógico** (`deleted_at`) y atómico; se quita la excepción de BR-GEN-02 para clientes. |
+| Q6–Q7 | Saldado contra Vencido | **"C"** y **"Confirmo"** [D] Saldado gana siempre a Vencido (saldo ≤ 0). Con saldo ≤ 0 "Dejar como está" no se ofrece en BR-PAY-13; con deuda pendiente sí. |
+| — | Factura con varias fotos | **"No tiene que avisar si tienen la misma fecha, no se valida."** [D] El N.º de factura y la fecha no se validan entre fotos. |
+| — | Monto en rojo | **"Eso se eliminó. Ya no vamos a poner el monto en rojo."** [D] Se cierra OQ-39. |
+| — | Plazo de 14 días | **"No le pares bolas… ya se habló con un programador diferente llamado William para que nos ayude a codear en tiempo récord cuando ya esté la visual definida."** [D] El diseño tomó más días; se mantiene el plazo de 14 días para la fase 1 con William como apoyo de programación. |
+
+*Nota:* la ronda "Sin código hasta cerrar el diseño" pasó de 22 a 21b para no repetir número con la ronda 22 de quitar un libro. Consecuencias: BR-GEN-02, BR-CUS-13/14, BR-PAY-13, AF-112, RQ-SAL-05, DOMAIN-MODEL, DATABASE, TESTING, ADR-0038.
 
 ---
 

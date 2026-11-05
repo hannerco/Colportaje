@@ -19,7 +19,7 @@ Si aparece una duda nueva, se agrega aquí con ID `OQ-*` y un supuesto por defec
 | SG-01 | Repetir la **medición de latencia desde un celular con datos móviles** para confirmar us-east-1 (medido ~85 ms vs ~146 ms de São Paulo, desde Medellín, línea fija) | Agente + dueño | Antes de crear los proyectos |
 | SG-02 | **Crear las cuentas nuevas** de Supabase y Vercel y hacer login por CLI (`supabase login`, `vercel login`) siguiendo `05-operacion/GUIA-DESPLIEGUE-PASO-A-PASO.md` | Dueño | Cuando llegue el momento de desplegar |
 | SG-03 | **Repositorio GitHub `Colportaje`**: creado y con la documentación subida (2026-11-04). Es **público** (sin las imágenes de referencia); pasarlo a **privado** antes de subir código, claves o datos | Dueño | Antes de comenzar a programar |
-| SG-04 | **Fecha de diseño en Claude Design**: el diseño debe estar elegido en los primeros 2–3 días del plazo de 14 | Dueño | Día 1–3 |
+| SG-04 | **Fecha de diseño en Claude Design**: se pensó para los días 1–3, pero el diseño tomó más días. Se mantiene el plazo de 14 días y **William** ayudará a programar rápido cuando la visual esté definida (ronda 24) | Dueño | Al cerrar el diseño |
 | SG-05 | **Aviso de tratamiento de datos (Ley 1581)**: el agente redacta la **plantilla con huecos** (responsable y correo de contacto) en `docs/05-operacion/AVISO-DATOS-PLANTILLA.md`; el dueño define responsable y alguien con criterio legal la revisa antes de abrir a otros colportores | Agente / dueño | Antes del piloto con otros |
 | SG-06 | **Decidir el paso a Supabase Pro (~25 USD/mes)** cuando el equipo use la app con dinero real (copias diarias, sin pausa) | Dueño | Tras validar con los colportores |
 | SG-07 | **Presentar la app a Emprendum** (marca "Colportor") cuando se valide con los colportores | Dueño | Tras validar |
@@ -106,4 +106,4 @@ El código que los aplicaba se descartó el 2026-11-04; los supuestos quedan com
 | OQ-35 | Al borrar una entrada de minibooks, el historial de cada ejemplar registra `returned` con motivo `wrong_registration` (no cuenta como devolución de un cliente) | — | Por confirmar |
 | OQ-36 | Borrar un abono cobrado se trata como disparador de BR-PAY-13 con orden "más próximo" y motivo `manual` | — | Por confirmar |
 | OQ-38 | **Avatar por defecto sin emoji:** ícono de persona (es derivado, el dominio no lo almacena) | `BR-CUS-15` | **Resuelto (ronda 19)** |
-| OQ-39 | El diseño no pinta el monto en rojo cuando el cliente está vencido (lo marca el ícono de estado); BR-CUS-13 lo anota como pendiente | `BR-CUS-13` | **Por confirmar con el dueño** |
+| OQ-39 | El diseño no pinta el monto en rojo cuando el cliente está vencido (lo marca el ícono de estado) | `BR-CUS-13` | **Resuelto (ronda 24)**: el monto no va en rojo |
