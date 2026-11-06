@@ -405,6 +405,31 @@ Revisión de contradicciones entre documentos. Preguntas con la técnica de entr
 
 ---
 
+## Ronda 25 — Hoy como resumen general (DT-09 parcialmente cerrada) (2026-11-05)
+
+Entrevista (grill-me) sobre el choque entre BR-CAL-07 (Hoy mínimo) y DT-09 (Hoy como resumen general). Respuestas del dueño:
+
+| # | Tema | Resultado |
+|---|---|---|
+| Q1 | Calendario y abonos | **"El calendario solo debe decirme cuántos cobros tengo. La sección de abonos es quien me muestra los abonos que tengo por cobrar. Lo del calendario del día es una vista muy general."** [D] Dos secciones separadas. |
+| Q2 | Cobrar rápido | **"B. No puede haber ese error porque en el abono por cobrar debe estar claramente el nombre del cliente."** [D] Formulario corto precargado; el nombre del cliente va bien visible. |
+| Q3 | Vencidos | **"B"** [D] Los vencidos entran a la lista de Hoy; se elimina el aviso único (BR-CAL-09). |
+| Q4 | Libros en físico | **"Que dijera cuántos libros tengo en el inventario y que si le doy click me mande a la lista de libros en físico. Lo de por resolver ya se ve en inventario."** [D] Un número (`in_stock`) que abre Inventario ▸ en físico. |
+| Q5 | Barra de meta | **"Sí"** [D] Se conserva. |
+| Q6 | Otras cosas sin definir | **"Epa"** (= sí, en Colombia) [D] Fuera de la fase 1, backlog. |
+| Q7 | Línea del calendario | **"Debo ver cuántos cobros tengo, si tengo una capacitación y visita para hoy… lo más parecido a lo que quiero es la B."** [D] Línea con conteos por tipo. |
+| Q8 | Por cobrar | **"Sí, es así."** [D] Vencidos arriba, de hoy debajo, máximo 5 y «Ver todos». |
+| Q9 | Método por defecto | **"Pon por defecto transferencia. Usualmente cobramos por WhatsApp."** [D] |
+| Q10 | Número de libros | **"Sí"** [D] |
+| Q11 | Orden | **"No, la tarjeta por entregar va a dejar de ser tan importante, porque para eso está esa tarjeta en Dinero. Lo primero sería el calendario, luego por cobrar, y luego los libros en físico."** [D] Orden: calendario → por cobrar → libros en físico. El lugar de «Por entregar» quedó **sin decidir** (OQ-40). |
+| Q12 | Excepciones | **"Sí, hazlo."** [D] Excepciones nombradas solo para Hoy en BR-GEN-10, BR-GEN-12 y BR-GOAL-06. |
+| Q14–Q15 | «Por entregar» en Hoy y «figuras geométricas» | **Sin responder**: el dueño cerró la conversación. Quedan como **OQ-40 y OQ-41** con supuesto del asistente. |
+| Idea | Comprobante de abono | **"Que cuando se cobre un abono se genere una imagen con el nombre del colportor, los abonos cobrados, lo que falta y la fecha del próximo pago… «compartir por WhatsApp»… Si no es gratis, al menos que cree la imagen."** [D] Anotada como idea próxima en el backlog; **módulo aún sin crear** y sin más discusión por ahora. |
+
+*Consecuencias:* BR-CAL-07/09, BR-GEN-10/12, BR-GOAL-06, RQ-CAL-05/07, F-20, DT-09, `HOY-BORRADOR.md`. BR-CAL-08 y BR-DEP-13 siguen vigentes hasta resolver OQ-40.
+
+---
+
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.
 2. **Repositorio de GitHub: `Colportaje`** (2026-11-04). Se pensó en `colportor`, pero el dueño ya había creado `hannerco/Colportaje` y pidió dejar todo con ese nombre.

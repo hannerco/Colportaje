@@ -32,7 +32,7 @@ docs/
 ├─ 04-diseno/
 │  ├─ DESIGN-BRIEF.md             brief v2 para Claude Design (estilo Notion, lista negra anti-IA, densidad, wireframes)
 │  ├─ PROMPT-CLAUDE-DESIGN.md     prompt v3 listo para pegar (empieza por Clientes)
-│  ├─ HOY-BORRADOR.md             lo que el dueño quiere en Hoy (sin definir, DT-09)
+│  ├─ HOY-BORRADOR.md             definición de Hoy (DT-09 parcialmente cerrada; pendiente OQ-40/41)
 │  └─ referencias/                imágenes de referencia del dueño (inspiración, no copiar); portadas/ = portadas de ejemplo de libros (DT-10)
 ├─ 05-operacion/                  PUESTA EN MARCHA
 │  ├─ DEPLOYMENT.md               plataformas, entornos, migraciones, backups, confiabilidad
