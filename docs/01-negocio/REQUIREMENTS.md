@@ -132,12 +132,12 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
 - **RQ-CAL-02 [F1]** Visitas con cliente opcional/etiqueta, hora opcional, estado; convertir visita en cliente.
 - **RQ-CAL-03 [F1]** Capacitaciones con fecha y hora, lugar, notas.
 - **RQ-CAL-04 [F1]** Recordatorios (inicio del día 07:00, 1 día, 1 semana, personalizado), sin valor por defecto, dentro de la app y descartables.
-- **RQ-CAL-05 [F1]** **Hoy** muestra: tarjeta "Por entregar", aviso único de vencidos (si hay), barra de meta y **una lista cronológica** de cobros, visitas, capacitaciones y recordatorios de hoy.
-  - *Entonces* **no** hay semana ni agenda aparte, ni subtítulos, y el **único botón** es «Entregar» de la tarjeta «Por entregar»; cada fila tiene máximo 2 líneas y un ícono de tipo (único color de categoría).
-  - *Dado* 2 abonos vencidos, *entonces* se ve **una** fila "2 cobros vencidos ›" y no hay filas individuales de vencidos; *dado* 0, *entonces* no aparece.
-  - *Cuando* toco el aviso, *entonces* abre Dinero ▸ Por cobrar filtrado a Vencidos.
+- **RQ-CAL-05 [F1]** **Hoy** muestra, en este orden: una línea de **calendario del día** con conteos por tipo (cobros, visitas, capacitaciones), la sección **Por cobrar** (vencidos y de hoy, máximo 5 y "Ver todos"), el número de **libros en físico**, y la barra de meta (BR-CAL-07/09). Su lugar para la tarjeta "Por entregar" está pendiente (OQ-40).
+  - *Entonces* **no** hay semana ni agenda aparte ni subtítulos; cada fila tiene máximo 2 líneas.
+  - *Dado* 2 abonos vencidos y 1 de hoy, *entonces* se ven 3 filas con el nombre del cliente, los vencidos arriba; *dado* más de 5, *entonces* se ven 5 y "Ver todos".
+  - *Cuando* toco "Cobrar" en una fila, *entonces* se abre un formulario con el monto acordado, la fecha de hoy y método transferencia; al confirmar queda cobrado (BR-PAY-05).
 - **RQ-CAL-06 [F2]** Push de recordatorios.
-- **RQ-CAL-07 [F1]** **Hoy** muestra la tarjeta **"Por entregar"** (BR-CAL-08).
+- **RQ-CAL-07 [F1]** La tarjeta **"Por entregar"** (BR-CAL-08) existe en **Dinero**; su permanencia en Hoy está pendiente (OQ-40).
   - *Dado* abonos cobrados no entregados por 30.000 en efectivo y 20.000 por transferencia, *entonces* la cifra principal es **50.000** y el desglose muestra Efectivo 30.000 · Transferencia 20.000.
   - *Dado* 10.000 de esos abonos en un Abibono **borrador**, *entonces* siguen contando; *dado* que el Abibono se **confirma**, *entonces* dejan de contar.
   - *Dado* dinero de minibooks o abonos `canceled`, *entonces* **no** cuentan.

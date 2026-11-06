@@ -110,8 +110,8 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 - **Reglas:** BR-CAL-03/04.
 
 ## F-20 Hoy (pendientes del día)
-- **Muestra (nada más):** tarjeta **"Por entregar"** destacada en color de acento (total grande con ojo al lado, una línea con el desglose y el botón **"Entregar"** → Nuevo Abibono precargado; tocar el resto de la tarjeta → Dinero) · **aviso único** "N cobros vencidos ›" solo si hay (toca → Dinero ▸ Por cobrar ▸ Vencidos) · barra de meta fina sin números (ubicación sujeta a cambio) · **una lista cronológica** de hoy con cobros, visitas, capacitaciones y recordatorios (ícono de tipo en color, hora, nombre, detalle). **Único botón: "Entregar". Sin subtítulos, sin semana.**
-- **Acciones:** tocar un cobro → F-13; tocar un evento → su detalle. El calendario es una sección aparte.
+- **Muestra (nada más), en este orden (ronda 25):** línea de **calendario del día** con conteos por tipo (toca → Calendario del día) · **Por cobrar** (vencidos arriba y de hoy, máximo 5, "Ver todos" → Dinero ▸ Por cobrar; cada fila con nombre del cliente y **Cobrar**) · **libros en físico** (un número → Inventario ▸ en físico) · barra de meta fina sin números. La tarjeta "Por entregar" queda **pendiente** (OQ-40).
+- **Acciones:** **Cobrar** en una fila → formulario corto (monto acordado, fecha de hoy, transferencia por defecto) → F-13. El calendario es una sección aparte.
 - **Reglas:** BR-CAL-05..09, BR-GOAL-01, BR-GEN-10/11. Los abonos `canceled` no aparecen; los vencidos no se listan uno por uno.
 
 ## F-21 Minibooks
