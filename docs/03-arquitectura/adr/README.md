@@ -23,7 +23,7 @@ Un ADR por decisión relevante. Formato: contexto → decisión → alternativas
 | 0014 | Búsqueda y dirección | Aceptado |
 | 0015 | Totalizadores en Hacer inventario | Aceptado |
 | 0016 | Meta de bonificación | Aceptado |
-| 0017 | Favoritos y agregar a inventario (antigüedad cancelada, ronda 21) | Aceptado (revisado) |
+| 0017 | Favoritos y agregar a inventario (antigüedad cancelada, ronda 21) | Reemplazado en parte por ADR-0043 |
 | 0018 | Navegación base | Aceptado (base; el diseño decide) |
 | 0019 | Arquitectura en capas y pruebas | Aceptado |
 | 0020 | Copias de seguridad | Aceptado |
@@ -32,9 +32,9 @@ Un ADR por decisión relevante. Formato: contexto → decisión → alternativas
 | 0023 | Numeración de ejemplares | Propuesto |
 | 0024 | Campañas diferidas | Aceptado |
 | 0025 | Devoluciones, saldo a favor y sin reembolsos | Aceptado (revisado) |
-| 0026 | Elección de ejemplares uno por uno | Aceptado |
+| 0026 | Elección de ejemplares uno por uno | Aceptado (ampliado por ADR-0044) |
 | 0027 | Invitaciones y restablecimiento por enlace desde el panel de admin | Aceptado |
-| 0028 | Pérdidas, "A responder al líder" y devolución al líder | Aceptado |
+| 0028 | Pérdidas, "A responder al líder" y devolución al líder | Reemplazado en parte por ADR-0043 |
 | 0029 | Estilo Notion, barra de vista única y navegación por íconos | Aceptado |
 | 0030 | Formato regional y preferencias de usuario | Aceptado |
 | 0031 | Tarjeta "Por entregar" en Hoy | Aceptado (revisado) |
@@ -43,10 +43,16 @@ Un ADR por decisión relevante. Formato: contexto → decisión → alternativas
 | 0035 | "Nuevo cliente" con ficha viva (reemplaza al asistente "+ Vender") | Aceptado |
 | 0036 | Ubicación del cliente: coordenadas, selector con pin y mapa interactivo | Aceptado |
 | 0037 | Avatar del cliente con emoji opcional | Aceptado |
-| 0038 | Guardado, resumen y descarte de la ficha de cliente nueva | Aceptado |
-| 0039 | Plan de abonos automático | Aceptado |
-| 0040 | Dinero: vistas, estados con color y deuda sin programar | Aceptado |
+| 0038 | Guardado, resumen y descarte de la ficha de cliente nueva | Aceptado (facturas reemplazadas por ADR-0042) |
+| 0039 | Plan de abonos automático | Aceptado (ampliado por ADR-0045) |
+| 0040 | Dinero: vistas, estados con color y deuda sin programar | Reemplazado en parte por ADR-0046 |
 | 0033 | Recorte, motivos de cancelación, prórroga y signo del saldo a favor | Aceptado |
+| 0041 | Alcance del back de Clientes, Inventario y Dinero, y reglas de extensibilidad | Aceptado |
+| 0042 | La factura como entidad propia, siempre con foto | Aceptado |
+| 0043 | Inventario según el diseño: agregar por lote, sin favoritos, devolver por unidad y deshacer | Aceptado |
+| 0044 | "Agregar libro" en la ficha lista cada ejemplar en físico | Aceptado |
+| 0045 | Plan de abonos: días de pago, corregir frente a prorrogar y cliente existente | Aceptado |
+| 0046 | Dinero según la exploración elegida: tarjeta única, Dinero total y cancelados aparte | Aceptado |
 
 ## Plantilla
 ```markdown

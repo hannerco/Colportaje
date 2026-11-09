@@ -22,41 +22,44 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
   - *Dado* un título minibook, *entonces* el precio público es opcional; *dado* cultural/religioso, *entonces* es obligatorio y > 0.
   - *Cuando* desactivo un título con ejemplares, *entonces* no aparece al agregar a inventario y sus ejemplares siguen intactos y vendibles.
 - **RQ-TIT-02 [F1]** Existe un script idempotente de carga inicial del catálogo.
-- **RQ-TIT-03 [F1]** Edito meta de bonificación y máximo de favoritos (por defecto 4.000.000 y 6).
+- **RQ-TIT-03 [F1]** Edito la meta de bonificación (por defecto 4.000.000). *(El máximo de favoritos se eliminó en la ronda 26.)*
 
 ## Inventario y ejemplares
-- **RQ-INV-01 [F1]** Agrego ejemplares con "+" (un toque = un ejemplar) desde lista o favoritos, **igual para libros y minibooks**.
-  - *Cuando* toco "+" tres veces sobre "Corazón tranquilo", *entonces* hay 3 ejemplares con números consecutivos y precios copiados del título.
-  - *Entonces* tras el primer toque el "+" es una **pastilla numérica**; si escribo 5, el total agregado en la sesión pasa a 5 (se crean o retiran los ejemplares recién agregados que sobren).
-  - *Entonces* aparece **Deshacer** unos segundos.
-- **RQ-INV-02 [F1]** Marco/desmarco favoritos (máx. 6). *Dado* 6 favoritos, *cuando* marco el séptimo, *entonces* se rechaza con aviso.
-- **RQ-INV-03 [F1]** Veo mis libros en físico por título con cantidad; minibooks al final; "Por resolver" aparte.
-- **RQ-INV-04 [F1]** Veo todos los ejemplares en 4 vistas (Todos, En físico, Vendidos, Con descuentos y aumentos) con orden y búsqueda, usando la barra de vista común.
+- **RQ-INV-01 [F1]** Agrego ejemplares **por lote** (ronda 26), **igual para libros y minibooks**.
+  - *Cuando* toco tres veces "Corazón tranquilo" y una "Bebidas saludables", *entonces* veo "4 por agregar" y aún no existe ningún ejemplar nuevo.
+  - *Cuando* confirmo "Agregar 4" en el Resumen, *entonces* se crean 4 ejemplares en una sola operación, con números consecutivos por título, precios copiados del título y la fecha del chip.
+  - *Cuando* toco "Descartar", *entonces* no se crea nada. *Si* la operación falla, *entonces* no se crea ninguno (todo o nada).
+- **RQ-INV-02 [F1]** *(Eliminado en la ronda 26: ya no hay favoritos.)*
+- **RQ-INV-03 [F1]** Veo mis libros en físico por título con cantidad y precio de referencia (precio público vigente); minibooks al final y fuera del total; "Por resolver" aparte.
+- **RQ-INV-04 [F1]** Veo todos los ejemplares (sin minibooks) en 4 vistas (Todos, En físico, Vendidos, Con descuentos y aumentos) con filtro Estado, orden (Recibido, Vendido, Título, Precio acordado, Diferencia; vacíos al final) y búsqueda por título, número o cliente, usando la barra de vista común.
+  - *Dado* el orden "Vendido", *entonces* la fecha de cada fila es la de venta y los no vendidos quedan al final sin fecha, en cualquier sentido.
 - **RQ-INV-05 [F1]** Edito el precio acordado de un ejemplar vendido y veo Precio distinto y Diferencia.
   - *Dado* público 50.000 y acordado 45.000, *entonces* diferencia −5.000 (descuento); *dado* 55.000, *entonces* +5.000 (aumento).
 - **RQ-INV-06 [F1]** Marco "Con novedad" (nota obligatoria) y resuelvo: **Apareció**, **Perdido (lo asumo yo)** o **Eliminar**.
   - *Entonces* un ejemplar `flagged` no cuenta como físico; "Perdido" lo deja `lost` y suma a "A responder al líder"; "Eliminar" lo borra sin contar en nada.
   - *Entonces* ningún texto de la app menciona que el líder pueda asumir una pérdida.
+  - *Cuando* deshago "Apareció" o "Perdido" (desde el aviso o el historial), *entonces* el ejemplar vuelve a Con novedad con la misma nota (ronda 26).
+- **RQ-INV-10 [F1]** Elimino un ejemplar En físico o Con novedad (nota opcional), nunca uno vendido, y puedo deshacerlo desde el aviso (BR-COPY-17).
 - **RQ-INV-07 [F1]** **Devuelvo** un ejemplar vendido (motivo: *cliente lo devolvió* / *me equivoqué*) sin alterar abonos cobrados ni Abibonos.
   - *Dado* un cliente con un solo ejemplar a 50.000 que pagó 30.000 (ya entregados en un Abibono confirmado), *cuando* se devuelve, *entonces* deuda 0, abonos 30.000, Abibono intacto, **Saldo a favor 30.000**, el ejemplar conserva su `received_at`.
   - *Dado* ese cliente con otro ejemplar de 20.000, *cuando* se devuelve el de 50.000, *entonces* deuda 20.000, abonos 30.000, saldo a favor 10.000.
   - *Entonces* con motivo *me equivoqué*, no cuenta como devolución en estadísticas.
 - **RQ-INV-08 [F1]** Agrego ejemplares con una **fecha de recibido pasada** (chip "Hoy ▾") y puedo **editar "Recibido el"** después (no futura, no posterior a la venta); el cambio queda en el historial.
-- **RQ-INV-09 [F1]** **Devuelvo al líder** ejemplares `in_stock` en lote, sin importar su fecha de recibido, con nota; puedo deshacerlo con nota.
+- **RQ-INV-09 [F1]** **Devuelvo al líder** ejemplares `in_stock` en lote (libros por unidad, minibooks por cantidad tomando los más antiguos), sin importar su fecha de recibido, con nota obligatoria; puedo deshacerlo por ejemplar con nota.
   - *Entonces* no cuentan en "Mi compra" ni en "A responder al líder" y salen en la columna "Devueltos".
 
 ## Clientes
 - **RQ-CUS-01 [F1]** Creo clientes con o sin libros (prospectos).
   - *Dado* un cliente sin ejemplares, *entonces* es prospecto: no aparece en listas por defecto ni en "Total clientes".
 - **RQ-CUS-02 [F1]** La ficha muestra deuda, abonos (con Cancelados plegable), saldo pendiente/a favor, sin programar, fechas de venta derivadas, facturas, fotos, visitas.
-- **RQ-CUS-03 [F1]** Pestañas Todos, Deudores, Saldados y Archivados; selector de orden (Más recientes por fecha de creación, Última modificación, Nombre, Mayor deuda, Próximo abono) con sentido ascendente/descendente invertible; interruptor "Incluir prospectos"; cada fila muestra el saldo pendiente del cliente.
+- **RQ-CUS-03 [F1]** Pestañas Todos, Deudores, Saldados y Archivados; selector de orden (Más recientes por fecha de creación, Última modificación, Nombre, Mayor deuda = mayor saldo pendiente, Próximo abono incluidos vencidos) con sentido invertible y vacíos al final; interruptor "Incluir prospectos" (solo en Todos); cada fila muestra el saldo pendiente y, en escritorio, el último abono.
 - **RQ-CUS-04 [F1]** Búsqueda local difusa sobre nombre, teléfono, información, dirección y libros (BR-CUS-07).
   - *Dado* "María Gómez" guardada, *cuando* busco "maria gomes", *entonces* aparece.
 - **RQ-CUS-05 [F1]** Dirección en texto (manual) + ubicación con coordenadas + enlace de Maps opcional; **"Abrir en Maps"** lleva las coordenadas a la app de mapas del celular.
   - *Dado* un cliente con coordenadas, *entonces* "Abrir en Maps" abre `…/maps/search/?api=1&query=<lat>,<lng>`; *dado* solo enlace pegado, abre ese enlace; *dado* solo dirección en texto, busca esa dirección; *dado* nada, el botón no aparece.
 - **RQ-CUS-11 [F1]** Búsqueda de clientes por nombre, teléfono, información, dirección y libros (BR-CUS-07); "Crear «texto»" desde un resultado vacío abre Nuevo cliente con ese nombre.
 - **RQ-CUS-12 [F1]** Orden por Última modificación (BR-CUS-16) y sentido invertible en todos los criterios (BR-CUS-05).
-- **RQ-CUS-13 [F1]** Factura con N.º opcional y fecha automática editable (BR-CUS-17); barra "Abonado el N % de la deuda" derivada (BR-CUS-10).
+- **RQ-CUS-13 [F1]** Factura con una o varias fotos, N.º opcional y fecha automática editable; no existe factura sin foto; un cliente puede tener varias; las fotos se pueden borrar (BR-CUS-17, ADR-0042); barra "Abonado el N % de la deuda" derivada (BR-CUS-10).
 - **RQ-CUS-10 [F1]** Avatar con **emoji** opcional por cliente (ADR-0037).
   - *Dado* un cliente sin emoji, *entonces* se ve el avatar por defecto sobre fondo neutro; *dado* un emoji, *entonces* se ve en la lista, la tabla y la ficha.
   - *Entonces* el selector carga solo al abrirse y permite **quitar** el emoji; solo se acepta **un** emoji; no afecta la búsqueda.
@@ -81,6 +84,8 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
   - *Dado* que cierro la app sin tocar ningún botón, *entonces* el cliente queda guardado como estaba.
 - **RQ-SAL-07 [F1]** Quitar un libro: *Dado* una ficha **en creación** (antes de "Guardar cliente"), *entonces* el ejemplar vuelve al inventario sin preguntas ni modal (AF-114). *Dado* un cliente **ya guardado**, *entonces* se activa el flujo de devolución (F-16).
 - **RQ-SAL-06 [F1]** Plan de abonos automático (BR-PAY-15): *Dado* saldo $140.000 y abonos de $30.000, *entonces* se crean $50.000, $30.000, $30.000, $30.000 (el sobrante va al más próximo) y la fila mayor no lleva marca. Editar un abono a mano acepta cualquier entero.
+  - *Dado* hoy 07/11 y frecuencia quincenal, *entonces* las fechas sugeridas son 15/11, 30/11, 15/12, 30/12; *dado* mensual, 30/11, 30/12, 30/01, 28/02 (ronda 26).
+  - *Dado* un cliente ya guardado que debe $100.000 con $40.000 programados, *cuando* aplico un plan, *entonces* reparte solo $60.000 y no toca los existentes.
 - **RQ-SAL-02 [F1]** Un cliente existente compra de nuevo: abro su ficha y uso "Agregar libro"; el saldo se recalcula.
 - **RQ-SAL-03 [F1]** Solo puedo agregar ejemplares `in_stock`; desde la ficha puedo agregar y quitar ejemplares.
 - **RQ-SAL-04 [F1]** Avisos informativos en línea, sin bloqueo.
@@ -93,7 +98,8 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
   - *Dado* acordado 50.000 y pagado 30.000, *entonces* `collected` por 30.000, saldo conserva 20.000 y se **sugiere** (no se crea) otro abono.
 - **RQ-PAY-03 [F1]** Doy prórroga: `original_due_date` no cambia, `due_date` sí, se inserta historial.
   - *Cuando* aplazo dos veces, *entonces* hay 2 filas de historial y la fecha original sigue siendo la primera.
-  - *Cuando* la nueva fecha no es posterior a la actual, *entonces* se rechaza; *cuando* cae a más de 2 meses desde hoy, *entonces* la app pide confirmar la fecha.
+  - *Cuando* la nueva fecha no es posterior a la actual o es anterior a hoy, *entonces* se rechaza; *cuando* cae a más de 2 meses desde hoy, *entonces* la app pide confirmar la fecha.
+  - *Dado* un cliente en creación, *cuando* corrijo la fecha de un abono, *entonces* cambian la fecha actual y la original y no queda historial (ronda 26).
 - **RQ-PAY-04 [F1]** Los abonos vencidos aparecen en Hoy solo como **aviso único** que abre Dinero ▸ Por cobrar ▸ Vencidos; el detalle se ve en Dinero y en el calendario.
 - **RQ-PAY-05 [F1]** Un abono en un Abibono confirmado está bloqueado (se desbloquea solo reabriendo el Abibono).
 - **RQ-PAY-06 [F1]** **Alerta de abonos que no cuadran** (BR-PAY-13).
@@ -106,8 +112,10 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
   - *Dado* programados menores que el saldo, *entonces* no hay alerta, solo "sin programar".
 
 ## Dinero y Abibonos
-- **RQ-DEP-01 [F1]** Veo lo **"Por entregar"** en una tarjeta fija de Dinero (total y desglose en efectivo y transferencia) con "Nuevo Abibono" (BR-DEP-14).
-- **RQ-DEP-09 [F1]** En Abonos de clientes uso las vistas Todos / Por cobrar / Por entregar / Entregados, el filtro de método y una barra de progreso de 3 tramos que, al tocarla, filtra. En Por cobrar veo los vencidos, los totales programado y sin programar y puedo cobrar desde la fila.
+- **RQ-DEP-01 [F1]** Veo lo **"Por entregar (Cobrado)"** en la tarjeta de Dinero (total y desglose en efectivo y transferencia) con "Entregar al líder" (BR-DEP-14).
+- **RQ-DEP-09 [F1]** En Abonos de clientes veo el medidor con el % entregado, las tarjetas Entregado / Cobrado / Por cobrar (tocables para filtrar) y Dinero total; uso las vistas Todos / Por cobrar / Por entregar / Entregados / Cancelados, el filtro de método, la búsqueda y el orden. En Por cobrar veo los vencidos, los totales programado y sin programar y puedo cobrar desde la fila.
+  - *Dado* entregado $1.420.000, cobrado $385.000 y por cobrar $935.000, *entonces* Dinero total es $2.740.000 y el medidor marca 52 %.
+  - *Dado* un abono cancelado de $50.000, *entonces* no aparece en Todos ni en ningún total; sí en Cancelados.
 - **RQ-DEP-10 [F1]** Puedo cobrar un abono desde la ficha, Hoy y Dinero (BR-PAY-05).
 - **RQ-DEP-02 [F1]** Armo un Abibono vinculando abonos `collected` y asignaciones de minibooks; efectivo/transferencia se autocalculan y son editables; el total no.
 - **RQ-DEP-03 [F1]** Esperado vs. entregado y diferencia siempre visibles; nota obligatoria si ≠ 0.
@@ -115,7 +123,7 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
 - **RQ-DEP-04 [F1]** Sin recibo no se confirma; con recibo, los abonos pasan a `delivered`. Una foto por defecto, "Añadir otra" disponible.
 - **RQ-DEP-05 [F1]** Un Abibono sin abonos vinculados (donación) es válido con nota.
 - **RQ-DEP-06 [F1]** Un abono no puede estar en dos Abibonos; título y fecha son automáticos y editables.
-- **RQ-DEP-08 [F1]** Entrego desde Hoy: el botón "Entregar" abre Nuevo Abibono precargado (BR-DEP-13).
+- **RQ-DEP-08 [F1]** Entrego al líder: el botón "Entregar al líder" de Dinero (o "Entregar" en Hoy, si se conserva) abre Nuevo Abibono precargado (BR-DEP-13).
   - *Dado* abonos cobrados libres por 30.000 en efectivo y 20.000 por transferencia, *entonces* el asistente abre con ambos seleccionados, efectivo 30.000 y transferencia 20.000, total 50.000 y esperado 50.000.
   - *Cuando* desmarco el de 20.000, *entonces* los montos se recalculan sin recargar.
 - **RQ-DEP-07 [F1]** **Reabro** un Abibono confirmado con motivo obligatorio; vuelve a borrador, sus abonos a `collected`, y queda en el historial. Siempre puedo editar la nota y añadir fotos.

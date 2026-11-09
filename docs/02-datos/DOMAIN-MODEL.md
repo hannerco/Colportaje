@@ -21,15 +21,17 @@ auth.users ─1──1─ profile ─1──N─ user_role
      │         │            ├─1──N─ payment_reschedule      └─1──N─ leader_deposit_event
      │         │            └─1──N─ payment_event
      │         ├─1──N─ copy ───N──1─ title
+     │         ├─1──N─ customer_invoice ─1──N─ photo (kind customer_invoice)
      │         └─0..N─ visit (agregación: customer_id nullable)
      ├─N─ copy ─1──N─ copy_event ; copy ─1──N─ copy_issue
      ├─N─ minibook_sale ─N──1─ title ; minibook_sale ─0..1─ customer (origen client_credit)
      ├─N─ training
      ├─N─ reminder  →  (visit | training)
-     ├─N─ title_favorite ─N──1─ title
      └─N─ photo  (polimórfica: customer_info | customer_invoice | deposit_receipt)
 app_settings (fila única, admin)    title (compartido, admin)
 ```
+
+> **Alcance de la primera entrega (ADR-0041, ronda 26):** se construyen `profile`, `user_role`, `app_settings`, `title`, `customer`, `customer_invoice`, `copy`, `copy_event`, `copy_issue`, `payment`, `payment_reschedule`, `payment_event`, `leader_deposit`, `leader_deposit_event` y `photo`. Quedan para su módulo: `visit`, `training`, `reminder` (Calendario) y `minibook_sale`, `leader_deposit_minibook_allocation` (Minibooks). Se agregan después sin cambiar lo existente. `title_favorite` se eliminó (ronda 26).
 
 ---
 
@@ -53,7 +55,8 @@ Se crea automáticamente (trigger sobre `auth.users`) al aceptar una invitación
 |---|---|---|
 | `id` | `smallint` PK | `1` (check `= 1`) |
 | `bonus_goal` | `integer` | `4000000` |
-| `max_favorites` | `smallint` | `6` |
+
+*(`max_favorites` se eliminó en la ronda 26: ya no hay favoritos.)*
 
 ## `title` (catálogo compartido; sin `owner_id`)
 | Columna | Tipo | Restricciones |
@@ -89,13 +92,16 @@ Checks: `status <> 'sold' ⇒ customer_id, agreed_price, sold_at, minibook_sale_
 Derivados por consulta/dominio: `price_differs`, `price_delta`.
 
 ## `copy_event` (solo inserción, historial)
-`copy_id`, `type enum('received','sold','returned','flagged','resolved','price_changed','received_date_changed','minibook_sold','returned_to_leader','undo_returned_to_leader')`, `data jsonb`, `at timestamptz`.
+`copy_id`, `type enum('received','sold','returned','flagged','resolved','undo_resolved','deleted','undo_deleted','price_changed','received_date_changed','minibook_sold','returned_to_leader','undo_returned_to_leader')`, `data jsonb`, `at timestamptz`.
 - `returned` guarda `data.reason ∈ {customer_returned, wrong_registration}` (BR-COPY-09).
-- `resolved` guarda `data.resolution ∈ {found, lost, removed}` y la nota.
+- `resolved` guarda `data.resolution ∈ {found, lost, removed}` y la nota opcional; `undo_resolved` deshace `found` o `lost` (BR-COPY-11).
+- `deleted` guarda el estado anterior y la nota opcional (BR-COPY-17); `undo_deleted` lo restaura.
+- `returned_to_leader` y `undo_returned_to_leader` guardan la nota (obligatoria).
+- `minibook_sold` se usará con el módulo de Minibooks.
 Se escribe en la misma transacción que el cambio.
 
 ## `copy_issue` (Novedad)
-`copy_id`, `note text not null`, `resolution enum('found','lost','removed') null`, `resolution_note text`, `resolved_at timestamptz null`. Una novedad abierta por ejemplar a la vez. `removed` borra lógicamente el ejemplar. **Ningún texto de la app** alude a que el líder pueda asumir una pérdida (BR-COPY-11).
+`copy_id`, `note text not null`, `resolution enum('found','lost','removed') null`, `resolution_note text`, `resolved_at timestamptz null`. Una novedad abierta por ejemplar a la vez. `removed` borra lógicamente el ejemplar. Deshacer una resolución (ronda 26) vuelve a abrir **la misma** novedad (`resolution`, `resolution_note` y `resolved_at` a nulo) y registra `undo_resolved`. **Ningún texto de la app** alude a que el líder pueda asumir una pérdida (BR-COPY-11).
 
 ## `customer`
 | Columna | Tipo | Restricciones |
@@ -111,7 +117,16 @@ Se escribe en la misma transacción que el cambio.
 | `location_accuracy_m` | `integer null` | precisión del GPS al capturar (metros); > 50 muestra "Ubicación aproximada" |
 | `archived_at` | `timestamptz null` | archivado (BR-CUS-09); no es borrado lógico |
 
-Fotos de información y facturas: tabla `photo`. Todo lo demás se **deriva** (BR-CUS-04).
+Fotos de información: tabla `photo`. Facturas: tabla `customer_invoice` (con sus fotos en `photo`). Todo lo demás se **deriva** (BR-CUS-04).
+
+## `customer_invoice` (Factura, ADR-0042)
+| Columna | Tipo | Restricciones |
+|---|---|---|
+| `customer_id` | `uuid` | FK, not null |
+| `invoice_number` | `text null` | N.º de factura opcional; no se valida entre facturas |
+| `invoice_date` | `date null` | por defecto el día (America/Bogota) en que se sube la primera foto; editable |
+
+Nace en la misma operación que su primera foto; **no existe sin al menos una foto activa** (al borrar la última foto se borra lógicamente). Un cliente puede tener varias.
 
 ## `payment` (Abono)
 | Columna | Tipo | Restricciones |
@@ -179,19 +194,16 @@ Efecto: consume `quantity` copies `in_stock` del título (FIFO por `received_at`
 ## `reminder`
 `target_type enum('visit','training')`, `target_id uuid`, `kind enum('start_of_day','one_day_before','one_week_before','custom')`, `custom_minutes_before integer null`, `dismissed_at timestamptz null`. Sin recordatorio por defecto; inicio del día = 07:00 Bogota. Los abonos no tienen filas: usan siempre inicio del día (BR-CAL-05).
 
-## `title_favorite`
-`owner_id`, `title_id`; PK `(owner_id,title_id)`; máximo `app_settings.max_favorites` por usuario.
-
 ## `photo`
 | Columna | Tipo | |
 |---|---|---|
 | `kind` | `enum('customer_info','customer_invoice','deposit_receipt')` | |
-| `customer_id` / `leader_deposit_id` | `uuid null` | exactamente uno según `kind` |
+| `customer_id` / `invoice_id` / `leader_deposit_id` | `uuid null` | según `kind`: `customer_info` → `customer_id`; `customer_invoice` → `customer_id` **e** `invoice_id`; `deposit_receipt` → `leader_deposit_id` |
 | `path` | `text` | `{owner_id}/{kind}/{uuid}.webp` |
 | `thumb_path` | `text` | miniatura ~15 KB |
 | `bytes` | `integer` | para medir uso (BR-PHO-04) |
-| `invoice_number` | `text null` | solo `customer_invoice`; N.º de factura opcional (BR-CUS-17) |
-| `invoice_date` | `date null` | solo `customer_invoice`; opcional; por defecto el día (America/Bogota) en que se agrega la foto, editable (BR-CUS-17) |
+
+*(`invoice_number` e `invoice_date` pasaron a `customer_invoice` en la ronda 26, ADR-0042.)* Borrado lógico; las de recibo de un Abibono confirmado no se borran (BR-PHO-03).
 
 ---
 
@@ -207,9 +219,16 @@ remaining(c)       = max(0, balance)
 scheduled_total(c) = Σ payment.agreed_amount       donde status = scheduled          (canceled NO cuenta)
 excess(c)          = scheduled_total − remaining   → alerta BR-PAY-13 si > 0
 unscheduled(c)     = max(0, remaining − scheduled_total)   (informativo)
+customer_since(c)  = first_sale_at(c) ?? c.created_at   (Cliente desde; BR-CUS-04)
+last_payment_at(c) = máx paid_at de payments collected/delivered   (Último abono; incluye cuota inicial y extra)
+next_due_date(c)   = mín due_date de payments scheduled (incluye vencidos)   (Próximo abono)
 to_collect_total   = Σ remaining(c)                (global; excluye clientes archivados con saldo 0)
 unscheduled_total  = Σ_c max(0, remaining(c) − scheduled_total(c))     (sin programar; BR-DEP-14)
-scheduled_to_collect = to_collect_total − unscheduled_total             (programado)
+scheduled_total_global = Σ agreed_amount de payments scheduled         ("Programado" / tarjeta "Por cobrar" de Dinero; literal, ronda 26)
+excess_total       = Σ_c max(0, excess(c))                             (lo programado de más)
+identidad          : to_collect_total = scheduled_total_global + unscheduled_total − excess_total   (sin sobrante: programado + sin programar)
+money_total        = Σ paid_amount (collected + delivered) + scheduled_total_global   ("Dinero total"; excluye canceled; BR-DEP-14)
+delivered_pct      = Σ paid_amount delivered ÷ money_total            (medidor; análogos para Cobrado y Por cobrar)
 sales_total        = Σ agreed_price de ejemplares sold no-minibook          (Total de venta)
 is_prospect(c)     = ¬∃ copy vendida
 payment_standing(c) = (prospecto → sin estado)
@@ -220,7 +239,7 @@ price_differs(k)   = k.agreed_price ≠ k.public_price_snapshot
 price_delta(k)     = k.agreed_price − k.public_price_snapshot
 overdue(p)         = p.status = scheduled ∧ p.due_date < hoy
 deposit.total      = cash + transfer
-deposit.expected   = Σ paid_amount(payments vinculados) + Σ allocation.amount
+deposit.expected   = Σ aportes = Σ paid_amount(payments vinculados) + Σ allocation.amount   (allocation llega con Minibooks; hoy 0)
 deposit.difference = total − expected
 cash_to_deliver    = Σ paid_amount de payments collected con method = cash       (análogo transfer_to_deliver)
 to_deliver_total   = cash_to_deliver + transfer_to_deliver   (tarjeta "Por entregar" en Hoy; excluye minibooks y canceled)
@@ -239,13 +258,15 @@ minibooks.net      = income − cost
 - `sold → in_stock` (devolver / quitar del cliente; conserva `received_at`)
 - `in_stock → flagged` (marcar novedad; requiere nota)
 - `flagged → in_stock` (Apareció) · `flagged → lost` (Perdido, lo asumo) · `flagged → [borrado lógico]` (Eliminar)
+- Deshacer (ronda 26): `in_stock → flagged` (deshacer Apareció, misma novedad) · `lost → flagged` (deshacer Perdido) · `[borrado lógico] → estado anterior` (deshacer Eliminar, solo desde el aviso)
+- `in_stock → [borrado lógico]` (Eliminar desde el detalle; nota opcional, BR-COPY-17)
 - `in_stock → returned_to_leader` (devolver al líder, en lote, con nota) · `returned_to_leader → in_stock` (deshacer, con nota)
 - Un ejemplar `sold` no se marca `flagged` directamente: primero se devuelve.
 
 **Payment**
 - `scheduled → collected` (cobrar) · `scheduled → canceled` (alerta BR-PAY-13, archivar cliente o manual)
 - `collected → delivered` (solo al confirmar su Abibono) · `delivered → collected` (solo al reabrir el Abibono, con motivo)
-- `scheduled` mantiene `due_date` editable (prórroga).
+- `scheduled` mantiene `due_date` editable: **corrección** durante la creación del cliente (cambia también `original_due_date`, sin historial) o **prórroga** después (BR-PAY-06). Ninguna fecha anterior a hoy.
 - `canceled` y `delivered` (mientras esté confirmado) no se editan.
 
 **LeaderDeposit:** `draft → confirmed` (con recibo, total > 0, nota si hay diferencia) · `confirmed → draft` (**Reabrir**, con motivo; queda en historial).

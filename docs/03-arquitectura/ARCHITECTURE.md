@@ -77,6 +77,8 @@ ui  ──►  features  ──►  repositories (interfaces)  ──►  domain
 - **Operaciones multi-fila atómicas** (vender, confirmar Abibono, registrar entrada de minibooks) mediante funciones/RPC de Postgres, no secuencias de llamadas desde la UI.
 - **Textos de UI** solo desde `copy/es.ts` (facilita tooltips y futura revisión); **sin** cadenas en español sueltas en componentes.
 - **Dinero:** `type COP = number` (entero) con helpers `formatCOP`, `parseCOP`; nunca decimales.
+- **Configuración de negocio:** los valores que pueden cambiar (BR-GEN-15) viven en `src/domain/config/business-config.ts`, tipados y con su regla citada; el dominio los recibe, no los repite.
+- **Alcance por módulos (ADR-0041):** la primera entrega construye los repositorios de clientes, facturas, ejemplares, títulos, abonos, Abibonos, fotos y perfil. `MinibookSaleRepository`, `VisitRepository` y `TrainingRepository` se agregan con sus módulos.
 - **Registro de totalizadores:** `features/totals/registry.ts` exporta un array de piezas `{ id, label, tooltip, compute(ctx), categoryAware }`; la pantalla itera. Quitar uno = borrar una entrada.
 
 ## 4b. Design system y tokens (ADR-0034)

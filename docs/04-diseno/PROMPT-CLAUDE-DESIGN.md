@@ -2,7 +2,7 @@
 
 **Qué adjuntar:** `04-diseno/DESIGN-BRIEF.md` (v2+), `00-contexto/CONTEXT.md`, `01-negocio/FLOWS.md`, y las **tres imágenes de referencia** de `04-diseno/referencias/` (`ref-1-escritorio-sidebar-y-tabla.png`, `ref-2-movil-barra-flotante-y-agenda.png`, `ref-3-movil-lista-de-actividad.png`). Si no lee `.md`, pegar el brief como texto. **Pegar todo lo que sigue:**
 
-````
+```
 Diseña "Colportor": PWA mobile-first para colportores (venta de libros a cuotas, Colombia)
 que también debe verse excelente en escritorio. Todo el texto en ESPAÑOL. Dinero $1.250.000,
 fechas dd/mm/aaaa, semana desde domingo. Sigue el brief adjunto; esto es lo que no se puede romper.
@@ -131,10 +131,12 @@ Espera mi elección antes de seguir con ficha de cliente, Hoy, Inventario, Diner
 
 NO DISEÑAR AHORA: Hoy, vista de líder, campañas, reembolsos, exportar PDF/CSV, notificaciones
 push, escritura sin conexión.
-````
+```
 
 ## Spec de HOY (para cuando toque; **no** va en el prompt de Clientes)
+
 Adjuntar entonces `referencias/ref-4-movil-tarjeta-saldo-con-accion.png` (solo la tarjeta de arriba). Añadir al prompt base:
+
 ```
 PANTALLA — HOY (móvil, 390 px): título "Hoy" + fecha pequeña. UNA tarjeta destacada en el COLOR DE
 ACENTO (casi negro en A, #092e53 en B), texto claro, como la Referencia 4: etiqueta "Por entregar",
@@ -149,12 +151,14 @@ No copies de la Referencia 4: tracking de envíos, líneas de progreso, saludo c
 ```
 
 ## Orden de las siguientes pantallas (cuando se elija Clientes)
+
 2 Ficha de cliente (viva: sirve para crear y para editar) · 3 Hoy · 4 Agregar libro y abonos dentro de la ficha · 5 Inventario y Agregar · 6 Devolver + modal de abonos · 7 Dinero y Abibono · 8 Minibooks · 9 Calendario (aquí sí tira de semana y línea de tiempo, estilo Referencia 2) · 10 Hacer inventario · 11 Admin · 12 Login y Ajustes. En cada paso se reutiliza el prompt base (estilo, lista negra, color, tipografía, densidad) cambiando solo la pantalla.
 
 ## Prompt — 4 ubicaciones de "Nuevo cliente" (ronda 16)
+
 Pegar en el **mismo proyecto de Claude Design** donde ya está Clientes (para que parta de lo que ya diseñó). **Pegar todo lo que sigue:**
 
-````
+```
 CONTEXTO: ya diseñaste el módulo "Clientes" (móvil y escritorio) en este proyecto. NO lo rediseñes.
 Mantén EXACTAMENTE el estilo actual: acento #092e53, tipografía, tamaños, tarjeta de perfil,
 pestañas-píldora, tabla, avatares, barra inferior flotante y todos los componentes tal como están.
@@ -195,12 +199,13 @@ REGLAS COMUNES: se llama "Nuevo cliente"; ícono de persona con "+"; "Vender" no
 lado (ni sidebar, ni flotante, ni etiquetas); no repitas el mismo botón de forma redundante en
 una misma pantalla (máximo dos apariciones y solo en la opción D en escritorio); conserva "Hoy",
 "Clientes", "Inventario", "Más" y todo lo demás sin cambios; mismos datos de ejemplo.
-````
+```
 
 ## Prompt — pantalla "Elegir ubicación" (ronda 17)
+
 Pegar en el mismo proyecto de Claude Design. **Pegar todo lo que sigue:**
 
-````
+```
 Diseña la pantalla "Elegir ubicación" del cliente (móvil 390 y escritorio 1440), con el mismo estilo del
 proyecto. Mapa a pantalla completa en estilo neutro y claro (sin colores llamativos). PIN FIJO al centro
 de la pantalla (el mapa se mueve por debajo, como al pedir un carro en Didi). Círculo de precisión del
@@ -209,14 +214,15 @@ botón principal "Confirmar". Un aviso discreto "Ubicación aproximada" cuando l
 bloquea). Muestra también: (1) en la ficha de cliente, la sección Dirección con el campo de texto, un
 botón único "Elegir en mapa" (se abre centrado en la ubicación actual), y el mapa pequeño con pin que se carga al tocarlo, con el botón
 "Abrir en Maps" (lleva las coordenadas a la app de mapas); (2) estado de permiso negado: el mapa se abre igual con un aviso discreto. Sin textos explicativos. Un solo botón principal por pantalla.
-````
-
+```
 
 ## Ronda 19 — ajustes tras revisar Clientes (2026-11-04)
+
 Prompts ya entregados a Claude Design, en este orden. Dejan el diseño alineado con ADR-0038, ADR-0039 y BR-CUS-05/07/08/13/14. (El "Resumen" y el generador de plan de abonos no necesitan prompt: el título ya quedó como "Resumen" y el cálculo es de código.)
 
 ### 19.1 Orden: "Última modificación" y sentido
-````
+
+```
 En la lista de Clientes (escritorio y móvil, claro y oscuro), cambia el selector "Ordenar por":
 opciones Más recientes (por fecha de creación), Última modificación (NUEVA), Nombre (A–Z), Mayor deuda
 y Próximo abono. Junto al criterio, un control de ícono con flecha arriba/abajo (aria-label "Invertir
@@ -226,10 +232,11 @@ muestra criterio y sentido (p. ej. "Orden: Última modificación ↓") y el sent
 texto accesible. Escritorio: dentro del menú "Ordenar por". Móvil: en la hoja "Filtrar y ordenar".
 Si el orden difiere del predeterminado, aparece el chip de filtros activos con "Restablecer".
 Solo tokens del design system; un solo botón principal por pantalla.
-````
+```
 
 ### 19.2 Botones de Crear cliente
-````
+
+```
 En Crear cliente (escritorio y móvil; llena y vacía; claro y oscuro): todo se guarda solo.
 Cabecera: "Descartar" (secundario) y "Guardar cliente" (el único botón principal, deshabilitado sin
 nombre); no hay indicador de "Borrador guardado" (un cliente con nombre ya existe). Reemplaza el actual "Cancelar" por "Descartar". Salir de la ficha de cualquier forma (atrás, menú, Resumen) sin "Guardar cliente" abre esa misma confirmación.
@@ -240,10 +247,11 @@ corta de lo que se perderá solo con lo que exista (p. ej. "Se quitarán 2 libro
 semántico existente). "Archivar" no aparece en la creación; después de "Guardar cliente" la ficha
 normal lo tiene en "Más acciones" y "Descartar" ya no existe. Diseña la confirmación con y sin contenido
 a perder, móvil y escritorio, claro y oscuro. Solo tokens.
-````
+```
 
 ### 19.3 Un solo botón "Elegir en mapa"
-````
+
+```
 En la sección Dirección de la ficha (Crear y ficha existente; móvil y escritorio; claro y oscuro) y en
 "Elegir ubicación": deja UN SOLO botón secundario "Elegir en mapa" y elimina "Mi ubicación". Al tocarlo
 se abre "Elegir ubicación" centrado en la ubicación actual; el permiso se pide solo en ese toque; el
@@ -255,19 +263,21 @@ discreto "Sin permiso de ubicación. Ubica el pin a mano."; sin botón "Elegir e
 necesita conexión."). Con ubicación guardada, "Cambiar" abre el selector centrado en el punto guardado;
 "Quitar" y "Abrir en Maps" no cambian. Vista inicial sin GPS: último punto elegido o, si no hay, Colombia.
 Un solo botón principal: "Confirmar". Solo tokens.
-````
+```
 
 ### 19.4 Búsqueda por libros
-````
+
+```
 En el estado "sin resultados" de Clientes (escritorio y móvil, claro y oscuro), cambia el texto
 secundario por "Busqué por nombre, teléfono, información, dirección y libros." y ajusta el placeholder
 del buscador si menciona los campos. No cambies nada más.
-````
+```
 
 ## Prompt — módulo Inventario (ronda 20)
+
 Pegar en el chat nuevo de diseño (con la skill `colportor-diseno`, que ya trae el estilo). Adjuntar `04-diseno/referencias/portadas/` solo para la exploración del identificador (DT-10), cuando toque. **Pegar todo lo que sigue:**
 
-````
+```
 Diseña el módulo INVENTARIO de Colportor, en el mismo proyecto y con el mismo sistema de diseño de
 Clientes (tokens, sin tamaños ni colores literales). Primero MÓVIL (390) en CLARO; después ESCRITORIO
 (1440) en CLARO; el modo oscuro se hace al final, cuando todo esté resuelto. Sin textos explicativos y un
@@ -315,13 +325,13 @@ portada o emoji) se explora después, con las listas ya diseñadas.
 
 REGLAS DE COPY: "En físico" (nunca "En inventario") para el estado de un ejemplar en tu poder.
 "Ejemplar" = unidad; "Título" = el libro como producto. Dinero en COP sin decimales.
-````
-
+```
 
 ## Prompt — módulo Dinero (ronda 23)
+
 Pegar en el chat de diseño (con la skill `colportor-diseno`), en el mismo proyecto. Primero **ESCRITORIO claro**; después móvil claro; el oscuro al final. **Pegar todo lo que sigue:**
 
-````
+```
 Diseña el módulo DINERO de Colportor, en el mismo proyecto y con el mismo sistema de diseño (tokens, sin
 tamaños ni colores literales). Primero ESCRITORIO (1440) en CLARO. Sin textos explicativos (tooltips con ⓘ
 bajo demanda) y un solo botón principal por pantalla. No inventes reglas: lo que no esté aquí, déjalo como
@@ -373,4 +383,4 @@ EXPLORACIÓN (sin decidir): el color de "Entregado". Muestra DOS variantes, una 
 
 REGLAS DE COPY: "Por cobrar", "Cobrado", "Entregado" (nunca "Sin reclamar", "Reclamado" ni "En la calle").
 "Abibono" se conserva, con tooltip "Entrega al líder".
-````
+```

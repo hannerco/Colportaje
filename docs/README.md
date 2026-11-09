@@ -28,19 +28,26 @@ docs/
 │  ├─ CONVENTIONS.md              idioma, nombres, TypeScript, UI, git, cómo trabaja un agente
 │  ├─ TESTING.md                  estrategia y casos de prueba
 │  ├─ SECURITY.md                 amenazas, secretos, políticas
-│  └─ adr/                        decisiones de arquitectura (ADR-0001 … ADR-0040) + README con índice
+│  └─ adr/                        decisiones de arquitectura (ADR-0001 … ADR-0046) + README con índice
 ├─ 04-diseno/
 │  ├─ DESIGN-BRIEF.md             brief v2 para Claude Design (estilo Notion, lista negra anti-IA, densidad, wireframes)
 │  ├─ PROMPT-CLAUDE-DESIGN.md     prompt v3 listo para pegar (empieza por Clientes)
 │  ├─ HOY-BORRADOR.md             definición de Hoy (DT-09 parcialmente cerrada; pendiente OQ-40/41)
+│  ├─ pendientes/                 lo que falta por diseñar y las contradicciones diseño ↔ docs (ronda 26)
 │  └─ referencias/                imágenes de referencia del dueño (inspiración, no copiar); portadas/ = portadas de ejemplo de libros (DT-10)
 ├─ 05-operacion/                  PUESTA EN MARCHA
 │  ├─ DEPLOYMENT.md               plataformas, entornos, migraciones, backups, confiabilidad
 │  ├─ GUIA-DESPLIEGUE-PASO-A-PASO.md   guía explicada para el dueño (Supabase, Vercel, GitHub)
 │  └─ AVISO-DATOS-PLANTILLA.md    plantilla del aviso de tratamiento de datos (Ley 1581)
-└─ 06-planificacion/              CUÁNDO y QUÉ queda
-   ├─ ROADMAP.md                  plan de 14 días, fases 1–3, backlog
-   └─ OPEN-QUESTIONS.md           sin preguntas abiertas; seguimientos SG-*, revisiones RV-*, decisiones de diseño
+├─ 06-planificacion/              CUÁNDO y QUÉ queda
+│  ├─ ROADMAP.md                  plan de 14 días, fases 1–3, backlog
+│  └─ OPEN-QUESTIONS.md           sin preguntas abiertas; seguimientos SG-*, revisiones RV-*, decisiones de diseño
+└─ 07-historias-usuario/          HISTORIAS DE USUARIO del back (Clientes, Inventario, Dinero + cimientos)
+   ├─ README.md                   índice, orden de implementación y cómo pedírselas a una IA
+   ├─ 00-REGLAS-COMUNES.md        reglas que aplican a todas las HU (capas, errores, configuración, terminado)
+   ├─ INTERPRETACIONES.md         detalles decididos al escribir las HU (vetables por el dueño)
+   ├─ PLANTILLA.md                plantilla para HU nuevas
+   └─ 00-base/ 01-inventario/ 02-clientes/ 03-abonos/ 04-dinero/   una HU por archivo
 ```
 
 ## Orden de lectura recomendado
@@ -57,6 +64,7 @@ docs/
 11. [`04-diseno/DESIGN-BRIEF.md`](04-diseno/DESIGN-BRIEF.md) — brief v2 para Claude Design · [`04-diseno/PROMPT-CLAUDE-DESIGN.md`](04-diseno/PROMPT-CLAUDE-DESIGN.md) — prompt listo para pegar.
 12. [`05-operacion/DEPLOYMENT.md`](05-operacion/DEPLOYMENT.md) y [`05-operacion/GUIA-DESPLIEGUE-PASO-A-PASO.md`](05-operacion/GUIA-DESPLIEGUE-PASO-A-PASO.md) (para el dueño, explicada) · [`05-operacion/AVISO-DATOS-PLANTILLA.md`](05-operacion/AVISO-DATOS-PLANTILLA.md).
 13. [`06-planificacion/ROADMAP.md`](06-planificacion/ROADMAP.md) — plan de 14 días, fases y backlog · [`06-planificacion/OPEN-QUESTIONS.md`](06-planificacion/OPEN-QUESTIONS.md) — **sin preguntas de producto abiertas**, salvo las decisiones de diseño (DT) y los supuestos OQ-30..36 por confirmar; también seguimientos (SG) y cosas por revisar (RV).
+14. [`07-historias-usuario/README.md`](07-historias-usuario/README.md) — **para programar el back:** una HU por archivo, en orden, con su contrato, reglas y criterios de aceptación.
 
 ## Si buscas algo concreto
 | Quiero… | Ve a |
@@ -66,7 +74,8 @@ docs/
 | Saber cómo se llama algo (UI y código) | `00-contexto/GLOSSARY.md` |
 | Crear tablas o migraciones | `02-datos/DATABASE.md` |
 | Diseñar pantallas | `04-diseno/DESIGN-BRIEF.md` y `04-diseno/PROMPT-CLAUDE-DESIGN.md` |
-| Escribir código o pruebas | `03-arquitectura/ARCHITECTURE.md`, `03-arquitectura/CONVENTIONS.md`, `03-arquitectura/TESTING.md` |
+| Escribir código o pruebas | `07-historias-usuario/` (qué construir y en qué orden), `03-arquitectura/ARCHITECTURE.md`, `03-arquitectura/CONVENTIONS.md`, `03-arquitectura/TESTING.md` |
+| Saber qué falta por diseñar | `04-diseno/pendientes/` |
 | Crear cuentas y desplegar | `05-operacion/GUIA-DESPLIEGUE-PASO-A-PASO.md` |
 | Ver qué toca hacer y cuándo | `06-planificacion/ROADMAP.md` |
 
@@ -81,6 +90,7 @@ Si encuentras una contradicción, **arréglala** en el mismo cambio y anótala e
 
 ## Estado del proyecto
 - Documentación: **completa y sin preguntas abiertas** (fase 0, revisada el 2026-10-28). **Aún no hay código**: el dueño decidió (2026-11-04) no programar nada hasta cerrar el diseño visual, porque las decisiones cambian al diseñar.
+- **Diseño de Clientes, Inventario y Dinero cerrado** (exportación del 05/11/2026, revisada contra los docs en la ronda 26). Las **historias de usuario del back** de esos tres módulos están en `07-historias-usuario/` (2026-11-08); lo que falta por diseñar, en `04-diseno/pendientes/`.
 - **Plazo: 14 días** para la fase 1 completa (`06-planificacion/ROADMAP.md`). Siguiente paso: diseño en **Claude Design** (2–3 variantes, días 1–3) → elección del dueño → scaffolding por capas con pruebas del dominio primero.
 - Pendientes con el dueño: repositorio `Colportaje` ya creado en GitHub (SG-03, público por ahora: pasarlo a privado antes de subir código), cuentas nuevas de Supabase y Vercel (SG-02, guía paso a paso; **pospuesto: primero el diseño**), diseño (SG-04).
 - Dueño del producto: colportor-desarrollador, primer usuario y admin. Idioma de trabajo: español.

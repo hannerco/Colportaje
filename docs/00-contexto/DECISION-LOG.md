@@ -430,6 +430,55 @@ Entrevista (grill-me) sobre el choque entre BR-CAL-07 (Hoy mínimo) y DT-09 (Hoy
 
 ---
 
+## Ronda 26 — Diseño exportado frente a docs, antes de las historias de usuario del back (2026-11-06 a 2026-11-08)
+
+Se comparó el diseño exportado de Claude Design (`colportor-diseno.zip`, 05/11/2026; referencia: **escritorio claro**; en Dinero manda la «Exploración elegida · Por entregar (Cobrado) y Dinero total en una sola tarjeta») con los docs, en tres rondas de preguntas (grill-me). Las diferencias que siguen abiertas y lo que falta por diseñar están en `04-diseno/pendientes/`.
+
+| # | Tema | Resultado |
+|---|---|---|
+| Q1/Q39 | Qué es "back" | **"Todo lo que no sea front, todo lo que no sea UI o componentes visibles. La lógica."** · **"Deja todo únicamente para que el front llame."** [D] ADR-0041. |
+| Q2 | Cimientos | **"Dale, está bien."** [D] Login con usuario creado a mano, `title` y script de catálogo; sin invitaciones ni admin. |
+| Q3/Q40/Q62 | Minibooks | **"No, eso no lo dejes listo porque es muy probable que cambie. Si te genera problemas, entonces no agregues nada de minibooks todavía."** [D] Solo sus ejemplares en Inventario; ventas y asignaciones a Abibonos, con su módulo. |
+| Q4 | Visitas | **"Decide tú si dejarlo para después… o adelantar ahora esa parte."** [D] El asistente decidió **posponerlas** con Calendario: agregarlas después es aditivo. |
+| Q5 | Reglas sin pantalla | **"Debes completar todo el back de los módulos que te pedí, siempre y cuando no estés dejando a medias algo que puede cambiar porque aún no tiene diseño… crea una carpetica con las cosas que a fecha de hoy no están en diseño."** [D] `04-diseno/pendientes/`. |
+| Q6 | OQ-30, 31, 32, 35, 36 | **"Sí a los 5."** [D] |
+| Q7 | Cancelar / "Borrador guardado" | **"Mandan los docs, crea también un documento que muestre las contradicciones que hay en diseño y en docs."** [D] `04-diseno/pendientes/CONTRADICCIONES-DISENO-DOCS.md`. |
+| Q8 | Prospectos | **"Yes."** [D] Ocultos salvo "Incluir prospectos", solo en Todos. |
+| Q9 | Último abono | **"Sí… una cuota inicial también cuenta como abono."** [D] `last_payment_at`. |
+| Q10 | Orden | **"Mayor deuda es quién tiene mayor saldo pendiente."** [D] Próximo abono incluye vencidos. |
+| Q11 | Cliente desde | **"Es la fecha en la que le agregué un libro… en un prospecto, la de creación."** [D] |
+| Q12 | "Cuota quincenal" | **"No creo que sea una propiedad."** [D] La frecuencia no se guarda. |
+| Q13/Q14 | Plan y fechas | **"Correcto."** [D] El plan nace con valor y primer abono; en creación se reemplaza; corregir (creación) frente a prorrogar (después). ADR-0045. |
+| Q15 | Cuota inicial en $0 | **"Puedo poner que el valor de la cuota inicial es 0. El método de pago… no debería ser posible ponerlo… Pero sí debería poder programar los abonos."** [D] |
+| Q16 | Método por defecto | **"Transferencia debería ser el método por defecto, siempre."** [D] BR-PAY-04. |
+| Q17/Q42/Q43/Q63 | Factura | **"No quiero que haya fecha sin foto… lo más importante es la bendita foto de la factura… si se compra dos veces, tenga dos facturas… puede que en un futuro agregue algo como 'Ver facturas'."** [D] Tabla `customer_invoice`, ADR-0042. |
+| Q18 | Borrar foto de factura | **"No es bueno que se borre una foto de una factura, pero aún así, lo debo permitir."** [D] BR-PHO-03 (la regla anterior no venía del dueño). Q44: el recibo de un Abibono confirmado sigue sin borrarse. |
+| Q19 | Agregar libro | **"No se van a mostrar los libros agotados, quita esa regla… manda el diseño ordenado por título y luego por el más antiguo. Por ahora sin minibooks."** [D] ADR-0044. |
+| Q20 | Enlace de Maps | **"Es algo que le falta al diseño… Deja el campo ahí."** [D] |
+| Q21 | Agregar al inventario | **"Correcto."** [D] Por lote, ADR-0043. |
+| Q22 | Favoritos | **"Favoritos ya no existe… un algoritmo que aprenda qué libros pide más… no en la v1."** [D] |
+| Q23/Q24 | Precio y conteos de Inventario | **"Ese precio es una referencia, pero no una suma."** [D] Minibooks fuera de los conteos. |
+| Q26/Q53 | Eliminar ejemplar | **"Se permite en ambos estados pero nunca en uno vendido… en un futuro… puede pedir una nota."** [D] BR-COPY-17. |
+| Q27/Q54/Q55/Q66 | Resolver y deshacer | **"Deja que pidan nota opcional"** · **"Todas esas acciones deberían poderse deshacer."** [D] Apareció y Perdido desde el historial; Eliminar solo en el aviso. |
+| Q28 | Devolver al líder | **"Sí."** [D] Por unidad; nota obligatoria. |
+| Q30/Q31 | Dinero | **"Yes"** · **"Exacto."** [D] Exploración elegida; Dinero total = abonos no cancelados. ADR-0046. |
+| Q32/Q56 | Programado con sobrante | **"Sería un caso terrible, pero puede suceder."** [D] Programado literal. El aviso en la ficha ya existe (BR-PAY-13) y falta en el diseño. |
+| Q33/Q57 | Cancelados | **"No tiene sentido que cancelados aparezca en Todos… Va a afectar las cuentas"** · **"En una quinta pestaña de cancelados."** [D] |
+| Q41 | Extensibilidad | **"Que se haga todo lo posible para que si hay que cambiar una tabla existente, no se dañe todo… que sea fácil de encontrar dónde se deben cambiar las cosas."** [D] CONVENTIONS §5b. |
+| Q45 | Plan en cliente existente | **"Sí, vale."** [D] Reparte solo lo sin programar. |
+| Q46 | Días del plan | **"Usualmente se refiere a los quinces y los 30 de cada mes… se busca el 15-16 o el 30-02 más cercano. Busca en internet… No creo que necesites preguntarme más."** [D] Investigado: en Colombia el sueldo se paga el 15 y el último día del mes. ADR-0045. |
+| Q47/Q48 | Fechas pasadas y programar sin libro | **"Exacto."** · **"No tiene nada de sentido… pero vale."** [D] |
+| Q49/Q50 | Descartar con dinero en un Abibono; restaurar | **"Ok."** [D] |
+| Q51/Q64 | Fecha en Ejemplares | **"Recibido es recibido. Si organizo por vendido es otra cosa… los que no lo están aparecerán al final siempre, como lo hace Notion."** [D] |
+| Q59 | Abono extra en Dinero | **"Ambos heredan el valor y fecha real."** [D] |
+| Q60 | Cobro en un borrador | **"Desde que el Abibono no se haya entregado, se puede corregir."** [D] |
+| Q65 | Vacíos al final | **"Correcto."** [D] BR-GEN-14. |
+| Q37/Q38/Q61 | Diferencias visuales y entrega | **"Ok"** · **"Correcto"** · **"Sí."** [D] |
+
+*Consecuencias:* ADR-0041 a ADR-0046; BR-GEN-12/14/15, BR-USR-08, BR-COPY-02/06/11/12/16/17, BR-CUS-04/05/09/10/14/17, BR-PAY-02/03/04/05/06/11/15/16, BR-DEP-02/05/12/13/14, BR-INV-02/03, BR-GOAL-03/06, BR-PHO-03, BR-AUD-01; DOMAIN-MODEL, DATABASE, GLOSSARY, FLOWS, FLOWS-ALTERNATIVOS (AF-115..117), REQUIREMENTS, TESTING, CONVENTIONS, ARCHITECTURE, OPEN-QUESTIONS, DESIGN-BRIEF; nuevas carpetas `04-diseno/pendientes/` y `07-historias-usuario/`.
+
+---
+
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.
 2. **Repositorio de GitHub: `Colportaje`** (2026-11-04). Se pensó en `colportor`, pero el dueño ya había creado `hannerco/Colportaje` y pidió dejar todo con ese nombre.
@@ -454,3 +503,4 @@ Entrevista (grill-me) sobre el choque entre BR-CAL-07 (Hoy mínimo) y DT-09 (Hoy
 13. **Brief v1:** pedía subtítulos, desglose permanente, una variante "Hoy denso" con semana, botones de acción repetidos y 7 colores de etiqueta; Claude Design lo siguió y el resultado fue recargado. Corregido en el brief v2.
 12. Se propuso el botón "×N" para cantidades; el dueño lo rechazó por poco estético; se cambió a "+ / pastilla numérica" estilo Notion.
 14. **Fórmula del saldo (2026-10-29):** la documentación decía `balance = debt − paid_total − credit_applied`, lo que hacía que entregar un minibook con saldo a favor *aumentara* el saldo a favor, contra BR-MBK-07 y AF-10. Lo detectó una prueba ejecutable al preparar el dominio (ese código se descartó el 2026-11-04; la corrección sigue vigente). El signo correcto es `+ credit_applied` (ADR-0033); se corrigió en BR-CUS-04, DOMAIN-MODEL y GLOSSARY.
+15. **(Ronda 26)** Dos preguntas mezclaban nombres de campos, fórmulas y varias decisiones; el dueño respondió "no entendí para nada" y "mucho enredo". Se reescribieron con una sola duda y un ejemplo con números. Además, BR-PHO-03 prohibía borrar fotos de factura sin que el dueño lo hubiera pedido; se corrigió.

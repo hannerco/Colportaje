@@ -1,5 +1,5 @@
 # ADR-0017: Antigüedad, favoritos y agregar a inventario
-Estado: Aceptado (la parte de **antigüedad quedó cancelada** en la ronda 21, 2026-11-04) · Fecha: 2026-10-26 · Revisado: 2026-10-28 (patrón "+ / pastilla")
+Estado: Aceptado (la parte de **antigüedad quedó cancelada** en la ronda 21, 2026-11-04) · Fecha: 2026-10-26 · Revisado: 2026-10-28 (patrón "+ / pastilla") · **Reemplazado en parte por ADR-0043** (agregar por lote; favoritos eliminados, ronda 26)
 
 ## Contexto
 Conviene vender primero los ejemplares más antiguos, pero el dueño no quiere que el usuario tenga "tan presente cuántos libros lleva": propuso un icono por etapas (la idea de una fruta que se pudre, "poco profesional"). En Notion agregar inventario era un botón por libro, que no escala. El líder normalmente entrega 2–4 ejemplares por título, pero de minibooks entrega muchos. Un botón "×N" visible le pareció poco estético; pidió pensar "cómo lo haría Notion".

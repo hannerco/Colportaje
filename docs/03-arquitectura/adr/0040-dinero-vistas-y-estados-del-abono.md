@@ -1,5 +1,5 @@
 # ADR-0040: Dinero: vistas, estados con color y deuda sin programar
-Estado: Aceptado · Fecha: 2026-11-05
+Estado: Aceptado · Fecha: 2026-11-05 · Reemplazado en parte por ADR-0046 (exploración elegida, ronda 26)
 
 ## Contexto
 El dueño usaba en Notion dos tablas: *Abonos de clientes* (vistas Por entregar, Entregados, Nequi/Efectivo por entregar, En la calle) y *Abibonos*. Su rutina nocturna era sumar lo por entregar por método, compararlo con lo que tenía y registrar el Abibono. Pidió totales visibles, una barra de progreso por estado y una forma de ver lo que falta por cobrar.

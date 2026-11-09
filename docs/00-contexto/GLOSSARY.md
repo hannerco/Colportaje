@@ -18,7 +18,11 @@
 | **Con novedad** | Antes "Sin resolver" |
 | Estado del cliente | `payment_standing`: **Vencido** `overdue` (rojo) / **Pagando** `current` (gris; debe algo y va cumpliendo) / **Saldado** `settled` (verde, el único; ya pagó todo); píldora suave con ícono en escritorio; en móvil, ícono del estado + etiqueta "Debe" sobre el saldo (BR-CUS-13) |
 | Barra flotante | Barra inferior móvil tipo píldora con 4 íconos y botón de "Nuevo cliente" (persona con "+") aparte |
-| Entregar (botón de Hoy) | Abre Nuevo Abibono precargado con los abonos `collected` libres (BR-DEP-13) |
+| Entregar (botón de Hoy) | Abre Nuevo Abibono precargado con los abonos `collected` libres (BR-DEP-13); su lugar en Hoy está pendiente (OQ-40) |
+| **Entregar al líder** (botón de Dinero) | Acción principal de Dinero; abre Nuevo Abibono precargado (BR-DEP-13/14, ronda 26) |
+| **Dinero total** | `money_total`: suma de los abonos no cancelados (Entregado + Cobrado + Por cobrar); base de los porcentajes de Dinero (BR-DEP-14) |
+| **Precio de referencia** | Precio público vigente del título (en minibooks sin precio público, el colportor) que se muestra por título en Libros en físico; no es una suma. Cada ejemplar conserva su propio precio congelado (BR-INV-03) |
+| **Corregir** (fecha de un abono) | Cambio de fecha mientras el cliente se crea: cambia también la fecha original y no deja historial; después, todo cambio es **prórroga** (BR-PAY-06) |
 | Token de diseño | Variable CSS con un valor visual (tamaño de letra por rol, color, radio…) definida en `src/ui/tokens/tokens.css`; `--font-scale` escala toda la tipografía (BR-GEN-13) |
 | Ubicación (del cliente) | `latitude` / `longitude` + `location_accuracy_m`; se elige con el **selector de ubicación** (pin al centro) que se abre con el botón **"Elegir en mapa"**, centrado en la ubicación actual (BR-CUS-08) |
 | Avatar (del cliente) | `avatar_emoji`: emoji opcional; sin él, avatar por defecto derivado: ícono de persona sobre fondo neutro (BR-CUS-15) |
@@ -53,9 +57,10 @@
 | Evento de abono | `payment_event` | Recortes, cancelaciones, reaperturas (solo inserción) |
 | Evento de Abibono | `leader_deposit_event` | Confirmación y reapertura con motivo |
 | Evento de ejemplar | `copy_event` | Historial (recibido, vendido, devuelto…) |
-| Favorito | `title_favorite` | Título marcado para agregar a inventario con un toque |
-| Foto | `photo` | Imagen de info de cliente, factura o recibo |
-| Ajustes | `app_settings` | Meta de bonificación, máx. favoritos |
+| ~~Favorito~~ | ~~`title_favorite`~~ | Eliminado en la ronda 26 (ADR-0043) |
+| Factura | `customer_invoice` | N.º y fecha opcionales con **una o varias fotos**; no existe sin foto (ADR-0042) |
+| Foto | `photo` | Imagen de info de cliente, de una factura o de un recibo |
+| Ajustes | `app_settings` | Meta de bonificación |
 | Meta (de bonificación) | `bonus_goal` | 4.000.000 por defecto, editable por admin |
 | Perfil / Rol | `profile` / `user_role` | El perfil guarda el formato de hora (12 h/24 h) y si está activo |
 
@@ -80,7 +85,7 @@
 | Cancelado | `canceled` | `payment` |
 | Borrador / Confirmado | `draft` / `confirmed` | `leader_deposit` |
 | Pendiente / Hecha / Cancelada | `pending` / `done` / `canceled` | `visit` |
-| Apareció / Perdido / Eliminar | `found` / `lost` / `removed` | resolución de `copy_issue` |
+| Apareció / Perdido / Eliminar | `found` / `lost` / `removed` | resolución de `copy_issue` (Apareció y Perdido se pueden deshacer, BR-COPY-11) |
 
 ## Tipos de abono (`payment.kind`)
 | UI | Código | Nace |
@@ -140,6 +145,11 @@
 | **Por entregar** (sin subtítulo; ⓘ: "dinero que ya cobraste y aún no has entregado al líder") | `to_deliver_total` | Σ abonos `collected` no entregados; desglose Efectivo `cash_to_deliver` / Transferencia `transfer_to_deliver` |
 | Vencido | `overdue` | abono `scheduled` con `due_date < hoy` |
 | Fecha de la venta | `first_sale_at` / `last_sale_at` | |
+| Cliente desde | `customer_since` | Fecha de la primera venta; en un prospecto, la de creación |
+| Último abono | `last_payment_at` | Fecha real más reciente de sus abonos cobrados o entregados (incluye cuota inicial) |
+| Próximo abono | `next_due_date` | Fecha acordada más temprana de sus abonos por cobrar (incluye vencidos) |
+| Programado | `scheduled_total_global` | Σ valor acordado de los abonos por cobrar (literal, aunque supere lo que se debe) |
+| Dinero total | `money_total` | Σ abonos no cancelados: entregado + cobrado + programado |
 | Progreso de bonificación | `bonus_progress` | Σ precio colportor de culturales vendidos ÷ meta |
 
 ## Procesos y pantallas
@@ -150,7 +160,7 @@
 | **Hacer inventario** | `/hacer-inventario` | Cuadre con el líder; incluye totalizadores |
 | Inventario (vista de culturales) / Inventario TODOS (cultural + religioso) | `view = cultural` / `view = all` | Minibooks siempre aparte |
 | Libros en físico | `/inventario` | Ejemplares `in_stock` por título |
-| Agregar a inventario | `/inventario/agregar` | Lista + favoritos |
+| Agregar a inventario | `/inventario/agregar` | Títulos por categoría; se agrega **por lote** con Resumen (BR-COPY-02) |
 | Dinero | `/dinero` | Abonos y Abibonos presentados juntos |
 | Modo administrador | `/admin` | |
 | Totalizador | `totalizer` | Pieza registrada en `features/totals/registry.ts` |

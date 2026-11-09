@@ -1,5 +1,5 @@
 # ADR-0011: Minibooks
-Estado: Aceptado · Fecha: 2026-10-26
+Estado: Aceptado (la forma de agregar stock pasó a ser por lote, ADR-0043) · Fecha: 2026-10-26
 
 ## Contexto
 Los minibooks son libros pequeños que se ofrecen cuando un cliente rechaza uno grande. Se pagan de contado, sin cliente, a precio libre (~1.500 el precio colportor o gratis). El líder hace firmar su recepción, así que tienen inventario físico. Su dinero es inestable: a veces se entrega al líder, a veces se usa para otra cosa. Antes el dueño los llevaba creando un cliente llamado "minibooks".

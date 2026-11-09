@@ -1,5 +1,5 @@
 # ADR-0038: Guardado, resumen y descarte de la ficha de cliente nueva
-Estado: Aceptado · Fecha: 2026-11-04
+Estado: Aceptado · Fecha: 2026-11-04 · La parte de facturas fue reemplazada por ADR-0042 (ronda 26)
 
 ## Contexto
 ADR-0035 definió la ficha viva: se guarda sola y el nombre es lo único obligatorio. El diseño de Claude Design (módulo Clientes, Crear) añadió un borrador guardado, botones "Cancelar / Guardar cliente" y una pantalla final "Antes de guardar". El dueño decidió conservar el guardado automático, **mantener** esos botones con otro sentido y renombrar la pantalla final a **"Resumen"**. También aparecieron campos nuevos: N.º y fecha de factura, y la fecha de factura automática.

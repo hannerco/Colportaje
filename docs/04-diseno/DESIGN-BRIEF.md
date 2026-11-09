@@ -120,7 +120,7 @@ Basada en lo que usan las apps de referencia (iOS: 17 / 15 / 13 pt; Material: cu
 | 3b | **Elegir ubicación** | Mapa a pantalla completa en estilo neutro y claro; **pin fijo al centro** con el mapa moviéndose por debajo; círculo de precisión del GPS; botón para recentrar en la ubicación actual (se abre ya centrado en ella); un solo botón principal **"Confirmar"**; aviso discreto "Ubicación aproximada" | F-30 |
 | 4 | **Nuevo cliente (ficha viva)** | Ficha que se guarda sola (nombre obligatorio); secciones en línea Libros → Abonos → Factura sin orden obligatorio; avisos informativos en línea ("Aún no tiene libro", "Revisar") | F-10 |
 | 5 | **Inventario** | Libros en físico por título; minibooks al final; "Por resolver"; **Agregar** (principal); "Devolver al líder" en lote | F-06, F-26 |
-| 6 | **Agregar a inventario** | Lista buscable + favoritos; "+" por fila → pastilla numérica; chip de fecha "Hoy ▾"; Deshacer | F-05 |
+| 6 | **Agregar a inventario** | Títulos por categoría con búsqueda; toque suma, "−" resta; chip de fecha "Hoy ▾"; Resumen y "Agregar N" (por lote; sin favoritos desde la ronda 26) | F-05 |
 | 7 | **Ejemplares** | Pestañas Todos / En físico / Vendidos / Con descuentos y aumentos (cada fila: título, número, estado, cliente, fechas, precio acordado, diferencia y marca de precio distinto; sin sumas de dinero al pie) | F-07 |
 | 8 | **Ejemplar** | Estado, cliente, precio acordado y "Recibido el" editables en línea, historial | F-08, F-09 |
 | 9 | **Devolver + modal de abonos** | Motivo (2 opciones) → modal con sobrante y abonos con casillas: Recortar / Cancelar los que marque / Dejar | F-16, F-29 |
@@ -130,7 +130,7 @@ Basada en lo que usan las apps de referencia (iOS: 17 / 15 / 13 pt; Material: cu
 | 13 | **Calendario** | Mes/día; tres tipos con ícono de color; crear visita/capacitación | F-18, F-19 |
 | 14 | **Hacer inventario** | Tabla por título, grupos, vistas Inventario/Todos, totalizadores, Perdidos asumidos / A responder al líder, Copiar resumen | F-22 |
 | 15 | **Admin** | Catálogo, Ajustes, Usuarios (Invitar con enlace copiable), almacenamiento | F-03, F-04, F-25 |
-| 16 | **Login / Ajustes** | Invitación; modo admin, formato de hora, favoritos | F-01, F-28 |
+| 16 | **Login / Ajustes** | Invitación; modo admin, formato de hora | F-01, F-28 |
 
 ### Hoy (móvil) — sin calendario, un solo botón, sin subtítulos
 ```
@@ -184,7 +184,7 @@ Cada variante en móvil y escritorio, claro y oscuro. En todas rigen las seccion
 | DT-05 | ~~Ícono de antigüedad por etapas~~ **Cancelada (ronda 21)**: ya no hay antigüedad |
 | DT-06 | Barra de vista única reutilizada en todos los módulos |
 | DT-07 | Tres tonos de los microíconos de tipo de evento (cobro / visita / capacitación) en cada variante |
-| DT-11 | **Color de «Entregado»**: dorado o azul (tono «prime»), explorados en variantes; Por cobrar gris, Cobrado verde, Cancelado gris tachado |
+| DT-11 | ✅ **Cerrada (ronda 26):** Entregado en verde oscuro y Cobrado en verde claro (exploración elegida de Dinero); Por cobrar gris, Cancelado gris tachado |
 | DT-08 | ✅ **Cerrada (ronda 19):** ítem del sidebar debajo de Hoy + botón en Clientes. *Ubicación de "Nuevo cliente" en escritorio* — 4 opciones evaluadas: A navegación global (ítem del sidebar), B solo en Clientes, C flotante, D ícono en la cabecera del sidebar + botón en Clientes. Y su equivalente móvil (cabecera / flotante). Ver `04-diseno/PROMPT-CLAUDE-DESIGN.md` («4 ubicaciones») |
 
 ## 14. No diseñar ahora

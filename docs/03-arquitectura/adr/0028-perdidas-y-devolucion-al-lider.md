@@ -1,5 +1,5 @@
 # ADR-0028: Pérdidas, "A responder al líder" y devolución de libros al líder
-Estado: Aceptado · Fecha: 2026-10-28
+Estado: Aceptado · Fecha: 2026-10-28 · Reemplazado en parte por ADR-0043 (Perdido se puede deshacer; devolver al líder por unidad)
 
 ## Contexto
 Normalmente el colportor asume la pérdida de un libro (se le sigue cobrando). Un líder amable puede aceptar la pérdida como suya, pero es un acto de bondad que **el colportor no debe ver como opción** en la app. Además, al terminar la campaña —o con libros viejos que el líder acepta— el colportor devuelve libros no vendidos al líder.

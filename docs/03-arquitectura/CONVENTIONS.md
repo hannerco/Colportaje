@@ -48,6 +48,14 @@ Obligatorias para todo agente o persona que escriba código o documentación aqu
 - Dependencias nuevas: justificar en el PR; preferir las ya elegidas en `03-arquitectura/ARCHITECTURE.md`.
 - Nada de "parche sobre parche": si una regla no encaja en el diseño, se corrige el diseño (y se escribe un ADR) en vez de añadir una excepción.
 
+## 5b. Extensibilidad (ADR-0041, ronda 26)
+Todo debe ser fácil de cambiar, porque muchas cosas pueden variar:
+1. **Cambiar una tabla sin dañar lo demás:** migraciones aditivas (expandir → migrar datos → contraer), nunca editar una ya aplicada; ningún módulo lee tablas ajenas sin pasar por su repositorio; pruebas que detectan la rotura.
+2. **Cada regla en su propio lugar:** una regla `BR-*` vive en un solo módulo del dominio y se cita por su ID.
+3. **Valores que pueden cambiar en un solo lugar:** `src/domain/config/business-config.ts` (BR-GEN-15); nunca números de negocio sueltos en el código.
+4. **Historial:** todo cambio de estado importante deja un evento de solo inserción (BR-AUD-01).
+5. **No dejar a medias lo que no tiene diseño:** se pospone y se anota en `04-diseno/pendientes/`.
+
 ## 6. Git
 - Rama principal: `main` (protegida: PR + CI verde). Ramas: `feat/<tema>`, `fix/<tema>`, `docs/<tema>`, `chore/<tema>`.
 - Commits pequeños, en español, imperativo: `feat(abonos): registrar prórroga con historial`. Tipos: `feat`, `fix`, `docs`, `test`, `refactor`, `chore`, `perf`.

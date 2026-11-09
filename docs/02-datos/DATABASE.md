@@ -53,9 +53,8 @@ create table user_role (
 
 create table app_settings (
   id smallint primary key default 1 check (id = 1),
-  bonus_goal integer not null default 4000000 check (bonus_goal > 0),
-  max_favorites smallint not null default 6 check (max_favorites > 0)
-);
+  bonus_goal integer not null default 4000000 check (bonus_goal > 0)
+);  -- max_favorites eliminado en la ronda 26 (sin favoritos)
 insert into app_settings default values;
 
 create table title (
@@ -90,6 +89,17 @@ create table customer (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   deleted_at timestamptz              -- también "Descartar" un cliente recién creado (BR-CUS-14); sin campo de "guardado" (ADR-0038)
+);
+
+create table customer_invoice (       -- Factura (ADR-0042): nace con su primera foto; nunca sin foto activa
+  id uuid primary key,
+  owner_id uuid not null references auth.users,
+  customer_id uuid not null references customer,
+  invoice_number text,
+  invoice_date date,                   -- por defecto el día (Bogota) de la primera foto; editable
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  deleted_at timestamptz
 );
 
 create table leader_deposit (
@@ -245,21 +255,18 @@ create table reminder (
   check (kind <> 'custom' or custom_minutes_before is not null)
 );
 
-create table title_favorite (
-  owner_id uuid references auth.users, title_id uuid references title,
-  primary key (owner_id, title_id)
-);
+-- title_favorite eliminado en la ronda 26 (sin favoritos, ADR-0043)
 
 create table photo (
   id uuid primary key, owner_id uuid not null references auth.users,
   kind photo_kind not null,
   customer_id uuid references customer, leader_deposit_id uuid references leader_deposit,
+  invoice_id uuid references customer_invoice,   -- solo kind = 'customer_invoice' (ADR-0042)
   path text not null, thumb_path text, bytes integer,
-  invoice_number text, invoice_date date,   -- solo kind = 'customer_invoice' (BR-CUS-17)
   created_at timestamptz not null default now(), deleted_at timestamptz,
   check ((kind = 'deposit_receipt') = (leader_deposit_id is not null)),
   check ((kind <> 'deposit_receipt') = (customer_id is not null)),
-  check (kind = 'customer_invoice' or (invoice_number is null and invoice_date is null))
+  check ((kind = 'customer_invoice') = (invoice_id is not null))
 );
 ```
 
@@ -275,12 +282,18 @@ Triggers `set_updated_at` en todas las tablas con `updated_at`. Triggers/funcion
 - Validar en trigger: `copy.received_at <= hoy` y `<= sold_at::date`; `payment.paid_at <= hoy`; `minibook_sale.amount <= saldo a favor` cuando `payment_source = 'client_credit'`.
 - Filtrar en toda consulta de listas: `deleted_at is null` y (para clientes) `archived_at is null` salvo la vista Archivados.
 - Vender minibooks: función `record_minibook_sale(...)` que consume stock FIFO y valida disponibilidad.
-- Mantener límite de `title_favorite` ≤ `app_settings.max_favorites`.
+- `add_copies(lines[], received_at)`: crea todo el lote de "Agregar al inventario" en una sola transacción (todo o nada), asignando números (BR-COPY-02).
+- `delete_copy` / `undo_delete_copy`, `resolve_copy_issue` / `undo_resolve_copy_issue` (BR-COPY-11/17).
+- `apply_payment_plan(customer_id, …)`: crea los abonos del plan; durante la creación reemplaza los programados del cliente, después reparte solo lo sin programar (BR-PAY-15).
+- `discard_new_customer(id)`: descarte atómico; se rechaza si algún abono está en un Abibono (BR-CUS-14).
+- `add_invoice_photo` / `delete_invoice_photo`: crea la factura con su primera foto y la borra al quitar la última (ADR-0042).
+- Validar en trigger: `payment.due_date >= hoy` al insertar o cambiar la fecha de un abono `scheduled` (BR-PAY-06/16).
+- **Alcance (ADR-0041):** `visit`, `training`, `reminder`, `minibook_sale` y `leader_deposit_minibook_allocation` (y `record_minibook_sale`) se crean con sus módulos; el resto de este esquema es la primera entrega.
 
 ## Seguridad (RLS)
 
 ```sql
--- patrón para tablas con owner_id (customer, copy, payment, leader_deposit, minibook_sale, visit, training, reminder, photo, copy_event, copy_issue, ...)
+-- patrón para tablas con owner_id (customer, customer_invoice, copy, payment, leader_deposit, photo, copy_event, copy_issue, ...; y luego minibook_sale, visit, training, reminder)
 alter table customer enable row level security;
 create policy "owner all" on customer for all
   using (owner_id = auth.uid()) with check (owner_id = auth.uid());

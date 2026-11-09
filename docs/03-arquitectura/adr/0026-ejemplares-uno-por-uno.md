@@ -1,5 +1,5 @@
 # ADR-0026: Elección de ejemplares uno por uno al vender
-Estado: Aceptado · Fecha: 2026-10-26
+Estado: Aceptado · Fecha: 2026-10-26 · Ampliado por ADR-0044 (lista por ejemplar, sin agotados)
 
 ## Contexto
 El asistente propuso vender eligiendo "título + cantidad" y asignar automáticamente los más antiguos. El dueño lo rechazó: "cuando vendes escoges un ejemplar específico… los vas añadiendo uno por uno. Si quieres venderlo a un precio diferente debes entrar al ejemplar individual y cambiar su precio acordado."

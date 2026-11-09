@@ -23,7 +23,12 @@ Un archivo por módulo en `src/domain/**/*.test.ts`. Cada prueba cita la regla.
 - **Devoluciones** (`BR-COPY-09`, `FLOWS-ALTERNATIVOS` AF-01..AF-12): cada caso A, con ambos motivos; se conserva `received_at`; abonos cobrados y Abibonos intactos; saldo a favor; cliente sin libros = prospecto; `wrong_registration` no cuenta como devolución.
 - **Pérdidas y devueltos al líder** (`BR-COPY-11/16`, `BR-GOAL-07`): resoluciones Apareció/Perdido/Eliminar; `lost_assumed_value` y `owed_to_leader`; `returned_to_leader` y su deshacer; la identidad `Recibidos = Vendidos + En físico + Con novedad + Perdidos + Devueltos`.
 - **Fecha de recibido** (`BR-COPY-04`): no futura, no posterior a la venta, cambio registrado en historial.
-- **Cantidad "+ / pastilla"** (`BR-COPY-02`): crear N, ajustar hacia arriba y hacia abajo solo sobre los ejemplares recién agregados, deshacer; igual para minibooks.
+- **Agregar por lote** (`BR-COPY-02`): el lote local suma y resta sin tocar la base; "Agregar N" crea todo o nada, con números consecutivos por título y la fecha elegida (nunca futura); igual para minibooks.
+- **Eliminar y deshacer** (`BR-COPY-11/17`): eliminar solo En físico o Con novedad; deshacer Eliminar restaura el estado anterior; deshacer Apareció (si sigue en físico) y Perdido reabren la misma novedad.
+- **Plan de abonos** (`BR-PAY-15`, ADR-0045): fechas sugeridas en días de pago (15 y 30; febrero último día) con separación mínima; nunca fechas pasadas; en creación reemplaza, con cliente guardado reparte solo lo sin programar; corrección frente a prórroga.
+- **Factura** (`BR-CUS-17`): nace con su primera foto; sin foto no hay N.º ni fecha; borrar la última foto borra la factura.
+- **Dinero** (`BR-DEP-14`): Dinero total y porcentajes sobre abonos no cancelados; programado literal; cancelados fuera de Todos; acordado = real en cuota inicial y extra.
+- **Orden con vacíos al final** (`BR-GEN-14`): en ambos sentidos.
 - **"Por entregar"** (`BR-CAL-08`): total = efectivo + transferencia; cuenta abonos de Abibonos borrador; deja de contar al confirmar y vuelve a contar al reabrir; excluye minibooks y `canceled`; cero → "Nada por entregar".
 - **Avatar** (`BR-CUS-15`): `isValidAvatarEmoji` acepta exactamente un emoji (incluidos los compuestos con tono de piel o variantes) y rechaza vacío, texto, varios emojis o emoji + texto.
 - **Ubicación** (`BR-CUS-08`): validar coordenadas (rango, numéricas, ambas o ninguna); construir el enlace de "Abrir en Maps" con la prioridad coordenadas → enlace pegado → búsqueda por dirección → nada; "Ubicación aproximada" cuando la precisión supera 50 m.
@@ -49,7 +54,7 @@ Carpeta `tests/rls/`. Con dos usuarios A y B sembrados:
 ## Prioridad 3 — E2E (Playwright, móvil y escritorio)
 Datos de prueba sembrados y reiniciables. Flujos mínimos:
 1. **Invitación → login → Hoy.**
-2. **Agregar a inventario** (favorito y lista) y números consecutivos.
+2. **Agregar a inventario** por lote (Resumen y confirmar) y números consecutivos.
 3. **Nuevo cliente (ficha viva)** de punta a punta (cliente nuevo; cliente existente que recompra con "Agregar libro"; con y sin cuota inicial; avisos "Aún no tiene libro" y "Revisar") y verificación de saldo.
 4. **Cobrar** un abono, parcial, y **prórroga**.
 5. **Abibono** completo: autocálculo, diferencia con nota, recibo, confirmación y bloqueo.

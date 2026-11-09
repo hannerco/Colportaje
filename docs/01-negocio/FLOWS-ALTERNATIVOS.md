@@ -155,19 +155,20 @@ Una sola acción —**"Devolver a inventario"** en la ficha del cliente (o en el
 - *App:* al agregar, el **chip de fecha** ("Hoy ▾") permite escoger un día **pasado**. También se edita después como propiedad en línea del ejemplar. No se permiten fechas futuras ni posteriores a la venta.
 
 ### AF-51 Agregué de más por error
-- *App:* aviso con **Deshacer** unos segundos; o tocar la pastilla numérica y escribir la cantidad correcta (retira los ejemplares **recién agregados** que sobren). Para ejemplares agregados antes: *Eliminar* desde el detalle (nota opcional).
+- *App (ronda 26):* antes de confirmar el lote, "−" resta y "Descartar" olvida todo; en el Resumen, "Seguir agregando" permite corregir. Después de confirmar no hay Deshacer: cada ejemplar de más se **elimina** desde su detalle (nota opcional, BR-COPY-17), con Deshacer en el aviso de unos segundos.
 
 ### AF-52 "Con novedad": opciones de resolución
 - *Situación:* el líder dice que te entregó 4 y tienes 3 (falta uno), o hay uno de más.
 - *Falta uno:* se marca "Con novedad" el ejemplar que falta (nota obligatoria; el **número** ayuda a saber cuál). Sale del físico.
-- *Resolución:* **Apareció** → vuelve a inventario. **Perdido (lo asumo yo)** → `lost`, cuenta en "A responder al líder". **Eliminar** (nota opcional) → se borra y no cuenta en nada.
+- *Resolución (nota opcional):* **Apareció** → vuelve a inventario. **Perdido (lo asumo yo)** → `lost`, cuenta en "A responder al líder". **Eliminar** → se borra y no cuenta en nada.
+- *Me equivoqué al resolver (ronda 26):* aviso con **Deshacer** unos segundos; Apareció y Perdido también se deshacen después desde el historial del ejemplar (vuelve a Con novedad con la misma nota). Eliminar solo se deshace desde el aviso.
 - *Regla de contenido:* ningún texto menciona que el líder pueda asumir pérdidas (BR-COPY-11).
 
 ### AF-53 Tengo un libro de más que no está en el sistema
 - *App:* se agrega un ejemplar normalmente (con la fecha real de recibido si aplica). Puede dejarse una nota en el historial.
 
 ### AF-54 Devolver libros al líder (fin de campaña o libros viejos)
-- *App:* en Libros en físico → **Devolver al líder** (lote): se eligen ejemplares `in_stock` (cualquier fecha de recibido) y una nota. Pasan a `returned_to_leader`; salen del físico; no cuentan en "Mi compra" ni "A responder"; columna **Devueltos** en *Hacer inventario*. **Deshacer** con nota si fue un error.
+- *App:* en Inventario → **Devolver al líder** (lote): se marcan ejemplares `in_stock` (cualquier fecha de recibido), los minibooks por cantidad, y una nota obligatoria. Pasan a `returned_to_leader`; salen del físico; no cuentan en "Mi compra" ni "A responder"; columna **Devueltos** en *Hacer inventario*. **Deshacer** con nota si fue un error.
 
 ### AF-55 Título desactivado con stock
 - *App:* los ejemplares existentes se siguen pudiendo vender y devolver; no se pueden agregar nuevos de ese título.
@@ -183,7 +184,7 @@ Una sola acción —**"Devolver a inventario"** en la ficha del cliente (o en el
 ## E. Minibooks
 
 ### AF-60 Vender más minibooks de los que hay
-- *App:* se **bloquea** y ofrece un atajo a "Agregar al inventario" (misma pastilla "+/numérica" que los libros).
+- *App:* se **bloquea** y ofrece un atajo a "Agregar al inventario" (el mismo Agregar por lote que los libros).
 
 ### AF-61 Regalar un minibook
 - *App:* monto 0 permitido; descuenta stock; cuenta en cantidades, no en ingresos.
@@ -278,6 +279,7 @@ Una sola acción —**"Devolver a inventario"** en la ficha del cliente (o en el
 ### AF-112 Descartar un cliente recién creado
 - *Situación:* el usuario toca **"Descartar"** en la cabecera de la ficha nueva, **o sale de la creación de cualquier forma** (atrás, menú, otra sección, el Resumen) sin tocar "Guardar cliente". Salir equivale a "Descartar".
 - *App:* pide confirmación con lo que se perderá ("Se quitarán 2 libros y 1 abono"; sin nada, "Se quitará este cliente") y los botones **"Seguir editando"** y **"Descartar"**. Si no hay nombre, no hay nada que descartar y sale directo. Si confirma: borra **lógicamente** al cliente (`deleted_at`), sus libros vuelven a `in_stock` (como en BR-COPY-06) y se quitan sus abonos y fotos, todo de forma atómica. Si elige "Seguir editando", no pasa nada. Tras "Guardar cliente" ya no existe "Descartar": se usa Archivar (BR-CUS-09). "Archivar" no aparece mientras se crea.
+- *Abono ya en un Abibono (ronda 26):* si alguno de sus abonos ya está en un Abibono (borrador o confirmado, p. ej. desde otro dispositivo), "Descartar" **se rechaza** con un aviso y el cliente queda guardado.
 - *Cierre inesperado:* si la app se cierra por un fallo (batería, navegador, conexión) no puede preguntar: el cliente queda guardado como estaba. Al reabrirlo es un cliente existente, sin "Descartar"; se gestiona devolviendo sus libros y archivando.
 
 ### AF-113 Plan automático que no divide exacto
@@ -298,6 +300,17 @@ Una sola acción —**"Devolver a inventario"** en la ficha del cliente (o en el
 - *App:* los abonos vinculados a un **borrador** siguen contando como por entregar. Al **confirmar**, salen. Al **reabrir** un Abibono, sus abonos vuelven a `collected` y **vuelven a contar**.
 
 ---
+
+### AF-115 Corregir un cobro que está en un Abibono borrador (ronda 26)
+- *Situación:* un abono cobrado de $50.000 está en un Abibono borrador y se corrige a $45.000 o se borra.
+- *App:* se permite. El borrador recalcula **lo esperado** y la **diferencia** (−$5.000), sin cambiar el efectivo ni la transferencia que el usuario escribió; al confirmar se exige nota si hay diferencia (BR-PAY-11, BR-DEP-06). Si el Abibono ya está confirmado, primero se reabre (AF-44).
+
+### AF-116 Plan nuevo en un cliente que ya tiene abonos programados (ronda 26)
+- *Situación:* el cliente debe $100.000 y tiene $40.000 programados.
+- *App:* un plan nuevo reparte solo los **$60.000 sin programar** y no toca los abonos existentes (BR-PAY-15). Durante la creación del cliente, en cambio, el plan reemplaza los programados.
+
+### AF-117 Foto de factura equivocada (ronda 26)
+- *App:* se borra la foto (lógico) y se sube la correcta; si era la única foto, la factura se borra con ella y la nueva foto crea otra factura (BR-CUS-17, BR-PHO-03).
 
 ## Matriz de impacto (qué toca cada acción)
 

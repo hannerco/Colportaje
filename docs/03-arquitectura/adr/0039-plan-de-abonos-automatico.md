@@ -1,5 +1,5 @@
 # ADR-0039: Plan de abonos automático
-Estado: Aceptado · Fecha: 2026-11-04
+Estado: Aceptado · Fecha: 2026-11-04 · Ampliado por ADR-0045 (días de pago, corregir frente a prorrogar)
 
 ## Contexto
 El diseño de Crear cliente añadió un generador: frecuencia (semanal, quincenal, mensual), valor de cada abono y fecha del primer abono, con la tabla "Así quedan los abonos". BR-PAY-03 solo describía abonos programados creados uno a uno. Los libros suelen costar múltiplos de $1.000 y el dueño no quiere abonos con centenas (por ejemplo $15.900) salvo cuando es inevitable.

@@ -1,6 +1,6 @@
 # Preguntas abiertas, supuestos y seguimientos
 
-**Estado actual: no queda ninguna pregunta abierta de producto ni de arquitectura, salvo las decisiones de diseño (§3) y los supuestos OQ-30..36 por confirmar (§6).** Todas las dudas del documento original se resolvieron en la entrevista (ver `00-contexto/DECISION-LOG.md`, rondas 7–9). Este archivo conserva:
+**Estado actual: no queda ninguna pregunta abierta de producto ni de arquitectura, salvo las decisiones de diseño (§3), OQ-34 (con el módulo Minibooks) y OQ-40/41 (Hoy). En la ronda 26 se confirmaron OQ-30, 31, 32, 35 y 36 y se resolvió OQ-33.** Todas las dudas del documento original se resolvieron en la entrevista (ver `00-contexto/DECISION-LOG.md`, rondas 7–9). Este archivo conserva:
 
 1. **Seguimientos (SG-*)** — cosas ya decididas que requieren una acción concreta, con responsable.
 2. **Cosas por revisar (RV-*)** — decisiones que el dueño quiere reevaluar con uso real.
@@ -40,7 +40,7 @@ Si aparece una duda nueva, se agrega aquí con ID `OQ-*` y un supuesto por defec
 | RV-07 | **Pestañas del cliente solapadas con el filtro de estado** (Todos / Deudores / Saldados / Archivados vs. filtro Pagando / Vencido / Saldado) | Se conservan por ser lo más sencillo y visual (ronda 19) | Si resultan redundantes o confusas en la siguiente versión |
 
 ## 3. Decisiones de diseño
-Ver `04-diseno/DESIGN-BRIEF.md` §13: DT-01 (total de deuda en Clientes), DT-02 (barra de meta), DT-03 ("Con novedad"), DT-04 (íconos), DT-05 (~~antigüedad~~, cancelada en la ronda 21), DT-06 (barra de vista), DT-07 (tonos de los microíconos de tipo de evento), **DT-09 (redefinir "Hoy": ver abajo)**, **DT-10 (identificador visual del Título)**, **DT-11 (color de «Entregado»: dorado o azul)**. **DT-08 cerrada** (ronda 19): ítem del sidebar bajo Hoy + botón en Clientes.
+Ver `04-diseno/DESIGN-BRIEF.md` §13: DT-01 (total de deuda en Clientes), DT-02 (barra de meta), DT-03 ("Con novedad"), DT-04 (íconos), DT-05 (~~antigüedad~~, cancelada en la ronda 21), DT-06 (barra de vista), DT-07 (tonos de los microíconos de tipo de evento), **DT-09 (redefinir "Hoy": ver abajo)**, **DT-10 (identificador visual del Título)**. **DT-11 cerrada** (ronda 26): Entregado en verde oscuro, según la exploración elegida de Dinero. Las diferencias entre el diseño exportado y los docs, y lo que falta por diseñar, están en `04-diseno/pendientes/`. **DT-08 cerrada** (ronda 19): ítem del sidebar bajo Hoy + botón en Clientes.
 
 **DT-09 · Redefinir "Hoy" (2026-11-04) — parcialmente cerrada en la ronda 25.** Decidido: Hoy es un resumen con (1) una línea de calendario del día con conteos por tipo, (2) **Por cobrar** con cobro rápido, (3) el número de libros en físico y la barra de meta; sin semana ni agenda, y "Agregar al inventario" no va en Hoy. Ver BR-CAL-07/09 y `04-diseno/HOY-BORRADOR.md`. **Pendiente:** lugar de la tarjeta «Por entregar» (OQ-40) y las formas geométricas de los microíconos (OQ-41).
 
@@ -59,7 +59,9 @@ Ver `04-diseno/DESIGN-BRIEF.md` §13: DT-01 (total de deuda en Clientes), DT-02 
 - ~~Vista de clientes vencidos~~ (ya cubierta por el filtro de Estado «Vencido», BR-CUS-13).
 - **Comprobante de abono compartible (idea próxima, ronda 25):** al cobrar un abono se genera una **imagen** con el nombre del colportor, los abonos cobrados, lo que falta y la fecha del próximo pago, con botón «Compartir por WhatsApp» hacia el número del cliente. Por verificar al implementar: generar la imagen, el menú de compartir del celular y un enlace `wa.me` son gratuitos; enviar la imagen automática al chat del cliente requiere la API de WhatsApp Business (de pago). Mínimo deseado: crear la imagen para mandarla. Módulo aún sin crear.
 - **Filtro de clientes por libro** (hoy la búsqueda ya encuentra por título, BR-CUS-07).
-- Buscador "Agregar libro del inventario" de la ficha: definir con el diseño de Inventario (datos por libro, agotados, precio de inventario, búsqueda y orden).
+- ~~Buscador "Agregar libro del inventario" de la ficha~~ (resuelto en la ronda 26, ADR-0044).
+- **Orden inteligente de títulos** (idea futura, fuera de la v1): que Agregar al inventario muestre primero los libros que más pide el colportor (reemplaza la idea de favoritos, eliminada en la ronda 26).
+- **"Ver facturas"** de un cliente o de todos (posible, ADR-0042).
 - Invitaciones por correo automáticas (con dominio + SMTP propio).
 - Offline de escritura y push (**fase 2**) y vista de líder (**fase 3**).
 
@@ -70,7 +72,7 @@ Ver `04-diseno/DESIGN-BRIEF.md` §13: DT-01 (total de deuda en Clientes), DT-02 
 | OQ-01 | "Recientes" | Fecha de creación descendente + selector de orden (BR-CUS-05) |
 | OQ-02 | Barra de meta | En Hoy; sujeta a diseño (DT-02) |
 | OQ-03 | "Con novedad" | Resolución Apareció / Perdido (lo asumo yo) / Eliminar; diseño abierto (DT-03); sin mención al líder (BR-COPY-11) |
-| OQ-04 | Máx. favoritos | 6, editable por admin (BR-INV-02) |
+| OQ-04 | Máx. favoritos | 6, editable por admin (BR-INV-02). **Ronda 26:** los favoritos se eliminaron (ADR-0043) |
 | OQ-05 | `received_at` editable | Sí: fecha pasada al agregar y edición en línea (BR-COPY-04) |
 | OQ-06 | Hora de inicio del día | 07:00; sin recordatorios por defecto (BR-CAL-04) |
 | OQ-07 | Tope saldo a favor | Monto ≤ saldo a favor vigente (BR-MBK-07) |
@@ -99,13 +101,13 @@ El código que los aplicaba se descartó el 2026-11-04; los supuestos quedan com
 
 | ID | Supuesto | Dónde vive | Estado |
 |---|---|---|---|
-| OQ-30 | Desempates deterministas: dos abonos programados con la misma fecha se recortan por orden de creación y luego por id; en el FIFO de minibooks, ejemplares recibidos el mismo día salen por número y luego por id | — | Por confirmar |
-| OQ-31 | Los "2 meses" de la prórroga se cuentan **desde hoy**, en meses calendario (31/12 + 2 meses = 28/02) y el límite exacto sí se acepta sin confirmar | — | Por confirmar |
-| OQ-32 | "Entregado al líder" en los totalizadores de minibooks suma solo asignaciones de Abibonos **confirmados** (un borrador aún no se entregó), igual que "Total abonado" | — | Por confirmar |
-| OQ-33 | Editar un abono **por cobrar** solo cambia su valor acordado; las fechas se cambian únicamente con una prórroga (así siempre queda historial y `original_due_date` no cambia) | — | Por confirmar |
-| OQ-34 | La fecha de una entrada de minibooks acepta cualquier día válido (no se restringe a no futura) y una venta normal ignora el cliente que se envíe | — | Por confirmar |
-| OQ-35 | Al borrar una entrada de minibooks, el historial de cada ejemplar registra `returned` con motivo `wrong_registration` (no cuenta como devolución de un cliente) | — | Por confirmar |
-| OQ-36 | Borrar un abono cobrado se trata como disparador de BR-PAY-13 con orden "más próximo" y motivo `manual` | — | Por confirmar |
+| OQ-30 | Desempates deterministas: dos abonos programados con la misma fecha se recortan por orden de creación y luego por id; en el FIFO de minibooks, ejemplares recibidos el mismo día salen por número y luego por id | BR-PAY-13 | **Confirmado (ronda 26)** |
+| OQ-31 | Los "2 meses" de la prórroga se cuentan **desde hoy**, en meses calendario (31/12 + 2 meses = 28/02) y el límite exacto sí se acepta sin confirmar | BR-PAY-06 | **Confirmado (ronda 26)** |
+| OQ-32 | "Entregado al líder" en los totalizadores de minibooks suma solo asignaciones de Abibonos **confirmados** (un borrador aún no se entregó), igual que "Total abonado" | BR-MBK-08 | **Confirmado (ronda 26)**; se construye con el módulo Minibooks |
+| OQ-33 | Editar un abono **por cobrar** solo cambia su valor acordado; las fechas se cambian únicamente con una prórroga | BR-PAY-06/11 | **Resuelto (ronda 26, ADR-0045):** el valor se edita; la fecha se **corrige** durante la creación del cliente y se **prorroga** después |
+| OQ-34 | La fecha de una entrada de minibooks acepta cualquier día válido (no se restringe a no futura) y una venta normal ignora el cliente que se envíe | BR-MBK-02 | Por confirmar **con el módulo Minibooks** |
+| OQ-35 | Al borrar una entrada de minibooks, el historial de cada ejemplar registra `returned` con motivo `wrong_registration` (no cuenta como devolución de un cliente) | BR-MBK-09 | **Confirmado (ronda 26)**; se construye con el módulo Minibooks |
+| OQ-36 | Borrar un abono cobrado se trata como disparador de BR-PAY-13 con orden "más próximo" y motivo `manual` | BR-PAY-13 | **Confirmado (ronda 26)** |
 | OQ-38 | **Avatar por defecto sin emoji:** ícono de persona (es derivado, el dominio no lo almacena) | `BR-CUS-15` | **Resuelto (ronda 19)** |
 | OQ-39 | El diseño no pinta el monto en rojo cuando el cliente está vencido (lo marca el ícono de estado) | `BR-CUS-13` | **Resuelto (ronda 24)**: el monto no va en rojo |
 | OQ-40 | **¿Qué pasa con la tarjeta «Por entregar» en Hoy?** A) se quita (vive solo en Dinero, con «Nuevo Abibono»; Hoy pierde el botón «Entregar», BR-DEP-13); B) se queda más abajo y sin acento; C) se queda arriba como hoy. Supuesto del asistente: **A**. El dueño dijo que será «menos importante» y su orden de Hoy no la nombra | `BR-CAL-07/08`, `BR-DEP-13` | **Por confirmar** (ronda 25) |
