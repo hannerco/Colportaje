@@ -46,6 +46,7 @@ Implementar en este orden. Una HU solo empieza cuando sus dependencias están te
 | 3 | [HU-BASE-04](00-base/HU-BASE-04-catalogo.md) | Catálogo de títulos: carga y lectura | BASE-02 |
 | 3 | [HU-BASE-05](00-base/HU-BASE-05-fotos.md) | Fotos: compresión, almacenamiento privado y acceso | BASE-02 |
 | 3 | [HU-BASE-06](00-base/HU-BASE-06-conexion.md) | Lectura sin conexión y bloqueo de escrituras | BASE-01 |
+| 4 | [HU-BASE-07](00-base/HU-BASE-07-despliegue.md) | Despliegue: migraciones a la nube, entornos, backups y Vercel | BASE-01, BASE-02 |
 | 4 | [HU-CLI-01](02-clientes/HU-CLI-01-cliente-y-cuenta.md) | Cliente: modelo y cuenta derivada | BASE-02 |
 | 5 | [HU-INV-01](01-inventario/HU-INV-01-ejemplar-modelo.md) | Ejemplar: modelo, numeración, estados e historial | BASE-04, CLI-01 |
 | 5 | [HU-ABO-01](03-abonos/HU-ABO-01-abono-modelo.md) | Abono: modelo, estados y vencido | CLI-01 |

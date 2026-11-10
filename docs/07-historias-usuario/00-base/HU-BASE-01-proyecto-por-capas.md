@@ -7,11 +7,11 @@
 
 ## Contexto
 - El repositorio hoy solo tiene documentación (`AGENTS.md`). El código anterior se descartó a propósito (ronda 21b); no se recupera.
-- **Antes de subir código**, el dueño debe pasar el repositorio `hannerco/Colportaje` a **privado** (SG-03). Es una acción externa del dueño; la IA no la hace.
+- El repositorio `hannerco/Colportaje` ya es **privado** (SG-03, 2026-11-10) y `main` está protegida: solo se cambia con Pull Request (regla `proteger-main`). Nunca se sube código con claves ni datos reales.
 - Stack fijado en ADR-0002 y `03-arquitectura/ARCHITECTURE.md` §1. Las cuentas de Supabase y Vercel **no** son necesarias para esta HU (todo corre en local).
 
 ## Alcance
-- **Incluye:** proyecto Next.js (App Router) con TypeScript estricto y pnpm; estructura de carpetas de ARCHITECTURE §3; reglas de límites entre capas; Vitest; CI; validación de variables de entorno; utilidades de dominio (`Result`, `AppError`, tiempo, dinero, configuración); inyección de repositorios.
+- **Incluye:** **versiones fijadas** (ver Contrato); proyecto Next.js (App Router) con TypeScript estricto y pnpm; estructura de carpetas de ARCHITECTURE §3; reglas de límites entre capas; Vitest; CI; validación de variables de entorno; utilidades de dominio (`Result`, `AppError`, tiempo, dinero, configuración); inyección de repositorios.
 - **No incluye:** pantallas ni componentes (solo un `layout` y una página vacía mínimos para que compile), tokens de diseño, Supabase (HU-BASE-02), PWA y caché (HU-BASE-06), despliegue en Vercel.
 
 ## Contrato para el resto del código
@@ -25,11 +25,15 @@
 - `src/lib/env.ts`: lee y valida con Zod `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY`; falla al arrancar si faltan. `.env.example` sin valores.
 - `src/features/shared/repositories-provider`: proveedor que inyecta las implementaciones de los repositorios (para poder cambiarlas en pruebas o en la fase 2).
 
+- **Versiones fijadas (que todos corran lo mismo):** `.nvmrc` con `22` (Node 22 LTS, ARCHITECTURE §1); `engines.node` y `packageManager` (pnpm con versión exacta) en `package.json`; `pnpm-lock.yaml` versionado; la CLI de Supabase como **dependencia de desarrollo** (`supabase`) y todos los scripts la llaman con `pnpm exec supabase` (no la global); dependencias con versión exacta o rango estrecho. Si pnpm bloquea el script de instalación del binario de `supabase`, se autoriza en `pnpm.onlyBuiltDependencies`. El README del proyecto explica cómo instalar Node con `nvm`/`fnm` y activar pnpm con `corepack`.
+- **CI:** `.github/workflows/ci.yml` con **un solo job llamado `ci`** (ese nombre es el que el dueño marca como *check* obligatorio en la regla `proteger-main`; no se cambia sin avisar). Usa `.nvmrc` para la versión de Node.
+
 ## Reglas (el sistema DEBE…)
 - **R1.** El dominio (`src/domain/`) DEBE ser TypeScript puro: sin React, Next, Supabase, `fetch` ni DOM. Una prueba de arquitectura lo verifica.
 - **R2.** CUANDO un archivo de una capa importa una capa prohibida (tabla de ARCHITECTURE §2), el lint DEBE fallar.
 - **R3.** "Hoy" DEBE calcularse en America/Bogota con un reloj inyectado, nunca con la zona del dispositivo ni del servidor (BR-GEN-05).
 - **R4.** Ningún valor de negocio cambiable DEBE aparecer fuera de `business-config.ts` (BR-GEN-15).
+- **R6.** CUANDO alguien usa una versión de Node o de pnpm distinta a la fijada, el proyecto DEBE avisarlo (`engines` con `engine-strict=true` en `.npmrc`).
 - **R5.** TypeScript DEBE estar en modo `strict` con `noUncheckedIndexedAccess`; `any` y `@ts-ignore` prohibidos por lint.
 
 ## Criterios de aceptación
@@ -40,6 +44,9 @@
 - **CA-5.** **Dado** `"María José  Gómez"`, **cuando** se normaliza, **entonces** da `"maria jose gomez"`.
 - **CA-6.** **Dado** el repositorio recién clonado, **cuando** se corre `pnpm install && pnpm lint && pnpm typecheck && pnpm test && pnpm build`, **entonces** todo pasa.
 - **CA-7.** **Dado** un pull request, **cuando** corre la CI, **entonces** ejecuta `lint → typecheck → test → build` y bloquea si algo falla (el paso de RLS se agrega en HU-BASE-02).
+
+- **CA-8.** **Dado** Node 20 instalado, **cuando** se corre `pnpm install`, **entonces** falla con un mensaje que pide Node 22; **dado** Node 22, **entonces** instala. `pnpm exec supabase --version` responde con la versión fijada en `package.json`.
+- **CA-9.** **Dado** un Pull Request, **cuando** corre la CI, **entonces** el *check* se llama exactamente `ci`.
 
 ## Casos borde y errores
 - La semana empieza el domingo: `startOfWeek(miércoles 2026-11-04)` = `2026-11-01`.
