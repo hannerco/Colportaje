@@ -68,7 +68,7 @@ vercel env add SUPABASE_SERVICE_ROLE_KEY     # solo servidor, Sensitive
 `vercel.json`: `{ "regions": ["iad1"] }`. Verificar en Settings → Functions → Function Region. Hobby podría limitar las opciones: si `iad1` es el valor por defecto, no hay nada que cambiar.
 
 ### 5.4 GitHub
-- Proteger `main` (PR obligatorio + CI verde).
+- Proteger `main`: regla `proteger-main` **ya creada y activa** (2026-11-10: exige PR, bloquea force push y borrado, 0 aprobaciones). Falta marcar el *check* `ci` como obligatorio cuando HU-BASE-01 cree el workflow y corra una vez (HU-BASE-07 CA-8).
 - Secrets del repo (Settings → Secrets and variables → Actions): `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD`, `SUPABASE_PROJECT_REF_PROD`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, y los de destino del backup.
 - Activar Dependabot y `pnpm audit` en CI.
 
