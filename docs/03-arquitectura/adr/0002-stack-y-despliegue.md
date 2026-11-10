@@ -7,7 +7,7 @@ Sin presupuesto; máximo ~10 usuarios; el dueño domina TypeScript y Next.js; lo
 ## Decisión
 - **Next.js (App Router) + TypeScript** como PWA; **Supabase** (Postgres, Auth, Storage); **Vercel Hobby**; **pnpm**; Node 22 LTS; **Vitest** + **Playwright**. Planes gratuitos.
 - **Región: us-east-1 (N. Virginia) en Supabase y iad1 (Washington D.C., por defecto) en Vercel.** Se **midió** la latencia TCP desde Medellín (línea fija, 6 muestras): us-east-1 **~85 ms**, us-east-2 ~97 ms, sa-east-1 (São Paulo) **~146 ms**, us-west-1 ~210 ms. El tráfico de Colombia sale por EE. UU., por eso Brasil queda más lejos en la práctica. Pendiente repetir desde un celular con datos móviles (SG-01).
-- **Cuentas nuevas y dedicadas** de Supabase y Vercel, con 2FA. Supabase: organización "Colportor" con **dos proyectos** (`colportor-prod`, `colportor-staging`).
+- **Cuentas nuevas y dedicadas** de Supabase y Vercel, con 2FA. Supabase: organización "Emprendum" con **dos proyectos** (`colportor-prod`, `colportor-staging`).
 - **Vercel y no Render:** Render gratis duerme a los 15 min y el primer acceso tarda ~30 s.
 - No usar funciones exclusivas de Vercel para poder migrar.
 
