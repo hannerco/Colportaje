@@ -5,9 +5,9 @@ Costo objetivo: **$0**. Región: **us-east-1 (N. Virginia)** en Supabase y **iad
 ## 1. Servicios
 | Servicio | Uso | Plan | Región | Cuenta |
 |---|---|---|---|---|
-| **GitHub** | Código, CI (Actions), backups programados, keep-alive | Gratis | — | `hannerco` (repo `Colportaje`; público por ahora, privado antes de subir código) |
+| **GitHub** | Código, CI (Actions), backups programados, keep-alive | Gratis | — | `hannerco` (repo `Colportaje`, **privado**) |
 | **Vercel** | Hosting de Next.js (PWA) | **Hobby** (gratis, uso no comercial) | **iad1** (por defecto) | **Cuenta nueva** dedicada |
-| **Supabase** | Postgres, Auth, Storage | **Free** | **us-east-1** | **Cuenta nueva** dedicada, org "Colportor" |
+| **Supabase** | Postgres, Auth, Storage | **Free** | **us-east-1** | **Cuenta nueva** dedicada, org "Emprendum" |
 | **Claude Design** | Diseño de pantallas (fuera del repo) | — | — | — |
 | *(futuro)* Cloudflare R2 | Fotos al 70 % de uso | Gratis (10 GB) | — | — |
 
@@ -18,11 +18,11 @@ Costo objetivo: **$0**. Región: **us-east-1 (N. Virginia)** en Supabase y **iad
 
 | Conexión | Estado | Detalle |
 |---|---|---|
-| Repositorio GitHub `Colportaje` | **Creado (SG-03)** | `https://github.com/hannerco/Colportaje`, público. Solo contiene documentación (sin las imágenes de referencia). Pasarlo a **privado** antes de subir código, claves o datos |
+| Repositorio GitHub `Colportaje` | **Creado (SG-03)** | `https://github.com/hannerco/Colportaje`, **privado** (2026-11-10). Ya se puede subir código; nunca claves ni datos reales |
 | CLI Vercel | Instalado (65.x) | Falta `vercel login` en la cuenta nueva |
-| CLI Supabase | Instalado (2.x) | Falta `supabase login` en la cuenta nueva |
+| CLI Supabase | Instalado (2.x) | **Login hecho** (2026-11-10, cuenta nueva) |
 | Proyecto Vercel enlazado | Pendiente | `vercel link` |
-| Proyectos Supabase `colportor-prod` / `colportor-staging` | Pendiente | `supabase projects create` o por el panel |
+| Proyectos Supabase `colportor-prod` / `colportor-staging` | **Creados (2026-11-10)** | Ambos en us-east-1, activos, org Emprendum, registro público desactivado, sin integración de GitHub. Sin enlazar aún (no existe `supabase/`) |
 
 ## 3. Entornos
 | Entorno | Base de datos | Hosting | Uso |
@@ -54,6 +54,7 @@ supabase init
 supabase link --project-ref <REF_STAGING>   # primero staging
 supabase db push
 ```
+Al crear **cada** proyecto: *Enable Data API* **sí**, *Automatically expose new tables* **no**, *Enable automatic RLS* **sí**, sin conectar la integración de GitHub de Supabase (las migraciones las despliega el CI); misma configuración en prod y staging. Las migraciones llevan `GRANT` explícitos (SECURITY.md, HU-BASE-02 R6).
 Panel: Authentication → desactivar **registro público**; **URL Configuration** con la URL de Vercel; subir el **tiempo de caducidad del enlace de invitación** al máximo permitido; buckets `title-images` (público) y `user-photos` (privado) con las políticas de `03-arquitectura/SECURITY.md` (idealmente creados por migración).
 
 ### 5.3 Vercel

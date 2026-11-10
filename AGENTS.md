@@ -25,7 +25,7 @@
 ## Estado y siguientes pasos
 - Fase 0: ver `docs/06-planificacion/ROADMAP.md` y `docs/05-operacion/DEPLOYMENT.md` §2 (repo, cuentas y diseño pendientes).
 - **Diseño de Clientes, Inventario y Dinero cerrado** (ronda 26). Para programar su back, sigue `docs/07-historias-usuario/README.md`: una HU por sesión, en el orden del índice, con `00-REGLAS-COMUNES.md`. Lo que falta por diseñar está en `docs/04-diseno/pendientes/`.
-- Antes de subir código: el dueño pasa el repositorio a **privado** (SG-03).
+- El repositorio `hannerco/Colportaje` ya es **privado** (SG-03, 2026-11-10).
 - Siguiente: el dueño revisa `docs/07-historias-usuario/INTERPRETACIONES.md`; luego se programa con apoyo de William, empezando por HU-BASE-01. Los demás módulos (Hoy, Calendario, Minibooks, Hacer inventario, Admin) esperan su diseño.
 
 ## Comandos (cuando exista el código)
