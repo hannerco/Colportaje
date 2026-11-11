@@ -442,7 +442,7 @@ Se comparó el diseño exportado de Claude Design (`colportor-diseno.zip`, 05/11
 | Q4 | Visitas | **"Decide tú si dejarlo para después… o adelantar ahora esa parte."** [D] El asistente decidió **posponerlas** con Calendario: agregarlas después es aditivo. |
 | Q5 | Reglas sin pantalla | **"Debes completar todo el back de los módulos que te pedí, siempre y cuando no estés dejando a medias algo que puede cambiar porque aún no tiene diseño… crea una carpetica con las cosas que a fecha de hoy no están en diseño."** [D] `04-diseno/pendientes/`. |
 | Q6 | OQ-30, 31, 32, 35, 36 | **"Sí a los 5."** [D] |
-| Q7 | Cancelar / "Borrador guardado" | **"Mandan los docs, crea también un documento que muestre las contradicciones que hay en diseño y en docs."** [D] `04-diseno/pendientes/CONTRADICCIONES-DISENO-DOCS.md`. |
+| Q7 | Cancelar / "Borrador guardado" | **"Mandan los docs, crea también un documento que muestre las contradicciones que hay en diseño y en docs."** [D] El documento de contradicciones se resolvió y se borró el 2026-11-11 (ronda 27). |
 | Q8 | Prospectos | **"Yes."** [D] Ocultos salvo "Incluir prospectos", solo en Todos. |
 | Q9 | Último abono | **"Sí… una cuota inicial también cuenta como abono."** [D] `last_payment_at`. |
 | Q10 | Orden | **"Mayor deuda es quién tiene mayor saldo pendiente."** [D] Próximo abono incluye vencidos. |

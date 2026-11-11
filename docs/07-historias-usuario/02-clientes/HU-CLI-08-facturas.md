@@ -1,6 +1,6 @@
 # HU-CLI-08 · Facturas
 
-> **Épica:** Clientes · **Depende de:** HU-CLI-02, HU-BASE-05 · **Reglas:** BR-CUS-17, BR-PHO-03, ADR-0042, AF-117 · **Diseño:** sección "Factura" de Crear y "Factura" en la ficha. El diseño deja escribir N.º y fecha sin foto (C-10); manda la regla
+> **Épica:** Clientes · **Depende de:** HU-CLI-02, HU-BASE-05 · **Reglas:** BR-CUS-17, BR-PHO-03, ADR-0042, AF-117 · **Diseño:** sección "Factura" de Crear y "Factura" en la ficha. Sin foto no hay factura (la regla manda sobre el diseño)
 
 ## Historia
 **Como** colportor **quiero** guardar la foto de la factura que le hice al cliente, con su número y fecha si quiero **para** tener la prueba de la venta a mano.

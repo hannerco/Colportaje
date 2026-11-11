@@ -7,7 +7,7 @@
 
 ## Contexto
 - Pestañas: **Todos**, **Deudores** (Vencido + Pagando), **Saldados**, **Archivados**, cada una con su conteo (BR-CUS-05).
-- Los **prospectos** están ocultos salvo el interruptor "Incluir prospectos", que aplica **solo en Todos** (ronda 26). El diseño los muestra sin el interruptor: contradicción C-03.
+- Los **prospectos** están ocultos salvo el interruptor "Incluir prospectos", que aplica **solo en Todos** (ronda 26).
 - "Mayor deuda" ordena por **saldo pendiente**; "Próximo abono" incluye los vencidos; los vacíos van al final (ronda 26).
 - Columnas de escritorio: Cliente, Teléfono, Libro(s), Saldo pendiente, **Último abono** y Estado.
 

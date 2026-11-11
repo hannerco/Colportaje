@@ -1,6 +1,6 @@
 # HU-CLI-07 · Fotos de información del cliente
 
-> **Épica:** Clientes · **Depende de:** HU-CLI-02, HU-BASE-05 · **Reglas:** BR-CUS-01, BR-PHO-01/03, BR-CUS-16 · **Diseño:** "Fotos de la casa" (Crear) y "Fotos" (Ficha) — nombre por unificar (C-11)
+> **Épica:** Clientes · **Depende de:** HU-CLI-02, HU-BASE-05 · **Reglas:** BR-CUS-01, BR-PHO-01/03, BR-CUS-16 · **Diseño:** "Imágenes" (Crear y Ficha; nombre decidido 2026-11-11)
 
 ## Historia
 **Como** colportor **quiero** guardar fotos de la casa del cliente u otras referencias **para** reconocer el lugar cuando vuelva a cobrar.

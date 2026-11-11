@@ -7,7 +7,7 @@
 
 ## Contexto
 - Se cobra desde **tres lugares** con el mismo formulario: la ficha, Dinero ▸ Por cobrar y Hoy (este último llega con su módulo) (BR-PAY-05).
-- Valores por defecto: el valor acordado, la fecha de hoy y **Transferencia** (ronda 26; el diseño de Dinero marca Efectivo, C-09).
+- Valores por defecto: el valor acordado, la fecha de hoy y **Transferencia** (ronda 26).
 - **Parcial:** si paga menos, el abono queda cobrado con lo pagado y la app **sugiere** programar lo que falta; **nunca** lo crea sola (BR-PAY-07).
 - **Mayor:** si paga más, se permite y se evalúan los abonos que no cuadran (modal, AF-21).
 

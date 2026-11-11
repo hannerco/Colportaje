@@ -8,7 +8,7 @@
 ## Contexto
 - El diseño elige los **libros por unidad** (casillas) y los **minibooks por cantidad** (se devuelven los de recibido más antiguo). Cualquier ejemplar en físico sirve, sin importar su fecha (ronda 26, ADR-0043).
 - La **nota es obligatoria** y se pide antes del resumen "Vas a devolver N ejemplares" (por categoría).
-- Se deshace **por ejemplar**, desde su historial, con nota obligatoria. El diseño no pide nota al deshacer: es la contradicción C-16 (manda la nota).
+- Se deshace **por ejemplar**, desde su historial, con nota obligatoria.
 
 ## Alcance
 - **Incluye:** candidatos a devolver; resumen; devolver en lote; deshacer por ejemplar.

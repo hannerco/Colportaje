@@ -184,7 +184,7 @@ Cada variante en móvil y escritorio, claro y oscuro. En todas rigen las seccion
 | DT-05 | ~~Ícono de antigüedad por etapas~~ **Cancelada (ronda 21)**: ya no hay antigüedad |
 | DT-06 | Barra de vista única reutilizada en todos los módulos |
 | DT-07 | Tres tonos de los microíconos de tipo de evento (cobro / visita / capacitación) en cada variante |
-| DT-11 | ✅ **Cerrada (ronda 26):** Entregado en verde oscuro y Cobrado en verde claro (exploración elegida de Dinero); Por cobrar gris, Cancelado gris tachado |
+| DT-11 | ✅ **Cerrada (ronda 26):** Entregado en **azul marino** con candado (ronda 27) y Cobrado en verde (exploración elegida de Dinero); Por cobrar gris, Cancelado gris tachado |
 | DT-08 | ✅ **Cerrada (ronda 19):** ítem del sidebar debajo de Hoy + botón en Clientes. *Ubicación de "Nuevo cliente" en escritorio* — 4 opciones evaluadas: A navegación global (ítem del sidebar), B solo en Clientes, C flotante, D ícono en la cabecera del sidebar + botón en Clientes. Y su equivalente móvil (cabecera / flotante). Ver `04-diseno/PROMPT-CLAUDE-DESIGN.md` («4 ubicaciones») |
 
 ## 14. No diseñar ahora

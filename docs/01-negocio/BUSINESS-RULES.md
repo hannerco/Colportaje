@@ -90,7 +90,7 @@ Notación: "colportor" = usuario con rol colportor. Fechas calendario en **Ameri
 
 ## 6. Clientes
 
-- **BR-CUS-01** Un cliente tiene: nombre, teléfono, información (texto libre + fotos), dirección (texto), **ubicación** (coordenadas, BR-CUS-08), enlace de Maps (opcional), fotos de factura (una o varias). El nombre es obligatorio; lo demás opcional.
+- **BR-CUS-01** Un cliente tiene: nombre, teléfono, información (texto libre + **imágenes**; así se llama en la UI, ronda 27), dirección (texto), **ubicación** (coordenadas, BR-CUS-08), enlace de Maps (opcional), fotos de factura (una o varias). El nombre es obligatorio; lo demás opcional.
 - **BR-CUS-02** Un cliente se puede crear **sin libros**. Un cliente sin ejemplares es un **prospecto** (derivado). Al vendérsele un ejemplar deja de serlo automáticamente.
 - **BR-CUS-03** Un cliente **es siempre un cliente**: si compra otra vez, se le agregan ejemplares, abonos y facturas al mismo registro. No hay entidad Venta.
 - **BR-CUS-04** Valores derivados por cliente:
@@ -130,7 +130,7 @@ Notación: "colportor" = usuario con rol colportor. Fechas calendario en **Ameri
 ## 7. Abonos (pagos de clientes)
 
 - **BR-PAY-01** Tipos (`kind`): `down_payment` (Cuota inicial), `scheduled` (Abono programado), `extra` (Abono extra: pago **fuera del plan**, sin fecha acordada, que nace ya cobrado). Todos en una sola tabla `payment`.
-- **BR-PAY-02** Estados (`status`): `scheduled` (Por cobrar) → `collected` (Cobrado: ya lo recibiste, falta entregarlo al líder) → `delivered` (Entregado al líder); y `canceled` (Cancelado), solo para abonos que nunca se cobraron. **Color (ronda 23, cerrado en la ronda 26):** Por cobrar **gris**; Cobrado **verde claro**; Entregado al líder **verde oscuro** (exploración elegida de Dinero; cierra DT-11); Cancelado **gris tachado**. **Vencido no es un estado** (ver BR-PAY-08).
+- **BR-PAY-02** Estados (`status`): `scheduled` (Por cobrar) → `collected` (Cobrado: ya lo recibiste, falta entregarlo al líder) → `delivered` (Entregado al líder); y `canceled` (Cancelado), solo para abonos que nunca se cobraron. **Color (ronda 23, cerrado en la ronda 26):** Por cobrar **gris**; Cobrado **verde claro**; Entregado al líder **azul marino** con candado (ronda 27: pastilla «🔒 Entregado» con borde gris azulado, y azul marino en el totalizador; cierra DT-11); Cancelado **gris tachado**. **Vencido no es un estado** (ver BR-PAY-08).
 - **BR-PAY-03** Nacimiento:
   - Cuota inicial: nace `collected`; `paid_at` = fecha de pago (en la ficha nueva, **hoy**); `due_date = original_due_date = fecha de pago`. **Una cuota inicial de $0 o vacía no crea abono** y no pide método; aun así se pueden programar abonos (ronda 26). Durante la creación hay **una sola** cuota inicial: editar su valor actualiza esa misma y dejarla en $0 la borra (lógico); un cliente que recompra puede registrar otra.
   - Abono programado: nace `scheduled`; requiere `agreed_amount` y `due_date`; `original_due_date = due_date`.

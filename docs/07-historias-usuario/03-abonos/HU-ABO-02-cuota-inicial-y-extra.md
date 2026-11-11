@@ -1,6 +1,6 @@
 # HU-ABO-02 · Cuota inicial, abono extra y corrección de cobros
 
-> **Épica:** Abonos · **Depende de:** HU-ABO-07, HU-DIN-01, HU-CLI-02 · **Reglas:** BR-PAY-01/03/04/10/11/13, BR-CUS-16, AF-22, AF-27, AF-31, AF-115 · **Diseño:** sección "Cuota inicial" de Crear (valor y medio de pago; el diseño marca Efectivo, C-09); "Registrar abono" de la ficha sin formulario (FC-09)
+> **Épica:** Abonos · **Depende de:** HU-ABO-07, HU-DIN-01, HU-CLI-02 · **Reglas:** BR-PAY-01/03/04/10/11/13, BR-CUS-16, AF-22, AF-27, AF-31, AF-115 · **Diseño:** sección "Cuota inicial" de Crear (valor y medio de pago); "Registrar abono" de la ficha sin formulario (FC-09)
 
 ## Historia
 **Como** colportor **quiero** registrar lo que el cliente me paga de entrada o fuera del plan, y corregir un cobro mal registrado **para** que su saldo y mi dinero por entregar sean correctos.

@@ -8,8 +8,8 @@
 ## Contexto
 - **Ficha viva:** el cliente **existe desde que tiene nombre**; no hay "borrador" ni campo de "guardado" (ADR-0038, ronda 24). Sin nombre no se crea nada (AF-108).
 - "Guardar cliente" no escribe nada nuevo: solo cierra la creación (el front). "Descartar" es HU-CLI-03.
-- El diseño muestra "Cancelar" y "Borrador guardado": contradicciones C-01 y C-02; mandan los docs.
-- Avatar: **un solo emoji** opcional; sin él, ícono de persona (BR-CUS-15). El diseño muestra iniciales en la ficha (C-04): manda la regla.
+- El botón es "Descartar" y no hay indicador "Borrador guardado" (BR-CUS-14).
+- Avatar: **un solo emoji** opcional; sin él, ícono de persona (BR-CUS-15). Nunca iniciales.
 - Aviso de posible duplicado: no bloqueante (BR-CUS-11); no está diseñado (FC-03).
 
 ## Alcance

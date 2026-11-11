@@ -12,7 +12,7 @@ El dueño eligió la exploración "Por entregar (Cobrado) y Dinero total en una 
 - **Cuota inicial y abono extra** muestran como valor y fecha acordados su valor y fecha reales (solo se muestra; no se guarda).
 - **Filtro Método:** oculto en Por cobrar; ni el filtro ni la búsqueda cambian los totales.
 - **Órdenes:** Abonos por fecha acordada (por defecto; descendente, ascendente en Por cobrar), fecha real, valor acordado, valor real y cliente. Abibonos por fecha (por defecto, descendente), total y nombre. Los vacíos van al final.
-- **Color:** Entregado en verde (cierra DT-11).
+- **Color:** Entregado en azul marino con candado (cierra DT-11; ronda 27 reemplazó el verde inicial).
 
 ## Alternativas descartadas
 - *Barra de 3 tramos y botón "Nuevo Abibono" (ADR-0040):* reemplazados por la exploración.

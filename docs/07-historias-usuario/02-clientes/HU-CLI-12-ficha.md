@@ -7,7 +7,7 @@
 
 ## Contexto
 - Es **una sola lectura** que reúne todo lo de las demás HU de la épica, lista para pintar. La misma sirve para crear (ficha viva) y para un cliente guardado.
-- El diseño no muestra el saldo sin programar, las fechas de venta ni el saldo a favor (FC-07, FC-08), y solo pone "Cobrar" en el abono vencido (C-08): la lectura trae todo y marca `canCollect` en **todo** abono por cobrar.
+- El diseño no muestra el saldo sin programar, las fechas de venta ni el saldo a favor (FC-07, FC-08), y debe poner "Cobrar" en todo abono por cobrar: la lectura trae todo y marca `canCollect` en **todo** abono por cobrar.
 - La preferencia Centrada / Lateral / Página completa se guarda en el dispositivo (FT-04); no es parte de esta HU.
 
 ## Alcance

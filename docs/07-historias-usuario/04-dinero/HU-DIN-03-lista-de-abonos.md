@@ -6,7 +6,7 @@
 **Como** colportor **quiero** ver todos los abonos de mis clientes por estado, filtrarlos por método, buscarlos y ordenarlos **para** saber qué cobrar, qué entregar y qué ya entregué.
 
 ## Contexto
-- Vistas: **Todos · Por cobrar · Por entregar · Entregados · Cancelados**, cada una con su conteo. **Todos no incluye cancelados**; Cancelados es una quinta pestaña nueva, aún sin diseño (ronda 26, C-17, FD-01).
+- Vistas: **Todos · Por cobrar · Por entregar · Entregados · Cancelados**, cada una con su conteo. **Todos no incluye cancelados**; Cancelados es una quinta pestaña nueva, aún sin diseño (ronda 26, FD-01).
 - Filtro **Método** (Efectivo / Transferencia): oculto en Por cobrar y Cancelados (no tienen método). Ni el filtro ni la búsqueda cambian los totales del resumen.
 - La cuota inicial y el abono extra muestran como valor y fecha acordados sus valores **reales** (ronda 26).
 - Por cobrar ordena por defecto de la fecha más antigua a la más nueva y tiene el chip **Vencidos**.
