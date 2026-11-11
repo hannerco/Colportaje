@@ -1,0 +1,2 @@
+# Falla si la versión de Node o de pnpm no es la fijada en package.json (HU-BASE-01 R6).
+engineStrict: true

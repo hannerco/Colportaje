@@ -1,6 +1,6 @@
 # AGENTS.md — Instrucciones para agentes de IA y colaboradores
 
-**Colportor** (marca de Emprendum) es una PWA mobile-first para colportores (venta de libros a cuotas). **Hoy el repositorio contiene solo documentación**: el código empieza después del diseño en Claude Design (decisión del dueño, 2026-11-04: no adelantar código mientras el diseño siga cambiando). **Plazo: 14 días** para la fase 1 completa (`docs/06-planificacion/ROADMAP.md`).
+**Colportor** (marca de Emprendum) es una PWA mobile-first para colportores (venta de libros a cuotas). **El código empezó con HU-BASE-01 (2026-11-11)**: se programa el back de los módulos ya diseñados (Clientes, Inventario y Dinero); los demás esperan su diseño (decisión del dueño, 2026-11-04: no adelantar código mientras el diseño siga cambiando). **Plazo: 14 días** para la fase 1 completa (`docs/06-planificacion/ROADMAP.md`).
 
 ## Antes de hacer cualquier cosa
 1. Lee `docs/README.md` y sigue su orden de lectura. Es obligatorio leer `docs/00-contexto/CONTEXT.md`, `docs/01-negocio/BUSINESS-RULES.md`, `docs/00-contexto/GLOSSARY.md`, `docs/02-datos/DOMAIN-MODEL.md` y `docs/03-arquitectura/CONVENTIONS.md`.
@@ -33,7 +33,7 @@
 pnpm install        # dependencias
 pnpm dev            # desarrollo
 pnpm lint && pnpm typecheck && pnpm test      # calidad (obligatorio antes de PR)
-supabase start      # Supabase local (Docker)
+pnpm exec supabase start   # Supabase local (Docker); la CLI es dependencia del proyecto
 pnpm test:rls       # pruebas de seguridad contra Supabase local
 pnpm test:e2e       # Playwright
 ```

@@ -25,7 +25,7 @@
 - `src/lib/env.ts`: lee y valida con Zod `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY`; falla al arrancar si faltan. `.env.example` sin valores.
 - `src/features/shared/repositories-provider`: proveedor que inyecta las implementaciones de los repositorios (para poder cambiarlas en pruebas o en la fase 2).
 
-- **Versiones fijadas (que todos corran lo mismo):** `.nvmrc` con `22` (Node 22 LTS, ARCHITECTURE §1); `engines.node` y `packageManager` (pnpm con versión exacta) en `package.json`; `pnpm-lock.yaml` versionado; la CLI de Supabase como **dependencia de desarrollo** (`supabase`) y todos los scripts la llaman con `pnpm exec supabase` (no la global); dependencias con versión exacta o rango estrecho. Si pnpm bloquea el script de instalación del binario de `supabase`, se autoriza en `pnpm.onlyBuiltDependencies`. El README del proyecto explica cómo instalar Node con `nvm`/`fnm` y activar pnpm con `corepack`.
+- **Versiones fijadas (que todos corran lo mismo):** `.nvmrc` con `22` (Node 22 LTS, ARCHITECTURE §1); `engines.node` y `packageManager` (pnpm con versión exacta) en `package.json`, con `engineStrict: true` en `pnpm-workspace.yaml`; `pnpm-lock.yaml` versionado; la CLI de Supabase como **dependencia de desarrollo** (`supabase`) y todos los scripts la llaman con `pnpm exec supabase` (no la global); dependencias con versión exacta o rango estrecho. Si pnpm bloquea el script de instalación del binario de `supabase`, se autoriza en `pnpm.onlyBuiltDependencies`. El README del proyecto explica cómo instalar Node con `nvm`/`fnm` y activar pnpm con `corepack`.
 - **CI:** `.github/workflows/ci.yml` con **un solo job llamado `ci`** (ese nombre es el que el dueño marca como *check* obligatorio en la regla `proteger-main`; no se cambia sin avisar). Usa `.nvmrc` para la versión de Node.
 
 ## Reglas (el sistema DEBE…)
@@ -33,7 +33,7 @@
 - **R2.** CUANDO un archivo de una capa importa una capa prohibida (tabla de ARCHITECTURE §2), el lint DEBE fallar.
 - **R3.** "Hoy" DEBE calcularse en America/Bogota con un reloj inyectado, nunca con la zona del dispositivo ni del servidor (BR-GEN-05).
 - **R4.** Ningún valor de negocio cambiable DEBE aparecer fuera de `business-config.ts` (BR-GEN-15).
-- **R6.** CUANDO alguien usa una versión de Node o de pnpm distinta a la fijada, el proyecto DEBE avisarlo (`engines` con `engine-strict=true` en `.npmrc`).
+- **R6.** CUANDO alguien usa una versión de Node o de pnpm distinta a la fijada, el proyecto DEBE avisarlo (`engines` en `package.json` con `engineStrict: true` en `pnpm-workspace.yaml`; pnpm 11+ ya no lee esa opción de `.npmrc`).
 - **R5.** TypeScript DEBE estar en modo `strict` con `noUncheckedIndexedAccess`; `any` y `@ts-ignore` prohibidos por lint.
 
 ## Criterios de aceptación
