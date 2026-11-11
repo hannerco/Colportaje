@@ -10,5 +10,6 @@ Qué le falta al diseño de Claude Design, a fecha **2026-11-08** (ronda 26). Si
 | `FALTA-INVENTARIO.md` | Igual para Inventario |
 | `FALTA-DINERO.md` | Igual para Dinero |
 | `FALTA-TRANSVERSAL.md` | Módulos completos sin diseño y elementos sin definir que cruzan módulos |
+| `PREGUNTAS-DE-DISENO.md` | Las **decisiones** que el dueño debe tomar para diseñar lo que falta (una duda por pregunta, con ejemplo y recomendación) |
 
 **Regla:** cuando un punto se diseñe, se marca aquí como resuelto (no se borra) con la fecha y la pantalla que lo resolvió. El back no espera a estos diseños: las historias de usuario de `07-historias-usuario/` ya cubren su lógica (ADR-0041), salvo lo que depende de un módulo sin diseño (visitas, minibooks, calendario, Hoy, Hacer inventario), que se pospone.
