@@ -61,3 +61,5 @@ Ninguno (sin base de datos todavía).
 
 ## Terminado cuando
 Se cumple §10 de las reglas comunes y la CI corre en GitHub Actions con los pasos de CA-7.
+
+**Al terminar, avisa al dueño:** que la CI ya corrió una vez en GitHub, para que él marque el *check* `ci` como obligatorio en la regla `proteger-main` (ver "Puntos de entrega" en `README.md`).

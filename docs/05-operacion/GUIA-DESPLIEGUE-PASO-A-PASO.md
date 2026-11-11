@@ -21,9 +21,9 @@ Esta guía está pensada para alguien que **no conoce Supabase ni Vercel**. Sigu
 
 ## PARTE 0 — Antes de empezar
 
-- [x] Crea (o elige) el **correo dedicado** del proyecto.
-- [x] Instala un **gestor de contraseñas** (el del navegador sirve; mejor Bitwarden o 1Password) y crea ahí una carpeta "Colportor".
-- [x] Ten el celular a mano para el 2FA.
+- [ ] Crea (o elige) el **correo dedicado** del proyecto.
+- [ ] Instala un **gestor de contraseñas** (el del navegador sirve; mejor Bitwarden o 1Password) y crea ahí una carpeta "Colportor".
+- [ ] Ten el celular a mano para el 2FA.
 
 ---
 
@@ -32,9 +32,9 @@ Esta guía está pensada para alguien que **no conoce Supabase ni Vercel**. Sigu
 El repositorio ya existe: `https://github.com/hannerco/Colportaje` (cuenta `hannerco`) y la carpeta local ya está conectada a él.
 
 1. Abre `https://github.com/hannerco/Colportaje`. Debes ver los archivos y `docs/`.
-2. El repositorio ya es **privado** (2026-11-10). Si alguna vez lo ves público, corrígelo: *Settings* → *General* → *Danger Zone* → *Change visibility* → *Make private*.
+2. **Antes de subir código, claves o datos reales**, hazlo privado: *Settings* → *General* → *Danger Zone* → *Change visibility* → *Make private*.
 
-- [x] El repositorio existe y es **privado** (candado junto al nombre).
+- [ ] El repositorio existe y (antes de subir código) es **privado** (candado junto al nombre).
 
 ---
 
@@ -46,8 +46,8 @@ El repositorio ya existe: `https://github.com/hannerco/Colportaje` (cuenta `hann
 2. Regístrate con el **correo dedicado** (o con GitHub si prefieres usar esa identidad). Revisa tu correo y confirma.
 3. Si te pide crear una **Organization**: nombre `Colportor`, tipo **Personal**, plan **Free**. Pulsa **Create organization**.
 
-- [x] Estás dentro del panel de Supabase y ves la organización "Colportor".
-- [x] Activa 2FA: icono de tu perfil (abajo a la izquierda o arriba a la derecha) → **Account preferences** → **Security** (o similar) → activar verificación en dos pasos.
+- [ ] Estás dentro del panel de Supabase y ves la organización "Colportor".
+- [ ] Activa 2FA: icono de tu perfil (abajo a la izquierda o arriba a la derecha) → **Account preferences** → **Security** (o similar) → activar verificación en dos pasos.
 
 ### 2.2 Crear el proyecto de producción
 
@@ -60,13 +60,13 @@ El repositorio ya existe: `https://github.com/hannerco/Colportaje` (cuenta `hann
    - **Pricing plan:** Free.
 3. Pulsa **Create new project** y espera 1–3 minutos.
 
-- [x] El proyecto `colportor-prod` está en estado activo (punto verde).
+- [ ] El proyecto `colportor-prod` está en estado activo (punto verde).
 
 ### 2.3 Crear el proyecto de pruebas
 
 Repite 2.2 con el nombre `**colportor-staging**` y **otra contraseña** de base de datos (guárdala también).
 
-- [x] Hay dos proyectos en la lista de proyectos de la organización.
+- [ ] Hay dos proyectos en la lista de proyectos de la organización.
 
 ### 2.4 Dónde está cada dato (solo para que sepas encontrarlos)
 
@@ -84,7 +84,7 @@ Dentro de un proyecto, en el menú lateral izquierdo (iconos):
 1. Entra al proyecto → **Authentication** → **Sign In / Providers** (a veces **Providers**) → **Email**.
 2. Desactiva **Allow new users to sign up** (o "Enable sign ups"). Guarda.
 
-- [x] En prod y en staging el registro público está **desactivado**. (Así nadie puede crear cuenta sin invitación.)
+- [ ] En prod y en staging el registro público está **desactivado**. (Así nadie puede crear cuenta sin invitación.)
 
 ### 2.6 Conectar la terminal a Supabase
 
@@ -92,7 +92,7 @@ Dentro de un proyecto, en el menú lateral izquierdo (iconos):
 2. Se abre el navegador: **inicia sesión con la cuenta nueva** y aprueba.
 3. Prueba: `! supabase projects list` → deben salir `colportor-prod` y `colportor-staging`.
 
-- [x] El comando lista los dos proyectos.
+- [ ] El comando lista los dos proyectos.
 
 > El agente se encarga luego de enlazar el proyecto, crear tablas, reglas de seguridad y buckets con migraciones. **Tú no tienes que tocar la base de datos a mano.**
 
@@ -110,16 +110,15 @@ Crea el archivo `.env.local` en la carpeta del proyecto (copiando `.env.example`
 
 1. Entra a **vercel.com** → **Sign Up**.
 2. Elige el plan **Hobby** (gratis). Acepta que es **uso personal/no comercial**.
-3. Regístrate con el **correo dedicado** (no con "Continue with GitHub"). Así Supabase y Vercel quedan bajo el mismo correo y GitHub sigue siendo tu cuenta personal `hannerco`.
-   > El correo **no tiene que coincidir** con el de GitHub: Vercel se conecta al repositorio por la identidad de GitHub, no por el correo. El paso 3.2 conecta `hannerco` a esa cuenta de Vercel.
+3. Regístrate con **Continue with GitHub** (autoriza a Vercel) o con el correo dedicado.
 4. Activa 2FA: **Settings → Authentication** (o **Security**).
 
 - [x] Estás en el panel de Vercel (Dashboard).
 
 ### 3.2 Dar acceso al repositorio
 
-1. En Vercel: **Add New…** → **Project**. Si aún no hay GitHub conectado, pulsa **Continue with GitHub** / **Connect** e inicia sesión con `hannerco`.
-2. Pulsa **Adjust GitHub App Permissions** (o **Configure**) y, en GitHub, elige **Only select repositories** → marca **Colportaje** → **Save**.
+1. En Vercel: **Add New…** → **Project**.
+2. Pulsa **Adjust GitHub App Permissions** (o **Configure**) y, en GitHub, elige **Only select repositories** → marca **colportor** → **Save**.
 
 - [x] Vercel ve el repositorio `Colportaje`.
 
@@ -147,7 +146,7 @@ Crea el archivo `.env.local` en la carpeta del proyecto (copiando `.env.example`
 ### 3.5 Decirle a Supabase cuál es la dirección de la web
 
 1. Supabase → **Authentication** → **URL Configuration**.
-2. **Site URL:** pega la dirección de Vercel. En **Redirect URLs** agrega la misma dirección con `/`** al final (por ejemplo `https://colportor-xxxx.vercel.app/`**).
+2. **Site URL:** pega la dirección de Vercel. En **Redirect URLs** agrega la misma dirección con `/`** al final (por ejemplo `https://colportor-xxxx.vercel.app/**`).
 3. Repite en staging con la URL de preview que indique el agente.
 
 - [ ] Guardado en ambos proyectos.
@@ -157,7 +156,7 @@ Crea el archivo `.env.local` en la carpeta del proyecto (copiando `.env.example`
 1. `! vercel login` → se abre el navegador → inicia sesión con la cuenta **nueva** de Vercel.
 2. `! vercel whoami` debe mostrar tu usuario nuevo.
 
-- [ ] `vercel whoami` responde con la cuenta nueva.
+- [x] `vercel whoami` responde con la cuenta nueva.
 
 ---
 

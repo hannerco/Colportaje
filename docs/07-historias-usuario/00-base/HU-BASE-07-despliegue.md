@@ -52,3 +52,5 @@ Sin tablas nuevas. No toca el esquema de negocio.
 
 ## Terminado cuando
 Se cumple §10 de las reglas comunes (en lo que aplique a workflows) y los CA-1 a CA-9 están verificados y anotados en `05-operacion/DEPLOYMENT.md` (estado de las conexiones, §2).
+
+**Al terminar, avisa al dueño, en este orden:** (1) antes de empezar, que el dueño decida el destino del backup (OQ-42); (2) cuando los workflows estén listos, que él cargue los valores de los secrets en GitHub y en Vercel (nombres en el Contrato); (3) que él importe el proyecto en Vercel (guía, paso 3.3) y configure la URL en Supabase (paso 3.5); (4) que él marque el *check* `ci` como obligatorio si aún no lo hizo (CA-8); (5) que él verifique la prueba de restauración (CA-6).

@@ -46,3 +46,5 @@ Trigger sobre `auth.users` → `profile` + `user_role('colportor')`. Configuraci
 
 ## Terminado cuando
 Se cumple §10 de las reglas comunes.
+
+**Al terminar, avisa al dueño:** para que él complete su `.env.local` con los valores de **staging** (guía de despliegue, paso 2.7) y cree su usuario en staging con el script. La IA no pide ni pega esas claves.
