@@ -44,7 +44,7 @@ Un ADR por decisión relevante. Formato: contexto → decisión → alternativas
 | 0036 | Ubicación del cliente: coordenadas, selector con pin y mapa interactivo | Aceptado |
 | 0037 | Avatar del cliente con emoji opcional | Aceptado |
 | 0038 | Guardado, resumen y descarte de la ficha de cliente nueva | Aceptado (facturas reemplazadas por ADR-0042) |
-| 0039 | Plan de abonos automático | Aceptado (ampliado por ADR-0045) |
+| 0039 | Plan de abonos automático | Aceptado (ampliado por ADR-0045; arrastre eliminado por ADR-0047) |
 | 0040 | Dinero: vistas, estados con color y deuda sin programar | Reemplazado en parte por ADR-0046 |
 | 0033 | Recorte, motivos de cancelación, prórroga y signo del saldo a favor | Aceptado |
 | 0041 | Alcance del back de Clientes, Inventario y Dinero, y reglas de extensibilidad | Aceptado |
@@ -53,6 +53,7 @@ Un ADR por decisión relevante. Formato: contexto → decisión → alternativas
 | 0044 | "Agregar libro" en la ficha lista cada ejemplar en físico | Aceptado |
 | 0045 | Plan de abonos: días de pago, corregir frente a prorrogar y cliente existente | Aceptado |
 | 0046 | Dinero según la exploración elegida: tarjeta única, Dinero total y cancelados aparte | Aceptado |
+| 0047 | Fechas del plan sin separación mínima y sin arrastre | Aceptado |
 
 ## Plantilla
 ```markdown

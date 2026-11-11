@@ -147,7 +147,7 @@ Convención: **[D]** = decidido · **[A]** = asumido por defecto, pendiente de c
 | Q34 | Devolver al líder | **"Sí a todo."** [D] Cualquier antigüedad, deshacer con nota, columna "Devueltos". |
 | Q35 | Cliente equivocado | **"Correcto."** [D] |
 | Q36 | Cantidad estilo Notion | **"Vaaale, vale. Me gusta. Pero haz lo mismo tanto en minibooks como en libros normales."** [D] Misma pastilla en ambos (sin selector visible desde el inicio en minibooks). |
-| Q37 | Región | **"Perfecto."** [D] us-east-1 + iad1. Pendiente repetir la medición desde un celular (SG-01). |
+| Q37 | Región | **"Perfecto."** [D] us-east-1 + iad1. La medición desde un celular (SG-01) se cerró en la ronda 28: los servidores ya están creados. |
 | Q38 | Nombres Título/Ejemplar | **"No. Por ahora prefiero lo que tú consideras mejor. Si en un futuro veo confusión, te pediré que lo cambies. Déjalo anotado en cosas por revisar."** [D] *Catálogo* (admin), *Libros* (colportor), *Ejemplar*; RV-01. |
 
 ---
@@ -329,7 +329,7 @@ Antes de diseñar Inventario se cruzaron las tres secciones de Notion del dueño
 | 4 | Variantes | Design debe mostrar variantes de Agregar (cuadrícula vs lista agrupada), y de "Por resolver" (DT-03) antes de decidir (la antigüedad se canceló en la ronda 21). |
 | 5 | Alcance del chat de diseño | Inventario, Agregar, Ejemplares, Ejemplar, Devolver al líder en lote y el buscador "Agregar libro" de la ficha. "Hacer inventario" y "Devolver + modal de abonos" van aparte. |
 | 6 | Pestañas de Inventario | Inventario tiene **Libros en físico** (por título) y **Ejemplares** (una fila por unidad, con vistas Todos / En físico / Vendidos / Descuentos y aumentos). Es la opción A. |
-| 7 | Identificador del título | Sin decidir (DT-10): ícono de un color por admin, portada o emoji; se ve en variantes cuando las listas estén listas. |
+| 7 | Identificador del título | (Cerrado en la ronda 28: imagen subida desde Admin.) Entonces sin decidir (DT-10): ícono de un color por admin, portada o emoji; se ve en variantes cuando las listas estén listas. |
 | 8 | Buscador "Agregar libro" | Tocar un título asigna el **ejemplar más antiguo**; se puede expandir y elegir por número; agotados al final, atenuados y sin tocar. |
 | 9 | Devolver al líder en lote | Por **cantidad por título** (principal) y "Elegir unidades" (secundaria); nota al final. |
 | 10 | Orden de trabajo de diseño | Las exploraciones (Agregar y "Por resolver") en **móvil claro**, luego **escritorio claro**; el oscuro al final. |
@@ -476,6 +476,29 @@ Se comparó el diseño exportado de Claude Design (`colportor-diseno.zip`, 05/11
 | Q37/Q38/Q61 | Diferencias visuales y entrega | **"Ok"** · **"Correcto"** · **"Sí."** [D] |
 
 *Consecuencias:* ADR-0041 a ADR-0046; BR-GEN-12/14/15, BR-USR-08, BR-COPY-02/06/11/12/16/17, BR-CUS-04/05/09/10/14/17, BR-PAY-02/03/04/05/06/11/15/16, BR-DEP-02/05/12/13/14, BR-INV-02/03, BR-GOAL-03/06, BR-PHO-03, BR-AUD-01; DOMAIN-MODEL, DATABASE, GLOSSARY, FLOWS, FLOWS-ALTERNATIVOS (AF-115..117), REQUIREMENTS, TESTING, CONVENTIONS, ARCHITECTURE, OPEN-QUESTIONS, DESIGN-BRIEF; nuevas carpetas `04-diseno/pendientes/` y `07-historias-usuario/`.
+
+---
+
+## Ronda 28 — Cierre de las interpretaciones de las HU (2026-11-11)
+
+El dueño revisó las 27 interpretaciones de `07-historias-usuario/INTERPRETACIONES.md`. Confirmó I-01 a I-05, I-09 a I-16, I-18 a I-27 sin cambios.
+
+| # | Tema | Resultado |
+|---|---|---|
+| 1 | Separación mínima entre abonos (I-06, I-07) | **"No importa que sean muy seguidos los pagos, es muy probable que el usuario te diga: pasa mañana y te pago."** [D] Sin separación mínima; el primer abono sugerido es el siguiente día de pago, aunque sea mañana. ADR-0047. |
+| 2 | «Correr también los siguientes» (I-08) | **"Solo se mueve el abono que editas."** [D] Mover una fecha nunca arrastra a las demás (al crear y con el cliente guardado). **"Se recalculan, porque apenas estamos creando el cliente"**: al crear, cambiar frecuencia, valor o primer abono del plan recalcula todos los abonos. ADR-0047. |
+| 3 | Reemplazar el plan al crear (I-25) | **"Correcto."** Los abonos anteriores desaparecen sin rastro. |
+| 4 | Borrar y Cancelar un programado (I-26) | **"Ambas acciones deberían ir separadas."** [D] Borrar = error de registro; Cancelar = se acordó y ya no se cobra (queda en Cancelados). |
+| 5 | Libros en físico y títulos desactivados (I-16) | **"Tienes razón."** Libros en físico muestra títulos desactivados con ejemplares; Agregar al inventario solo los activos. |
+| 6 | Orden de «Por resolver» (I-17) | **"La novedad va de la más nueva a la más antigua."** [D] Corrige la interpretación original. |
+| 7 | Conteos de las pestañas (I-12) | **"Quedan fijos."** |
+| 8 | Título automático del Abibono (I-18) | **"Ok."** Se cuentan solo los Abibonos no borrados del mismo día. |
+| 9 | DT-10: identificador visual del título | **"Cada título tendrá una imagen que nosotros mismos proporcionaremos desde el panel del admin."** [D] Se descartan ícono y emoji; la imagen la sube el equipo desde Admin. Proporción de recorte y si es obligatoria: al diseñar Admin. |
+| 10 | SG-01: medición de latencia desde un celular | Cerrada: los servidores (Supabase us-east-1 y Vercel iad1) ya están creados. |
+| 11 | Orden del diseño | Dinero en móvil (FT-05) → Calendario → … → **Hoy al final** (es el resumen de todo). |
+| 12 | SG-05: aviso de datos (Ley 1581) | Se deja **para el final**; el asistente debe recordarlo antes de abrir la app a otros colportores. |
+
+*Consecuencias:* ADR-0047; BR-PAY-15, BR-GEN-15; HU-ABO-03/04/05, HU-INV-03; se elimina `paymentPlan.minGapDays` y el parámetro `shiftFollowing`.
 
 ---
 

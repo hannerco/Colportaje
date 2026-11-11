@@ -8,7 +8,7 @@
 ## Contexto
 - El plan **no** es una entidad: crea abonos programados normales y **no guarda la frecuencia** (ronda 26).
 - Cantidad de abonos = `saldo ÷ valor` hacia abajo (mínimo 1); el sobrante lo suma el **más próximo**; los abonos suman **exactamente** el saldo. El valor de cada abono es múltiplo de $1.000 (configurable).
-- **Fechas (ronda 26):** en Colombia el sueldo se paga el 15 y el último día del mes. Quincenal = 15 y 30 (febrero: último día); mensual = 30 (febrero: último día); semanal = cada 7 días. El primer abono sugerido es el día de pago más cercano **después de hoy**. Las siguientes caen en el siguiente día de pago a una distancia mínima (7 días quincenal, 20 mensual). Todo configurable (BR-GEN-15).
+- **Fechas (ronda 26):** en Colombia el sueldo se paga el 15 y el último día del mes. Quincenal = 15 y 30 (febrero: último día); mensual = 30 (febrero: último día); semanal = cada 7 días. El primer abono sugerido es el día de pago más cercano **después de hoy**. Cada siguiente es el siguiente día de pago posterior al anterior, sin separación mínima (ADR-0047). Todo configurable (BR-GEN-15).
 - **Durante la creación**, cambiar frecuencia, valor o primer abono **reemplaza** los programados; **con el cliente guardado**, un plan nuevo reparte **solo lo sin programar** (AF-116). El front indica el modo.
 
 ## Alcance
@@ -26,7 +26,7 @@
 ## Reglas (el sistema DEBE…)
 - **R1.** `base` DEBE ser el saldo pendiente (`remaining`) en `replace_all` y lo sin programar (`unscheduled`) en `unscheduled_only`; si es 0, `PLAN_REQUIRES_BALANCE`.
 - **R2.** CUANDO `base < amount`, el plan DEBE ser un solo abono por `base` (AF-113).
-- **R3.** Quincenal: `nextDueDate` DEBE ser el primer día de pago (15 o 30/último) que esté a ≥ 7 días del anterior; mensual: el primer 30 (o último día) a ≥ 20 días; semanal: +7 días. `suggestFirstDueDate` = primer día de pago **posterior** a hoy (semanal: hoy + 7).
+- **R3.** Quincenal: `nextDueDate` DEBE ser el primer día de pago (15 o 30/último) **posterior** al anterior; mensual: el primer 30 (o último día) posterior; semanal: +7 días. `suggestFirstDueDate` = primer día de pago **posterior** a hoy (semanal: hoy + 7).
 - **R4.** El servidor DEBE validar que la suma de `items` sea exactamente `base`, que cada valor sea entero > 0 y cada fecha no anterior a hoy, antes de guardar.
 - **R5.** `replace_all` DEBE borrar (lógicamente, sin evento) los programados del cliente y crear los nuevos en una transacción; `unscheduled_only` NO DEBE tocar los existentes.
 - **R6.** Los abonos creados DEBEN nacer programados con fecha acordada = fecha original.
@@ -36,7 +36,7 @@
 - **CA-2.** **Dado** saldo 140.000 y abonos de 35.000, **entonces** son 4 de 35.000.
 - **CA-3.** **Dado** saldo 20.000 y abonos de 30.000, **entonces** es un solo abono de 20.000.
 - **CA-4.** **Dado** hoy 07/11/2026 y quincenal, **entonces** las fechas sugeridas son 15/11, 30/11, 15/12 y 30/12; **dado** mensual, 30/11, 30/12, 30/01/2027 y 28/02/2027.
-- **CA-5.** **Dado** quincenal con primer abono cambiado al 28/11, **entonces** la siguiente es 15/12 (el 30/11 queda a solo 2 días).
+- **CA-5.** **Dado** quincenal con primer abono cambiado al 28/11, **entonces** la siguiente es 30/11 (sin separación mínima).
 - **CA-6.** **Dado** un valor de 35.500, **entonces** `VALIDATION` (no es múltiplo de 1.000).
 - **CA-7.** **Dado** Natalia en creación con un plan de 4 abonos, **cuando** cambia el valor a 70.000, **entonces** quedan solo los 2 abonos nuevos (los 4 anteriores borrados).
 - **CA-8.** **Dado** un cliente guardado que debe 100.000 con 40.000 programados, **cuando** aplica un plan de 30.000 en modo `unscheduled_only`, **entonces** se crean abonos por 60.000 (30.000 + 30.000) y los 40.000 existentes siguen igual (AF-116).

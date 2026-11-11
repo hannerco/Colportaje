@@ -20,7 +20,7 @@
   - `titles`: culturales y religiosos con al menos un ejemplar `in_stock`, ordenados por nombre. `minibooks`: igual, aparte. Incluye títulos **desactivados** si aún tienen ejemplares.
   - `booksTotal` = ejemplares `in_stock` que **no** son minibook.
 - `useInStockCopiesOfTitle(titleId)` → `{ title: { name, inStockCount, referencePrice }, copies: [{ copyId, number, receivedAt }] }` ordenados por recibido más antiguo y luego número.
-- `useFlaggedCopies()` → `[{ copyId, titleName, number, note, flaggedAt }]` ordenados del más antiguo al más reciente (incluye minibooks).
+- `useFlaggedCopies()` → `[{ copyId, titleName, number, note, flaggedAt }]` ordenados del más reciente al más antiguo (incluye minibooks).
 
 ## Reglas (el sistema DEBE…)
 - **R1.** El conteo de un título DEBE contar solo ejemplares `in_stock` no borrados (BR-INV-03).

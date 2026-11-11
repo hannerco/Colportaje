@@ -112,7 +112,7 @@ Workflow `.github/workflows/backup.yml` (cada 2 días al inicio, luego semanal, 
 - [ ] Registro público desactivado en Supabase Auth (en prod y staging).
 - [ ] RLS activada y `tests/rls` en verde en todas las tablas.
 - [ ] Buckets y políticas de Storage verificados con dos usuarios de prueba.
-- [ ] Región **us-east-1** (Supabase) e **iad1** (Vercel) confirmadas; medición repetida desde un celular (SG-01).
+- [ ] Región **us-east-1** (Supabase) e **iad1** (Vercel) confirmadas; (SG-01 cerrado: servidores ya creados).
 - [ ] Variables correctas en Vercel; `service_role` fuera del cliente y marcada Sensitive.
 - [ ] Endpoints `/api/admin/*` rechazan a no-admins (probado).
 - [ ] Backup ejecutado y **restauración probada**; keep-alive activo.

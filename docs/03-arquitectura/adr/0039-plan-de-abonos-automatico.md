@@ -9,7 +9,7 @@ El diseño de Crear cliente añadió un generador: frecuencia (semanal, quincena
 - Número de abonos = `saldo ÷ valor` **hacia abajo** (mínimo 1). Lo que sobre lo suma el **abono con la fecha más próxima**; los abonos suman exactamente el saldo. Ejemplo: $140.000 con $30.000 → $50.000, $30.000, $30.000, $30.000.
 - La fila del abono mayor **no lleva marca**. El valor de cada abono es múltiplo de $1.000.
 - La regla de múltiplos de $1.000 aplica **solo al cálculo automático**. Editar un abono a mano acepta cualquier entero; los pagos reales (cuota inicial, cobros, extras) también.
-- Cambiar una fecha con "Correr también los siguientes" es la prórroga de BR-PAY-06 (solo se mueven las fechas).
+- ~~Cambiar una fecha con "Correr también los siguientes"~~ (eliminado en la ronda 28, ADR-0047): cambiar una fecha mueve solo ese abono.
 
 ## Alternativas descartadas
 - *Último abono con la diferencia* y *un abono extra pequeño al final*: el dueño prefiere que el sobrante lo absorba el más próximo.
