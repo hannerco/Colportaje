@@ -46,3 +46,5 @@ Ninguno en la base. Persistencia local en IndexedDB.
 
 ## Terminado cuando
 Se cumple §10 de las reglas comunes.
+
+**Al terminar, avisa al dueño:** para que él pruebe instalar la app en su celular y consultar sin conexión cuando exista el primer despliegue (guía de despliegue, Parte 4).

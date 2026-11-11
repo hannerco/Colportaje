@@ -83,5 +83,19 @@ Implementar en este orden. Una HU solo empieza cuando sus dependencias están te
 | 11 | [HU-DIN-05](04-dinero/HU-DIN-05-confirmar.md) | Confirmar un Abibono | DIN-04 |
 | 12 | [HU-DIN-07](04-dinero/HU-DIN-07-reabrir.md) | Reabrir un Abibono confirmado | DIN-05 |
 
+## Puntos de entrega: cuándo avisar al dueño
+Cada vez que se termina una de estas HU, quien la hizo **avisa al dueño** con el mensaje indicado. El dueño hace su parte y responde "listo". Nadie pide ni pega claves en el chat: los valores los carga el dueño directamente en GitHub, Vercel o su `.env.local`.
+
+| Cuando se termina… | Se avisa al dueño | El dueño hace |
+|---|---|---|
+| **HU-BASE-01** (CI corrió al menos una vez en GitHub) | "BASE-01 lista, la CI ya corrió" | En GitHub: *Settings → Rules → proteger-main → Require status checks* y agrega `ci`. Prueba con un PR que la CI en rojo no se pueda fusionar |
+| **HU-BASE-03** (sesión con usuarios locales) | "BASE-03 lista" | Completa su `.env.local` con los valores de **staging** (guía 2.7) y crea su usuario en staging con el script |
+| **HU-BASE-04** (catálogo y script de carga) | "BASE-04 lista" | Entrega la lista real de títulos (nombre, autor, categoría, precios); se carga a staging y después a producción |
+| **Antes de empezar HU-BASE-07** | "Voy a empezar BASE-07" | Decide el destino de los backups (OQ-42) |
+| **HU-BASE-07**, workflows escritos | "BASE-07 lista, faltan los secrets" | Carga los secrets en GitHub y Vercel; importa el proyecto en Vercel (guía 3.3); pone la URL en Supabase (3.5); verifica la restauración del backup |
+| **HU-BASE-06** (PWA y sin conexión) y primer despliegue | "BASE-06 lista y desplegada" | Instala la app en su celular y prueba con y sin internet |
+
+Mientras tanto, el dueño diseña lo que falta (Hoy, Calendario, Minibooks, Hacer inventario, Admin): no bloquea al back.
+
 ## Fuera de alcance de todas estas HU
 UI y componentes visibles; textos de pantalla; Hoy; Calendario, visitas, capacitaciones y recordatorios; ventas de minibooks, asignaciones a Abibonos y canje de saldo a favor; Hacer inventario y totalizadores; invitaciones, restablecimiento de contraseña y panel de admin; escritura sin conexión y push (fase 2); vista de líder (fase 3). Lo que falta por diseñar está en `04-diseno/pendientes/`.

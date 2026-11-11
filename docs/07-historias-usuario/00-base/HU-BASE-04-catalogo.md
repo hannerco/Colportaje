@@ -45,3 +45,5 @@ Tabla `title` (DATABASE.md), RLS de lectura para autenticados y escritura con `i
 
 ## Terminado cuando
 Se cumple §10 de las reglas comunes y el `seed.sql` local trae unos 15 títulos ficticios de las tres categorías (para probar las HU de inventario).
+
+**Al terminar, avisa al dueño:** para que él entregue la lista real del catálogo (nombre, autor, categoría y precios) y se cargue a staging y luego a producción con el script. El dueño puede ir preparándola antes.
