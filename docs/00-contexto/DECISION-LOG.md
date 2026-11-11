@@ -486,6 +486,7 @@ Se comparó el diseño exportado de Claude Design (`colportor-diseno.zip`, 05/11
 4. **Recorte automático de abonos**: tras abono extra, desde el más próximo; tras devolución/baja de precio/archivado, desde el más lejano (modificable en el modal).
 5. **Archivar** sustituye a "eliminar" cliente (conserva información, que el dueño quiere guardar).
 6. Los abonos de Abibonos en **borrador** siguen contando como "Por entregar" hasta confirmarse, y vuelven a contar si el Abibono se reabre (AF-105).
+7. **(2026-11-11, HU-BASE-01)** El bloqueo por versión de Node/pnpm se configura con `engineStrict: true` en `pnpm-workspace.yaml`, no con `engine-strict=true` en `.npmrc`: se comprobó que pnpm 12 ignora esa opción en `.npmrc` (instaló con `engines.node: ">=99"`). Con `pnpm-workspace.yaml` falla con `ERR_PNPM_UNSUPPORTED_ENGINE`. Además se fijó TypeScript 6.0 (no 7) porque `typescript-eslint` exige `< 6.1`, y ESLint 9 (no 10) porque los plugins de `eslint-config-next` aún no soportan ESLint 10.
 
 ## Correcciones al propio asistente (para no repetir errores)
 0. **(Ronda 19)** Se recomendó quitar la etiqueta "Debe" y renombrar "Pagando" como verde sin conocer el motivo del dueño (el número era ambiguo); además se pasó por alto que el generador de plan de abonos tenía que ser solo del cálculo automático. Se verificó con el dueño antes de editar.

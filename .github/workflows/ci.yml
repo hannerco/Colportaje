@@ -1,0 +1,48 @@
+# Calidad obligatoria antes de fusionar a main (HU-BASE-01 CA-7).
+# El job se llama exactamente `ci`: es el check que exige la regla `proteger-main` (CA-9). No cambiar sin avisar al dueño.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      # Instala la versión de pnpm fijada en package.json (`packageManager`).
+      - uses: pnpm/action-setup@v6.1.1
+
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Pruebas
+        run: pnpm test
+
+      # El paso de RLS (supabase start + pnpm test:rls) se agrega en HU-BASE-02.
+
+      - name: Build
+        run: pnpm build

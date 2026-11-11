@@ -6,6 +6,7 @@ dist/
 coverage/
 .turbo/
 *.tsbuildinfo
+next-env.d.ts
 
 # Entorno y secretos (NUNCA commitear)
 .env
