@@ -54,7 +54,6 @@ Los valores que pueden cambiar viven en `src/domain/config/business-config.ts` (
 | `paymentPlan.amountMultiple` | 1.000 | BR-PAY-15 |
 | `paymentPlan.paydays.biweekly` | días 15 y 30 (30 = último día si el mes es más corto) | BR-PAY-15 |
 | `paymentPlan.paydays.monthly` | día 30 (último día si el mes es más corto) | BR-PAY-15 |
-| `paymentPlan.minGapDays` | quincenal 7 · mensual 20 | BR-PAY-15 |
 | `paymentPlan.weeklyStepDays` | 7 | BR-PAY-15 |
 | `reschedule.confirmBeyondMonths` | 2 | BR-PAY-06 |
 | `location.approximateAccuracyMeters` | 50 | BR-CUS-08 |

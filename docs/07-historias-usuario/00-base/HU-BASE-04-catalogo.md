@@ -7,7 +7,7 @@
 
 ## Contexto
 - El catálogo es compartido (sin `owner_id`) y solo el admin lo modifica (BR-TIT-01). La pantalla **Catálogo** del admin no está diseñada (ADR-0041): la carga inicial y los ajustes se hacen con un **script idempotente** (BR-TIT-06).
-- El identificador visual del título (DT-10: ícono, portada o emoji) **sigue abierto**; el diseño usa un cuadro de imagen. Por ahora solo existe `image_path` (portada opcional).
+- El identificador visual del título (DT-10, cerrada en la ronda 28) es una **imagen** que sube el equipo desde el panel de Admin; el diseño usa un cuadro de imagen. Por ahora solo existe `image_path` (opcional hasta diseñar Admin).
 
 ## Alcance
 - **Incluye:** tabla `title` con sus checks y RLS; bucket público `title-images` (lectura pública, escritura admin); script `scripts/load-catalog.ts` que lee un archivo de datos del repositorio (`scripts/data/catalog.json`, lo provee el dueño) y hace *upsert* idempotente; `TitleRepository` de lectura; cálculo del **precio de referencia**.

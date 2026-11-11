@@ -25,7 +25,7 @@ Un archivo por módulo en `src/domain/**/*.test.ts`. Cada prueba cita la regla.
 - **Fecha de recibido** (`BR-COPY-04`): no futura, no posterior a la venta, cambio registrado en historial.
 - **Agregar por lote** (`BR-COPY-02`): el lote local suma y resta sin tocar la base; "Agregar N" crea todo o nada, con números consecutivos por título y la fecha elegida (nunca futura); igual para minibooks.
 - **Eliminar y deshacer** (`BR-COPY-11/17`): eliminar solo En físico o Con novedad; deshacer Eliminar restaura el estado anterior; deshacer Apareció (si sigue en físico) y Perdido reabren la misma novedad.
-- **Plan de abonos** (`BR-PAY-15`, ADR-0045): fechas sugeridas en días de pago (15 y 30; febrero último día) con separación mínima; nunca fechas pasadas; en creación reemplaza, con cliente guardado reparte solo lo sin programar; corrección frente a prórroga.
+- **Plan de abonos** (`BR-PAY-15`, ADR-0045): fechas sugeridas en días de pago (15 y 30; febrero último día) sin separación mínima; nunca fechas pasadas; en creación reemplaza, con cliente guardado reparte solo lo sin programar; corrección frente a prórroga.
 - **Factura** (`BR-CUS-17`): nace con su primera foto; sin foto no hay N.º ni fecha; borrar la última foto borra la factura.
 - **Dinero** (`BR-DEP-14`): Dinero total y porcentajes sobre abonos no cancelados; programado literal; cancelados fuera de Todos; acordado = real en cuota inicial y extra.
 - **Orden con vacíos al final** (`BR-GEN-14`): en ambos sentidos.

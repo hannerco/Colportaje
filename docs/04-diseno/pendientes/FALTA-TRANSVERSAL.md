@@ -17,6 +17,6 @@ Lo que cruza varios módulos o es un módulo entero sin diseño (05/11/2026).
 |---|---|---|---|
 | FT-01 | **"Buscar ⌘K"** en el sidebar: no está definido qué busca | Sidebar de escritorio | Sin regla; fuera por ahora |
 | FT-02 | Botón **"Cambiar de cuenta"** junto al nombre del usuario: no hay varias cuentas | Sidebar de escritorio | Sin regla; fuera por ahora |
-| FT-03 | **Identificador visual del título** (DT-10): ícono, portada o emoji; hoy es un cuadro gris | Todas las listas de libros | Abierto; el back usa solo `image_path` |
+| FT-03 | **Identificador visual del título** (DT-10): **imagen** subida por el admin (ronda 28, 2026-11-11); hoy es un cuadro gris | Todas las listas de libros | Decidido; falta diseñarlo (recorte a proporción fija) y la subida en Admin; el back usa `image_path` |
 | FT-04 | Preferencia **Centrada / Lateral / Página completa** de la ficha | Ficha en escritorio | Se guarda en el dispositivo (no en el back) |
 | FT-05 | Modo **oscuro** y **móvil** de Dinero | Dinero | Sin diseñar |
