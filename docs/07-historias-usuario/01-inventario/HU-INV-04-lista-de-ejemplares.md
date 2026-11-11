@@ -7,7 +7,7 @@
 
 ## Contexto
 - La lista **excluye minibooks** y ejemplares borrados (ronda 26).
-- Cada fila muestra **una sola fecha**, la del orden elegido: Recibido → fecha de recibido; Vendido → fecha de venta (los no vendidos van al final, sin fecha); Título, Precio acordado y Diferencia → fecha de recibido. El diseño mezclaba fechas; es la contradicción C-13, ya resuelta así por el dueño.
+- Cada fila muestra **una sola fecha**, la del orden elegido: Recibido → fecha de recibido; Vendido → fecha de venta (los no vendidos van al final, sin fecha); Título, Precio acordado y Diferencia → fecha de recibido.
 - **Sin sumas de dinero** al pie: los totales viven en Hacer inventario.
 
 ## Alcance

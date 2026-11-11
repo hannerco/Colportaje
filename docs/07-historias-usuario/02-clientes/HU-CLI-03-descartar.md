@@ -1,6 +1,6 @@
 # HU-CLI-03 · Descartar un cliente recién creado
 
-> **Épica:** Clientes · **Depende de:** HU-CLI-09, HU-ABO-02, HU-DIN-01 · **Reglas:** BR-CUS-14, BR-GEN-02, BR-COPY-09 (AF-114), ADR-0038, AF-112 · **Diseño:** sin pantalla (`04-diseno/pendientes/FALTA-CLIENTES.md` FC-01; el diseño muestra "Cancelar", C-01)
+> **Épica:** Clientes · **Depende de:** HU-CLI-09, HU-ABO-02, HU-DIN-01 · **Reglas:** BR-CUS-14, BR-GEN-02, BR-COPY-09 (AF-114), ADR-0038, AF-112 · **Diseño:** sin pantalla (`04-diseno/pendientes/FALTA-CLIENTES.md` FC-01)
 
 ## Historia
 **Como** colportor **quiero** descartar un cliente que estaba creando por error **para** que desaparezca y sus libros vuelvan a mi inventario sin dejar rastros en mis cuentas.

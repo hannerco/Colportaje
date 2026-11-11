@@ -8,7 +8,7 @@
 ## Contexto
 - El diseño cambió la regla anterior (un ejemplar por toque): ahora se **acumula** un lote local y se confirma en un **Resumen** ("Vas a agregar N ejemplares") con "Agregar N" (ronda 26, ADR-0043). Nada se guarda antes. No hay favoritos.
 - El chip de fecha ofrece Hoy, Ayer, Anteayer y "Otra fecha…" (nunca futura): sirve cuando no hubo señal o celular el día que llegaron (AF-50).
-- En móvil, el diseño muestra "#14 agregado · Deshacer" en cada toque; es una contradicción ya anotada (C-12): **manda el lote**.
+- En móvil no hay aviso "agregado · Deshacer" por toque: manda el lote.
 
 ## Alcance
 - **Incluye:** lectura del catálogo para agregar (activos, agrupados y con búsqueda); lógica local del lote (sumar, restar, escribir cantidad, vaciar, resumen por categoría); opciones de fecha; función SQL que crea todo el lote.

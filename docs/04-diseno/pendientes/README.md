@@ -1,12 +1,11 @@
 # Pendientes de diseño
 
-Qué le falta al diseño de Claude Design y en qué no coincide con los docs, a fecha **2026-11-08** (ronda 26). Sirve para atacar estos puntos cuando haya tokens de diseño, sin perderlos.
+Qué le falta al diseño de Claude Design, a fecha **2026-11-08** (ronda 26). Sirve para atacar estos puntos cuando haya tokens de diseño, sin perderlos.
 
 **Diseño revisado:** exportación del 05/11/2026 del lienzo `https://claude.ai/artifact/RgxEeQ7BZExzaJVcih3AZV` (`colportor-diseno.zip`). La referencia es **escritorio claro**; en Dinero manda la «Exploración elegida · Por entregar (Cobrado) y Dinero total en una sola tarjeta».
 
 | Archivo | Para qué |
 |---|---|
-| `CONTRADICCIONES-DISENO-DOCS.md` | Lo que el diseño muestra distinto de los docs. **Mandan los docs** (o la decisión de la ronda 26): hay que corregir el diseño |
 | `FALTA-CLIENTES.md` | Lo que el back de Clientes ya cubre (o cubrirá) y no tiene pantalla |
 | `FALTA-INVENTARIO.md` | Igual para Inventario |
 | `FALTA-DINERO.md` | Igual para Dinero |
