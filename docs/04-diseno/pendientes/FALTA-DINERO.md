@@ -14,3 +14,4 @@ Reglas de Dinero que el back cubre (ADR-0041) y que no tienen pantalla en el dis
 | FD-08 | Error al confirmar un Abibono (falta recibo, falla la subida) | Nuevo Abibono | BR-DEP-09, AF-92 |
 | FD-09 | **Dinero en móvil** (no está diseñado; tampoco en oscuro) | Dinero | — |
 | FD-10 | Sección **Minibooks** de Nuevo Abibono: existe en el diseño, pero queda **oculta** hasta el módulo Minibooks | Nuevo Abibono | BR-MBK-06, ADR-0041 |
+| FD-11 | **Nombre automático «Abibono (n)»** en lugar de «Abibono – fecha» (ronda 29): actualizar la lista de Abibonos y Nuevo Abibono; en borradores sin número, el nombre es solo una sugerencia | Dinero · Abibonos, Nuevo Abibono | BR-DEP-02 |

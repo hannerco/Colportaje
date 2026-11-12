@@ -105,7 +105,8 @@ create table customer_invoice (       -- Factura (ADR-0042): nace con su primera
 create table leader_deposit (
   id uuid primary key,
   owner_id uuid not null references auth.users,
-  title text not null,
+  title text,                       -- null = nombre automático «Abibono (n)» (BR-DEP-02)
+  deposit_number integer check (deposit_number >= 1),  -- se asigna al confirmar por primera vez
   deposit_date date not null,
   cash_amount integer not null default 0 check (cash_amount >= 0),
   transfer_amount integer not null default 0 check (transfer_amount >= 0),
@@ -116,6 +117,8 @@ create table leader_deposit (
   updated_at timestamptz not null default now(),
   deleted_at timestamptz
 );
+
+create unique index leader_deposit_owner_number_uq on leader_deposit (owner_id, deposit_number) where deposit_number is not null;
 
 create table minibook_sale (
   id uuid primary key,

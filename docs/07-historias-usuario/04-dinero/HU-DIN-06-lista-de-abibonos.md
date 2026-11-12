@@ -21,12 +21,15 @@
 - **R1.** La lista DEBE incluir borradores y confirmados (no los borradores borrados).
 - **R2.** `totalDeliveredToLeader` DEBE sumar solo confirmados.
 - **R3.** `hasReceipt` DEBE ser verdadero si tiene al menos una foto de recibo activa.
+- **R5.** El orden por nombre DEBE tratar los números como números ("Abibono (2)" antes de "Abibono (10)") y `title` en las filas es el nombre que se muestra, incluido el automático «Abibono (n)».
 - **R4.** La búsqueda DEBE ser por título, sin tildes ni mayúsculas; el orden por fecha desempata por título.
 
 ## Criterios de aceptación
 - **CA-1.** **Dado** cinco confirmados que suman 1.440.000 y un borrador de 50.000 sin recibo, **entonces** `count = 6`, `totalDeliveredToLeader = 1.440.000` y el borrador tiene `hasReceipt = false`.
 - **CA-2.** **Dado** la búsqueda "donacion", **entonces** aparece "Donación campaña".
 - **CA-3.** **Dado** el orden por total descendente, **entonces** el de 420.000 va primero.
+
+- **CA-4.** **Dado** "Abibono (2)", "Abibono (10)" y "Abibono (1)", **cuando** se ordena por nombre ascendente, **entonces** el orden es (1), (2), (10).
 
 ## Casos borde y errores
 - Sin Abibonos: `count = 0` ("Aún no tienes Abibonos", front).
@@ -35,7 +38,7 @@
 Sin cambios de esquema.
 
 ## Cómo se verifica
-- **Dominio:** función que arma la lista (CA-1 a CA-3).
+- **Dominio:** función que arma la lista (CA-1 a CA-4).
 
 ## Terminado cuando
 Se cumple §10 de las reglas comunes.
