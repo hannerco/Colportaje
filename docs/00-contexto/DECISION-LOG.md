@@ -502,6 +502,16 @@ El dueño revisó las 27 interpretaciones de `07-historias-usuario/INTERPRETACIO
 
 ---
 
+## Ronda 29 — Nombre automático de los Abibonos (2026-11-12)
+
+| # | Tema | Resultado |
+|---|---|---|
+| 1 | Nombre por defecto del Abibono | **"Quiero que se nombre ahora como Abibono (1), Abibono (2), y así, de forma consecutiva. Si al abibono 2 le cambio el nombre, el siguiente aún así por defecto se va a llamar Abibono (3). Si hay borradores, tampoco cuentan todavía en la secuencia."** [D] Reemplaza «Abibono – fecha». El número se asigna al confirmar y no cambia; renombrar no altera la secuencia; los borradores no consumen número. Detalles en I-28 a I-31 (por confirmar con el dueño). |
+
+*Consecuencias:* BR-DEP-02; `leader_deposit.title` pasa a ser opcional y se agrega `deposit_number` (DOMAIN-MODEL, DATABASE); HU-DIN-01/04/05/06/07; FD-11.
+
+---
+
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.
 2. **Repositorio de GitHub: `Colportaje`** (2026-11-04). Se pensó en `colportor`, pero el dueño ya había creado `hannerco/Colportaje` y pidió dejar todo con ese nombre.

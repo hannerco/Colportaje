@@ -23,7 +23,7 @@ Detalles que los docs no fijaban y que el asistente decidió al escribir las his
 | I-15 | A un cliente archivado no se le asignan libros ni se le registran cobros nuevos (primero se restaura); sí se pueden corregir sus cobros existentes | HU-CLI-09, HU-ABO-02 | Archivado = "nada pendiente" (BR-CUS-09); sus cobros siguen en Dinero (AF-47) |
 | I-16 | Libros en físico muestra títulos desactivados que aún tienen ejemplares; Agregar al inventario solo muestra activos | HU-INV-03, HU-INV-02 | BR-TIT-03 y AF-55 |
 | I-17 | "Por resolver" se ordena de la novedad **más nueva a la más antigua** (ronda 28) | HU-INV-03 | Decisión del dueño |
-| I-18 | El sufijo " (2)" del título automático del Abibono cuenta los Abibonos no borrados con la misma fecha | HU-DIN-01 | BR-DEP-02 "si ya existe otro ese día" |
+| I-18 | ~~El sufijo « (2)» del título automático cuenta los Abibonos con la misma fecha~~ | HU-DIN-01 | **Reemplazada en la ronda 29**: el nombre automático es «Abibono (n)» consecutivo (BR-DEP-02, I-28 a I-31) |
 | I-19 | Disparadores de la alerta de abonos que no cuadran: la cuota inicial o quitar un libro **durante la creación** muestran franja; registrar un cobro en un cliente guardado y **cobrar más de lo acordado** abren el modal; "Revisar" usa "más lejano" y motivo `manual` | HU-ABO-07 | BR-PAY-13 lista los disparadores; AF-21 pide modal para el cobro mayor; la franja de creación sigue la ronda 22 |
 | I-20 | Agregar un libro nunca genera la alerta (la deuda sube) | HU-CLI-09 | Solo puede generar "sin programar" |
 | I-21 | El "último punto elegido" del selector de ubicación se guarda en el dispositivo | HU-CLI-06 | BR-CUS-08 no dice dónde; no necesita viajar al servidor |
@@ -33,3 +33,7 @@ Detalles que los docs no fijaban y que el asistente decidió al escribir las his
 | I-25 | Durante la creación, reemplazar el plan borra los programados anteriores sin dejar evento (nunca existieron para el cliente) | HU-ABO-03 | El plan aún se está armando; no es una cancelación |
 | I-26 | "Borrar" un programado (error de registro, no queda rastro visible) y "Cancelar" (queda en Cancelados) son acciones distintas | HU-ABO-04 | BR-PAY-11 permite borrar; BR-PAY-13 define cancelar con motivo |
 | I-27 | En un Abibono confirmado la nota no puede quedar vacía si la diferencia no es 0 | HU-DIN-05 | Mantiene BR-DEP-06 después de confirmar |
+| I-28 | El número `n` de «Abibono (n)» se asigna **al confirmar por primera vez** y no cambia nunca (ni al renombrar ni al reabrir) | HU-DIN-01, 05, 07 | El dueño: renombrar no altera la secuencia y los borradores no cuentan todavía (ronda 29) |
+| I-29 | Un borrador muestra como sugerencia el siguiente número libre; dos borradores pueden mostrar el mismo, y al confirmar cada uno toma el siguiente que corresponda | HU-DIN-01, 05 | Consecuencia directa de «los borradores no cuentan» |
+| I-30 | El nombre automático **no se guarda** (el título queda vacío): si el usuario lo conserva, se calcula al mostrar; si escribe uno, ese se guarda | HU-DIN-01, 04, 05 | Así el nombre sugerido se ajusta solo al confirmar y no hay duplicados |
+| I-31 | La secuencia es del colportor (no global) y sigue la regla «mayor número asignado + 1»; reabrir un Abibono conserva su número | HU-DIN-01, 07 | Sin huecos: solo se pueden borrar borradores, que nunca tuvieron número |

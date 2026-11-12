@@ -366,7 +366,7 @@ si no convence, el dueño pedirá otras variantes.
 2) ABIBONOS (tooltip del nombre: "Entrega al líder"). Lista con: nombre, fecha, total, efectivo,
    transferencia, estado (Borrador / Confirmado) y miniatura del recibo. Muestra el "Total abonado al
    líder". Sin subvistas en óvalos. Orden y búsqueda.
-3) NUEVO ABIBONO (precargado desde la tarjeta o desde Hoy): título automático "Abibono – dd/mm/aaaa" y
+3) NUEVO ABIBONO (precargado desde la tarjeta o desde Hoy): nombre automático "Abibono (n)" (n consecutivo, p. ej. "Abibono (3)") y
    fecha automática, ambos editables. Lista de abonos Cobrados libres, TODOS preseleccionados, con casillas;
    asignaciones de minibooks (opcionales). Efectivo y transferencia se autocalculan y son editables; el
    Total es derivado y NO editable. "Esperado" vs "Entregado" y "Diferencia" siempre visibles; si la

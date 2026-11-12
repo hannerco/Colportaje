@@ -22,14 +22,17 @@
 - **R1.** El motivo DEBE tener texto.
 - **R2.** En una transacción: el Abibono DEBE pasar a `draft`; sus abonos de `delivered` a `collected` (siguen vinculados a él); registrar `leader_deposit_event reopened` con el motivo y un `payment_event reopened` por abono.
 - **R3.** Solo un Abibono `confirmed` DEBE poder reabrirse.
+- **R5.** El Abibono reabierto DEBE conservar su `deposit_number`; reabrir NO DEBE liberar ni reasignar números (BR-DEP-02).
 - **R4.** Sus fotos de recibo DEBEN conservarse; al volver a borrador, se pueden quitar o reemplazar.
 
 ## Criterios de aceptación
-- **CA-1.** **Dado** "Abibono – 25/10/2026" confirmado con 5 abonos por 380.000, **cuando** se reabre con "Incluí por error el abono de Óscar Iván Mejía", **entonces** queda en borrador, sus 5 abonos vuelven a cobrados y cuentan otra vez en "Por entregar".
+- **CA-1.** **Dado** "Abibono (4)" confirmado el 25/10/2026 con 5 abonos por 380.000, **cuando** se reabre con "Incluí por error el abono de Óscar Iván Mejía", **entonces** queda en borrador, sus 5 abonos vuelven a cobrados y cuentan otra vez en "Por entregar".
 - **CA-2.** **Dado** ese borrador, **cuando** se desmarca el abono de Óscar y se confirma de nuevo con recibo y nota por la diferencia, **entonces** queda confirmado con 4 abonos, y el de Óscar sigue cobrado y libre.
 - **CA-3.** **Dado** un motivo vacío, **cuando** se reabre, **entonces** `REASON_REQUIRED` y nada cambia.
 - **CA-4.** **Dado** un borrador, **cuando** se intenta reabrir, **entonces** `DEPOSIT_NOT_CONFIRMED`.
 - **CA-5.** **Dado** el Abibono reabierto y confirmado de nuevo, **cuando** se lee su historial, **entonces** tiene, en orden: confirmado, reabierto (con el motivo), confirmado.
+
+- **CA-6.** **Dado** "Abibono (2)" reabierto y, mientras tanto, un "Abibono (3)" ya confirmado, **cuando** se confirma de nuevo el (2) con su nombre automático, **entonces** sigue llamándose "Abibono (2)" y el siguiente nuevo se muestra como "Abibono (4)".
 
 ## Casos borde y errores
 - Reabrir dos veces seguidas: la segunda devuelve `DEPOSIT_NOT_CONFIRMED`.

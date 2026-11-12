@@ -155,7 +155,8 @@ Checks: `status in ('scheduled','canceled') ⇒ kind = 'scheduled' ∧ agreed_am
 ## `leader_deposit` (Abibono 🔶 — "Entrega al líder")
 | Columna | Tipo | Restricciones |
 |---|---|---|
-| `title` | `text` | not null; automático `Abibono – dd/mm/aaaa [(n)]` |
+| `title` | `text null` | lo que escribió el usuario; `null` = nombre automático `Abibono (n)` (se calcula al mostrar) |
+| `deposit_number` | `integer null` | consecutivo por colportor, se asigna **al confirmar por primera vez**; único por `owner_id`; nunca cambia ni se reutiliza; `null` en borradores nuevos (BR-DEP-02) |
 | `deposit_date` | `date` | default hoy (Bogota) |
 | `cash_amount` | `integer` | `≥ 0` |
 | `transfer_amount` | `integer` | `≥ 0` |
