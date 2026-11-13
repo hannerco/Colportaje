@@ -11,6 +11,7 @@ import { createUser } from '../../scripts/lib/create-user';
 import { pool } from '../rls/helpers/db';
 import { napiImageCodec, photoLikeJpeg } from '../support/napi-image-codec';
 import { adminClient, anonClient, uniqueEmail } from './helpers/local-supabase';
+import { fakeConnectivity } from '../support/fake-connectivity';
 
 const admin = adminClient();
 const userIds: string[] = [];
@@ -41,7 +42,7 @@ const webp = (bytes = 2048) => new Blob([new Uint8Array(bytes)], { type: 'image/
 
 function photoDeps(client: AppSupabaseClient) {
   return {
-    connectivity: { isOnline: () => true },
+    connectivity: fakeConnectivity(true),
     auth: createSupabaseAuthRepository(() => client),
     imageCodec: napiImageCodec,
     storage: createSupabaseStorageRepository(() => client),

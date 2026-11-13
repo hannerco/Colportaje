@@ -8,6 +8,7 @@ import type { AuthChange, AuthRepository, ProfileRepository } from '@/repositori
 import { AppFailure, unwrap } from '../shared/app-failure';
 import { createSessionStore } from './session-store';
 import { signIn } from './use-cases/sign-in';
+import { fakeConnectivity } from '../../../tests/support/fake-connectivity';
 
 const activeProfile: Profile = {
   id: 'u1',
@@ -48,7 +49,7 @@ const profilesReturning = (result: Result<Profile, AppError>): ProfileRepository
   getCurrentProfile: async () => result,
 });
 
-const online = { isOnline: () => true };
+const online = fakeConnectivity(true);
 const credentials = { email: ' hanner@example.test ', password: 'secreta' };
 
 describe('signIn (HU-BASE-03)', () => {
@@ -66,7 +67,7 @@ describe('signIn (HU-BASE-03)', () => {
   it('sin conexión devuelve OFFLINE sin intentar', async () => {
     const { auth } = fakeAuth();
     const result = await signIn(
-      { auth, profiles: profilesReturning(ok(activeProfile)), connectivity: { isOnline: () => false } },
+      { auth, profiles: profilesReturning(ok(activeProfile)), connectivity: fakeConnectivity(false) },
       credentials,
     );
     expect(result).toEqual(err(appError('OFFLINE')));

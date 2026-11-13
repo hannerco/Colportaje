@@ -1,7 +1,8 @@
 import { AUTH_ERROR_CODES } from '@/domain/auth';
-import { appError, COMMON_ERROR_CODES, type AppError } from '@/domain/shared/errors';
+import { appError, type AppError } from '@/domain/shared/errors';
 import { err, ok, type Result } from '@/domain/shared/result';
 import type { AuthRepository, Connectivity, ProfileRepository } from '@/repositories';
+import { runMutation } from '../../shared/run-mutation';
 
 export type SignInDeps = {
   readonly auth: AuthRepository;
@@ -17,19 +18,19 @@ export async function signIn(
   deps: SignInDeps,
   input: { email: string; password: string },
 ): Promise<Result<void, AppError>> {
-  if (!deps.connectivity.isOnline()) return err(appError(COMMON_ERROR_CODES.OFFLINE));
+  return runMutation(deps.connectivity, async () => {
+    const signedIn = await deps.auth.signIn({ email: input.email.trim(), password: input.password });
+    if (!signedIn.ok) return signedIn;
 
-  const signedIn = await deps.auth.signIn({ email: input.email.trim(), password: input.password });
-  if (!signedIn.ok) return signedIn;
-
-  const profile = await deps.profiles.getCurrentProfile();
-  if (!profile.ok) {
-    await deps.auth.signOut();
-    return profile;
-  }
-  if (!profile.value.isActive) {
-    await deps.auth.signOut();
-    return err(appError(AUTH_ERROR_CODES.USER_INACTIVE));
-  }
-  return ok(undefined);
+    const profile = await deps.profiles.getCurrentProfile();
+    if (!profile.ok) {
+      await deps.auth.signOut();
+      return profile;
+    }
+    if (!profile.value.isActive) {
+      await deps.auth.signOut();
+      return err(appError(AUTH_ERROR_CODES.USER_INACTIVE));
+    }
+    return ok(undefined);
+  });
 }

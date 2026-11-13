@@ -7,7 +7,7 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
-    include: ['src/**/*.test.{ts,tsx}', 'tests/architecture/**/*.test.ts'],
+    include: ['src/**/*.test.{ts,tsx}', 'tests/architecture/**/*.test.ts', 'tests/offline/**/*.test.ts'],
     coverage: {
       provider: 'v8',
       include: ['src/domain/**/*.ts'],

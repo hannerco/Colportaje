@@ -42,3 +42,10 @@ export const adminClient = (): AppSupabaseClient =>
 
 export const uniqueEmail = (label: string) =>
   `${label}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.test`;
+
+/** Cliente local con la sesión de `accessToken` y un `fetch` propio (para simular fallos de red). */
+export const clientWithFetch = (accessToken: string, customFetch: typeof fetch): AppSupabaseClient =>
+  createClient<Database>(localStatus().API_URL, localStatus().ANON_KEY, {
+    ...noPersistence,
+    global: { fetch: customFetch, headers: { Authorization: `Bearer ${accessToken}` } },
+  });

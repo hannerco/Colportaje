@@ -1,6 +1,6 @@
 'use client';
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query';
 import { useSyncExternalStore } from 'react';
 import { INITIAL_SESSION_STATE, type SessionState } from '@/domain/auth';
 import type { AuthRepository } from '@/repositories';
@@ -13,6 +13,12 @@ export const authQueryKeys = {
   all: ['auth'] as const,
   currentProfile: (userId: string | undefined) => ['auth', 'current-profile', userId] as const,
 };
+
+/** ¿Hay en caché un perfil de un usuario distinto de `userId`? */
+export const cacheBelongsToAnotherUser = (queryClient: QueryClient, userId: string | null): boolean =>
+  queryClient
+    .getQueriesData({ queryKey: ['auth', 'current-profile'] })
+    .some(([key, data]) => data !== undefined && key[2] !== userId);
 
 const stores = new WeakMap<AuthRepository, SessionStore>();
 
@@ -51,8 +57,15 @@ export function useSignIn() {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: (input: { email: string; password: string }) => signIn(repositories, input),
-    onSuccess: (result) => {
-      if (result.ok) void queryClient.invalidateQueries({ queryKey: authQueryKeys.all });
+    onSuccess: async (result) => {
+      if (!result.ok) return;
+      // La caché guardada es del usuario anterior si la sesión venció y entró otra persona (HU-BASE-06).
+      const userId = await repositories.auth.getCurrentUserId();
+      if (cacheBelongsToAnotherUser(queryClient, userId)) {
+        queryClient.clear();
+        await repositories.offlineCache.clear();
+      }
+      void queryClient.invalidateQueries({ queryKey: authQueryKeys.all });
     },
   });
   return { signIn: mutation.mutateAsync, isPending: mutation.isPending };
@@ -63,12 +76,14 @@ export function useSignIn() {
  * (puede usarlo otra persona); si la sesión solo vence, la caché se conserva (AF-83, R4).
  */
 export function useSignOut() {
-  const { auth } = useRepositories();
+  const { auth, offlineCache } = useRepositories();
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: () => auth.signOut(),
-    onSuccess: (result) => {
-      if (result.ok) queryClient.clear();
+    onSuccess: async (result) => {
+      if (!result.ok) return;
+      queryClient.clear();
+      await offlineCache.clear(); // de inmediato, sin esperar al guardado periódico (HU-BASE-06)
     },
   });
   return { signOut: mutation.mutateAsync, isPending: mutation.isPending };

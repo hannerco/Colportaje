@@ -91,6 +91,7 @@ Implementar en este orden. Una HU solo empieza cuando sus dependencias están te
 | HU-BASE-03 | Terminada (2026-11-13) | `will-dev` |
 | HU-BASE-04 | Terminada (2026-11-13); falta cargar el catálogo real (punto de entrega) | `will-dev` |
 | HU-BASE-05 | Terminada (2026-11-13); falta probar la compresión en un iPhone real (OQ-43) | `will-dev` |
+| HU-BASE-06 | Terminada (2026-11-13); la E2E con Playwright queda para cuando exista la primera pantalla o el primer despliegue (no hay UI que recorrer) | `will-dev` |
 
 **Flujo de trabajo del back (desde 2026-11-13):** las HU se programan en la rama `will-dev`, con un commit por HU y la CI corriendo en cada push. No se abre un PR a `main` por cada HU; `main` se actualiza con un PR desde `will-dev` cuando se acuerde con el dueño. Antes de cada commit: `pnpm lint && pnpm typecheck && pnpm test && pnpm test:rls && pnpm build`.
 

@@ -5,6 +5,7 @@ import type { AuthRepository, ImageCodec, PhotoRepository, StorageRepository } f
 import { napiImageCodec, photoLikeJpeg } from '../../../tests/support/napi-image-codec';
 import { compressImage } from './compress-image';
 import { createPhoto, uploadPhotoFiles } from './upload-photo';
+import { fakeConnectivity } from '../../../tests/support/fake-connectivity';
 
 const dimensionsOf = async (blob: Blob) => {
   const image = await napiImageCodec.decode(blob);
@@ -82,7 +83,7 @@ describe('compressImage: búsqueda de calidad', () => {
 describe('subida de fotos (HU-BASE-05)', () => {
   const okCodec = fakeCodec(() => 1000);
   const auth = { getCurrentUserId: async () => 'owner-1' } as AuthRepository;
-  const online = { isOnline: () => true };
+  const online = fakeConnectivity(true);
   const input = { photoId: 'photo-1', kind: 'customer_info' as const, file: new Blob() };
 
   const storageWith = (failOn?: string): StorageRepository & { uploaded: string[] } => {
@@ -143,7 +144,7 @@ describe('subida de fotos (HU-BASE-05)', () => {
     const codec = fakeCodec(() => 1000);
     const storage = storageWith();
     const result = await uploadPhotoFiles(
-      { connectivity: { isOnline: () => false }, auth, imageCodec: codec, storage },
+      { connectivity: fakeConnectivity(false), auth, imageCodec: codec, storage },
       input,
     );
     expect(result).toEqual(err(appError('OFFLINE')));

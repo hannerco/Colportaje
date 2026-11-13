@@ -8,6 +8,7 @@ import type {
   PhotoRepository,
   StorageRepository,
 } from '@/repositories';
+import { runMutation } from '../shared/run-mutation';
 import { compressImage } from './compress-image';
 
 export type PhotoUploadDeps = {
@@ -34,20 +35,21 @@ export async function uploadPhotoFiles(
   deps: PhotoUploadDeps,
   input: { photoId: string; kind: PhotoKind; file: Blob },
 ): Promise<Result<UploadedPhotoFiles, AppError>> {
-  if (!deps.connectivity.isOnline()) return err(appError(COMMON_ERROR_CODES.OFFLINE));
-  const ownerId = await deps.auth.getCurrentUserId();
-  if (!ownerId) return err(appError(COMMON_ERROR_CODES.SESSION_EXPIRED));
+  return runMutation(deps.connectivity, async () => {
+    const ownerId = await deps.auth.getCurrentUserId();
+    if (!ownerId) return err(appError(COMMON_ERROR_CODES.SESSION_EXPIRED));
 
-  const compressed = await compressImage(deps.imageCodec, input.file);
-  if (!compressed.ok) return compressed;
+    const compressed = await compressImage(deps.imageCodec, input.file);
+    if (!compressed.ok) return compressed;
 
-  const { path, thumbPath } = photoPaths(ownerId, input.kind, input.photoId);
-  const full = await deps.storage.upload(path, compressed.value.full);
-  if (!full.ok) return full;
-  const thumb = await deps.storage.upload(thumbPath, compressed.value.thumb);
-  if (!thumb.ok) return thumb;
+    const { path, thumbPath } = photoPaths(ownerId, input.kind, input.photoId);
+    const full = await deps.storage.upload(path, compressed.value.full);
+    if (!full.ok) return full;
+    const thumb = await deps.storage.upload(thumbPath, compressed.value.thumb);
+    if (!thumb.ok) return thumb;
 
-  return ok({ path, thumbPath, bytes: compressed.value.fullBytes + compressed.value.thumbBytes });
+    return ok({ path, thumbPath, bytes: compressed.value.fullBytes + compressed.value.thumbBytes });
+  });
 }
 
 /** Flujo genérico completo: subir archivos y, solo si ambas subidas terminan, crear la fila `photo` (R4). */

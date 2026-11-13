@@ -5,6 +5,7 @@ import { signIn, type SignInDeps } from '@/features/auth/use-cases/sign-in';
 import { createUser } from '../../scripts/lib/create-user';
 import { pool } from '../rls/helpers/db';
 import { adminClient, anonClient, uniqueEmail } from './helpers/local-supabase';
+import { fakeConnectivity } from '../support/fake-connectivity';
 
 const admin = adminClient();
 const createdIds: string[] = [];
@@ -34,7 +35,7 @@ function deviceRepositories(): SignInDeps {
   return {
     auth: createSupabaseAuthRepository(() => client),
     profiles: createSupabaseProfileRepository(() => client),
-    connectivity: { isOnline: () => true },
+    connectivity: fakeConnectivity(true),
   };
 }
 
