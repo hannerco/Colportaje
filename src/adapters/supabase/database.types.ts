@@ -554,6 +554,10 @@ export type Database = {
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
       next_copy_number: { Args: { p_owner: string; p_title: string }; Returns: number };
       photo_total_bytes: { Args: Record<PropertyKey, never>; Returns: number };
+      resolve_schedule_excess: {
+        Args: { p_choice: Json; p_customer_id: string; p_trigger: string };
+        Returns: undefined;
+      };
       today_bogota: { Args: Record<PropertyKey, never>; Returns: string };
     };
     Enums: {

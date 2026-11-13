@@ -4,6 +4,8 @@ import { offlineCacheFrom } from '@/adapters/browser/query-persister';
 import { createSupabaseAuthRepository } from '@/adapters/supabase/auth-repository';
 import { createSupabaseBrowserClient, type AppSupabaseClient } from '@/adapters/supabase/client';
 import { createSupabaseCopyRepository } from '@/adapters/supabase/copy-repository';
+import { createSupabaseCustomerRepository } from '@/adapters/supabase/customer-repository';
+import { createSupabasePaymentRepository } from '@/adapters/supabase/payment-repository';
 import { createSupabasePhotoRepository } from '@/adapters/supabase/photo-repository';
 import { createSupabaseProfileRepository } from '@/adapters/supabase/profile-repository';
 import { createSupabaseStorageRepository } from '@/adapters/supabase/storage-repository';
@@ -22,6 +24,8 @@ export function createAppRepositories(persister: Persister): Repositories {
     profiles: createSupabaseProfileRepository(getClient),
     titles: createSupabaseTitleRepository(getClient),
     copies: createSupabaseCopyRepository(getClient),
+    customers: createSupabaseCustomerRepository(getClient),
+    payments: createSupabasePaymentRepository(getClient),
     photos: createSupabasePhotoRepository(getClient),
     storage: createSupabaseStorageRepository(getClient),
     imageCodec: canvasImageCodec,
