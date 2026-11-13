@@ -29,7 +29,8 @@ const RULES = {
   // El dominio es TypeScript puro: solo se importa a sí mismo (R1).
   domain: [
     {
-      regex: '^(?!\\.{1,2}/|@/domain(?:/|$)|vitest$)',
+      // vitest y fast-check solo aparecen en pruebas; la prueba de pureza revisa el código sin ellas.
+      regex: '^(?!\\.{1,2}/|@/domain(?:/|$)|vitest$|fast-check$)',
       message:
         'Límite entre capas: "domain" es TypeScript puro y no importa paquetes externos (ARCHITECTURE §2, HU-BASE-01 R1).',
     },

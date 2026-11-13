@@ -19,6 +19,61 @@ export type Database = {
         };
         Relationships: [];
       };
+      customer: {
+        Row: {
+          address: string | null;
+          archived_at: string | null;
+          avatar_emoji: string | null;
+          created_at: string;
+          deleted_at: string | null;
+          id: string;
+          info: string | null;
+          latitude: number | null;
+          location_accuracy_m: number | null;
+          longitude: number | null;
+          maps_url: string | null;
+          name: string;
+          owner_id: string;
+          phone: string | null;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          address?: string | null;
+          archived_at?: string | null;
+          avatar_emoji?: string | null;
+          created_at?: string;
+          deleted_at?: string | null;
+          id: string;
+          info?: string | null;
+          latitude?: number | null;
+          location_accuracy_m?: number | null;
+          longitude?: number | null;
+          maps_url?: string | null;
+          name: string;
+          owner_id?: string;
+          phone?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          address?: string | null;
+          archived_at?: string | null;
+          avatar_emoji?: string | null;
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          info?: string | null;
+          latitude?: number | null;
+          location_accuracy_m?: number | null;
+          longitude?: number | null;
+          maps_url?: string | null;
+          name?: string;
+          owner_id?: string;
+          phone?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       photo: {
         Row: {
           bytes: number;
