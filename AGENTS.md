@@ -26,7 +26,7 @@
 - Fase 0: ver `docs/06-planificacion/ROADMAP.md` y `docs/05-operacion/DEPLOYMENT.md` §2 (repo, cuentas y diseño pendientes).
 - **Diseño de Clientes, Inventario y Dinero cerrado** (ronda 26). Para programar su back, sigue `docs/07-historias-usuario/README.md`: una HU por sesión, en el orden del índice, con `00-REGLAS-COMUNES.md`. Lo que falta por diseñar está en `docs/04-diseno/pendientes/`.
 - El repositorio `hannerco/Colportaje` ya es **privado** (SG-03, 2026-11-10).
-- **Avance del back:** HU-BASE-01 en `main`; HU-BASE-02 a 06 terminadas en `will-dev`; HU-CLI-01, HU-INV-01, HU-ABO-01, HU-INV-02, HU-INV-03, HU-ABO-07, HU-DIN-01, HU-CLI-02, HU-INV-04, HU-INV-05 e HU-CLI-09 terminadas (bloques 5, 6 y 7 completos; del 8 siguen HU-ABO-02 a 05). Falta HU-BASE-07 (despliegue; antes, el dueño decide OQ-42). El trabajo se acumula en la rama `will-dev` (sin PR por HU); ver "Avance" en `docs/07-historias-usuario/README.md`. Los demás módulos (Hoy, Calendario, Minibooks, Hacer inventario, Admin) esperan su diseño.
+- **Avance del back:** HU-BASE-01 en `main`; HU-BASE-02 a 06 terminadas en `will-dev`; HU-CLI-01, HU-INV-01, HU-ABO-01, HU-INV-02, HU-INV-03, HU-ABO-07, HU-DIN-01, HU-CLI-02, HU-INV-04, HU-INV-05, HU-CLI-09 e HU-ABO-02 terminadas (bloques 5, 6 y 7 completos; del 8 siguen HU-ABO-03, 04 y 05). Falta HU-BASE-07 (despliegue; antes, el dueño decide OQ-42). El trabajo se acumula en la rama `will-dev` (sin PR por HU); ver "Avance" en `docs/07-historias-usuario/README.md`. Los demás módulos (Hoy, Calendario, Minibooks, Hacer inventario, Admin) esperan su diseño.
 
 ## Comandos (cuando exista el código)
 ```bash

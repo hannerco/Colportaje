@@ -1,3 +1,7 @@
+import { z } from 'zod';
+import { COLLECTED_PAYMENT_ERROR_CODES } from '@/domain/collected-payment';
+import { CUSTOMER_ERROR_CODES } from '@/domain/customer-data';
+import { PAYMENT_ERROR_CODES } from '@/domain/payment';
 import { SCHEDULE_EXCESS_ERROR_CODES } from '@/domain/schedule-excess';
 import { COMMON_ERROR_CODES } from '@/domain/shared/errors';
 import { err, ok } from '@/domain/shared/result';
@@ -33,5 +37,69 @@ export function createSupabasePaymentRepository(getClient: GetSupabaseClient): P
       }
       return ok(undefined);
     },
+
+    async setCreationDownPayment({ paymentId, customerId, amount, method }) {
+      const { error } = await getClient().rpc('set_creation_down_payment', {
+        p_payment_id: paymentId,
+        p_customer_id: customerId,
+        p_amount: amount,
+        p_method: method,
+      });
+      return error ? err(mapCollectedError(error)) : ok(undefined);
+    },
+
+    async registerCollected(input) {
+      const { error } = await getClient().rpc('register_collected_payment', {
+        p_payment_id: input.paymentId,
+        p_customer_id: input.customerId,
+        p_kind: input.kind,
+        p_paid_amount: input.paidAmount,
+        p_paid_at: input.paidAt,
+        p_method: input.method,
+      });
+      return error ? err(mapCollectedError(error)) : ok(undefined);
+    },
+
+    async updateCollected(paymentId, patch) {
+      const { data, error } = await getClient().rpc('update_collected_payment', {
+        p_payment_id: paymentId,
+        ...(patch.paidAmount !== undefined && { p_paid_amount: patch.paidAmount }),
+        ...(patch.paidAt !== undefined && { p_paid_at: patch.paidAt }),
+        ...(patch.method !== undefined && { p_method: patch.method }),
+      });
+      if (error) return err(mapCollectedError(error));
+      return ok({ customerId: z.uuid().parse(data) });
+    },
+
+    async delete(paymentId) {
+      const { data, error } = await getClient().rpc('delete_payment', { p_payment_id: paymentId });
+      if (error) return err(mapCollectedError(error));
+      const [row] = deletedRowsSchema.parse(data);
+      return ok({ customerId: row!.customer_id, previousStatus: row!.previous_status });
+    },
   };
 }
+
+const deletedRowsSchema = z
+  .array(
+    z.object({
+      customer_id: z.uuid(),
+      previous_status: z.enum(['scheduled', 'collected', 'delivered', 'canceled']),
+    }),
+  )
+  .length(1);
+
+const COLLECTED_ERRORS = [
+  ...Object.values(COLLECTED_PAYMENT_ERROR_CODES),
+  CUSTOMER_ERROR_CODES.CUSTOMER_ARCHIVED,
+  PAYMENT_ERROR_CODES.INVALID_TRANSITION,
+  COMMON_ERROR_CODES.VALIDATION,
+  COMMON_ERROR_CODES.CONFLICT,
+  COMMON_ERROR_CODES.NOT_FOUND,
+  COMMON_ERROR_CODES.FORBIDDEN,
+];
+
+const mapCollectedError = (error: Parameters<typeof mapRpcError>[0]) =>
+  mapRpcError(error, COLLECTED_ERRORS, (code, detail) =>
+    code === COMMON_ERROR_CODES.VALIDATION && detail ? { field: detail } : undefined,
+  );

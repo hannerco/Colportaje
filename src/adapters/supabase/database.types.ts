@@ -675,18 +675,56 @@ export type Database = {
           title_id: string;
         }[];
       };
+      assert_collected: { Args: { p_paid_amount: number; p_paid_at: string }; Returns: undefined };
       assign_copy_to_customer: { Args: { p_copy_id: string; p_customer_id: string }; Returns: undefined };
+      delete_payment: {
+        Args: { p_payment_id: string };
+        Returns: {
+          customer_id: string;
+          previous_status: Database['public']['Enums']['payment_status'];
+        }[];
+      };
       is_active_user: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
       next_copy_number: { Args: { p_owner: string; p_title: string }; Returns: number };
       next_deposit_number: { Args: { p_owner: string }; Returns: number };
       photo_total_bytes: { Args: Record<PropertyKey, never>; Returns: number };
+      register_collected_payment: {
+        Args: {
+          p_customer_id: string;
+          p_kind: Database['public']['Enums']['payment_kind'];
+          p_method?: Database['public']['Enums']['pay_method'];
+          p_paid_amount: number;
+          p_paid_at?: string;
+          p_payment_id: string;
+        };
+        Returns: undefined;
+      };
+      require_active_user: { Args: Record<PropertyKey, never>; Returns: string };
       resolve_schedule_excess: {
         Args: { p_choice: Json; p_customer_id: string; p_trigger: string };
         Returns: undefined;
       };
       return_copy_from_customer: { Args: { p_copy_id: string; p_reason: string }; Returns: string };
+      set_creation_down_payment: {
+        Args: {
+          p_amount: number;
+          p_customer_id: string;
+          p_method?: Database['public']['Enums']['pay_method'];
+          p_payment_id: string;
+        };
+        Returns: undefined;
+      };
       today_bogota: { Args: Record<PropertyKey, never>; Returns: string };
+      update_collected_payment: {
+        Args: {
+          p_method?: Database['public']['Enums']['pay_method'];
+          p_paid_amount?: number;
+          p_paid_at?: string;
+          p_payment_id: string;
+        };
+        Returns: string;
+      };
       update_copy_received_date: { Args: { p_copy_id: string; p_date: string }; Returns: undefined };
     };
     Enums: {

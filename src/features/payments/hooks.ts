@@ -5,6 +5,15 @@ import type { ExcessChoice, ExcessTrigger } from '@/domain/schedule-excess';
 import { systemClock } from '@/lib/clock';
 import { useRepositories } from '../shared/repositories-provider';
 import { resolveScheduleExcess } from './use-cases/resolve-schedule-excess';
+import {
+  deletePayment,
+  registerCollectedPayment,
+  setCreationDownPayment,
+  updateCollectedPayment,
+  type RegisterCollectedInput,
+  type SetCreationDownPaymentInput,
+  type UpdateCollectedPatch,
+} from './use-cases/collected-payments';
 
 export const paymentQueryKeys = { all: ['payments'] as const };
 
@@ -33,4 +42,53 @@ export function useResolveScheduleExcess() {
     },
   });
   return { resolveScheduleExcess: mutation.mutateAsync, isPending: mutation.isPending };
+}
+
+/** Mutación de cobros que, al terminar bien, refresca abonos, clientes y Dinero. */
+function useCollectedMutation<TInput, TResult extends { ok: boolean }>(
+  run: (deps: Parameters<typeof setCreationDownPayment>[0], input: TInput) => Promise<TResult>,
+) {
+  const { payments, customers, connectivity } = useRepositories();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (input: TInput) => run({ payments, customers, connectivity, clock: systemClock }, input),
+    onSuccess: (result) => {
+      if (!result.ok) return;
+      for (const queryKey of AFFECTED_ROOTS) void queryClient.invalidateQueries({ queryKey });
+    },
+  });
+  return { mutate: mutation.mutateAsync, isPending: mutation.isPending };
+}
+
+/** Cuota inicial de la ficha nueva (HU-ABO-02): 0 o vacío la borra. Devuelve cuenta y franja de sobrante. */
+export function useSetCreationDownPayment() {
+  const { mutate, isPending } = useCollectedMutation((deps, input: SetCreationDownPaymentInput) =>
+    setCreationDownPayment(deps, input),
+  );
+  return { setCreationDownPayment: mutate, isPending };
+}
+
+/** "Registrar abono" en un cliente guardado: otra cuota inicial o un abono extra (modal de sobrante). */
+export function useRegisterCollectedPayment() {
+  const { mutate, isPending } = useCollectedMutation((deps, input: RegisterCollectedInput) =>
+    registerCollectedPayment(deps, input),
+  );
+  return { registerCollectedPayment: mutate, isPending };
+}
+
+/** Corrige un cobro (valor, fecha real o método). */
+export function useUpdateCollectedPayment() {
+  const { mutate, isPending } = useCollectedMutation(
+    (deps, input: { paymentId: string; patch: UpdateCollectedPatch }) =>
+      updateCollectedPayment(deps, input.paymentId, input.patch),
+  );
+  return { updateCollectedPayment: mutate, isPending };
+}
+
+/** Borra (lógico) un abono cobrado o por cobrar. */
+export function useDeletePayment() {
+  const { mutate, isPending } = useCollectedMutation((deps, paymentId: string) =>
+    deletePayment(deps, paymentId),
+  );
+  return { deletePayment: mutate, isPending };
 }

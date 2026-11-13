@@ -1,6 +1,9 @@
 import type { AppError } from '@/domain/shared/errors';
 import type { Result } from '@/domain/shared/result';
+import type { COP } from '@/domain/money';
+import type { PaymentStatus, PayMethod } from '@/domain/payment';
 import type { ExcessChoice, ExcessTrigger } from '@/domain/schedule-excess';
+import type { LocalDate } from '@/domain/time';
 
 /** Abonos (HU-ABO-*). Cada HU de Abonos agrega aquí sus acciones. */
 export interface PaymentRepository {
@@ -14,4 +17,40 @@ export interface PaymentRepository {
     choice: ExcessChoice,
     trigger: ExcessTrigger,
   ): Promise<Result<void, AppError>>;
+
+  /**
+   * Cuota inicial de la ficha nueva (una sola): 0 la borra; > 0 la crea con fecha de hoy o actualiza su valor
+   * (HU-ABO-02). Errores: `VALIDATION`, `PAYMENT_LOCKED`, `CUSTOMER_ARCHIVED`, `NOT_FOUND`, `NETWORK_ERROR`.
+   */
+  setCreationDownPayment(input: {
+    paymentId: string;
+    customerId: string;
+    amount: COP;
+    method: PayMethod;
+  }): Promise<Result<void, AppError>>;
+
+  /**
+   * Registra un cobro (otra cuota inicial o abono extra) en un cliente guardado. Idempotente por `paymentId`.
+   * Errores: `VALIDATION`, `CUSTOMER_ARCHIVED`, `CONFLICT`, `NOT_FOUND`, `NETWORK_ERROR`.
+   */
+  registerCollected(input: {
+    paymentId: string;
+    customerId: string;
+    kind: 'down_payment' | 'extra';
+    paidAmount: COP;
+    paidAt: LocalDate;
+    method: PayMethod;
+  }): Promise<Result<void, AppError>>;
+
+  /** Corrige un cobro. Errores: `VALIDATION`, `PAYMENT_LOCKED`, `NOT_FOUND`, `NETWORK_ERROR`. */
+  updateCollected(
+    paymentId: string,
+    patch: { paidAmount?: COP; paidAt?: LocalDate; method?: PayMethod },
+  ): Promise<Result<{ customerId: string }, AppError>>;
+
+  /**
+   * Borra (lógico) un abono por cobrar o cobrado; lo quita de su Abibono borrador. Devuelve el cliente y el
+   * estado que tenía. Errores: `PAYMENT_LOCKED`, `INVALID_TRANSITION`, `NOT_FOUND`, `NETWORK_ERROR`.
+   */
+  delete(paymentId: string): Promise<Result<{ customerId: string; previousStatus: PaymentStatus }, AppError>>;
 }

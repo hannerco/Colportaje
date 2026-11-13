@@ -35,5 +35,9 @@ export const fakeTitleRepository = (overrides: Partial<TitleRepository> = {}): T
 
 export const fakePaymentRepository = (overrides: Partial<PaymentRepository> = {}): PaymentRepository => ({
   resolveScheduleExcess: vi.fn(),
+  setCreationDownPayment: vi.fn(),
+  registerCollected: vi.fn(),
+  updateCollected: vi.fn(),
+  delete: vi.fn(),
   ...overrides,
 });
