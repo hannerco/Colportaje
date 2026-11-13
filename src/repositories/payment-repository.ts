@@ -65,4 +65,30 @@ export interface PaymentRepository {
     mode: PlanMode,
     items: readonly { paymentId: string; dueDate: LocalDate; amount: COP }[],
   ): Promise<Result<void, AppError>>;
+
+  /**
+   * Programa un abono suelto (HU-ABO-04). Idempotente por `paymentId`. Errores: `VALIDATION`,
+   * `CUSTOMER_ARCHIVED`, `CONFLICT`, `NOT_FOUND`, `NETWORK_ERROR`.
+   */
+  scheduleSingle(input: {
+    paymentId: string;
+    customerId: string;
+    agreedAmount: COP;
+    dueDate: LocalDate;
+  }): Promise<Result<void, AppError>>;
+
+  /** Cambia el valor de un programado. Errores: `VALIDATION`, `PAYMENT_NOT_SCHEDULED`, `CUSTOMER_ARCHIVED`, `NOT_FOUND`. */
+  updateScheduledAmount(
+    paymentId: string,
+    agreedAmount: COP,
+  ): Promise<Result<{ customerId: string }, AppError>>;
+
+  /** Corrige la fecha de un programado (y su fecha original), sin prórroga. Mismos errores. */
+  correctScheduledDate(
+    paymentId: string,
+    dueDate: LocalDate,
+  ): Promise<Result<{ customerId: string }, AppError>>;
+
+  /** Cancela programados de un mismo cliente (motivo manual). Errores: `PAYMENT_NOT_SCHEDULED`, `VALIDATION`, `NOT_FOUND`. */
+  cancelScheduled(paymentIds: readonly string[]): Promise<Result<{ customerId: string }, AppError>>;
 }

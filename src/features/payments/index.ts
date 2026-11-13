@@ -2,6 +2,10 @@
 export {
   paymentQueryKeys,
   useApplyPaymentPlan,
+  useCancelScheduledPayments,
+  useCorrectScheduledDate,
+  useScheduleSinglePayment,
+  useUpdateScheduledAmount,
   useDeletePayment,
   useRegisterCollectedPayment,
   useResolveScheduleExcess,
@@ -20,6 +24,14 @@ export {
 } from './use-cases/collected-payments';
 export { COLLECTED_PAYMENT_ERROR_CODES, DEFAULT_PAY_METHOD } from '@/domain/collected-payment';
 export { applyPaymentPlan, type ApplyPaymentPlanInput } from './use-cases/payment-plan';
+export {
+  cancelScheduledPayments,
+  correctScheduledDate,
+  scheduleSinglePayment,
+  updateScheduledAmount,
+  type ScheduleSingleInput,
+} from './use-cases/scheduled-payments';
+export { SCHEDULED_PAYMENT_ERROR_CODES } from '@/domain/scheduled-payment';
 // Plan de abonos (cálculo puro, sin red): el front arma la vista previa "Así quedan los abonos".
 export {
   PAYMENT_PLAN_ERROR_CODES,

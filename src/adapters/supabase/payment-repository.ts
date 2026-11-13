@@ -3,6 +3,7 @@ import { COLLECTED_PAYMENT_ERROR_CODES } from '@/domain/collected-payment';
 import { CUSTOMER_ERROR_CODES } from '@/domain/customer-data';
 import { PAYMENT_ERROR_CODES } from '@/domain/payment';
 import { PAYMENT_PLAN_ERROR_CODES } from '@/domain/payment-plan';
+import { SCHEDULED_PAYMENT_ERROR_CODES } from '@/domain/scheduled-payment';
 import { SCHEDULE_EXCESS_ERROR_CODES } from '@/domain/schedule-excess';
 import { COMMON_ERROR_CODES } from '@/domain/shared/errors';
 import { err, ok } from '@/domain/shared/result';
@@ -81,6 +82,42 @@ export function createSupabasePaymentRepository(getClient: GetSupabaseClient): P
       return error ? err(mapCollectedError(error)) : ok(undefined);
     },
 
+    async scheduleSingle(input) {
+      const { error } = await getClient().rpc('schedule_single_payment', {
+        p_payment_id: input.paymentId,
+        p_customer_id: input.customerId,
+        p_agreed_amount: input.agreedAmount,
+        p_due_date: input.dueDate,
+      });
+      return error ? err(mapCollectedError(error)) : ok(undefined);
+    },
+
+    async updateScheduledAmount(paymentId, agreedAmount) {
+      const { data, error } = await getClient().rpc('update_scheduled_amount', {
+        p_payment_id: paymentId,
+        p_agreed_amount: agreedAmount,
+      });
+      if (error) return err(mapCollectedError(error));
+      return ok({ customerId: z.uuid().parse(data) });
+    },
+
+    async correctScheduledDate(paymentId, dueDate) {
+      const { data, error } = await getClient().rpc('correct_scheduled_date', {
+        p_payment_id: paymentId,
+        p_due_date: dueDate,
+      });
+      if (error) return err(mapCollectedError(error));
+      return ok({ customerId: z.uuid().parse(data) });
+    },
+
+    async cancelScheduled(paymentIds) {
+      const { data, error } = await getClient().rpc('cancel_scheduled_payments', {
+        p_payment_ids: [...paymentIds],
+      });
+      if (error) return err(mapCollectedError(error));
+      return ok({ customerId: z.uuid().parse(data) });
+    },
+
     async delete(paymentId) {
       const { data, error } = await getClient().rpc('delete_payment', { p_payment_id: paymentId });
       if (error) return err(mapCollectedError(error));
@@ -102,6 +139,7 @@ const deletedRowsSchema = z
 const COLLECTED_ERRORS = [
   ...Object.values(COLLECTED_PAYMENT_ERROR_CODES),
   ...Object.values(PAYMENT_PLAN_ERROR_CODES),
+  ...Object.values(SCHEDULED_PAYMENT_ERROR_CODES),
   CUSTOMER_ERROR_CODES.CUSTOMER_ARCHIVED,
   PAYMENT_ERROR_CODES.INVALID_TRANSITION,
   COMMON_ERROR_CODES.VALIDATION,

@@ -680,7 +680,10 @@ export type Database = {
         Returns: undefined;
       };
       assert_collected: { Args: { p_paid_amount: number; p_paid_at: string }; Returns: undefined };
+      assert_scheduled: { Args: { p_agreed_amount: number; p_due_date: string }; Returns: undefined };
       assign_copy_to_customer: { Args: { p_copy_id: string; p_customer_id: string }; Returns: undefined };
+      cancel_scheduled_payments: { Args: { p_payment_ids: string[] }; Returns: string };
+      correct_scheduled_date: { Args: { p_due_date: string; p_payment_id: string }; Returns: string };
       delete_payment: {
         Args: { p_payment_id: string };
         Returns: {
@@ -690,6 +693,7 @@ export type Database = {
       };
       is_active_user: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
+      lock_scheduled_payment: { Args: { p_owner: string; p_payment_id: string }; Returns: string };
       next_copy_number: { Args: { p_owner: string; p_title: string }; Returns: number };
       next_deposit_number: { Args: { p_owner: string }; Returns: number };
       photo_total_bytes: { Args: Record<PropertyKey, never>; Returns: number };
@@ -710,6 +714,10 @@ export type Database = {
         Returns: undefined;
       };
       return_copy_from_customer: { Args: { p_copy_id: string; p_reason: string }; Returns: string };
+      schedule_single_payment: {
+        Args: { p_agreed_amount: number; p_customer_id: string; p_due_date: string; p_payment_id: string };
+        Returns: undefined;
+      };
       set_creation_down_payment: {
         Args: {
           p_amount: number;
@@ -730,6 +738,7 @@ export type Database = {
         Returns: string;
       };
       update_copy_received_date: { Args: { p_copy_id: string; p_date: string }; Returns: undefined };
+      update_scheduled_amount: { Args: { p_agreed_amount: number; p_payment_id: string }; Returns: string };
     };
     Enums: {
       app_role: 'colportor' | 'admin' | 'leader';

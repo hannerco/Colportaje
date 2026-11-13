@@ -2,6 +2,7 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { ExcessChoice, ExcessTrigger } from '@/domain/schedule-excess';
+import type { LocalDate } from '@/domain/time';
 import { systemClock } from '@/lib/clock';
 import { useRepositories } from '../shared/repositories-provider';
 import { resolveScheduleExcess } from './use-cases/resolve-schedule-excess';
@@ -15,6 +16,13 @@ import {
   type UpdateCollectedPatch,
 } from './use-cases/collected-payments';
 import { applyPaymentPlan, type ApplyPaymentPlanInput } from './use-cases/payment-plan';
+import {
+  cancelScheduledPayments,
+  correctScheduledDate,
+  scheduleSinglePayment,
+  updateScheduledAmount,
+  type ScheduleSingleInput,
+} from './use-cases/scheduled-payments';
 
 export const paymentQueryKeys = { all: ['payments'] as const };
 
@@ -103,4 +111,38 @@ export function useApplyPaymentPlan() {
     applyPaymentPlan(deps, input),
   );
   return { applyPaymentPlan: mutate, isPending };
+}
+
+/** Programa un abono suelto (HU-ABO-04): siempre se puede, aunque el cliente no tenga libro. */
+export function useScheduleSinglePayment() {
+  const { mutate, isPending } = useCollectedMutation((deps, input: ScheduleSingleInput) =>
+    scheduleSinglePayment(deps, input),
+  );
+  return { scheduleSinglePayment: mutate, isPending };
+}
+
+/** Cambia el valor de un abono programado (cualquier entero > 0). */
+export function useUpdateScheduledAmount() {
+  const { mutate, isPending } = useCollectedMutation(
+    (deps, input: { paymentId: string; agreedAmount: number }) =>
+      updateScheduledAmount(deps, input.paymentId, input.agreedAmount),
+  );
+  return { updateScheduledAmount: mutate, isPending };
+}
+
+/** Corrige la fecha de un programado (solo durante la creación del cliente): mueve solo ese abono. */
+export function useCorrectScheduledDate() {
+  const { mutate, isPending } = useCollectedMutation(
+    (deps, input: { paymentId: string; dueDate: LocalDate }) =>
+      correctScheduledDate(deps, input.paymentId, input.dueDate),
+  );
+  return { correctScheduledDate: mutate, isPending };
+}
+
+/** Cancela abonos programados (quedan en Cancelados, motivo manual). */
+export function useCancelScheduledPayments() {
+  const { mutate, isPending } = useCollectedMutation((deps, paymentIds: readonly string[]) =>
+    cancelScheduledPayments(deps, paymentIds),
+  );
+  return { cancelScheduledPayments: mutate, isPending };
 }
