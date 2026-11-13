@@ -1,11 +1,12 @@
 import { z } from 'zod';
+import { ADD_COPIES_ERROR_CODES } from '@/domain/add-batch';
 import type { CopyEvent } from '@/domain/copy';
 import { appError, COMMON_ERROR_CODES } from '@/domain/shared/errors';
 import { err, ok } from '@/domain/shared/result';
 import type { LocalDate } from '@/domain/time';
 import type { CopyRepository } from '@/repositories';
 import type { GetSupabaseClient } from './client';
-import { mapPostgrestError } from './errors';
+import { mapPostgrestError, mapRpcError } from './errors';
 
 const localDate = z
   .string()
@@ -102,5 +103,40 @@ export function createSupabaseCopyRepository(getClient: GetSupabaseClient): Copy
         }),
       );
     },
+
+    async addBatch(input) {
+      const { data, error } = await getClient().rpc('add_copies', {
+        p_batch_id: input.batchId,
+        p_received_at: input.receivedAt,
+        p_lines: input.lines.map((line) => ({ titleId: line.titleId, copyIds: [...line.copyIds] })),
+      });
+      if (error) return err(mapRpcError(error, ADD_COPIES_ERRORS, addCopiesDetails));
+      return ok({
+        created: createdRowsSchema.parse(data).map((row) => ({
+          copyId: row.copy_id,
+          titleId: row.title_id,
+          number: row.number,
+        })),
+      });
+    },
   };
 }
+
+const ADD_COPIES_ERRORS = [
+  ...Object.values(ADD_COPIES_ERROR_CODES),
+  COMMON_ERROR_CODES.VALIDATION,
+  COMMON_ERROR_CODES.CONFLICT,
+  COMMON_ERROR_CODES.FORBIDDEN,
+];
+
+const addCopiesDetails = (code: string, detail: string | null) => {
+  if (code === ADD_COPIES_ERROR_CODES.TITLE_INACTIVE && detail) {
+    return { titleIds: z.array(z.uuid()).parse(JSON.parse(detail)) };
+  }
+  // La base revalida la forma del lote; el dominio ya rechaza antes lo que puede (VALIDATION con field).
+  return code === COMMON_ERROR_CODES.VALIDATION ? { field: 'lines' } : undefined;
+};
+
+const createdRowsSchema = z.array(
+  z.object({ copy_id: z.uuid(), title_id: z.uuid(), number: z.number().int().positive() }),
+);

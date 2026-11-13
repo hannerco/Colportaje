@@ -542,6 +542,14 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      add_copies: {
+        Args: { p_batch_id: string; p_lines: Json; p_received_at: string };
+        Returns: {
+          copy_id: string;
+          number: number;
+          title_id: string;
+        }[];
+      };
       is_active_user: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
       next_copy_number: { Args: { p_owner: string; p_title: string }; Returns: number };

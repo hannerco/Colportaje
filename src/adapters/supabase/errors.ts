@@ -38,6 +38,23 @@ export const mapPostgrestError = (error: PostgrestError): AppError => {
   throw new Error(`Error inesperado de la base de datos (${error.code}): ${error.message}`);
 };
 
+/**
+ * Error de una función SQL (RPC). Las funciones de negocio lanzan `raise exception 'CODIGO: …'` con
+ * `errcode = 'P0001'`; si `CODIGO` es uno de los esperados (`known`), se devuelve como `AppError` con
+ * `details` = el `detail` de la excepción interpretado por `toDetails`. Lo demás sigue `mapPostgrestError`.
+ */
+export const mapRpcError = (
+  error: PostgrestError,
+  known: readonly string[],
+  toDetails: (code: string, detail: string | null) => Readonly<Record<string, unknown>> | undefined = () =>
+    undefined,
+): AppError => {
+  const code = error.code === 'P0001' ? /^([A-Z][A-Z_]*):/.exec(error.message)?.[1] : undefined;
+  if (code !== undefined && known.includes(code))
+    return appError(code, toDetails(code, error.details || null));
+  return mapPostgrestError(error);
+};
+
 /** Error de Supabase Storage (forma común de StorageApiError y StorageUnknownError). */
 type StorageErrorLike = { message: string; status?: number | undefined; statusCode?: string | undefined };
 

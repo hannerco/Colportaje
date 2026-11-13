@@ -8,7 +8,7 @@ import type { TitleRepository } from './title-repository';
 
 export type { AuthChange, AuthRepository } from './auth-repository';
 export type { Connectivity } from './connectivity';
-export type { CopyRepository } from './copy-repository';
+export type { CopyRepository, CreatedCopy } from './copy-repository';
 export type { OfflineCache } from './offline-cache';
 export type { DecodedImage, ImageCodec, NewPhoto, PhotoRepository, StorageRepository } from './photo-ports';
 export type { ProfileRepository } from './profile-repository';
