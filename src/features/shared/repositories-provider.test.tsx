@@ -5,7 +5,7 @@ import { RepositoriesProvider, useRepositories } from './repositories-provider';
 
 describe('RepositoriesProvider', () => {
   it('entrega a los hooks las implementaciones inyectadas', () => {
-    const fake = { marker: 'fake' } as Repositories;
+    const fake = { marker: 'fake' } as unknown as Repositories;
     let received: Repositories | undefined;
     function Probe() {
       received = useRepositories();

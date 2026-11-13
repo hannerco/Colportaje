@@ -60,8 +60,9 @@ Los valores que pueden cambiar viven en `src/domain/config/business-config.ts` (
 | `location.defaultCenter` | Colombia (vista país) | BR-CUS-08 |
 | `copyDelete.noteRequired` | `false` | BR-COPY-17 |
 | `undo.toastSeconds` | 6 | BR-COPY-11/17 (lo usa el front) |
-| `photos` | WebP, lado mayor ≤ 1.280 px, ~150 KB, miniatura ~15 KB | BR-PHO-01 |
-| `search.fuzzyThreshold` / `duplicates.nameThreshold` | los fija HU-CLI-05 / HU-CLI-02 con su prueba | BR-CUS-07/11 |
+| `photos` | WebP, lado mayor ≤ 1.280 px, ~150 KB, miniatura ~15 KB (lado mayor 320 px); URL firmadas de 1 hora | BR-PHO-01, HU-BASE-05 R3 |
+| `search.fuzzyThreshold` | lo fija HU-CLI-05 con su prueba | BR-CUS-07 |
+| `duplicates.nameThreshold` | 0,85 (similitud de nombres normalizados; fijado en HU-CLI-02 con su prueba) | BR-CUS-11 |
 
 ## 9. Extensibilidad (CONVENTIONS §5b, ADR-0041)
 1. Cambiar una tabla sin dañar lo demás: migraciones **aditivas** (expandir → migrar → contraer), nunca editar una migración aplicada; cada módulo accede a tablas ajenas solo por su repositorio.

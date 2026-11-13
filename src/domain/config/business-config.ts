@@ -28,11 +28,6 @@ export const businessConfig = deepFreeze({
       biweekly: [15, 30],
       monthly: [30],
     },
-    /** Separación mínima entre abonos sugeridos (INTERPRETACIONES I-07). */
-    minGapDays: {
-      biweekly: 7,
-      monthly: 20,
-    },
     weeklyStepDays: 7,
   },
 
@@ -64,7 +59,11 @@ export const businessConfig = deepFreeze({
     format: 'webp',
     maxLongSidePx: 1280,
     targetBytes: 150_000,
+    /** Lado mayor de la miniatura para listas; con ~320 px queda cerca de los ~15 KB. */
+    thumbnailMaxLongSidePx: 320,
     thumbnailTargetBytes: 15_000,
+    /** R3 de HU-BASE-05: las fotos se ven con URL firmadas de corta duración. */
+    signedUrlSeconds: 3600,
   },
 
   /** BR-CUS-07: umbral de la búsqueda difusa; lo fija HU-CLI-05 con su prueba. */
@@ -72,9 +71,14 @@ export const businessConfig = deepFreeze({
     fuzzyThreshold: null as number | null,
   },
 
-  /** BR-CUS-11: umbral de nombre "muy parecido" para posibles duplicados; lo fija HU-CLI-02 con su prueba. */
+  /**
+   * BR-CUS-11: nombre "casi idéntico" para posibles duplicados = similitud ≥ umbral (1 − distancia de edición
+   * relativa entre nombres normalizados). Fijado en HU-CLI-02 con su prueba (src/domain/customer-data.test.ts):
+   * con 0,85 se detectan errores de una o dos letras ("Natalia Cardenaz") y se descartan nombres distintos
+   * ("Pedro Pérez" / "Pablo Pérez").
+   */
   duplicates: {
-    nameThreshold: null as number | null,
+    nameThreshold: 0.85,
   },
 });
 

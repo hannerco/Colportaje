@@ -5,10 +5,14 @@ const LAYERS = ['domain', 'repositories', 'adapters', 'features', 'ui', 'lib', '
 
 const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-/** Importar una capa por alias (`@/adapters/...`) o por ruta relativa (`../../adapters/...`). */
+/**
+ * Importar una capa por alias (`@/adapters/...`) o por ruta relativa que sube hasta ella (`../../adapters/...`).
+ * Las capas son carpetas directas de `src/`, así que una ruta relativa a otra capa sube con `../` y lo primero
+ * que encuentra es el nombre de la capa. `./copy` (p. ej. `domain/copy.ts`) es un archivo propio, no la capa `copy`.
+ */
 const layerImport = (layer) => {
   const l = escape(layer);
-  return `^(?:@/${l}|\\.{1,2}/(?:.*/)?${l})(?:/|$)`;
+  return `^(?:@/${l}|(?:\\.\\./)+${l})(?:/|$)`;
 };
 
 const forbidLayers = (from, layers) =>
@@ -29,7 +33,8 @@ const RULES = {
   // El dominio es TypeScript puro: solo se importa a sí mismo (R1).
   domain: [
     {
-      regex: '^(?!\\.{1,2}/|@/domain(?:/|$)|vitest$)',
+      // vitest y fast-check solo aparecen en pruebas; la prueba de pureza revisa el código sin ellas.
+      regex: '^(?!\\.{1,2}/|@/domain(?:/|$)|vitest$|fast-check$)',
       message:
         'Límite entre capas: "domain" es TypeScript puro y no importa paquetes externos (ARCHITECTURE §2, HU-BASE-01 R1).',
     },

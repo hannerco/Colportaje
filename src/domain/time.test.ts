@@ -4,6 +4,7 @@ import {
   addMonthsClamped,
   daysBetween,
   fixedClock,
+  toBogotaDate,
   formatDate,
   formatTime,
   lastDayOfMonth,
@@ -28,6 +29,13 @@ describe('time', () => {
 
     it('BR-GEN-05: el cambio de año se calcula en Bogotá, no en UTC', () => {
       expect(todayBogota(fixedClock('2027-01-01T03:00:00Z'))).toBe('2026-12-31');
+    });
+  });
+
+  describe('toBogotaDate', () => {
+    it('BR-GEN-05: convierte un instante al día de Bogotá', () => {
+      expect(toBogotaDate(new Date('2026-10-03T04:30:00Z'))).toBe('2026-10-02');
+      expect(toBogotaDate(new Date('2026-10-03T05:00:00Z'))).toBe('2026-10-03');
     });
   });
 

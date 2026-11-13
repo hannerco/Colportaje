@@ -20,7 +20,22 @@ Las versiones están fijadas para que todos corran lo mismo: **Node 22** (`.nvmr
 2. **pnpm** con corepack, que viene con Node: `corepack enable pnpm`. Al entrar al proyecto, corepack usa la versión exacta de `packageManager`.
 3. **Docker** corriendo (lo usa Supabase local a partir de HU-BASE-02).
 4. `pnpm install`.
-5. `cp .env.example .env.local` y completa los valores. `pnpm dev` no arranca sin ellos. Nunca se suben `.env*` ni claves.
+5. `.env.local` (solo si vas a correr la app con `pnpm dev` o los scripts; ver abajo). Nunca se suben `.env*` ni claves.
+
+### Variables de entorno: local frente a la nube
+
+**Para programar y probar el back no hacen falta claves de la nube.** Todo corre contra Supabase local (Docker): las pruebas (`pnpm test:rls`) leen solas la URL y las claves locales con `pnpm exec supabase status`. Esas claves son de demostración, iguales en todas las instalaciones y solo sirven en tu equipo.
+
+`.env.local` solo se necesita para `pnpm dev` (no arranca sin él) y para los scripts `user:create` y `catalog:load`. Para local, cópialo de `.env.example` y llénalo con la salida de `pnpm exec supabase status`:
+
+| Variable | Valor local |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | `API_URL` (`http://127.0.0.1:54321`) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `ANON_KEY` |
+| `SUPABASE_SERVICE_ROLE_KEY` | `SERVICE_ROLE_KEY` (solo scripts; nunca con prefijo `NEXT_PUBLIC_`) |
+| `SUPABASE_DB_PASSWORD`, `SUPABASE_PROJECT_REF` | vacías (son para la nube) |
+
+Los valores de **staging y producción** solo los usa el dueño, en su propio `.env.local`, para operar contra la nube (crear usuarios reales, cargar el catálogo) y, más adelante, la CI de despliegue (HU-BASE-07). Nadie los pide ni los pega en el chat.
 
 La CLI de Supabase es una dependencia del proyecto: se usa con `pnpm exec supabase …`, no con una instalación global.
 
@@ -31,9 +46,34 @@ pnpm dev                                   # desarrollo
 pnpm lint && pnpm typecheck && pnpm test   # calidad (obligatorio antes de un PR; es lo que corre la CI)
 pnpm build                                 # compilación de producción
 pnpm format                                # aplica el formato de Prettier
+
+# Base de datos local (requiere Docker)
+pnpm db:start                              # arranca Supabase local
+pnpm db:reset                              # recrea la base con las migraciones y supabase/seed.sql
+pnpm db:types                              # regenera src/adapters/supabase/database.types.ts
+pnpm test:rls                              # pruebas de seguridad (RLS) contra Supabase local
+pnpm db:stop                               # detiene Supabase local
 ```
 
 `pnpm test` corre las pruebas con cobertura; el dominio (`src/domain/`) exige ≥ 95 %.
+
+**Crear un usuario** (HU-BASE-03; registro público desactivado): pon en `.env.local` la URL y la `service_role` del entorno (local: `pnpm exec supabase status`) y corre
+
+```bash
+pnpm user:create --email ana@example.com --name "Ana Pérez" [--admin] [--password <clave>]
+```
+
+Sin `--password` genera una clave segura y la muestra una sola vez. *Windows con nvm instalado en una ruta con espacios:* el atajo de `pnpm` falla con argumentos que tienen espacios (`--name "Ana Pérez"`); usa `node --env-file-if-exists=.env.local --import tsx scripts/create-user.ts …` con los mismos argumentos.
+
+**Cargar el catálogo** (HU-BASE-04): el archivo sigue el formato de `scripts/data/catalog.example.json` (cada título con un `id` UUID estable; `publicPrice` es obligatorio salvo en minibooks).
+
+```bash
+pnpm catalog:load scripts/data/catalog.json
+```
+
+Valida todo el archivo antes de escribir: si un registro está mal, no carga nada y dice cuál. Volver a correrlo actualiza sin duplicar; los títulos que no estén en el archivo no se tocan (para retirar uno, `"isActive": false`). En local, `pnpm db:reset` ya trae 15 títulos ficticios.
+
+**Migraciones:** una por cambio en `supabase/migrations/` (`pnpm exec supabase migration new <nombre>`), nunca se edita una ya fusionada. Toda tabla nueva sigue el patrón documentado al inicio de la migración base: RLS, política y `GRANT` explícito a `authenticated`, nada para `anon`. `pnpm test:rls` falla si una tabla con `owner_id` no lo cumple.
 
 ## Capas
 

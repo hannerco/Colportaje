@@ -9,7 +9,6 @@ describe('businessConfig', () => {
       paymentPlan: {
         amountMultiple: 1000,
         paydays: { biweekly: [15, 30], monthly: [30] },
-        minGapDays: { biweekly: 7, monthly: 20 },
         weeklyStepDays: 7,
       },
       reschedule: { confirmBeyondMonths: 2 },
@@ -19,9 +18,16 @@ describe('businessConfig', () => {
       },
       copyDelete: { noteRequired: false },
       undo: { toastSeconds: 6 },
-      photos: { format: 'webp', maxLongSidePx: 1280, targetBytes: 150_000, thumbnailTargetBytes: 15_000 },
+      photos: {
+        format: 'webp',
+        maxLongSidePx: 1280,
+        targetBytes: 150_000,
+        thumbnailMaxLongSidePx: 320,
+        thumbnailTargetBytes: 15_000,
+        signedUrlSeconds: 3600,
+      },
       search: { fuzzyThreshold: null },
-      duplicates: { nameThreshold: null },
+      duplicates: { nameThreshold: 0.85 },
     });
   });
 

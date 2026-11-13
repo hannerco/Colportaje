@@ -87,11 +87,14 @@ const zonedParts = (instant: Instant) => {
   };
 };
 
-/** El día de hoy en America/Bogota (BR-GEN-05). */
-export const todayBogota = (clock: Clock): LocalDate => {
-  const { year, month, day } = zonedParts(clock.now());
+/** El día calendario de un instante en America/Bogota (BR-GEN-05). */
+export const toBogotaDate = (instant: Instant): LocalDate => {
+  const { year, month, day } = zonedParts(instant);
   return fromParts(year, month, day);
 };
+
+/** El día de hoy en America/Bogota (BR-GEN-05). */
+export const todayBogota = (clock: Clock): LocalDate => toBogotaDate(clock.now());
 
 /** `2026-11-07` → `07/11/2026` (BR-GEN-07). */
 export const formatDate = (d: LocalDate): string => {

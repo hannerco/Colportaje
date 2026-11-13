@@ -1,0 +1,35 @@
+[
+  {
+    "id": "0b6f6c2e-6a51-4c3e-9d2a-1f0e2b7c4a01",
+    "name": "Libro cultural de ejemplo",
+    "author": "Autora Ficticia",
+    "description": "Descripción corta opcional.",
+    "imagePath": null,
+    "publicPrice": 75000,
+    "colportorPrice": 37500,
+    "category": "cultural",
+    "isActive": true
+  },
+  {
+    "id": "0b6f6c2e-6a51-4c3e-9d2a-1f0e2b7c4a02",
+    "name": "Libro religioso de ejemplo",
+    "author": null,
+    "description": null,
+    "imagePath": null,
+    "publicPrice": 60000,
+    "colportorPrice": 51000,
+    "category": "religious",
+    "isActive": true
+  },
+  {
+    "id": "0b6f6c2e-6a51-4c3e-9d2a-1f0e2b7c4a03",
+    "name": "Minibook de ejemplo",
+    "author": null,
+    "description": null,
+    "imagePath": null,
+    "publicPrice": null,
+    "colportorPrice": 1500,
+    "category": "minibook",
+    "isActive": true
+  }
+]

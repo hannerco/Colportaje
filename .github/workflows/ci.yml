@@ -5,7 +5,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, will-dev]
 
 permissions:
   contents: read
@@ -42,7 +42,17 @@ jobs:
       - name: Pruebas
         run: pnpm test
 
-      # El paso de RLS (supabase start + pnpm test:rls) se agrega en HU-BASE-02.
+      # Supabase local solo con lo que usan las pruebas: base de datos, Auth, API, Storage (HU-BASE-05) y meta (tipos).
+      - name: Iniciar Supabase local
+        run: pnpm exec supabase start -x realtime,imgproxy,mailpit,studio,edge-runtime,logflare,vector,supavisor
+
+      - name: Pruebas de seguridad (RLS)
+        run: pnpm test:rls
+
+      - name: Tipos generados al día
+        run: |
+          pnpm db:types
+          git diff --exit-code -- src/adapters/supabase/database.types.ts
 
       - name: Build
         run: pnpm build

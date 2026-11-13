@@ -35,7 +35,7 @@ Archivo `.env.example` versionado (sin valores); `.env.local` **ignorado por git
 Se validan al arrancar con Zod (`src/lib/env.ts`); la app falla rápido si faltan.
 
 ## Permisos de la API (Data API)
-En los proyectos de nube (prod y staging) "Automatically expose new tables" está **desactivado** y "Enable automatic RLS" **activado** (2026-11-10). RLS es la barrera de filas; los `GRANT` son la barrera de tablas. Cada migración que crea una tabla otorga explícitamente a `authenticated` (nunca a `anon` en tablas de negocio) y define sus políticas. El esquema local se configura igual (HU-BASE-02, R6) para que lo probado en local coincida con la nube.
+En los proyectos de nube (prod y staging) "Automatically expose new tables" está **desactivado** y "Enable automatic RLS" **activado** (2026-11-10). RLS es la barrera de filas; los `GRANT` son la barrera de tablas. Cada migración que crea una tabla otorga explícitamente a `authenticated` (nunca a `anon` en tablas de negocio) y define sus políticas. El esquema local se configura igual (HU-BASE-02, R6) para que lo probado en local coincida con la nube. La `service_role` también necesita `GRANT` (salta RLS, no los permisos de tabla): solo se le otorga lo que usa un script o endpoint de servidor (hoy, leer `profile` y leer/insertar `user_role` para `scripts/create-user.ts`).
 
 ## Políticas de Storage (resumen)
 - `title-images`: `select` público; `insert/update/delete` solo `is_admin()`.

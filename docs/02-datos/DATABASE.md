@@ -69,7 +69,8 @@ create table title (
   is_active boolean not null default true,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  check (category = 'minibook' or public_price > 0)
+  check (category = 'minibook' or (public_price is not null and public_price > 0)),  -- con NULL, "public_price > 0" solo no falla
+  check (public_price is null or public_price > 0)
 );
 
 create table customer (
@@ -285,7 +286,7 @@ Triggers `set_updated_at` en todas las tablas con `updated_at`. Triggers/funcion
 - Validar en trigger: `copy.received_at <= hoy` y `<= sold_at::date`; `payment.paid_at <= hoy`; `minibook_sale.amount <= saldo a favor` cuando `payment_source = 'client_credit'`.
 - Filtrar en toda consulta de listas: `deleted_at is null` y (para clientes) `archived_at is null` salvo la vista Archivados.
 - Vender minibooks: función `record_minibook_sale(...)` que consume stock FIFO y valida disponibilidad.
-- `add_copies(lines[], received_at)`: crea todo el lote de "Agregar al inventario" en una sola transacción (todo o nada), asignando números (BR-COPY-02).
+- `add_copies(p_batch_id, p_received_at, p_lines jsonb)` (HU-INV-02): crea todo el lote de "Agregar al inventario" en una sola transacción (todo o nada), asignando números (BR-COPY-02).
 - `delete_copy` / `undo_delete_copy`, `resolve_copy_issue` / `undo_resolve_copy_issue` (BR-COPY-11/17).
 - `apply_payment_plan(customer_id, …)`: crea los abonos del plan; durante la creación reemplaza los programados del cliente, después reparte solo lo sin programar (BR-PAY-15).
 - `discard_new_customer(id)`: descarte atómico; se rechaza si algún abono está en un Abibono (BR-CUS-14).
