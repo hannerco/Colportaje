@@ -26,15 +26,18 @@
 - Fase 0: ver `docs/06-planificacion/ROADMAP.md` y `docs/05-operacion/DEPLOYMENT.md` §2 (repo, cuentas y diseño pendientes).
 - **Diseño de Clientes, Inventario y Dinero cerrado** (ronda 26). Para programar su back, sigue `docs/07-historias-usuario/README.md`: una HU por sesión, en el orden del índice, con `00-REGLAS-COMUNES.md`. Lo que falta por diseñar está en `docs/04-diseno/pendientes/`.
 - El repositorio `hannerco/Colportaje` ya es **privado** (SG-03, 2026-11-10).
-- Siguiente: el dueño revisa `docs/07-historias-usuario/INTERPRETACIONES.md`; luego se programa con apoyo de William, empezando por HU-BASE-01. Los demás módulos (Hoy, Calendario, Minibooks, Hacer inventario, Admin) esperan su diseño.
+- **Avance del back:** HU-BASE-01 en `main`; HU-BASE-02 y 03 terminadas en `will-dev`; sigue HU-BASE-04. El trabajo se acumula en la rama `will-dev` (sin PR por HU); ver "Avance" en `docs/07-historias-usuario/README.md`. Los demás módulos (Hoy, Calendario, Minibooks, Hacer inventario, Admin) esperan su diseño.
 
 ## Comandos (cuando exista el código)
 ```bash
 pnpm install        # dependencias
 pnpm dev            # desarrollo
-pnpm lint && pnpm typecheck && pnpm test      # calidad (obligatorio antes de PR)
-pnpm exec supabase start   # Supabase local (Docker); la CLI es dependencia del proyecto
-pnpm test:rls       # pruebas de seguridad contra Supabase local (también: pnpm db:start, db:reset, db:types)
+pnpm lint && pnpm typecheck && pnpm test      # calidad (obligatorio antes de cada commit)
+pnpm db:start       # Supabase local (Docker); la CLI es dependencia del proyecto (pnpm exec supabase …)
+pnpm db:reset       # recrea la base local con migraciones y seed (tras cambiar config.toml: db:stop + db:start)
+pnpm db:types       # regenera los tipos de la base
+pnpm test:rls       # pruebas de seguridad (RLS) e integración contra Supabase local
+pnpm user:create --email <correo> --name "<nombre>" [--admin]   # crea un usuario (lee .env.local)
 pnpm test:e2e       # Playwright
 ```
 

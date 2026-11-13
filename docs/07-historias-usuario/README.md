@@ -83,13 +83,23 @@ Implementar en este orden. Una HU solo empieza cuando sus dependencias están te
 | 11 | [HU-DIN-05](04-dinero/HU-DIN-05-confirmar.md) | Confirmar un Abibono | DIN-04 |
 | 12 | [HU-DIN-07](04-dinero/HU-DIN-07-reabrir.md) | Reabrir un Abibono confirmado | DIN-05 |
 
+## Avance
+| HU | Estado | Dónde |
+|---|---|---|
+| HU-BASE-01 | Terminada (2026-11-11) | `main` |
+| HU-BASE-02 | Terminada (2026-11-13) | `will-dev` |
+| HU-BASE-03 | Terminada (2026-11-13) | `will-dev` |
+| HU-BASE-04 | En curso | `will-dev` |
+
+**Flujo de trabajo del back (desde 2026-11-13):** las HU se programan en la rama `will-dev`, con un commit por HU y la CI corriendo en cada push. No se abre un PR a `main` por cada HU; `main` se actualiza con un PR desde `will-dev` cuando se acuerde con el dueño. Antes de cada commit: `pnpm lint && pnpm typecheck && pnpm test && pnpm test:rls && pnpm build`.
+
 ## Puntos de entrega: cuándo avisar al dueño
 Cada vez que se termina una de estas HU, quien la hizo **avisa al dueño** con el mensaje indicado. El dueño hace su parte y responde "listo". Nadie pide ni pega claves en el chat: los valores los carga el dueño directamente en GitHub, Vercel o su `.env.local`.
 
 | Cuando se termina… | Se avisa al dueño | El dueño hace |
 |---|---|---|
 | **HU-BASE-01** (CI corrió al menos una vez en GitHub) | "BASE-01 lista, la CI ya corrió" | En GitHub: *Settings → Rules → proteger-main → Require status checks* y agrega `ci`. Prueba con un PR que la CI en rojo no se pueda fusionar |
-| **HU-BASE-03** (sesión con usuarios locales) | "BASE-03 lista" | Completa su `.env.local` con los valores de **staging** (guía 2.7) y crea su usuario en staging con el script |
+| **HU-BASE-03** (sesión con usuarios locales) | "BASE-03 lista" | Completa su `.env.local` con los valores de **staging** (guía 2.7) y crea su usuario admin: `pnpm user:create --email <correo> --name "<nombre>" --admin` (sin `--password` genera una clave y la muestra una vez; ver README del repositorio) |
 | **HU-BASE-04** (catálogo y script de carga) | "BASE-04 lista" | Entrega la lista real de títulos (nombre, autor, categoría, precios); se carga a staging y después a producción |
 | **Antes de empezar HU-BASE-07** | "Voy a empezar BASE-07" | Decide el destino de los backups (OQ-42) |
 | **HU-BASE-07**, workflows escritos | "BASE-07 lista, faltan los secrets" | Carga los secrets en GitHub y Vercel; importa el proyecto en Vercel (guía 3.3); pone la URL en Supabase (3.5); verifica la restauración del backup |

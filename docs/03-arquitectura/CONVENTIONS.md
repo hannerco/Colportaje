@@ -58,6 +58,7 @@ Todo debe ser fácil de cambiar, porque muchas cosas pueden variar:
 
 ## 6. Git
 - Rama principal: `main` (protegida: PR + CI verde). Ramas: `feat/<tema>`, `fix/<tema>`, `docs/<tema>`, `chore/<tema>`.
+- **Back de la fase 1:** se acumula en `will-dev` (un commit por HU; la CI corre en cada push) y llega a `main` con un PR cuando se acuerde con el dueño (`07-historias-usuario/README.md`, "Avance").
 - Commits pequeños, en español, imperativo: `feat(abonos): registrar prórroga con historial`. Tipos: `feat`, `fix`, `docs`, `test`, `refactor`, `chore`, `perf`.
 - Un cambio de comportamiento de negocio incluye docs + pruebas en el mismo PR.
 - **Nunca** commitear secretos (`.env*` salvo `.env.example`), claves, volcados de BD ni fotos reales de clientes.

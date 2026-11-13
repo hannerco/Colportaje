@@ -91,8 +91,8 @@ Si encuentras una contradicción, **arréglala** en el mismo cambio y anótala e
 ## Estado del proyecto
 - Documentación: **completa y sin preguntas abiertas** (fase 0, revisada el 2026-10-28). El código empezó el 2026-11-11 con HU-BASE-01 (proyecto por capas); se programa solo el back de los módulos ya diseñados, porque las decisiones cambian al diseñar (decisión del dueño, 2026-11-04).
 - **Diseño de Clientes, Inventario y Dinero cerrado** (exportación del 05/11/2026, revisada contra los docs en la ronda 26). Las **historias de usuario del back** de esos tres módulos están en `07-historias-usuario/` (2026-11-08); lo que falta por diseñar, en `04-diseno/pendientes/`.
-- **Plazo: 14 días** para la fase 1 completa (`06-planificacion/ROADMAP.md`). Siguiente paso: diseño en **Claude Design** (2–3 variantes, días 1–3) → elección del dueño → scaffolding por capas con pruebas del dominio primero.
-- Pendientes con el dueño: repositorio `Colportaje` ya creado en GitHub (SG-03, **privado** desde 2026-11-10), cuentas nuevas de Supabase y Vercel (SG-02, guía paso a paso; **pospuesto: primero el diseño**), diseño (SG-04).
+- **Plazo: 14 días** para la fase 1 completa (`06-planificacion/ROADMAP.md`). Avance del back (proyecto, base de datos con RLS, sesión): ver "Avance" en `07-historias-usuario/README.md`; el trabajo se acumula en la rama `will-dev`.
+- Pendientes con el dueño: repositorio `Colportaje` ya creado en GitHub (SG-03, **privado** desde 2026-11-10), Supabase creado (prod y staging en us-east-1), Vercel pendiente (SG-02, guía paso a paso), diseño (SG-04).
 - Dueño del producto: colportor-desarrollador, primer usuario y admin. Idioma de trabajo: español.
 
 ## Mantenimiento de la documentación
