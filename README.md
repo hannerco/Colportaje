@@ -20,7 +20,22 @@ Las versiones están fijadas para que todos corran lo mismo: **Node 22** (`.nvmr
 2. **pnpm** con corepack, que viene con Node: `corepack enable pnpm`. Al entrar al proyecto, corepack usa la versión exacta de `packageManager`.
 3. **Docker** corriendo (lo usa Supabase local a partir de HU-BASE-02).
 4. `pnpm install`.
-5. `cp .env.example .env.local` y completa los valores. `pnpm dev` no arranca sin ellos. Nunca se suben `.env*` ni claves.
+5. `.env.local` (solo si vas a correr la app con `pnpm dev` o los scripts; ver abajo). Nunca se suben `.env*` ni claves.
+
+### Variables de entorno: local frente a la nube
+
+**Para programar y probar el back no hacen falta claves de la nube.** Todo corre contra Supabase local (Docker): las pruebas (`pnpm test:rls`) leen solas la URL y las claves locales con `pnpm exec supabase status`. Esas claves son de demostración, iguales en todas las instalaciones y solo sirven en tu equipo.
+
+`.env.local` solo se necesita para `pnpm dev` (no arranca sin él) y para los scripts `user:create` y `catalog:load`. Para local, cópialo de `.env.example` y llénalo con la salida de `pnpm exec supabase status`:
+
+| Variable | Valor local |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | `API_URL` (`http://127.0.0.1:54321`) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `ANON_KEY` |
+| `SUPABASE_SERVICE_ROLE_KEY` | `SERVICE_ROLE_KEY` (solo scripts; nunca con prefijo `NEXT_PUBLIC_`) |
+| `SUPABASE_DB_PASSWORD`, `SUPABASE_PROJECT_REF` | vacías (son para la nube) |
+
+Los valores de **staging y producción** solo los usa el dueño, en su propio `.env.local`, para operar contra la nube (crear usuarios reales, cargar el catálogo) y, más adelante, la CI de despliegue (HU-BASE-07). Nadie los pide ni los pega en el chat.
 
 La CLI de Supabase es una dependencia del proyecto: se usa con `pnpm exec supabase …`, no con una instalación global.
 
