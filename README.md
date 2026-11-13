@@ -42,6 +42,14 @@ pnpm db:stop                               # detiene Supabase local
 
 `pnpm test` corre las pruebas con cobertura; el dominio (`src/domain/`) exige ≥ 95 %.
 
+**Crear un usuario** (HU-BASE-03; registro público desactivado): pon en `.env.local` la URL y la `service_role` del entorno (local: `pnpm exec supabase status`) y corre
+
+```bash
+pnpm user:create --email ana@example.com --name "Ana Pérez" [--admin] [--password <clave>]
+```
+
+Sin `--password` genera una clave segura y la muestra una sola vez. *Windows con nvm instalado en una ruta con espacios:* el atajo de `pnpm` falla con argumentos que tienen espacios (`--name "Ana Pérez"`); usa `node --env-file-if-exists=.env.local --import tsx scripts/create-user.ts …` con los mismos argumentos.
+
 **Migraciones:** una por cambio en `supabase/migrations/` (`pnpm exec supabase migration new <nombre>`), nunca se edita una ya fusionada. Toda tabla nueva sigue el patrón documentado al inicio de la migración base: RLS, política y `GRANT` explícito a `authenticated`, nada para `anon`. `pnpm test:rls` falla si una tabla con `owner_id` no lo cumple.
 
 ## Capas

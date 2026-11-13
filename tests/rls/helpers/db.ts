@@ -73,21 +73,19 @@ export async function expectError(tx: Tx, sql: string, params: unknown[] = []): 
 
 type UserOptions = { isAdmin?: boolean; isActive?: boolean };
 
-/** Crea un usuario ficticio (auth.users + profile + rol colportor, y admin si se pide). */
+/** Crea un usuario ficticio en auth.users (el trigger crea profile y rol colportor) y admin si se pide. */
 export async function createUser(
   tx: Tx,
   { isAdmin = false, isActive = true }: UserOptions = {},
 ): Promise<string> {
   const id = randomUUID();
+  // El trigger handle_new_user (HU-BASE-03) crea el perfil y el rol colportor.
   await tx.query(
-    `insert into auth.users (id, email, aud, role) values ($1, $2, 'authenticated', 'authenticated')`,
+    `insert into auth.users (id, email, aud, role, raw_user_meta_data)
+     values ($1, $2, 'authenticated', 'authenticated', '{"full_name": "Usuario de prueba"}')`,
     [id, `${id}@example.test`],
   );
-  await tx.query(
-    `insert into public.profile (id, full_name, is_active) values ($1, 'Usuario de prueba', $2)`,
-    [id, isActive],
-  );
-  await tx.query(`insert into public.user_role (user_id, role) values ($1, 'colportor')`, [id]);
+  if (!isActive) await tx.query(`update public.profile set is_active = false where id = $1`, [id]);
   if (isAdmin) await tx.query(`insert into public.user_role (user_id, role) values ($1, 'admin')`, [id]);
   return id;
 }

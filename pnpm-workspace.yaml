@@ -1,2 +1,5 @@
 # Falla si la versión de Node o de pnpm no es la fijada en package.json (HU-BASE-01 R6).
 engineStrict: true
+# Scripts de instalación permitidos. esbuild (de tsx) no lo necesita: su binario llega por dependencias opcionales.
+allowBuilds:
+  esbuild: false
