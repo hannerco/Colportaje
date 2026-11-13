@@ -28,11 +28,6 @@ export const businessConfig = deepFreeze({
       biweekly: [15, 30],
       monthly: [30],
     },
-    /** Separación mínima entre abonos sugeridos (INTERPRETACIONES I-07). */
-    minGapDays: {
-      biweekly: 7,
-      monthly: 20,
-    },
     weeklyStepDays: 7,
   },
 

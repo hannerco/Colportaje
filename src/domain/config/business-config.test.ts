@@ -9,7 +9,6 @@ describe('businessConfig', () => {
       paymentPlan: {
         amountMultiple: 1000,
         paydays: { biweekly: [15, 30], monthly: [30] },
-        minGapDays: { biweekly: 7, monthly: 20 },
         weeklyStepDays: 7,
       },
       reschedule: { confirmBeyondMonths: 2 },
