@@ -1,6 +1,7 @@
 import { afterAll, describe, expect, it } from 'vitest';
 import { createSupabaseAuthRepository } from '@/adapters/supabase/auth-repository';
 import { createSupabaseProfileRepository } from '@/adapters/supabase/profile-repository';
+import { createSupabaseTitleRepository } from '@/adapters/supabase/title-repository';
 import { signIn } from '@/features/auth/use-cases/sign-in';
 import type { Repositories } from '@/repositories';
 import { createUser } from '../../scripts/lib/create-user';
@@ -35,6 +36,7 @@ function deviceRepositories(): Repositories {
   return {
     auth: createSupabaseAuthRepository(() => client),
     profiles: createSupabaseProfileRepository(() => client),
+    titles: createSupabaseTitleRepository(() => client),
     connectivity: { isOnline: () => true },
   };
 }

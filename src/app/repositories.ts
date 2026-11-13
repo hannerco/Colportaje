@@ -2,6 +2,7 @@ import { browserConnectivity } from '@/adapters/browser/connectivity';
 import { createSupabaseAuthRepository } from '@/adapters/supabase/auth-repository';
 import { createSupabaseBrowserClient, type AppSupabaseClient } from '@/adapters/supabase/client';
 import { createSupabaseProfileRepository } from '@/adapters/supabase/profile-repository';
+import { createSupabaseTitleRepository } from '@/adapters/supabase/title-repository';
 import { getPublicEnv } from '@/lib/env';
 import type { Repositories } from '@/repositories';
 
@@ -13,6 +14,7 @@ export function createAppRepositories(): Repositories {
   return {
     auth: createSupabaseAuthRepository(getClient),
     profiles: createSupabaseProfileRepository(getClient),
+    titles: createSupabaseTitleRepository(getClient),
     connectivity: browserConnectivity,
   };
 }

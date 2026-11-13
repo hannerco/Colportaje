@@ -50,6 +50,49 @@ export type Database = {
         };
         Relationships: [];
       };
+      title: {
+        Row: {
+          author: string | null;
+          category: Database['public']['Enums']['title_category'];
+          colportor_price: number;
+          created_at: string;
+          description: string | null;
+          id: string;
+          image_path: string | null;
+          is_active: boolean;
+          name: string;
+          public_price: number | null;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          author?: string | null;
+          category: Database['public']['Enums']['title_category'];
+          colportor_price: number;
+          created_at?: string;
+          description?: string | null;
+          id: string;
+          image_path?: string | null;
+          is_active?: boolean;
+          name: string;
+          public_price?: number | null;
+          updated_at?: string;
+        };
+        Update: {
+          author?: string | null;
+          category?: Database['public']['Enums']['title_category'];
+          colportor_price?: number;
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          image_path?: string | null;
+          is_active?: boolean;
+          name?: string;
+          public_price?: number | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       user_role: {
         Row: {
           role: Database['public']['Enums']['app_role'];

@@ -69,7 +69,8 @@ create table title (
   is_active boolean not null default true,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  check (category = 'minibook' or public_price > 0)
+  check (category = 'minibook' or (public_price is not null and public_price > 0)),  -- con NULL, "public_price > 0" solo no falla
+  check (public_price is null or public_price > 0)
 );
 
 create table customer (

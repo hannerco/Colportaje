@@ -1,10 +1,12 @@
 import type { AuthRepository } from './auth-repository';
 import type { Connectivity } from './connectivity';
 import type { ProfileRepository } from './profile-repository';
+import type { TitleRepository } from './title-repository';
 
 export type { AuthChange, AuthRepository } from './auth-repository';
 export type { Connectivity } from './connectivity';
 export type { ProfileRepository } from './profile-repository';
+export type { TitleRepository } from './title-repository';
 
 /**
  * Contratos de datos que la app recibe inyectados (ARCHITECTURE §2).
@@ -14,5 +16,6 @@ export type { ProfileRepository } from './profile-repository';
 export interface Repositories {
   readonly auth: AuthRepository;
   readonly profiles: ProfileRepository;
+  readonly titles: TitleRepository;
   readonly connectivity: Connectivity;
 }

@@ -19,6 +19,7 @@
     "test:watch": "vitest",
     "test:rls": "vitest run --config vitest.rls.config.mts",
     "user:create": "node --env-file-if-exists=.env.local --import tsx scripts/create-user.ts",
+    "catalog:load": "node --env-file-if-exists=.env.local --import tsx scripts/load-catalog.ts",
     "db:start": "supabase start",
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset",

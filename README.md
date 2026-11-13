@@ -50,6 +50,14 @@ pnpm user:create --email ana@example.com --name "Ana Pérez" [--admin] [--passwo
 
 Sin `--password` genera una clave segura y la muestra una sola vez. *Windows con nvm instalado en una ruta con espacios:* el atajo de `pnpm` falla con argumentos que tienen espacios (`--name "Ana Pérez"`); usa `node --env-file-if-exists=.env.local --import tsx scripts/create-user.ts …` con los mismos argumentos.
 
+**Cargar el catálogo** (HU-BASE-04): el archivo sigue el formato de `scripts/data/catalog.example.json` (cada título con un `id` UUID estable; `publicPrice` es obligatorio salvo en minibooks).
+
+```bash
+pnpm catalog:load scripts/data/catalog.json
+```
+
+Valida todo el archivo antes de escribir: si un registro está mal, no carga nada y dice cuál. Volver a correrlo actualiza sin duplicar; los títulos que no estén en el archivo no se tocan (para retirar uno, `"isActive": false`). En local, `pnpm db:reset` ya trae 15 títulos ficticios.
+
 **Migraciones:** una por cambio en `supabase/migrations/` (`pnpm exec supabase migration new <nombre>`), nunca se edita una ya fusionada. Toda tabla nueva sigue el patrón documentado al inicio de la migración base: RLS, política y `GRANT` explícito a `authenticated`, nada para `anon`. `pnpm test:rls` falla si una tabla con `owner_id` no lo cumple.
 
 ## Capas
