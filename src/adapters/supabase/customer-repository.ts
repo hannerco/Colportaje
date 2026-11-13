@@ -148,6 +148,21 @@ export function createSupabaseCustomerRepository(getClient: GetSupabaseClient): 
       );
     },
 
+    async getRefs(ids) {
+      if (ids.length === 0) return ok([]);
+      const { data, error } = await getClient()
+        .from('customer')
+        .select('id, name, avatar_emoji')
+        .in('id', [...new Set(ids)]);
+      if (error) return err(mapPostgrestError(error));
+      return ok(
+        data.map((raw) => {
+          const row = refRowSchema.parse(raw);
+          return { id: row.id, name: row.name, avatarEmoji: row.avatar_emoji };
+        }),
+      );
+    },
+
     async listDuplicateCandidates() {
       const client = getClient();
       const rows = await selectAll((from, to) =>

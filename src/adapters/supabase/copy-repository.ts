@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { ADD_COPIES_ERROR_CODES } from '@/domain/add-batch';
 import type { CopiesListCopy } from '@/domain/copies-list';
 import type { CopyEvent } from '@/domain/copy';
+import { RECEIVED_DATE_ERROR_CODES } from '@/domain/copy-detail';
 import { appError, COMMON_ERROR_CODES } from '@/domain/shared/errors';
 import { err, ok } from '@/domain/shared/result';
 import type { LocalDate } from '@/domain/time';
@@ -206,6 +207,51 @@ export function createSupabaseCopyRepository(getClient: GetSupabaseClient): Copy
       );
     },
 
+    async getDetail(copyId) {
+      const client = getClient();
+      const copy = await client
+        .from('copy')
+        .select(LIST_COLUMNS)
+        .eq('id', copyId)
+        .is('deleted_at', null)
+        .maybeSingle();
+      if (copy.error) return err(mapPostgrestError(copy.error));
+      if (!copy.data) return err(appError(COMMON_ERROR_CODES.NOT_FOUND));
+      const issue = await client
+        .from('copy_issue')
+        .select('note, created_at')
+        .eq('copy_id', copyId)
+        .is('resolved_at', null)
+        .maybeSingle();
+      if (issue.error) return err(mapPostgrestError(issue.error));
+      const row = listRowSchema.parse(copy.data);
+      const open = issue.data ? openIssueDetailSchema.parse(issue.data) : null;
+      return ok({
+        copy: {
+          id: row.id,
+          titleId: row.title_id,
+          number: row.number,
+          status: row.status,
+          customerId: row.customer_id,
+          agreedPrice: row.agreed_price,
+          publicPriceSnapshot: row.public_price_snapshot,
+          receivedAt: row.received_at,
+          soldAt: row.sold_at === null ? null : new Date(row.sold_at),
+          deletedAt: null,
+        },
+        openIssue: open && { note: open.note, createdAt: new Date(open.created_at) },
+      });
+    },
+
+    async updateReceivedDate(copyId, date) {
+      const { error } = await getClient().rpc('update_copy_received_date', {
+        p_copy_id: copyId,
+        p_date: date,
+      });
+      if (error) return err(mapRpcError(error, RECEIVED_DATE_ERRORS));
+      return ok(undefined);
+    },
+
     async addBatch(input) {
       const { data, error } = await getClient().rpc('add_copies', {
         p_batch_id: input.batchId,
@@ -287,3 +333,11 @@ const listRowSchema = z.object({
   received_at: localDate,
   sold_at: z.string().nullable(),
 });
+
+const openIssueDetailSchema = z.object({ note: z.string(), created_at: z.string() });
+
+const RECEIVED_DATE_ERRORS = [
+  ...Object.values(RECEIVED_DATE_ERROR_CODES),
+  COMMON_ERROR_CODES.NOT_FOUND,
+  COMMON_ERROR_CODES.FORBIDDEN,
+];

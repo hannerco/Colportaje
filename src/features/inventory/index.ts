@@ -5,13 +5,22 @@ export {
   useAddCatalog,
   useAddCopiesBatch,
   useCopiesList,
+  useCopyDetail,
   useCopyHistory,
   useFlaggedCopies,
   useInStockCopiesOfTitle,
   useInStockSummary,
   useReceivedDateOptions,
+  useUpdateReceivedDate,
 } from './hooks';
 export { addCopiesBatch, type AddCopiesBatchDeps } from './use-cases/add-copies-batch';
+export {
+  RECEIVED_DATE_ERROR_CODES,
+  type CopyCapabilities,
+  type CopyDetail,
+  type HistoryItem,
+  type HistoryUndo,
+} from '@/domain/copy-detail';
 export type { FlaggedCopy, InStockCopiesOfTitle, InStockSummary, InStockTitle } from '@/domain/inventory';
 export {
   DEFAULT_COPIES_LIST_PARAMS,

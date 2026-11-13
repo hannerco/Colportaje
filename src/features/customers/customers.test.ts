@@ -3,20 +3,20 @@ import { appError } from '@/domain/shared/errors';
 import { err, ok } from '@/domain/shared/result';
 import type { CustomerRepository } from '@/repositories';
 import { fakeConnectivity } from '../../../tests/support/fake-connectivity';
+import { fakeCustomerRepository } from '../../../tests/support/fake-repositories';
 import { createCustomer, loadPossibleDuplicates, updateCustomer } from './use-cases/customer-data';
 
 const ID = '30000000-0000-4000-8000-000000000001';
 
-const fakeCustomers = (overrides: Partial<CustomerRepository> = {}): CustomerRepository => ({
-  getAccountData: vi.fn(),
-  create: vi.fn(async ({ id }: { id: string }) => ok({ id })),
-  update: vi.fn(async () => ok(undefined)),
-  listRefs: vi.fn(),
-  listDuplicateCandidates: vi.fn(async () =>
-    ok([{ id: 'c1', name: 'María Gómez', phone: '3125551234', archived: false }]),
-  ),
-  ...overrides,
-});
+const fakeCustomers = (overrides: Partial<CustomerRepository> = {}): CustomerRepository =>
+  fakeCustomerRepository({
+    create: vi.fn(async ({ id }: { id: string }) => ok({ id })),
+    update: vi.fn(async () => ok(undefined)),
+    listDuplicateCandidates: vi.fn(async () =>
+      ok([{ id: 'c1', name: 'María Gómez', phone: '3125551234', archived: false }]),
+    ),
+    ...overrides,
+  });
 
 describe('createCustomer (HU-CLI-02)', () => {
   it('crea con el nombre recortado', async () => {

@@ -1,9 +1,11 @@
 import type { AddCopiesInput } from '@/domain/add-batch';
 import type { CopiesListCopy } from '@/domain/copies-list';
 import type { CopyEvent } from '@/domain/copy';
+import type { DetailCopy } from '@/domain/copy-detail';
 import type { FlaggedCopyInput, StockCopy } from '@/domain/inventory';
 import type { AppError } from '@/domain/shared/errors';
 import type { Result } from '@/domain/shared/result';
+import type { Instant, LocalDate } from '@/domain/time';
 
 /** Un ejemplar recién creado por el lote, con el número que le asignó la base. */
 export type CreatedCopy = { readonly copyId: string; readonly titleId: string; readonly number: number };
@@ -39,4 +41,18 @@ export interface CopyRepository {
 
   /** Todos los ejemplares no eliminados, para la lista de ejemplares (HU-INV-04). Errores: `NETWORK_ERROR`. */
   listAll(): Promise<Result<CopiesListCopy[], AppError>>;
+
+  /**
+   * El ejemplar y su novedad abierta (HU-INV-05). Errores: `NOT_FOUND` (no existe, no es del usuario o
+   * está eliminado), `NETWORK_ERROR`.
+   */
+  getDetail(
+    copyId: string,
+  ): Promise<Result<{ copy: DetailCopy; openIssue: { note: string; createdAt: Instant } | null }, AppError>>;
+
+  /**
+   * Cambia la fecha de recibido (función `update_copy_received_date`). Errores: `DATE_IN_FUTURE`,
+   * `DATE_AFTER_SALE`, `NOT_FOUND`, `FORBIDDEN`, `NETWORK_ERROR`.
+   */
+  updateReceivedDate(copyId: string, date: LocalDate): Promise<Result<void, AppError>>;
 }

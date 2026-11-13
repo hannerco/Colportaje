@@ -4,6 +4,7 @@ import { err, ok } from '@/domain/shared/result';
 import { fixedClock, localDate } from '@/domain/time';
 import type { CustomerAccountData, CustomerRepository, PaymentRepository } from '@/repositories';
 import { fakeConnectivity } from '../../../tests/support/fake-connectivity';
+import { fakeCustomerRepository } from '../../../tests/support/fake-repositories';
 import { resolveScheduleExcess } from './use-cases/resolve-schedule-excess';
 
 const CUSTOMER = '30000000-0000-4000-8000-000000000001';
@@ -33,13 +34,9 @@ const data: CustomerAccountData = {
 
 const depsWith = (resolve: PaymentRepository['resolveScheduleExcess'], online = true) => {
   const payments: PaymentRepository = { resolveScheduleExcess: vi.fn(resolve) };
-  const customers: CustomerRepository = {
+  const customers: CustomerRepository = fakeCustomerRepository({
     getAccountData: vi.fn(async () => ok(data)),
-    create: vi.fn(),
-    update: vi.fn(),
-    listDuplicateCandidates: vi.fn(),
-    listRefs: vi.fn(),
-  };
+  });
   return { payments, customers, connectivity: fakeConnectivity(online), clock };
 };
 

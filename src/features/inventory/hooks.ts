@@ -16,6 +16,7 @@ import { unwrap } from '../shared/app-failure';
 import { useRepositories } from '../shared/repositories-provider';
 import { addCopiesBatch } from './use-cases/add-copies-batch';
 import { loadCopiesListData } from './use-cases/copies-list';
+import { loadCopyDetail, updateReceivedDate } from './use-cases/copy-detail';
 import { loadFlaggedCopies, loadInStockCopiesOfTitle, loadInStockSummary } from './use-cases/stock';
 
 export const inventoryQueryKeys = {
@@ -25,6 +26,7 @@ export const inventoryQueryKeys = {
   inStockOfTitle: (titleId: string) => ['inventory', 'in-stock-of-title', titleId] as const,
   flagged: ['inventory', 'flagged'] as const,
   copiesList: ['inventory', 'copies-list'] as const,
+  copyDetail: (copyId: string) => ['inventory', 'copy-detail', copyId] as const,
 };
 
 /** Historial de un ejemplar, del más reciente al más antiguo (HU-INV-01). */
@@ -116,4 +118,28 @@ export function useCopiesList(params: CopiesListParams) {
     queryFn: async () => unwrap(await loadCopiesListData({ copies, titles, customers })),
     select: (data) => buildCopiesListView(data.copies, data.titles, data.customers, params),
   });
+}
+
+/** Detalle de un ejemplar con historial e indicadores de acciones (HU-INV-05). */
+export function useCopyDetail(copyId: string | null | undefined) {
+  const { copies, titles, customers } = useRepositories();
+  return useQuery({
+    queryKey: inventoryQueryKeys.copyDetail(copyId ?? ''),
+    queryFn: async () => unwrap(await loadCopyDetail({ copies, titles, customers }, copyId!)),
+    enabled: Boolean(copyId),
+  });
+}
+
+/** Cambia la fecha de recibido (discreto en el diseño). Devuelve `Result`; al terminar bien invalida Inventario. */
+export function useUpdateReceivedDate() {
+  const { copies, connectivity } = useRepositories();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (input: { copyId: string; date: LocalDate }) =>
+      updateReceivedDate({ copies, connectivity, clock: systemClock }, input.copyId, input.date),
+    onSuccess: (result) => {
+      if (result.ok) void queryClient.invalidateQueries({ queryKey: inventoryQueryKeys.all });
+    },
+  });
+  return { updateReceivedDate: mutation.mutateAsync, isPending: mutation.isPending };
 }

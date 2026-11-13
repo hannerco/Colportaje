@@ -5,6 +5,7 @@ import { fixedClock, localDate } from '@/domain/time';
 import type { Title } from '@/domain/title';
 import type { CopyRepository, CustomerRepository, TitleRepository } from '@/repositories';
 import { fakeConnectivity } from '../../../tests/support/fake-connectivity';
+import { fakeCopyRepository, fakeCustomerRepository } from '../../../tests/support/fake-repositories';
 import { addCopiesBatch } from './use-cases/add-copies-batch';
 import { loadCopiesListData } from './use-cases/copies-list';
 import { loadFlaggedCopies, loadInStockCopiesOfTitle, loadInStockSummary } from './use-cases/stock';
@@ -20,14 +21,8 @@ const input = (receivedAt = '2026-11-04') => ({
   lines: [{ titleId: TITLE, copyIds: [COPY] }],
 });
 
-const copiesWith = (addBatch: CopyRepository['addBatch']): CopyRepository => ({
-  getHistory: vi.fn(),
-  addBatch: vi.fn(addBatch),
-  listStock: vi.fn(),
-  listInStockOfTitle: vi.fn(),
-  listFlagged: vi.fn(),
-  listAll: vi.fn(),
-});
+const copiesWith = (addBatch: CopyRepository['addBatch']): CopyRepository =>
+  fakeCopyRepository({ addBatch: vi.fn(addBatch) });
 
 describe('addCopiesBatch (HU-INV-02)', () => {
   it('confirma el lote y devuelve los ejemplares creados', async () => {
@@ -173,13 +168,8 @@ describe('loadCopiesListData (HU-INV-04)', () => {
     soldAt: null,
     deletedAt: null,
   };
-  const customersWith = (listRefs: CustomerRepository['listRefs']): CustomerRepository => ({
-    getAccountData: vi.fn(),
-    create: vi.fn(),
-    update: vi.fn(),
-    listDuplicateCandidates: vi.fn(),
-    listRefs: vi.fn(listRefs),
-  });
+  const customersWith = (listRefs: CustomerRepository['listRefs']): CustomerRepository =>
+    fakeCustomerRepository({ listRefs: vi.fn(listRefs) });
   const ref = { id: 'c1', name: 'Gloria', avatarEmoji: null };
 
   it('trae ejemplares, sus títulos (también desactivados) y los clientes', async () => {

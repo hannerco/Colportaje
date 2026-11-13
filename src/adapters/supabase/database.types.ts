@@ -685,6 +685,7 @@ export type Database = {
         Returns: undefined;
       };
       today_bogota: { Args: Record<PropertyKey, never>; Returns: string };
+      update_copy_received_date: { Args: { p_copy_id: string; p_date: string }; Returns: undefined };
     };
     Enums: {
       app_role: 'colportor' | 'admin' | 'leader';

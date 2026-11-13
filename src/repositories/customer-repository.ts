@@ -35,4 +35,7 @@ export interface CustomerRepository {
 
   /** Nombre y emoji de los clientes no borrados (incluidos archivados), para mostrarlos en otras listas. */
   listRefs(): Promise<Result<CustomerRef[], AppError>>;
+
+  /** Nombre y emoji de estos clientes (los que existan y sean del usuario). */
+  getRefs(ids: readonly string[]): Promise<Result<CustomerRef[], AppError>>;
 }
