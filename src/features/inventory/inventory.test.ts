@@ -2,9 +2,11 @@ import { describe, expect, it, vi } from 'vitest';
 import { appError } from '@/domain/shared/errors';
 import { err, ok } from '@/domain/shared/result';
 import { fixedClock, localDate } from '@/domain/time';
-import type { CopyRepository } from '@/repositories';
+import type { Title } from '@/domain/title';
+import type { CopyRepository, TitleRepository } from '@/repositories';
 import { fakeConnectivity } from '../../../tests/support/fake-connectivity';
 import { addCopiesBatch } from './use-cases/add-copies-batch';
+import { loadFlaggedCopies, loadInStockCopiesOfTitle, loadInStockSummary } from './use-cases/stock';
 
 const TITLE = '00000000-0000-4000-8000-000000000101';
 const COPY = '20000000-0000-4000-8000-000000000001';
@@ -20,6 +22,9 @@ const input = (receivedAt = '2026-11-04') => ({
 const copiesWith = (addBatch: CopyRepository['addBatch']): CopyRepository => ({
   getHistory: vi.fn(),
   addBatch: vi.fn(addBatch),
+  listStock: vi.fn(),
+  listInStockOfTitle: vi.fn(),
+  listFlagged: vi.fn(),
 });
 
 describe('addCopiesBatch (HU-INV-02)', () => {
@@ -63,5 +68,92 @@ describe('addCopiesBatch (HU-INV-02)', () => {
     expect(await addCopiesBatch({ copies, connectivity: fakeConnectivity(), clock }, input())).toEqual(
       failure,
     );
+  });
+});
+
+const aTitle: Title = {
+  id: TITLE,
+  name: 'Salud y bienestar',
+  author: null,
+  description: null,
+  imageUrl: null,
+  publicPrice: 75_000,
+  colportorPrice: 37_500,
+  category: 'cultural',
+  isActive: false,
+};
+
+const stockDeps = (overrides: Partial<CopyRepository> = {}, titles: Title[] = [aTitle]) => {
+  const titleRepo: TitleRepository = {
+    listActive: vi.fn(),
+    getMany: vi.fn(async (ids: readonly string[]) => ok(titles.filter((t) => ids.includes(t.id)))),
+  };
+  return {
+    copies: { ...copiesWith(async () => ok({ created: [] })), ...overrides },
+    titles: titleRepo,
+  };
+};
+
+const stockCopy = {
+  id: COPY,
+  titleId: TITLE,
+  number: 1,
+  status: 'in_stock' as const,
+  receivedAt: localDate('2026-11-01'),
+};
+const offline = err(appError('NETWORK_ERROR'));
+
+describe('lecturas de Libros en físico (HU-INV-03)', () => {
+  it('loadInStockSummary pide los títulos de sus ejemplares (también desactivados) y arma el resumen', async () => {
+    const deps = stockDeps({ listStock: vi.fn(async () => ok([stockCopy, { ...stockCopy, id: 'x' }])) });
+    const result = await loadInStockSummary(deps);
+    expect(deps.titles.getMany).toHaveBeenCalledWith([TITLE]);
+    expect(result.ok && result.value).toMatchObject({
+      booksTotal: 2,
+      titles: [{ titleId: TITLE, inStockCount: 2 }],
+    });
+  });
+
+  it('loadInStockCopiesOfTitle: el título y sus ejemplares; NOT_FOUND si el título no existe', async () => {
+    const deps = stockDeps({ listInStockOfTitle: vi.fn(async () => ok([stockCopy])) });
+    expect(await loadInStockCopiesOfTitle(deps, TITLE)).toEqual(
+      ok({
+        title: { name: 'Salud y bienestar', inStockCount: 1, referencePrice: 75_000 },
+        copies: [{ copyId: COPY, number: 1, receivedAt: '2026-11-01' }],
+      }),
+    );
+    expect(await loadInStockCopiesOfTitle(stockDeps({}, []), TITLE)).toEqual(err(appError('NOT_FOUND')));
+  });
+
+  it('loadFlaggedCopies: con el nombre del título', async () => {
+    const flaggedAt = new Date('2026-11-02T15:00:00Z');
+    const deps = stockDeps({
+      listFlagged: vi.fn(async () =>
+        ok([{ copyId: COPY, titleId: TITLE, number: 3, note: 'Faltó', flaggedAt }]),
+      ),
+    });
+    expect(await loadFlaggedCopies(deps)).toEqual(
+      ok([{ copyId: COPY, titleName: 'Salud y bienestar', number: 3, note: 'Faltó', flaggedAt }]),
+    );
+  });
+
+  it('los errores de los repositorios pasan tal cual', async () => {
+    const failing = stockDeps({
+      listStock: vi.fn(async () => offline),
+      listInStockOfTitle: vi.fn(async () => offline),
+      listFlagged: vi.fn(async () => offline),
+    });
+    expect(await loadInStockSummary(failing)).toEqual(offline);
+    expect(await loadInStockCopiesOfTitle(failing, TITLE)).toEqual(offline);
+    expect(await loadFlaggedCopies(failing)).toEqual(offline);
+
+    const noTitles = stockDeps({
+      listStock: vi.fn(async () => ok([stockCopy])),
+      listFlagged: vi.fn(async () => ok([])),
+    });
+    vi.mocked(noTitles.titles.getMany).mockResolvedValue(offline);
+    expect(await loadInStockSummary(noTitles)).toEqual(offline);
+    expect(await loadInStockCopiesOfTitle(noTitles, TITLE)).toEqual(offline);
+    expect(await loadFlaggedCopies(noTitles)).toEqual(offline);
   });
 });

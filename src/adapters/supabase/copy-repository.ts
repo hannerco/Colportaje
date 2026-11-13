@@ -4,9 +4,11 @@ import type { CopyEvent } from '@/domain/copy';
 import { appError, COMMON_ERROR_CODES } from '@/domain/shared/errors';
 import { err, ok } from '@/domain/shared/result';
 import type { LocalDate } from '@/domain/time';
+import type { FlaggedCopyInput, StockCopy } from '@/domain/inventory';
 import type { CopyRepository } from '@/repositories';
 import type { GetSupabaseClient } from './client';
 import { mapPostgrestError, mapRpcError } from './errors';
+import { selectAll } from './select-all';
 
 const localDate = z
   .string()
@@ -104,6 +106,80 @@ export function createSupabaseCopyRepository(getClient: GetSupabaseClient): Copy
       );
     },
 
+    async listStock() {
+      const client = getClient();
+      const rows = await selectAll((from, to) =>
+        client
+          .from('copy')
+          .select(STOCK_COLUMNS)
+          .in('status', ['in_stock', 'flagged'])
+          .is('deleted_at', null)
+          .order('id')
+          .range(from, to),
+      );
+      return rows.ok ? ok(rows.value.map(toStockCopy)) : rows;
+    },
+
+    async listInStockOfTitle(titleId) {
+      const client = getClient();
+      const rows = await selectAll((from, to) =>
+        client
+          .from('copy')
+          .select(STOCK_COLUMNS)
+          .eq('title_id', titleId)
+          .eq('status', 'in_stock')
+          .is('deleted_at', null)
+          .order('id')
+          .range(from, to),
+      );
+      return rows.ok ? ok(rows.value.map(toStockCopy)) : rows;
+    },
+
+    async listFlagged() {
+      const client = getClient();
+      const flagged = await selectAll((from, to) =>
+        client
+          .from('copy')
+          .select('id, title_id, number, updated_at')
+          .eq('status', 'flagged')
+          .is('deleted_at', null)
+          .order('id')
+          .range(from, to),
+      );
+      if (!flagged.ok) return flagged;
+      if (flagged.value.length === 0) return ok([]);
+      // Las novedades abiertas son pocas (una por ejemplar con novedad, R6 de HU-INV-01).
+      const issues = await selectAll((from, to) =>
+        client
+          .from('copy_issue')
+          .select('copy_id, note, created_at')
+          .is('resolved_at', null)
+          .order('id')
+          .range(from, to),
+      );
+      if (!issues.ok) return issues;
+      const openIssue = new Map(
+        issues.value.map((raw) => {
+          const issue = openIssueSchema.parse(raw);
+          return [issue.copy_id, issue] as const;
+        }),
+      );
+      return ok(
+        flagged.value.map((raw): FlaggedCopyInput => {
+          const row = flaggedRowSchema.parse(raw);
+          const issue = openIssue.get(row.id);
+          // Sin novedad abierta (no debería pasar): sin nota y con la fecha del último cambio del ejemplar.
+          return {
+            copyId: row.id,
+            titleId: row.title_id,
+            number: row.number,
+            note: issue?.note ?? null,
+            flaggedAt: new Date(issue?.created_at ?? row.updated_at),
+          };
+        }),
+      );
+    },
+
     async addBatch(input) {
       const { data, error } = await getClient().rpc('add_copies', {
         p_batch_id: input.batchId,
@@ -140,3 +216,33 @@ const addCopiesDetails = (code: string, detail: string | null) => {
 const createdRowsSchema = z.array(
   z.object({ copy_id: z.uuid(), title_id: z.uuid(), number: z.number().int().positive() }),
 );
+
+const STOCK_COLUMNS = 'id, title_id, number, status, received_at' as const;
+
+const stockRowSchema = z.object({
+  id: z.uuid(),
+  title_id: z.uuid(),
+  number: z.number().int(),
+  status: z.enum(['in_stock', 'sold', 'flagged', 'lost', 'returned_to_leader']),
+  received_at: localDate,
+});
+
+const toStockCopy = (raw: unknown): StockCopy => {
+  const row = stockRowSchema.parse(raw);
+  return {
+    id: row.id,
+    titleId: row.title_id,
+    number: row.number,
+    status: row.status,
+    receivedAt: row.received_at,
+  };
+};
+
+const flaggedRowSchema = z.object({
+  id: z.uuid(),
+  title_id: z.uuid(),
+  number: z.number().int(),
+  updated_at: z.string(),
+});
+
+const openIssueSchema = z.object({ copy_id: z.uuid(), note: z.string(), created_at: z.string() });

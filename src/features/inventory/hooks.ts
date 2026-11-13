@@ -14,10 +14,14 @@ import { catalogQueryKeys } from '../catalog';
 import { unwrap } from '../shared/app-failure';
 import { useRepositories } from '../shared/repositories-provider';
 import { addCopiesBatch } from './use-cases/add-copies-batch';
+import { loadFlaggedCopies, loadInStockCopiesOfTitle, loadInStockSummary } from './use-cases/stock';
 
 export const inventoryQueryKeys = {
   all: ['inventory'] as const,
   copyHistory: (copyId: string) => ['inventory', 'copy-history', copyId] as const,
+  inStockSummary: ['inventory', 'in-stock-summary'] as const,
+  inStockOfTitle: (titleId: string) => ['inventory', 'in-stock-of-title', titleId] as const,
+  flagged: ['inventory', 'flagged'] as const,
 };
 
 /** Historial de un ejemplar, del más reciente al más antiguo (HU-INV-01). */
@@ -68,4 +72,32 @@ export function useAddCopiesBatch() {
     },
   });
   return { addCopiesBatch: mutation.mutateAsync, isPending: mutation.isPending };
+}
+
+/** Libros en físico: conteo por título, minibooks aparte y "N por resolver" (HU-INV-03). Sin sumas de dinero. */
+export function useInStockSummary() {
+  const { copies, titles } = useRepositories();
+  return useQuery({
+    queryKey: inventoryQueryKeys.inStockSummary,
+    queryFn: async () => unwrap(await loadInStockSummary({ copies, titles })),
+  });
+}
+
+/** Un título abierto: sus ejemplares en físico, del recibido más antiguo al más nuevo (HU-INV-03). */
+export function useInStockCopiesOfTitle(titleId: string | null | undefined) {
+  const { copies, titles } = useRepositories();
+  return useQuery({
+    queryKey: inventoryQueryKeys.inStockOfTitle(titleId ?? ''),
+    queryFn: async () => unwrap(await loadInStockCopiesOfTitle({ copies, titles }, titleId!)),
+    enabled: Boolean(titleId),
+  });
+}
+
+/** Por resolver: ejemplares con novedad, del más reciente al más antiguo (HU-INV-03, BR-COPY-10). */
+export function useFlaggedCopies() {
+  const { copies, titles } = useRepositories();
+  return useQuery({
+    queryKey: inventoryQueryKeys.flagged,
+    queryFn: async () => unwrap(await loadFlaggedCopies({ copies, titles })),
+  });
 }

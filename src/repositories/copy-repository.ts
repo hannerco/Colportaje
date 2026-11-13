@@ -1,5 +1,6 @@
 import type { AddCopiesInput } from '@/domain/add-batch';
 import type { CopyEvent } from '@/domain/copy';
+import type { FlaggedCopyInput, StockCopy } from '@/domain/inventory';
 import type { AppError } from '@/domain/shared/errors';
 import type { Result } from '@/domain/shared/result';
 
@@ -20,4 +21,18 @@ export interface CopyRepository {
    * (`details.titleIds`), `VALIDATION`, `CONFLICT`, `FORBIDDEN`, `NETWORK_ERROR`.
    */
   addBatch(input: AddCopiesInput): Promise<Result<{ created: CreatedCopy[] }, AppError>>;
+
+  /**
+   * Ejemplares en físico y con novedad, sin borrados (HU-INV-03, R1/R4). Errores: `NETWORK_ERROR`.
+   */
+  listStock(): Promise<Result<StockCopy[], AppError>>;
+
+  /** Ejemplares en físico de un título, sin borrados (HU-INV-03). Errores: `NETWORK_ERROR`. */
+  listInStockOfTitle(titleId: string): Promise<Result<StockCopy[], AppError>>;
+
+  /**
+   * Ejemplares con novedad y su novedad abierta: nota y fecha en que se marcó (HU-INV-03, BR-COPY-10).
+   * Errores: `NETWORK_ERROR`.
+   */
+  listFlagged(): Promise<Result<FlaggedCopyInput[], AppError>>;
 }
