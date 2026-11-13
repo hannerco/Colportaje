@@ -1,5 +1,6 @@
 import type { AuthRepository } from './auth-repository';
 import type { Connectivity } from './connectivity';
+import type { CopyRepository } from './copy-repository';
 import type { OfflineCache } from './offline-cache';
 import type { ImageCodec, PhotoRepository, StorageRepository } from './photo-ports';
 import type { ProfileRepository } from './profile-repository';
@@ -7,6 +8,7 @@ import type { TitleRepository } from './title-repository';
 
 export type { AuthChange, AuthRepository } from './auth-repository';
 export type { Connectivity } from './connectivity';
+export type { CopyRepository } from './copy-repository';
 export type { OfflineCache } from './offline-cache';
 export type { DecodedImage, ImageCodec, NewPhoto, PhotoRepository, StorageRepository } from './photo-ports';
 export type { ProfileRepository } from './profile-repository';
@@ -21,6 +23,7 @@ export interface Repositories {
   readonly auth: AuthRepository;
   readonly profiles: ProfileRepository;
   readonly titles: TitleRepository;
+  readonly copies: CopyRepository;
   readonly photos: PhotoRepository;
   readonly storage: StorageRepository;
   readonly imageCodec: ImageCodec;

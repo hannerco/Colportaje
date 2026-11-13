@@ -5,10 +5,14 @@ const LAYERS = ['domain', 'repositories', 'adapters', 'features', 'ui', 'lib', '
 
 const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-/** Importar una capa por alias (`@/adapters/...`) o por ruta relativa (`../../adapters/...`). */
+/**
+ * Importar una capa por alias (`@/adapters/...`) o por ruta relativa que sube hasta ella (`../../adapters/...`).
+ * Las capas son carpetas directas de `src/`, así que una ruta relativa a otra capa sube con `../` y lo primero
+ * que encuentra es el nombre de la capa. `./copy` (p. ej. `domain/copy.ts`) es un archivo propio, no la capa `copy`.
+ */
 const layerImport = (layer) => {
   const l = escape(layer);
-  return `^(?:@/${l}|\\.{1,2}/(?:.*/)?${l})(?:/|$)`;
+  return `^(?:@/${l}|(?:\\.\\./)+${l})(?:/|$)`;
 };
 
 const forbidLayers = (from, layers) =>

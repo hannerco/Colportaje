@@ -19,6 +19,187 @@ export type Database = {
         };
         Relationships: [];
       };
+      copy: {
+        Row: {
+          agreed_price: number | null;
+          colportor_price_snapshot: number;
+          created_at: string;
+          customer_id: string | null;
+          deleted_at: string | null;
+          id: string;
+          number: number;
+          owner_id: string;
+          public_price_snapshot: number | null;
+          received_at: string;
+          sold_at: string | null;
+          status: Database['public']['Enums']['copy_status'];
+          title_id: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          agreed_price?: number | null;
+          colportor_price_snapshot: number;
+          created_at?: string;
+          customer_id?: string | null;
+          deleted_at?: string | null;
+          id: string;
+          number: number;
+          owner_id?: string;
+          public_price_snapshot?: number | null;
+          received_at?: string;
+          sold_at?: string | null;
+          status?: Database['public']['Enums']['copy_status'];
+          title_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          agreed_price?: number | null;
+          colportor_price_snapshot?: number;
+          created_at?: string;
+          customer_id?: string | null;
+          deleted_at?: string | null;
+          id?: string;
+          number?: number;
+          owner_id?: string;
+          public_price_snapshot?: number | null;
+          received_at?: string;
+          sold_at?: string | null;
+          status?: Database['public']['Enums']['copy_status'];
+          title_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'copy_customer_same_owner';
+            columns: ['customer_id', 'owner_id'];
+            isOneToOne: false;
+            referencedRelation: 'customer';
+            referencedColumns: ['id', 'owner_id'];
+          },
+          {
+            foreignKeyName: 'copy_title_id_fkey';
+            columns: ['title_id'];
+            isOneToOne: false;
+            referencedRelation: 'title';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      copy_counter: {
+        Row: {
+          last_number: number;
+          owner_id: string;
+          title_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          last_number?: number;
+          owner_id: string;
+          title_id: string;
+        };
+        Update: {
+          last_number?: number;
+          owner_id?: string;
+          title_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'copy_counter_title_id_fkey';
+            columns: ['title_id'];
+            isOneToOne: false;
+            referencedRelation: 'title';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      copy_event: {
+        Row: {
+          at: string;
+          copy_id: string;
+          data: NonNullable<Json>;
+          id: string;
+          note: string | null;
+          owner_id: string;
+          seq: number;
+          type: Database['public']['Enums']['copy_event_type'];
+        };
+        ComputedFields: never;
+        Insert: {
+          at?: string;
+          copy_id: string;
+          data?: NonNullable<Json>;
+          id?: string;
+          note?: string | null;
+          owner_id: string;
+          seq?: never;
+          type: Database['public']['Enums']['copy_event_type'];
+        };
+        Update: {
+          at?: string;
+          copy_id?: string;
+          data?: NonNullable<Json>;
+          id?: string;
+          note?: string | null;
+          owner_id?: string;
+          seq?: never;
+          type?: Database['public']['Enums']['copy_event_type'];
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'copy_event_copy_same_owner';
+            columns: ['copy_id', 'owner_id'];
+            isOneToOne: false;
+            referencedRelation: 'copy';
+            referencedColumns: ['id', 'owner_id'];
+          },
+        ];
+      };
+      copy_issue: {
+        Row: {
+          copy_id: string;
+          created_at: string;
+          id: string;
+          note: string;
+          owner_id: string;
+          resolution: Database['public']['Enums']['issue_resolution'] | null;
+          resolution_note: string | null;
+          resolved_at: string | null;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          copy_id: string;
+          created_at?: string;
+          id: string;
+          note: string;
+          owner_id?: string;
+          resolution?: Database['public']['Enums']['issue_resolution'] | null;
+          resolution_note?: string | null;
+          resolved_at?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          copy_id?: string;
+          created_at?: string;
+          id?: string;
+          note?: string;
+          owner_id?: string;
+          resolution?: Database['public']['Enums']['issue_resolution'] | null;
+          resolution_note?: string | null;
+          resolved_at?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'copy_issue_copy_same_owner';
+            columns: ['copy_id', 'owner_id'];
+            isOneToOne: false;
+            referencedRelation: 'copy';
+            referencedColumns: ['id', 'owner_id'];
+          },
+        ];
+      };
       customer: {
         Row: {
           address: string | null;
@@ -216,12 +397,27 @@ export type Database = {
     Functions: {
       is_active_user: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
+      next_copy_number: { Args: { p_owner: string; p_title: string }; Returns: number };
       photo_total_bytes: { Args: Record<PropertyKey, never>; Returns: number };
       today_bogota: { Args: Record<PropertyKey, never>; Returns: string };
     };
     Enums: {
       app_role: 'colportor' | 'admin' | 'leader';
       cancel_reason: 'book_returned' | 'overpaid' | 'manual' | 'customer_archived';
+      copy_event_type:
+        | 'received'
+        | 'sold'
+        | 'returned'
+        | 'flagged'
+        | 'resolved'
+        | 'undo_resolved'
+        | 'deleted'
+        | 'undo_deleted'
+        | 'price_changed'
+        | 'received_date_changed'
+        | 'minibook_sold'
+        | 'returned_to_leader'
+        | 'undo_returned_to_leader';
       copy_status: 'in_stock' | 'sold' | 'flagged' | 'lost' | 'returned_to_leader';
       deposit_status: 'draft' | 'confirmed';
       issue_resolution: 'found' | 'lost' | 'removed';
@@ -343,6 +539,21 @@ export const Constants = {
     Enums: {
       app_role: ['colportor', 'admin', 'leader'],
       cancel_reason: ['book_returned', 'overpaid', 'manual', 'customer_archived'],
+      copy_event_type: [
+        'received',
+        'sold',
+        'returned',
+        'flagged',
+        'resolved',
+        'undo_resolved',
+        'deleted',
+        'undo_deleted',
+        'price_changed',
+        'received_date_changed',
+        'minibook_sold',
+        'returned_to_leader',
+        'undo_returned_to_leader',
+      ],
       copy_status: ['in_stock', 'sold', 'flagged', 'lost', 'returned_to_leader'],
       deposit_status: ['draft', 'confirmed'],
       issue_resolution: ['found', 'lost', 'removed'],
