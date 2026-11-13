@@ -1,4 +1,5 @@
 import type { AddCopiesInput } from '@/domain/add-batch';
+import type { CopiesListCopy } from '@/domain/copies-list';
 import type { CopyEvent } from '@/domain/copy';
 import type { FlaggedCopyInput, StockCopy } from '@/domain/inventory';
 import type { AppError } from '@/domain/shared/errors';
@@ -35,4 +36,7 @@ export interface CopyRepository {
    * Errores: `NETWORK_ERROR`.
    */
   listFlagged(): Promise<Result<FlaggedCopyInput[], AppError>>;
+
+  /** Todos los ejemplares no eliminados, para la lista de ejemplares (HU-INV-04). Errores: `NETWORK_ERROR`. */
+  listAll(): Promise<Result<CopiesListCopy[], AppError>>;
 }

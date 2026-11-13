@@ -3,9 +3,10 @@ import { appError } from '@/domain/shared/errors';
 import { err, ok } from '@/domain/shared/result';
 import { fixedClock, localDate } from '@/domain/time';
 import type { Title } from '@/domain/title';
-import type { CopyRepository, TitleRepository } from '@/repositories';
+import type { CopyRepository, CustomerRepository, TitleRepository } from '@/repositories';
 import { fakeConnectivity } from '../../../tests/support/fake-connectivity';
 import { addCopiesBatch } from './use-cases/add-copies-batch';
+import { loadCopiesListData } from './use-cases/copies-list';
 import { loadFlaggedCopies, loadInStockCopiesOfTitle, loadInStockSummary } from './use-cases/stock';
 
 const TITLE = '00000000-0000-4000-8000-000000000101';
@@ -25,6 +26,7 @@ const copiesWith = (addBatch: CopyRepository['addBatch']): CopyRepository => ({
   listStock: vi.fn(),
   listInStockOfTitle: vi.fn(),
   listFlagged: vi.fn(),
+  listAll: vi.fn(),
 });
 
 describe('addCopiesBatch (HU-INV-02)', () => {
@@ -155,5 +157,58 @@ describe('lecturas de Libros en físico (HU-INV-03)', () => {
     expect(await loadInStockSummary(noTitles)).toEqual(offline);
     expect(await loadInStockCopiesOfTitle(noTitles, TITLE)).toEqual(offline);
     expect(await loadFlaggedCopies(noTitles)).toEqual(offline);
+  });
+});
+
+describe('loadCopiesListData (HU-INV-04)', () => {
+  const listCopy = {
+    id: COPY,
+    titleId: TITLE,
+    number: 1,
+    status: 'in_stock' as const,
+    customerId: null,
+    agreedPrice: null,
+    publicPriceSnapshot: 75_000,
+    receivedAt: localDate('2026-11-01'),
+    soldAt: null,
+    deletedAt: null,
+  };
+  const customersWith = (listRefs: CustomerRepository['listRefs']): CustomerRepository => ({
+    getAccountData: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    listDuplicateCandidates: vi.fn(),
+    listRefs: vi.fn(listRefs),
+  });
+  const ref = { id: 'c1', name: 'Gloria', avatarEmoji: null };
+
+  it('trae ejemplares, sus títulos (también desactivados) y los clientes', async () => {
+    const deps = {
+      ...stockDeps({ listAll: vi.fn(async () => ok([listCopy])) }),
+      customers: customersWith(async () => ok([ref])),
+    };
+    expect(await loadCopiesListData(deps)).toEqual(
+      ok({ copies: [listCopy], titles: [aTitle], customers: [ref] }),
+    );
+    expect(deps.titles.getMany).toHaveBeenCalledWith([TITLE]);
+  });
+
+  it('cualquier lectura que falle devuelve su error', async () => {
+    const failingCopies = {
+      ...stockDeps({ listAll: vi.fn(async () => offline) }),
+      customers: customersWith(async () => ok([])),
+    };
+    expect(await loadCopiesListData(failingCopies)).toEqual(offline);
+    const failingCustomers = {
+      ...stockDeps({ listAll: vi.fn(async () => ok([])) }),
+      customers: customersWith(async () => offline),
+    };
+    expect(await loadCopiesListData(failingCustomers)).toEqual(offline);
+    const failingTitles = {
+      ...stockDeps({ listAll: vi.fn(async () => ok([listCopy])) }),
+      customers: customersWith(async () => ok([])),
+    };
+    vi.mocked(failingTitles.titles.getMany).mockResolvedValue(offline);
+    expect(await loadCopiesListData(failingTitles)).toEqual(offline);
   });
 });

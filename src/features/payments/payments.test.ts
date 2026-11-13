@@ -38,6 +38,7 @@ const depsWith = (resolve: PaymentRepository['resolveScheduleExcess'], online = 
     create: vi.fn(),
     update: vi.fn(),
     listDuplicateCandidates: vi.fn(),
+    listRefs: vi.fn(),
   };
   return { payments, customers, connectivity: fakeConnectivity(online), clock };
 };

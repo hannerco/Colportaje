@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { ADD_COPIES_ERROR_CODES } from '@/domain/add-batch';
+import type { CopiesListCopy } from '@/domain/copies-list';
 import type { CopyEvent } from '@/domain/copy';
 import { appError, COMMON_ERROR_CODES } from '@/domain/shared/errors';
 import { err, ok } from '@/domain/shared/result';
@@ -180,6 +181,31 @@ export function createSupabaseCopyRepository(getClient: GetSupabaseClient): Copy
       );
     },
 
+    async listAll() {
+      const client = getClient();
+      const rows = await selectAll((from, to) =>
+        client.from('copy').select(LIST_COLUMNS).is('deleted_at', null).order('id').range(from, to),
+      );
+      if (!rows.ok) return rows;
+      return ok(
+        rows.value.map((raw): CopiesListCopy => {
+          const row = listRowSchema.parse(raw);
+          return {
+            id: row.id,
+            titleId: row.title_id,
+            number: row.number,
+            status: row.status,
+            customerId: row.customer_id,
+            agreedPrice: row.agreed_price,
+            publicPriceSnapshot: row.public_price_snapshot,
+            receivedAt: row.received_at,
+            soldAt: row.sold_at === null ? null : new Date(row.sold_at),
+            deletedAt: null,
+          };
+        }),
+      );
+    },
+
     async addBatch(input) {
       const { data, error } = await getClient().rpc('add_copies', {
         p_batch_id: input.batchId,
@@ -246,3 +272,18 @@ const flaggedRowSchema = z.object({
 });
 
 const openIssueSchema = z.object({ copy_id: z.uuid(), note: z.string(), created_at: z.string() });
+
+const LIST_COLUMNS =
+  'id, title_id, number, status, customer_id, agreed_price, public_price_snapshot, received_at, sold_at' as const;
+
+const listRowSchema = z.object({
+  id: z.uuid(),
+  title_id: z.uuid(),
+  number: z.number().int(),
+  status: z.enum(['in_stock', 'sold', 'flagged', 'lost', 'returned_to_leader']),
+  customer_id: z.uuid().nullable(),
+  agreed_price: z.number().int().nullable(),
+  public_price_snapshot: z.number().int().nullable(),
+  received_at: localDate,
+  sold_at: z.string().nullable(),
+});

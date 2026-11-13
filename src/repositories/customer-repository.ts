@@ -1,4 +1,5 @@
 import type { CustomerAccountInput } from '@/domain/customer';
+import type { CustomerRef } from '@/domain/copies-list';
 import type { CustomerPatch, DuplicateCandidate } from '@/domain/customer-data';
 import type { Payment } from '@/domain/payment';
 import type { AppError } from '@/domain/shared/errors';
@@ -31,4 +32,7 @@ export interface CustomerRepository {
 
   /** Clientes no borrados (incluidos archivados) para buscar posibles duplicados (BR-CUS-11). */
   listDuplicateCandidates(): Promise<Result<DuplicateCandidate[], AppError>>;
+
+  /** Nombre y emoji de los clientes no borrados (incluidos archivados), para mostrarlos en otras listas. */
+  listRefs(): Promise<Result<CustomerRef[], AppError>>;
 }

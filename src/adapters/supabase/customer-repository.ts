@@ -129,6 +129,25 @@ export function createSupabaseCustomerRepository(getClient: GetSupabaseClient): 
       return data.length > 0 ? ok(undefined) : err(appError(COMMON_ERROR_CODES.NOT_FOUND));
     },
 
+    async listRefs() {
+      const client = getClient();
+      const rows = await selectAll((from, to) =>
+        client
+          .from('customer')
+          .select('id, name, avatar_emoji')
+          .is('deleted_at', null)
+          .order('id')
+          .range(from, to),
+      );
+      if (!rows.ok) return rows;
+      return ok(
+        rows.value.map((raw) => {
+          const row = refRowSchema.parse(raw);
+          return { id: row.id, name: row.name, avatarEmoji: row.avatar_emoji };
+        }),
+      );
+    },
+
     async listDuplicateCandidates() {
       const client = getClient();
       const rows = await selectAll((from, to) =>
@@ -149,6 +168,8 @@ export function createSupabaseCustomerRepository(getClient: GetSupabaseClient): 
     },
   };
 }
+
+const refRowSchema = z.object({ id: z.uuid(), name: z.string(), avatar_emoji: z.string().nullable() });
 
 const candidateRowSchema = z.object({
   id: z.uuid(),

@@ -8,12 +8,14 @@ import {
   type AddBatch,
   type AddCopiesInput,
 } from '@/domain/add-batch';
+import { buildCopiesListView, type CopiesListParams } from '@/domain/copies-list';
 import { todayBogota, type LocalDate } from '@/domain/time';
 import { systemClock } from '@/lib/clock';
 import { catalogQueryKeys } from '../catalog';
 import { unwrap } from '../shared/app-failure';
 import { useRepositories } from '../shared/repositories-provider';
 import { addCopiesBatch } from './use-cases/add-copies-batch';
+import { loadCopiesListData } from './use-cases/copies-list';
 import { loadFlaggedCopies, loadInStockCopiesOfTitle, loadInStockSummary } from './use-cases/stock';
 
 export const inventoryQueryKeys = {
@@ -22,6 +24,7 @@ export const inventoryQueryKeys = {
   inStockSummary: ['inventory', 'in-stock-summary'] as const,
   inStockOfTitle: (titleId: string) => ['inventory', 'in-stock-of-title', titleId] as const,
   flagged: ['inventory', 'flagged'] as const,
+  copiesList: ['inventory', 'copies-list'] as const,
 };
 
 /** Historial de un ejemplar, del más reciente al más antiguo (HU-INV-01). */
@@ -99,5 +102,18 @@ export function useFlaggedCopies() {
   return useQuery({
     queryKey: inventoryQueryKeys.flagged,
     queryFn: async () => unwrap(await loadFlaggedCopies({ copies, titles })),
+  });
+}
+
+/**
+ * Lista de ejemplares con vistas, conteos, filtro de estado, orden y búsqueda (HU-INV-04). Los datos se
+ * leen una vez; cambiar de vista, filtro, orden o búsqueda no vuelve a la red.
+ */
+export function useCopiesList(params: CopiesListParams) {
+  const { copies, titles, customers } = useRepositories();
+  return useQuery({
+    queryKey: inventoryQueryKeys.copiesList,
+    queryFn: async () => unwrap(await loadCopiesListData({ copies, titles, customers })),
+    select: (data) => buildCopiesListView(data.copies, data.titles, data.customers, params),
   });
 }

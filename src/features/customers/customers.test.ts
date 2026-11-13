@@ -11,6 +11,7 @@ const fakeCustomers = (overrides: Partial<CustomerRepository> = {}): CustomerRep
   getAccountData: vi.fn(),
   create: vi.fn(async ({ id }: { id: string }) => ok({ id })),
   update: vi.fn(async () => ok(undefined)),
+  listRefs: vi.fn(),
   listDuplicateCandidates: vi.fn(async () =>
     ok([{ id: 'c1', name: 'María Gómez', phone: '3125551234', archived: false }]),
   ),
