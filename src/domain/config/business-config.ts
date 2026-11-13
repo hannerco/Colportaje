@@ -59,7 +59,11 @@ export const businessConfig = deepFreeze({
     format: 'webp',
     maxLongSidePx: 1280,
     targetBytes: 150_000,
+    /** Lado mayor de la miniatura para listas; con ~320 px queda cerca de los ~15 KB. */
+    thumbnailMaxLongSidePx: 320,
     thumbnailTargetBytes: 15_000,
+    /** R3 de HU-BASE-05: las fotos se ven con URL firmadas de corta duración. */
+    signedUrlSeconds: 3600,
   },
 
   /** BR-CUS-07: umbral de la búsqueda difusa; lo fija HU-CLI-05 con su prueba. */

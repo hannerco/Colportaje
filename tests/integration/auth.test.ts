@@ -1,9 +1,7 @@
 import { afterAll, describe, expect, it } from 'vitest';
 import { createSupabaseAuthRepository } from '@/adapters/supabase/auth-repository';
 import { createSupabaseProfileRepository } from '@/adapters/supabase/profile-repository';
-import { createSupabaseTitleRepository } from '@/adapters/supabase/title-repository';
-import { signIn } from '@/features/auth/use-cases/sign-in';
-import type { Repositories } from '@/repositories';
+import { signIn, type SignInDeps } from '@/features/auth/use-cases/sign-in';
 import { createUser } from '../../scripts/lib/create-user';
 import { pool } from '../rls/helpers/db';
 import { adminClient, anonClient, uniqueEmail } from './helpers/local-supabase';
@@ -31,12 +29,11 @@ async function scriptUser(input: { fullName: string; isAdmin?: boolean; password
 }
 
 /** Repositorios reales sobre un cliente nuevo (como un dispositivo nuevo). */
-function deviceRepositories(): Repositories {
+function deviceRepositories(): SignInDeps {
   const client = anonClient();
   return {
     auth: createSupabaseAuthRepository(() => client),
     profiles: createSupabaseProfileRepository(() => client),
-    titles: createSupabaseTitleRepository(() => client),
     connectivity: { isOnline: () => true },
   };
 }

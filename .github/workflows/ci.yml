@@ -42,9 +42,9 @@ jobs:
       - name: Pruebas
         run: pnpm test
 
-      # Supabase local solo con lo que usan las pruebas (HU-BASE-02): base de datos, Auth, API y meta (tipos).
+      # Supabase local solo con lo que usan las pruebas: base de datos, Auth, API, Storage (HU-BASE-05) y meta (tipos).
       - name: Iniciar Supabase local
-        run: pnpm exec supabase start -x realtime,storage-api,imgproxy,mailpit,studio,edge-runtime,logflare,vector,supavisor
+        run: pnpm exec supabase start -x realtime,imgproxy,mailpit,studio,edge-runtime,logflare,vector,supavisor
 
       - name: Pruebas de seguridad (RLS)
         run: pnpm test:rls

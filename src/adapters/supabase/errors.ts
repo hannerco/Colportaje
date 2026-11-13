@@ -37,3 +37,17 @@ export const mapPostgrestError = (error: PostgrestError): AppError => {
   if (!error.code) return appError(COMMON_ERROR_CODES.NETWORK_ERROR);
   throw new Error(`Error inesperado de la base de datos (${error.code}): ${error.message}`);
 };
+
+/** Error de Supabase Storage (forma común de StorageApiError y StorageUnknownError). */
+type StorageErrorLike = { message: string; status?: number | undefined; statusCode?: string | undefined };
+
+/** Traduce un error de Storage. Sin estado HTTP (no hubo respuesta) es un fallo de red reintentable (AF-92). */
+export const mapStorageError = (error: StorageErrorLike): AppError => {
+  const code = Number(error.statusCode ?? error.status);
+  if (!Number.isFinite(code) || code === 0 || code >= 500) return appError(COMMON_ERROR_CODES.NETWORK_ERROR);
+  if (code === 401 || code === 403) return appError(COMMON_ERROR_CODES.FORBIDDEN);
+  if (code === 404) return appError(COMMON_ERROR_CODES.NOT_FOUND);
+  if (code === 413 || code === 415)
+    return appError(COMMON_ERROR_CODES.VALIDATION, { field: 'file', status: code });
+  return appError('STORAGE_FAILED', { status: code, message: error.message });
+};

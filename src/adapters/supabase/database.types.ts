@@ -19,6 +19,43 @@ export type Database = {
         };
         Relationships: [];
       };
+      photo: {
+        Row: {
+          bytes: number;
+          created_at: string;
+          deleted_at: string | null;
+          id: string;
+          kind: Database['public']['Enums']['photo_kind'];
+          owner_id: string;
+          path: string;
+          thumb_path: string | null;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          bytes: number;
+          created_at?: string;
+          deleted_at?: string | null;
+          id: string;
+          kind: Database['public']['Enums']['photo_kind'];
+          owner_id?: string;
+          path: string;
+          thumb_path?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          bytes?: number;
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          kind?: Database['public']['Enums']['photo_kind'];
+          owner_id?: string;
+          path?: string;
+          thumb_path?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       profile: {
         Row: {
           created_at: string;
@@ -124,6 +161,7 @@ export type Database = {
     Functions: {
       is_active_user: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
+      photo_total_bytes: { Args: Record<PropertyKey, never>; Returns: number };
       today_bogota: { Args: Record<PropertyKey, never>; Returns: string };
     };
     Enums: {
