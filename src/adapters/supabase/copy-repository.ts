@@ -1,5 +1,7 @@
 import { z } from 'zod';
 import { ADD_COPIES_ERROR_CODES } from '@/domain/add-batch';
+import { ASSIGN_ERROR_CODES } from '@/domain/assignable-copies';
+import { CUSTOMER_ERROR_CODES } from '@/domain/customer-data';
 import type { CopiesListCopy } from '@/domain/copies-list';
 import type { CopyEvent } from '@/domain/copy';
 import { RECEIVED_DATE_ERROR_CODES } from '@/domain/copy-detail';
@@ -252,6 +254,24 @@ export function createSupabaseCopyRepository(getClient: GetSupabaseClient): Copy
       return ok(undefined);
     },
 
+    async assignToCustomer(copyId, customerId) {
+      const { error } = await getClient().rpc('assign_copy_to_customer', {
+        p_copy_id: copyId,
+        p_customer_id: customerId,
+      });
+      if (error) return err(mapRpcError(error, ASSIGN_ERRORS));
+      return ok(undefined);
+    },
+
+    async returnFromCustomer(copyId, reason) {
+      const { data, error } = await getClient().rpc('return_copy_from_customer', {
+        p_copy_id: copyId,
+        p_reason: reason,
+      });
+      if (error) return err(mapRpcError(error, ASSIGN_ERRORS));
+      return ok({ customerId: z.uuid().parse(data) });
+    },
+
     async addBatch(input) {
       const { data, error } = await getClient().rpc('add_copies', {
         p_batch_id: input.batchId,
@@ -340,4 +360,12 @@ const RECEIVED_DATE_ERRORS = [
   ...Object.values(RECEIVED_DATE_ERROR_CODES),
   COMMON_ERROR_CODES.NOT_FOUND,
   COMMON_ERROR_CODES.FORBIDDEN,
+];
+
+const ASSIGN_ERRORS = [
+  ...Object.values(ASSIGN_ERROR_CODES),
+  CUSTOMER_ERROR_CODES.CUSTOMER_ARCHIVED,
+  COMMON_ERROR_CODES.NOT_FOUND,
+  COMMON_ERROR_CODES.FORBIDDEN,
+  COMMON_ERROR_CODES.VALIDATION,
 ];

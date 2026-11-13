@@ -5,10 +5,18 @@ import { findPossibleDuplicates, type CustomerPatch } from '@/domain/customer-da
 import { unwrap } from '../shared/app-failure';
 import { useRepositories } from '../shared/repositories-provider';
 import { createCustomer, updateCustomer } from './use-cases/customer-data';
+import {
+  assignCopyToCustomer,
+  loadAssignableData,
+  removeCopyDuringCreation,
+} from './use-cases/customer-books';
+import { systemClock } from '@/lib/clock';
+import { assignableCopies } from '@/domain/assignable-copies';
 
 export const customerQueryKeys = {
   all: ['customers'] as const,
   duplicateCandidates: ['customers', 'duplicate-candidates'] as const,
+  assignableCopies: ['customers', 'assignable-copies'] as const,
 };
 
 /** Crea el cliente con su nombre (ficha viva, HU-CLI-02). Devuelve `Result`. */
@@ -55,4 +63,54 @@ export function usePossibleDuplicates(query: {
     select: (candidates) => findPossibleDuplicates(candidates, query),
     enabled: hasQuery,
   });
+}
+
+/** Lecturas que cambian cuando un libro entra o sale de un cliente: inventario, clientes, abonos y Dinero. */
+const BOOK_AFFECTED_ROOTS = [['inventory'], ['customers'], ['payments'], ['money']] as const;
+
+/**
+ * Buscador "Agregar libro del inventario" (HU-CLI-09): cada ejemplar en físico de títulos que no son
+ * minibook, por título y recibido más antiguo; busca por título o número exacto.
+ */
+export function useAssignableCopies({ search = '' }: { search?: string } = {}) {
+  const { copies, titles } = useRepositories();
+  return useQuery({
+    queryKey: customerQueryKeys.assignableCopies,
+    queryFn: async () => unwrap(await loadAssignableData({ copies, titles })),
+    select: (data) => assignableCopies(data.copies, data.titles, search),
+  });
+}
+
+/** Agrega (vende) un ejemplar al cliente. Devuelve `Result` con la cuenta recalculada. */
+export function useAssignCopyToCustomer() {
+  const { copies, customers, connectivity } = useRepositories();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (input: { copyId: string; customerId: string }) =>
+      assignCopyToCustomer(
+        { copies, customers, connectivity, clock: systemClock },
+        input.copyId,
+        input.customerId,
+      ),
+    onSuccess: (result) => {
+      if (!result.ok) return;
+      for (const queryKey of BOOK_AFFECTED_ROOTS) void queryClient.invalidateQueries({ queryKey });
+    },
+  });
+  return { assignCopyToCustomer: mutation.mutateAsync, isPending: mutation.isPending };
+}
+
+/** Quita un libro mientras se crea el cliente (error de captura, AF-114). Trae la cuenta y la franja de sobrante. */
+export function useRemoveCopyDuringCreation() {
+  const { copies, customers, connectivity } = useRepositories();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (copyId: string) =>
+      removeCopyDuringCreation({ copies, customers, connectivity, clock: systemClock }, copyId),
+    onSuccess: (result) => {
+      if (!result.ok) return;
+      for (const queryKey of BOOK_AFFECTED_ROOTS) void queryClient.invalidateQueries({ queryKey });
+    },
+  });
+  return { removeCopyDuringCreation: mutation.mutateAsync, isPending: mutation.isPending };
 }

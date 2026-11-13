@@ -55,4 +55,19 @@ export interface CopyRepository {
    * `DATE_AFTER_SALE`, `NOT_FOUND`, `FORBIDDEN`, `NETWORK_ERROR`.
    */
   updateReceivedDate(copyId: string, date: LocalDate): Promise<Result<void, AppError>>;
+
+  /**
+   * Vende un ejemplar en físico a un cliente por su precio público copiado (HU-CLI-09). Idempotente.
+   * Errores: `COPY_NOT_IN_STOCK`, `COPY_IS_MINIBOOK`, `CUSTOMER_ARCHIVED`, `NOT_FOUND`, `NETWORK_ERROR`.
+   */
+  assignToCustomer(copyId: string, customerId: string): Promise<Result<void, AppError>>;
+
+  /**
+   * Quita un libro de su cliente: vuelve a físico (HU-CLI-09 con `wrong_registration`, HU-CLI-10 con
+   * `customer_returned`). Devuelve el cliente. Errores: `COPY_NOT_SOLD`, `NOT_FOUND`, `NETWORK_ERROR`.
+   */
+  returnFromCustomer(
+    copyId: string,
+    reason: 'wrong_registration' | 'customer_returned',
+  ): Promise<Result<{ customerId: string }, AppError>>;
 }

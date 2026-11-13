@@ -675,6 +675,7 @@ export type Database = {
           title_id: string;
         }[];
       };
+      assign_copy_to_customer: { Args: { p_copy_id: string; p_customer_id: string }; Returns: undefined };
       is_active_user: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
       next_copy_number: { Args: { p_owner: string; p_title: string }; Returns: number };
@@ -684,6 +685,7 @@ export type Database = {
         Args: { p_choice: Json; p_customer_id: string; p_trigger: string };
         Returns: undefined;
       };
+      return_copy_from_customer: { Args: { p_copy_id: string; p_reason: string }; Returns: string };
       today_bogota: { Args: Record<PropertyKey, never>; Returns: string };
       update_copy_received_date: { Args: { p_copy_id: string; p_date: string }; Returns: undefined };
     };
