@@ -31,9 +31,18 @@ pnpm dev                                   # desarrollo
 pnpm lint && pnpm typecheck && pnpm test   # calidad (obligatorio antes de un PR; es lo que corre la CI)
 pnpm build                                 # compilación de producción
 pnpm format                                # aplica el formato de Prettier
+
+# Base de datos local (requiere Docker)
+pnpm db:start                              # arranca Supabase local
+pnpm db:reset                              # recrea la base con las migraciones y supabase/seed.sql
+pnpm db:types                              # regenera src/adapters/supabase/database.types.ts
+pnpm test:rls                              # pruebas de seguridad (RLS) contra Supabase local
+pnpm db:stop                               # detiene Supabase local
 ```
 
 `pnpm test` corre las pruebas con cobertura; el dominio (`src/domain/`) exige ≥ 95 %.
+
+**Migraciones:** una por cambio en `supabase/migrations/` (`pnpm exec supabase migration new <nombre>`), nunca se edita una ya fusionada. Toda tabla nueva sigue el patrón documentado al inicio de la migración base: RLS, política y `GRANT` explícito a `authenticated`, nada para `anon`. `pnpm test:rls` falla si una tabla con `owner_id` no lo cumple.
 
 ## Capas
 

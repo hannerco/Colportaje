@@ -34,7 +34,7 @@ pnpm install        # dependencias
 pnpm dev            # desarrollo
 pnpm lint && pnpm typecheck && pnpm test      # calidad (obligatorio antes de PR)
 pnpm exec supabase start   # Supabase local (Docker); la CLI es dependencia del proyecto
-pnpm test:rls       # pruebas de seguridad contra Supabase local
+pnpm test:rls       # pruebas de seguridad contra Supabase local (también: pnpm db:start, db:reset, db:types)
 pnpm test:e2e       # Playwright
 ```
 
