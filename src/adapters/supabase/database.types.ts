@@ -255,6 +255,153 @@ export type Database = {
         };
         Relationships: [];
       };
+      payment: {
+        Row: {
+          agreed_amount: number | null;
+          cancel_reason: Database['public']['Enums']['cancel_reason'] | null;
+          canceled_at: string | null;
+          created_at: string;
+          customer_id: string;
+          deleted_at: string | null;
+          due_date: string | null;
+          id: string;
+          kind: Database['public']['Enums']['payment_kind'];
+          method: Database['public']['Enums']['pay_method'] | null;
+          original_due_date: string | null;
+          owner_id: string;
+          paid_amount: number | null;
+          paid_at: string | null;
+          status: Database['public']['Enums']['payment_status'];
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          agreed_amount?: number | null;
+          cancel_reason?: Database['public']['Enums']['cancel_reason'] | null;
+          canceled_at?: string | null;
+          created_at?: string;
+          customer_id: string;
+          deleted_at?: string | null;
+          due_date?: string | null;
+          id: string;
+          kind: Database['public']['Enums']['payment_kind'];
+          method?: Database['public']['Enums']['pay_method'] | null;
+          original_due_date?: string | null;
+          owner_id?: string;
+          paid_amount?: number | null;
+          paid_at?: string | null;
+          status: Database['public']['Enums']['payment_status'];
+          updated_at?: string;
+        };
+        Update: {
+          agreed_amount?: number | null;
+          cancel_reason?: Database['public']['Enums']['cancel_reason'] | null;
+          canceled_at?: string | null;
+          created_at?: string;
+          customer_id?: string;
+          deleted_at?: string | null;
+          due_date?: string | null;
+          id?: string;
+          kind?: Database['public']['Enums']['payment_kind'];
+          method?: Database['public']['Enums']['pay_method'] | null;
+          original_due_date?: string | null;
+          owner_id?: string;
+          paid_amount?: number | null;
+          paid_at?: string | null;
+          status?: Database['public']['Enums']['payment_status'];
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'payment_customer_same_owner';
+            columns: ['customer_id', 'owner_id'];
+            isOneToOne: false;
+            referencedRelation: 'customer';
+            referencedColumns: ['id', 'owner_id'];
+          },
+        ];
+      };
+      payment_event: {
+        Row: {
+          at: string;
+          data: NonNullable<Json>;
+          id: string;
+          owner_id: string;
+          payment_id: string;
+          seq: number;
+          type: Database['public']['Enums']['payment_event_type'];
+        };
+        ComputedFields: never;
+        Insert: {
+          at?: string;
+          data?: NonNullable<Json>;
+          id?: string;
+          owner_id: string;
+          payment_id: string;
+          seq?: never;
+          type: Database['public']['Enums']['payment_event_type'];
+        };
+        Update: {
+          at?: string;
+          data?: NonNullable<Json>;
+          id?: string;
+          owner_id?: string;
+          payment_id?: string;
+          seq?: never;
+          type?: Database['public']['Enums']['payment_event_type'];
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'payment_event_payment_same_owner';
+            columns: ['payment_id', 'owner_id'];
+            isOneToOne: false;
+            referencedRelation: 'payment';
+            referencedColumns: ['id', 'owner_id'];
+          },
+        ];
+      };
+      payment_reschedule: {
+        Row: {
+          changed_at: string;
+          id: string;
+          new_due_date: string;
+          note: string | null;
+          owner_id: string;
+          payment_id: string;
+          previous_due_date: string;
+          seq: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          changed_at?: string;
+          id?: string;
+          new_due_date: string;
+          note?: string | null;
+          owner_id: string;
+          payment_id: string;
+          previous_due_date: string;
+          seq?: never;
+        };
+        Update: {
+          changed_at?: string;
+          id?: string;
+          new_due_date?: string;
+          note?: string | null;
+          owner_id?: string;
+          payment_id?: string;
+          previous_due_date?: string;
+          seq?: never;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'payment_reschedule_payment_same_owner';
+            columns: ['payment_id', 'owner_id'];
+            isOneToOne: false;
+            referencedRelation: 'payment';
+            referencedColumns: ['id', 'owner_id'];
+          },
+        ];
+      };
       photo: {
         Row: {
           bytes: number;
@@ -422,6 +569,7 @@ export type Database = {
       deposit_status: 'draft' | 'confirmed';
       issue_resolution: 'found' | 'lost' | 'removed';
       pay_method: 'cash' | 'transfer';
+      payment_event_type: 'amount_reduced' | 'canceled' | 'reopened';
       payment_kind: 'down_payment' | 'scheduled' | 'extra';
       payment_status: 'scheduled' | 'collected' | 'delivered' | 'canceled';
       photo_kind: 'customer_info' | 'customer_invoice' | 'deposit_receipt';
@@ -558,6 +706,7 @@ export const Constants = {
       deposit_status: ['draft', 'confirmed'],
       issue_resolution: ['found', 'lost', 'removed'],
       pay_method: ['cash', 'transfer'],
+      payment_event_type: ['amount_reduced', 'canceled', 'reopened'],
       payment_kind: ['down_payment', 'scheduled', 'extra'],
       payment_status: ['scheduled', 'collected', 'delivered', 'canceled'],
       photo_kind: ['customer_info', 'customer_invoice', 'deposit_receipt'],
