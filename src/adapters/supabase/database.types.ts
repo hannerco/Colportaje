@@ -675,6 +675,10 @@ export type Database = {
           title_id: string;
         }[];
       };
+      apply_payment_plan: {
+        Args: { p_customer_id: string; p_items: Json; p_mode: string };
+        Returns: undefined;
+      };
       assert_collected: { Args: { p_paid_amount: number; p_paid_at: string }; Returns: undefined };
       assign_copy_to_customer: { Args: { p_copy_id: string; p_customer_id: string }; Returns: undefined };
       delete_payment: {

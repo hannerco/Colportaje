@@ -14,6 +14,7 @@ import {
   type SetCreationDownPaymentInput,
   type UpdateCollectedPatch,
 } from './use-cases/collected-payments';
+import { applyPaymentPlan, type ApplyPaymentPlanInput } from './use-cases/payment-plan';
 
 export const paymentQueryKeys = { all: ['payments'] as const };
 
@@ -91,4 +92,15 @@ export function useDeletePayment() {
     deletePayment(deps, paymentId),
   );
   return { deletePayment: mutate, isPending };
+}
+
+/**
+ * Aplica el plan de abonos (HU-ABO-03): en la ficha nueva reemplaza los programados (`replace_all`); en un
+ * cliente guardado reparte solo lo sin programar (`unscheduled_only`). Devuelve la cuenta recalculada.
+ */
+export function useApplyPaymentPlan() {
+  const { mutate, isPending } = useCollectedMutation((deps, input: ApplyPaymentPlanInput) =>
+    applyPaymentPlan(deps, input),
+  );
+  return { applyPaymentPlan: mutate, isPending };
 }

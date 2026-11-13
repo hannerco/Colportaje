@@ -1,6 +1,7 @@
 // API pública de Abonos (HU-ABO-*).
 export {
   paymentQueryKeys,
+  useApplyPaymentPlan,
   useDeletePayment,
   useRegisterCollectedPayment,
   useResolveScheduleExcess,
@@ -18,6 +19,19 @@ export {
   type UpdateCollectedPatch,
 } from './use-cases/collected-payments';
 export { COLLECTED_PAYMENT_ERROR_CODES, DEFAULT_PAY_METHOD } from '@/domain/collected-payment';
+export { applyPaymentPlan, type ApplyPaymentPlanInput } from './use-cases/payment-plan';
+// Plan de abonos (cálculo puro, sin red): el front arma la vista previa "Así quedan los abonos".
+export {
+  PAYMENT_PLAN_ERROR_CODES,
+  buildPaymentPlan,
+  nextDueDate,
+  planBase,
+  suggestFirstDueDate,
+  withPaymentIds,
+  type PlanFrequency,
+  type PlanItem,
+  type PlanMode,
+} from '@/domain/payment-plan';
 export { resolveScheduleExcess, type ResolveScheduleExcessDeps } from './use-cases/resolve-schedule-excess';
 // Evaluación local del sobrante (sin red): el front la llama tras cada disparador (BR-PAY-13).
 export {

@@ -2,6 +2,7 @@ import type { AppError } from '@/domain/shared/errors';
 import type { Result } from '@/domain/shared/result';
 import type { COP } from '@/domain/money';
 import type { PaymentStatus, PayMethod } from '@/domain/payment';
+import type { PlanMode } from '@/domain/payment-plan';
 import type { ExcessChoice, ExcessTrigger } from '@/domain/schedule-excess';
 import type { LocalDate } from '@/domain/time';
 
@@ -53,4 +54,15 @@ export interface PaymentRepository {
    * estado que tenía. Errores: `PAYMENT_LOCKED`, `INVALID_TRANSITION`, `NOT_FOUND`, `NETWORK_ERROR`.
    */
   delete(paymentId: string): Promise<Result<{ customerId: string; previousStatus: PaymentStatus }, AppError>>;
+
+  /**
+   * Aplica un plan de abonos (HU-ABO-03). El servidor recalcula la base y exige que los abonos la sumen
+   * exactamente. Idempotente por los ids. Errores: `PLAN_REQUIRES_BALANCE`, `PLAN_TOTAL_MISMATCH`,
+   * `VALIDATION`, `CUSTOMER_ARCHIVED`, `CONFLICT`, `NOT_FOUND`, `NETWORK_ERROR`.
+   */
+  applyPlan(
+    customerId: string,
+    mode: PlanMode,
+    items: readonly { paymentId: string; dueDate: LocalDate; amount: COP }[],
+  ): Promise<Result<void, AppError>>;
 }

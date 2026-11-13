@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { COLLECTED_PAYMENT_ERROR_CODES } from '@/domain/collected-payment';
 import { CUSTOMER_ERROR_CODES } from '@/domain/customer-data';
 import { PAYMENT_ERROR_CODES } from '@/domain/payment';
+import { PAYMENT_PLAN_ERROR_CODES } from '@/domain/payment-plan';
 import { SCHEDULE_EXCESS_ERROR_CODES } from '@/domain/schedule-excess';
 import { COMMON_ERROR_CODES } from '@/domain/shared/errors';
 import { err, ok } from '@/domain/shared/result';
@@ -71,6 +72,15 @@ export function createSupabasePaymentRepository(getClient: GetSupabaseClient): P
       return ok({ customerId: z.uuid().parse(data) });
     },
 
+    async applyPlan(customerId, mode, items) {
+      const { error } = await getClient().rpc('apply_payment_plan', {
+        p_customer_id: customerId,
+        p_mode: mode,
+        p_items: items.map((i) => ({ paymentId: i.paymentId, dueDate: i.dueDate, amount: i.amount })),
+      });
+      return error ? err(mapCollectedError(error)) : ok(undefined);
+    },
+
     async delete(paymentId) {
       const { data, error } = await getClient().rpc('delete_payment', { p_payment_id: paymentId });
       if (error) return err(mapCollectedError(error));
@@ -91,6 +101,7 @@ const deletedRowsSchema = z
 
 const COLLECTED_ERRORS = [
   ...Object.values(COLLECTED_PAYMENT_ERROR_CODES),
+  ...Object.values(PAYMENT_PLAN_ERROR_CODES),
   CUSTOMER_ERROR_CODES.CUSTOMER_ARCHIVED,
   PAYMENT_ERROR_CODES.INVALID_TRANSITION,
   COMMON_ERROR_CODES.VALIDATION,

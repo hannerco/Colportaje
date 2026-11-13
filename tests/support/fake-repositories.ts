@@ -39,5 +39,6 @@ export const fakePaymentRepository = (overrides: Partial<PaymentRepository> = {}
   registerCollected: vi.fn(),
   updateCollected: vi.fn(),
   delete: vi.fn(),
+  applyPlan: vi.fn(),
   ...overrides,
 });
