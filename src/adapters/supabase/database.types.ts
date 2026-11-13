@@ -255,6 +255,110 @@ export type Database = {
         };
         Relationships: [];
       };
+      leader_deposit: {
+        Row: {
+          cash_amount: number;
+          confirmed_at: string | null;
+          created_at: string;
+          deleted_at: string | null;
+          deposit_date: string;
+          deposit_number: number | null;
+          id: string;
+          note: string | null;
+          owner_id: string;
+          status: Database['public']['Enums']['deposit_status'];
+          title: string | null;
+          transfer_amount: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          cash_amount?: number;
+          confirmed_at?: string | null;
+          created_at?: string;
+          deleted_at?: string | null;
+          deposit_date?: string;
+          deposit_number?: number | null;
+          id: string;
+          note?: string | null;
+          owner_id?: string;
+          status?: Database['public']['Enums']['deposit_status'];
+          title?: string | null;
+          transfer_amount?: number;
+          updated_at?: string;
+        };
+        Update: {
+          cash_amount?: number;
+          confirmed_at?: string | null;
+          created_at?: string;
+          deleted_at?: string | null;
+          deposit_date?: string;
+          deposit_number?: number | null;
+          id?: string;
+          note?: string | null;
+          owner_id?: string;
+          status?: Database['public']['Enums']['deposit_status'];
+          title?: string | null;
+          transfer_amount?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      leader_deposit_counter: {
+        Row: {
+          last_number: number;
+          owner_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          last_number?: number;
+          owner_id: string;
+        };
+        Update: {
+          last_number?: number;
+          owner_id?: string;
+        };
+        Relationships: [];
+      };
+      leader_deposit_event: {
+        Row: {
+          at: string;
+          id: string;
+          leader_deposit_id: string;
+          owner_id: string;
+          reason: string | null;
+          seq: number;
+          type: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          at?: string;
+          id?: string;
+          leader_deposit_id: string;
+          owner_id: string;
+          reason?: string | null;
+          seq?: never;
+          type: string;
+        };
+        Update: {
+          at?: string;
+          id?: string;
+          leader_deposit_id?: string;
+          owner_id?: string;
+          reason?: string | null;
+          seq?: never;
+          type?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'leader_deposit_event_deposit_same_owner';
+            columns: ['leader_deposit_id', 'owner_id'];
+            isOneToOne: false;
+            referencedRelation: 'leader_deposit';
+            referencedColumns: ['id', 'owner_id'];
+          },
+        ];
+      };
       payment: {
         Row: {
           agreed_amount: number | null;
@@ -266,6 +370,7 @@ export type Database = {
           due_date: string | null;
           id: string;
           kind: Database['public']['Enums']['payment_kind'];
+          leader_deposit_id: string | null;
           method: Database['public']['Enums']['pay_method'] | null;
           original_due_date: string | null;
           owner_id: string;
@@ -285,6 +390,7 @@ export type Database = {
           due_date?: string | null;
           id: string;
           kind: Database['public']['Enums']['payment_kind'];
+          leader_deposit_id?: string | null;
           method?: Database['public']['Enums']['pay_method'] | null;
           original_due_date?: string | null;
           owner_id?: string;
@@ -303,6 +409,7 @@ export type Database = {
           due_date?: string | null;
           id?: string;
           kind?: Database['public']['Enums']['payment_kind'];
+          leader_deposit_id?: string | null;
           method?: Database['public']['Enums']['pay_method'] | null;
           original_due_date?: string | null;
           owner_id?: string;
@@ -317,6 +424,13 @@ export type Database = {
             columns: ['customer_id', 'owner_id'];
             isOneToOne: false;
             referencedRelation: 'customer';
+            referencedColumns: ['id', 'owner_id'];
+          },
+          {
+            foreignKeyName: 'payment_deposit_same_owner';
+            columns: ['leader_deposit_id', 'owner_id'];
+            isOneToOne: false;
+            referencedRelation: 'leader_deposit';
             referencedColumns: ['id', 'owner_id'];
           },
         ];
@@ -409,6 +523,7 @@ export type Database = {
           deleted_at: string | null;
           id: string;
           kind: Database['public']['Enums']['photo_kind'];
+          leader_deposit_id: string | null;
           owner_id: string;
           path: string;
           thumb_path: string | null;
@@ -421,6 +536,7 @@ export type Database = {
           deleted_at?: string | null;
           id: string;
           kind: Database['public']['Enums']['photo_kind'];
+          leader_deposit_id?: string | null;
           owner_id?: string;
           path: string;
           thumb_path?: string | null;
@@ -432,12 +548,21 @@ export type Database = {
           deleted_at?: string | null;
           id?: string;
           kind?: Database['public']['Enums']['photo_kind'];
+          leader_deposit_id?: string | null;
           owner_id?: string;
           path?: string;
           thumb_path?: string | null;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'photo_deposit_same_owner';
+            columns: ['leader_deposit_id', 'owner_id'];
+            isOneToOne: false;
+            referencedRelation: 'leader_deposit';
+            referencedColumns: ['id', 'owner_id'];
+          },
+        ];
       };
       profile: {
         Row: {
@@ -553,6 +678,7 @@ export type Database = {
       is_active_user: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
       next_copy_number: { Args: { p_owner: string; p_title: string }; Returns: number };
+      next_deposit_number: { Args: { p_owner: string }; Returns: number };
       photo_total_bytes: { Args: Record<PropertyKey, never>; Returns: number };
       resolve_schedule_excess: {
         Args: { p_choice: Json; p_customer_id: string; p_trigger: string };
