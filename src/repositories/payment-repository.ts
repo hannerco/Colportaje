@@ -91,4 +91,16 @@ export interface PaymentRepository {
 
   /** Cancela programados de un mismo cliente (motivo manual). Errores: `PAYMENT_NOT_SCHEDULED`, `VALIDATION`, `NOT_FOUND`. */
   cancelScheduled(paymentIds: readonly string[]): Promise<Result<{ customerId: string }, AppError>>;
+
+  /**
+   * Prorroga un programado (HU-ABO-05): solo ese abono; la fecha original no cambia; deja su fila de
+   * historial. Errores: `PAYMENT_NOT_SCHEDULED`, `DATE_NOT_LATER`, `DATE_IN_PAST`,
+   * `RESCHEDULE_NEEDS_CONFIRMATION` (`details.dates`), `CUSTOMER_ARCHIVED`, `NOT_FOUND`, `NETWORK_ERROR`.
+   */
+  reschedule(
+    paymentId: string,
+    input: { newDueDate: LocalDate; note?: string | null; confirmed?: boolean },
+  ): Promise<
+    Result<{ moved: { paymentId: string; previousDueDate: LocalDate; newDueDate: LocalDate }[] }, AppError>
+  >;
 }

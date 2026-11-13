@@ -709,6 +709,14 @@ export type Database = {
         Returns: undefined;
       };
       require_active_user: { Args: Record<PropertyKey, never>; Returns: string };
+      reschedule_payment: {
+        Args: { p_confirmed?: boolean; p_new_due_date: string; p_note?: string; p_payment_id: string };
+        Returns: {
+          new_due_date: string;
+          payment_id: string;
+          previous_due_date: string;
+        }[];
+      };
       resolve_schedule_excess: {
         Args: { p_choice: Json; p_customer_id: string; p_trigger: string };
         Returns: undefined;

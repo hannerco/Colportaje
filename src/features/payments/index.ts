@@ -8,6 +8,7 @@ export {
   useUpdateScheduledAmount,
   useDeletePayment,
   useRegisterCollectedPayment,
+  useReschedulePayment,
   useResolveScheduleExcess,
   useSetCreationDownPayment,
   useUpdateCollectedPayment,
@@ -32,6 +33,8 @@ export {
   type ScheduleSingleInput,
 } from './use-cases/scheduled-payments';
 export { SCHEDULED_PAYMENT_ERROR_CODES } from '@/domain/scheduled-payment';
+export { reschedulePayment, type RescheduleInput } from './use-cases/reschedule';
+export { RESCHEDULE_ERROR_CODES, rescheduleConfirmLimit } from '@/domain/reschedule';
 // Plan de abonos (cálculo puro, sin red): el front arma la vista previa "Así quedan los abonos".
 export {
   PAYMENT_PLAN_ERROR_CODES,

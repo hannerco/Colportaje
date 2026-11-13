@@ -3,7 +3,9 @@ import { COLLECTED_PAYMENT_ERROR_CODES } from '@/domain/collected-payment';
 import { CUSTOMER_ERROR_CODES } from '@/domain/customer-data';
 import { PAYMENT_ERROR_CODES } from '@/domain/payment';
 import { PAYMENT_PLAN_ERROR_CODES } from '@/domain/payment-plan';
+import { RESCHEDULE_ERROR_CODES } from '@/domain/reschedule';
 import { SCHEDULED_PAYMENT_ERROR_CODES } from '@/domain/scheduled-payment';
+import type { LocalDate } from '@/domain/time';
 import { SCHEDULE_EXCESS_ERROR_CODES } from '@/domain/schedule-excess';
 import { COMMON_ERROR_CODES } from '@/domain/shared/errors';
 import { err, ok } from '@/domain/shared/result';
@@ -118,6 +120,23 @@ export function createSupabasePaymentRepository(getClient: GetSupabaseClient): P
       return ok({ customerId: z.uuid().parse(data) });
     },
 
+    async reschedule(paymentId, input) {
+      const { data, error } = await getClient().rpc('reschedule_payment', {
+        p_payment_id: paymentId,
+        p_new_due_date: input.newDueDate,
+        ...(input.note ? { p_note: input.note } : {}),
+        p_confirmed: input.confirmed ?? false,
+      });
+      if (error) return err(mapCollectedError(error));
+      return ok({
+        moved: movedRowsSchema.parse(data).map((row) => ({
+          paymentId: row.payment_id,
+          previousDueDate: row.previous_due_date,
+          newDueDate: row.new_due_date,
+        })),
+      });
+    },
+
     async delete(paymentId) {
       const { data, error } = await getClient().rpc('delete_payment', { p_payment_id: paymentId });
       if (error) return err(mapCollectedError(error));
@@ -140,6 +159,7 @@ const COLLECTED_ERRORS = [
   ...Object.values(COLLECTED_PAYMENT_ERROR_CODES),
   ...Object.values(PAYMENT_PLAN_ERROR_CODES),
   ...Object.values(SCHEDULED_PAYMENT_ERROR_CODES),
+  ...Object.values(RESCHEDULE_ERROR_CODES),
   CUSTOMER_ERROR_CODES.CUSTOMER_ARCHIVED,
   PAYMENT_ERROR_CODES.INVALID_TRANSITION,
   COMMON_ERROR_CODES.VALIDATION,
@@ -149,6 +169,19 @@ const COLLECTED_ERRORS = [
 ];
 
 const mapCollectedError = (error: Parameters<typeof mapRpcError>[0]) =>
-  mapRpcError(error, COLLECTED_ERRORS, (code, detail) =>
-    code === COMMON_ERROR_CODES.VALIDATION && detail ? { field: detail } : undefined,
-  );
+  mapRpcError(error, COLLECTED_ERRORS, (code, detail) => {
+    if (code === COMMON_ERROR_CODES.VALIDATION && detail) return { field: detail };
+    if (code === RESCHEDULE_ERROR_CODES.RESCHEDULE_NEEDS_CONFIRMATION && detail) {
+      return { dates: z.array(localDateSchema).parse(JSON.parse(detail)) };
+    }
+    return undefined;
+  });
+
+const localDateSchema = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/)
+  .transform((value) => value as LocalDate);
+
+const movedRowsSchema = z.array(
+  z.object({ payment_id: z.uuid(), previous_due_date: localDateSchema, new_due_date: localDateSchema }),
+);
