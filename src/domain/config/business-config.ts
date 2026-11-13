@@ -71,9 +71,14 @@ export const businessConfig = deepFreeze({
     fuzzyThreshold: null as number | null,
   },
 
-  /** BR-CUS-11: umbral de nombre "muy parecido" para posibles duplicados; lo fija HU-CLI-02 con su prueba. */
+  /**
+   * BR-CUS-11: nombre "casi idéntico" para posibles duplicados = similitud ≥ umbral (1 − distancia de edición
+   * relativa entre nombres normalizados). Fijado en HU-CLI-02 con su prueba (src/domain/customer-data.test.ts):
+   * con 0,85 se detectan errores de una o dos letras ("Natalia Cardenaz") y se descartan nombres distintos
+   * ("Pedro Pérez" / "Pablo Pérez").
+   */
   duplicates: {
-    nameThreshold: null as number | null,
+    nameThreshold: 0.85,
   },
 });
 

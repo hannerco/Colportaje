@@ -27,7 +27,7 @@ describe('businessConfig', () => {
         signedUrlSeconds: 3600,
       },
       search: { fuzzyThreshold: null },
-      duplicates: { nameThreshold: null },
+      duplicates: { nameThreshold: 0.85 },
     });
   });
 

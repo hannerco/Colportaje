@@ -33,7 +33,12 @@ const data: CustomerAccountData = {
 
 const depsWith = (resolve: PaymentRepository['resolveScheduleExcess'], online = true) => {
   const payments: PaymentRepository = { resolveScheduleExcess: vi.fn(resolve) };
-  const customers: CustomerRepository = { getAccountData: vi.fn(async () => ok(data)) };
+  const customers: CustomerRepository = {
+    getAccountData: vi.fn(async () => ok(data)),
+    create: vi.fn(),
+    update: vi.fn(),
+    listDuplicateCandidates: vi.fn(),
+  };
   return { payments, customers, connectivity: fakeConnectivity(online), clock };
 };
 

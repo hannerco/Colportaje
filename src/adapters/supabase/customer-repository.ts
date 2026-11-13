@@ -1,11 +1,13 @@
+import type { PostgrestError } from '@supabase/supabase-js';
 import { z } from 'zod';
+import { CUSTOMER_ERROR_CODES, type CustomerPatch } from '@/domain/customer-data';
 import type { Payment } from '@/domain/payment';
 import { appError, COMMON_ERROR_CODES } from '@/domain/shared/errors';
 import { err, ok } from '@/domain/shared/result';
 import type { LocalDate } from '@/domain/time';
 import type { CustomerRepository } from '@/repositories';
 import type { GetSupabaseClient } from './client';
-import { mapPostgrestError } from './errors';
+import { mapPostgrestError, mapRpcError } from './errors';
 import { selectAll } from './select-all';
 
 const localDate = z
@@ -101,5 +103,92 @@ export function createSupabaseCustomerRepository(getClient: GetSupabaseClient): 
         payments: payments.value.map(toPayment),
       });
     },
+
+    async create({ id, name }) {
+      const client = getClient();
+      const inserted = await client
+        .from('customer')
+        .upsert({ id, name }, { onConflict: 'id', ignoreDuplicates: true })
+        .select('id');
+      if (inserted.error) return err(mapCustomerWriteError(inserted.error));
+      if (inserted.data.length > 0) return ok({ id });
+      // Ya existía: es un reintento si el cliente es del usuario; si no, el id está ocupado.
+      const existing = await client.from('customer').select('id').eq('id', id).maybeSingle();
+      if (existing.error) return err(mapPostgrestError(existing.error));
+      return existing.data ? ok({ id }) : err(appError(COMMON_ERROR_CODES.CONFLICT));
+    },
+
+    async update(id, patch) {
+      const { data, error } = await getClient()
+        .from('customer')
+        .update(toCustomerColumns(patch))
+        .eq('id', id)
+        .is('deleted_at', null)
+        .select('id');
+      if (error) return err(mapCustomerWriteError(error));
+      return data.length > 0 ? ok(undefined) : err(appError(COMMON_ERROR_CODES.NOT_FOUND));
+    },
+
+    async listDuplicateCandidates() {
+      const client = getClient();
+      const rows = await selectAll((from, to) =>
+        client
+          .from('customer')
+          .select('id, name, phone, archived_at')
+          .is('deleted_at', null)
+          .order('id')
+          .range(from, to),
+      );
+      if (!rows.ok) return rows;
+      return ok(
+        rows.value.map((raw) => {
+          const row = candidateRowSchema.parse(raw);
+          return { id: row.id, name: row.name, phone: row.phone, archived: row.archived_at !== null };
+        }),
+      );
+    },
   };
 }
+
+const candidateRowSchema = z.object({
+  id: z.uuid(),
+  name: z.string(),
+  phone: z.string().nullable(),
+  archived_at: z.string().nullable(),
+});
+
+/** Parche del dominio → columnas; solo las que vienen en el parche. */
+const toCustomerColumns = (patch: CustomerPatch) => {
+  const columns: {
+    name?: string;
+    phone?: string | null;
+    info?: string | null;
+    address?: string | null;
+    avatar_emoji?: string | null;
+    maps_url?: string | null;
+  } = {};
+  if (patch.name !== undefined) columns.name = patch.name;
+  if (patch.phone !== undefined) columns.phone = patch.phone;
+  if (patch.info !== undefined) columns.info = patch.info;
+  if (patch.address !== undefined) columns.address = patch.address;
+  if (patch.avatarEmoji !== undefined) columns.avatar_emoji = patch.avatarEmoji;
+  if (patch.mapsUrl !== undefined) columns.maps_url = patch.mapsUrl;
+  return columns;
+};
+
+/** Checks de la base → VALIDATION con su campo (el dominio valida antes; esto es la red de seguridad). */
+const CHECK_FIELDS: Readonly<Record<string, string>> = {
+  customer_name_check: 'name',
+  customer_avatar_emoji_check: 'avatarEmoji',
+  customer_maps_url_allowed: 'mapsUrl',
+};
+
+const mapCustomerWriteError = (error: PostgrestError) => {
+  if (error.code === '23514') {
+    const field = Object.entries(CHECK_FIELDS).find(([constraint]) =>
+      error.message.includes(constraint),
+    )?.[1];
+    if (field) return appError(COMMON_ERROR_CODES.VALIDATION, { field });
+  }
+  return mapRpcError(error, [CUSTOMER_ERROR_CODES.CUSTOMER_ARCHIVED]);
+};
