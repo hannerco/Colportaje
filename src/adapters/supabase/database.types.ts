@@ -683,6 +683,19 @@ export type Database = {
       assert_scheduled: { Args: { p_agreed_amount: number; p_due_date: string }; Returns: undefined };
       assign_copy_to_customer: { Args: { p_copy_id: string; p_customer_id: string }; Returns: undefined };
       cancel_scheduled_payments: { Args: { p_payment_ids: string[] }; Returns: string };
+      collect_payment: {
+        Args: {
+          p_method?: Database['public']['Enums']['pay_method'];
+          p_paid_amount?: number;
+          p_paid_at?: string;
+          p_payment_id: string;
+        };
+        Returns: {
+          agreed_amount: number;
+          customer_id: string;
+          paid_amount: number;
+        }[];
+      };
       correct_scheduled_date: { Args: { p_due_date: string; p_payment_id: string }; Returns: string };
       delete_payment: {
         Args: { p_payment_id: string };

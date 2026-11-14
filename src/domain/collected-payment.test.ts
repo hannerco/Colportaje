@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { creationDownPaymentAmount, DEFAULT_PAY_METHOD, validateCollected } from './collected-payment';
+import {
+  collectShortfall,
+  creationDownPaymentAmount,
+  DEFAULT_PAY_METHOD,
+  isOverpayment,
+  validateCollected,
+} from './collected-payment';
 import { localDate } from './time';
 
 const today = localDate('2026-11-08');
@@ -41,5 +47,19 @@ describe('collected-payment (HU-ABO-02)', () => {
       ok: false,
       error: { details: { field: 'paidAmount' } },
     });
+  });
+});
+
+describe('cobrar un programado (HU-ABO-06)', () => {
+  it('R2 / CA-2: pagar 30.000 de 40.000 deja un faltante de 10.000; lo acordado o más, ninguno', () => {
+    expect(collectShortfall(40_000, 30_000)).toBe(10_000);
+    expect(collectShortfall(40_000, 40_000)).toBeNull();
+    expect(collectShortfall(10_000, 15_000)).toBeNull();
+  });
+
+  it('R3 / CA-3: solo un pago mayor es sobrepago', () => {
+    expect(isOverpayment(10_000, 15_000)).toBe(true);
+    expect(isOverpayment(10_000, 10_000)).toBe(false);
+    expect(isOverpayment(40_000, 30_000)).toBe(false);
   });
 });

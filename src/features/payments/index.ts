@@ -2,6 +2,7 @@
 export {
   paymentQueryKeys,
   useApplyPaymentPlan,
+  useCollectPayment,
   useCancelScheduledPayments,
   useCorrectScheduledDate,
   useScheduleSinglePayment,
@@ -23,7 +24,11 @@ export {
   type SetCreationDownPaymentInput,
   type UpdateCollectedPatch,
 } from './use-cases/collected-payments';
-export { COLLECTED_PAYMENT_ERROR_CODES, DEFAULT_PAY_METHOD } from '@/domain/collected-payment';
+export {
+  COLLECTED_PAYMENT_ERROR_CODES,
+  DEFAULT_PAY_METHOD,
+  collectShortfall,
+} from '@/domain/collected-payment';
 export { applyPaymentPlan, type ApplyPaymentPlanInput } from './use-cases/payment-plan';
 export {
   cancelScheduledPayments,
@@ -34,6 +39,11 @@ export {
 } from './use-cases/scheduled-payments';
 export { SCHEDULED_PAYMENT_ERROR_CODES } from '@/domain/scheduled-payment';
 export { reschedulePayment, type RescheduleInput } from './use-cases/reschedule';
+export {
+  collectPayment,
+  type CollectPaymentInput,
+  type CollectPaymentResult,
+} from './use-cases/collect-payment';
 export { RESCHEDULE_ERROR_CODES, rescheduleConfirmLimit } from '@/domain/reschedule';
 // Plan de abonos (cálculo puro, sin red): el front arma la vista previa "Así quedan los abonos".
 export {

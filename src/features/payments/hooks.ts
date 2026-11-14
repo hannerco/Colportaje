@@ -24,6 +24,7 @@ import {
   type ScheduleSingleInput,
 } from './use-cases/scheduled-payments';
 import { reschedulePayment, type RescheduleInput } from './use-cases/reschedule';
+import { collectPayment, type CollectPaymentInput } from './use-cases/collect-payment';
 
 export const paymentQueryKeys = { all: ['payments'] as const };
 
@@ -157,4 +158,16 @@ export function useReschedulePayment() {
     reschedulePayment(deps, input.paymentId, input),
   );
   return { reschedulePayment: mutate, isPending };
+}
+
+/**
+ * Cobrar un abono programado (HU-ABO-06), el mismo formulario en la ficha, Dinero ▸ Por cobrar y Hoy.
+ * Devuelve la cuenta, el faltante (para sugerir "Programar") y, si pagó de más, los abonos que no cuadran.
+ */
+export function useCollectPayment() {
+  const { mutate, isPending } = useCollectedMutation(
+    (deps, input: { paymentId: string } & CollectPaymentInput) =>
+      collectPayment(deps, input.paymentId, input),
+  );
+  return { collectPayment: mutate, isPending };
 }

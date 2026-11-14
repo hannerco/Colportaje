@@ -31,3 +31,13 @@ export const creationDownPaymentAmount = (amount: COP | null | undefined): Resul
   if (amount === null || amount === undefined || amount === 0) return ok(0);
   return isValidCOP(amount) ? ok(amount) : err(validationError('paidAmount'));
 };
+
+/**
+ * BR-PAY-07 (HU-ABO-06 R2): lo que falta cuando se paga menos de lo acordado; `null` si pagó lo acordado o
+ * más. El faltante queda en el saldo (derivado) y la app solo SUGIERE programarlo; nunca lo crea.
+ */
+export const collectShortfall = (agreedAmount: COP, paidAmount: COP): COP | null =>
+  paidAmount < agreedAmount ? agreedAmount - paidAmount : null;
+
+/** R3 (AF-21): solo un pago mayor que lo acordado evalúa abonos que no cuadran (disparador `overpayment`). */
+export const isOverpayment = (agreedAmount: COP, paidAmount: COP): boolean => paidAmount > agreedAmount;
