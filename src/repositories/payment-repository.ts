@@ -103,4 +103,15 @@ export interface PaymentRepository {
   ): Promise<
     Result<{ moved: { paymentId: string; previousDueDate: LocalDate; newDueDate: LocalDate }[] }, AppError>
   >;
+
+  /**
+   * Cobra un abono programado (HU-ABO-06): pasa a cobrado con el valor real (`null` = el acordado), la fecha
+   * real y el método; conserva lo acordado. Devuelve el cliente, lo acordado y lo pagado. Errores:
+   * `PAYMENT_NOT_SCHEDULED` (también si ya está cobrado), `VALIDATION` (`paidAmount`, `paidAt`),
+   * `CUSTOMER_ARCHIVED`, `NOT_FOUND`, `NETWORK_ERROR`.
+   */
+  collect(
+    paymentId: string,
+    input: { paidAmount: COP | null; paidAt: LocalDate; method: PayMethod },
+  ): Promise<Result<{ customerId: string; agreedAmount: COP; paidAmount: COP }, AppError>>;
 }

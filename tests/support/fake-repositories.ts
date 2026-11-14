@@ -45,5 +45,6 @@ export const fakePaymentRepository = (overrides: Partial<PaymentRepository> = {}
   correctScheduledDate: vi.fn(),
   cancelScheduled: vi.fn(),
   reschedule: vi.fn(),
+  collect: vi.fn(),
   ...overrides,
 });

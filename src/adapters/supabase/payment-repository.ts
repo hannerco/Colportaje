@@ -137,6 +137,22 @@ export function createSupabasePaymentRepository(getClient: GetSupabaseClient): P
       });
     },
 
+    async collect(paymentId, input) {
+      const { data, error } = await getClient().rpc('collect_payment', {
+        p_payment_id: paymentId,
+        ...(input.paidAmount === null ? {} : { p_paid_amount: input.paidAmount }),
+        p_paid_at: input.paidAt,
+        p_method: input.method,
+      });
+      if (error) return err(mapCollectedError(error));
+      const [row] = collectedRowsSchema.parse(data);
+      return ok({
+        customerId: row!.customer_id,
+        agreedAmount: row!.agreed_amount,
+        paidAmount: row!.paid_amount,
+      });
+    },
+
     async delete(paymentId) {
       const { data, error } = await getClient().rpc('delete_payment', { p_payment_id: paymentId });
       if (error) return err(mapCollectedError(error));
@@ -153,6 +169,10 @@ const deletedRowsSchema = z
       previous_status: z.enum(['scheduled', 'collected', 'delivered', 'canceled']),
     }),
   )
+  .length(1);
+
+const collectedRowsSchema = z
+  .array(z.object({ customer_id: z.uuid(), agreed_amount: z.number().int(), paid_amount: z.number().int() }))
   .length(1);
 
 const COLLECTED_ERRORS = [
