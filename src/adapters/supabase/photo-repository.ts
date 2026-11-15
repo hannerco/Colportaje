@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { CUSTOMER_ERROR_CODES } from '@/domain/customer-data';
+import { DEPOSIT_DRAFT_ERROR_CODES } from '@/domain/deposit-draft';
 import { appError, COMMON_ERROR_CODES } from '@/domain/shared/errors';
 import { err, ok } from '@/domain/shared/result';
 import type { PhotoRepository } from '@/repositories';
@@ -8,6 +9,7 @@ import { mapPostgrestError, mapRpcError } from './errors';
 
 /** Errores de los triggers de `photo` (HU-CLI-07). */
 const PHOTO_WRITE_ERRORS = [CUSTOMER_ERROR_CODES.CUSTOMER_ARCHIVED, COMMON_ERROR_CODES.NOT_FOUND];
+const FOREIGN_KEY_VIOLATION = '23503';
 
 const storedPhotoSchema = z.object({
   id: z.uuid(),
@@ -30,10 +32,14 @@ export function createSupabasePhotoRepository(getClient: GetSupabaseClient): Pho
             thumb_path: photo.thumbPath,
             bytes: photo.bytes,
             customer_id: photo.customerId ?? null,
+            leader_deposit_id: photo.leaderDepositId ?? null,
           },
           { onConflict: 'id', ignoreDuplicates: true },
         );
-      return error ? err(mapRpcError(error, PHOTO_WRITE_ERRORS)) : ok(undefined);
+      if (!error) return ok(undefined);
+      // El Abibono del recibo ya no existe (lo borraron entre la consulta y la subida).
+      if (error.code === FOREIGN_KEY_VIOLATION) return err(appError(COMMON_ERROR_CODES.NOT_FOUND));
+      return err(mapRpcError(error, PHOTO_WRITE_ERRORS));
     },
 
     async softDelete(id, options = {}) {
@@ -45,7 +51,7 @@ export function createSupabasePhotoRepository(getClient: GetSupabaseClient): Pho
         .is('deleted_at', null);
       if (options.kind) update = update.eq('kind', options.kind);
       const { data, error } = await update.select('id');
-      if (error) return err(mapPostgrestError(error));
+      if (error) return err(mapRpcError(error, [DEPOSIT_DRAFT_ERROR_CODES.RECEIPT_LOCKED]));
       if (data.length > 0) return ok(undefined);
       // Ya estaba borrada (reintento) o no existe / no es del usuario / es de otro tipo.
       let existing = client.from('photo').select('id').eq('id', id);

@@ -54,7 +54,7 @@ const depsWith = () => ({
       ]),
     ),
     listSummaryDeposits: vi.fn(async () =>
-      ok([{ status: 'confirmed' as const, cashAmount: 10_000, transferAmount: 5_000 }]),
+      ok([{ status: 'confirmed' as const, cashAmount: 10_000, transferAmount: 5_000, depositNumber: 1 }]),
     ),
   }),
   customers: fakeCustomerRepository({

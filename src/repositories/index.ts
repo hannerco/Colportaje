@@ -32,7 +32,7 @@ export type {
   StoredPhoto,
 } from './photo-ports';
 export type { LastPickerPointStore } from './last-picker-point';
-export type { MoneyRepository } from './money-repository';
+export type { DepositRecord, MoneyRepository } from './money-repository';
 export type { ProfileRepository } from './profile-repository';
 export type { TitleRepository } from './title-repository';
 
