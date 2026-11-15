@@ -12,7 +12,12 @@ import type { TitleRepository } from './title-repository';
 export type { AuthChange, AuthRepository } from './auth-repository';
 export type { Connectivity } from './connectivity';
 export type { CopyRepository, CreatedCopy } from './copy-repository';
-export type { CustomerAccountData, CustomerRepository, DiscardSummary } from './customer-repository';
+export type {
+  CustomerAccountData,
+  CustomerListData,
+  CustomerRepository,
+  DiscardSummary,
+} from './customer-repository';
 export type { InvoiceRepository, UploadedInvoicePhoto } from './invoice-repository';
 export type { OfflineCache } from './offline-cache';
 export type { PaymentRepository } from './payment-repository';

@@ -29,6 +29,9 @@ import {
 } from './use-cases/customer-invoices';
 import type { InvoicePatch } from '@/domain/invoice';
 import { discardNewCustomer, getDiscardSummary } from './use-cases/customer-discard';
+import { buildCustomerListView, type CustomerListParams } from '@/domain/customer-list';
+import { todayBogota } from '@/domain/time';
+import { loadCustomerListData } from './use-cases/customer-list';
 
 export const customerQueryKeys = {
   all: ['customers'] as const,
@@ -37,6 +40,7 @@ export const customerQueryKeys = {
   infoPhotos: (customerId: string) => ['customers', 'info-photos', customerId] as const,
   photoUrl: (photoId: string) => ['customers', 'photo-url', photoId] as const,
   invoices: (customerId: string) => ['customers', 'invoices', customerId] as const,
+  list: ['customers', 'list'] as const,
   discardSummary: (customerId: string) => ['customers', 'discard-summary', customerId] as const,
 };
 
@@ -286,4 +290,17 @@ export function useDiscardNewCustomer() {
     },
   });
   return { discardNewCustomer: mutation.mutateAsync, isPending: mutation.isPending };
+}
+
+/**
+ * Lista de clientes (HU-CLI-04): `{ counts, statusCounts, isDefaultView, rows }`. Lee una vez todo (cientos
+ * de clientes) y calcula pestañas, filtro y orden en el teléfono; sin conexión muestra lo último guardado.
+ */
+export function useCustomerList(params: CustomerListParams) {
+  const { customers, titles } = useRepositories();
+  return useQuery({
+    queryKey: customerQueryKeys.list,
+    queryFn: async () => unwrap(await loadCustomerListData({ customers, titles })),
+    select: (data) => buildCustomerListView(data.customers, data.accounts, params, todayBogota(systemClock)),
+  });
 }

@@ -163,6 +163,75 @@ export function createSupabaseCustomerRepository(getClient: GetSupabaseClient): 
       );
     },
 
+    async listForCustomerList() {
+      const client = getClient();
+      const [customers, copies, payments] = await Promise.all([
+        selectAll((from, to) =>
+          client
+            .from('customer')
+            .select('id, name, avatar_emoji, phone, created_at, updated_at, archived_at')
+            .is('deleted_at', null)
+            .order('id')
+            .range(from, to),
+        ),
+        selectAll((from, to) =>
+          client
+            .from('copy')
+            .select('id, customer_id, title_id, agreed_price, sold_at')
+            .eq('status', 'sold')
+            .is('deleted_at', null)
+            .order('id')
+            .range(from, to),
+        ),
+        selectAll((from, to) =>
+          client
+            .from('payment')
+            .select('customer_id, status, agreed_amount, paid_amount, due_date, paid_at')
+            .is('deleted_at', null)
+            .order('id')
+            .range(from, to),
+        ),
+      ]);
+      if (!customers.ok) return customers;
+      if (!copies.ok) return copies;
+      if (!payments.ok) return payments;
+      return ok({
+        customers: customers.value.map((raw) => {
+          const row = listCustomerRowSchema.parse(raw);
+          return {
+            id: row.id,
+            name: row.name,
+            avatarEmoji: row.avatar_emoji,
+            phone: row.phone,
+            createdAt: row.created_at,
+            updatedAt: row.updated_at,
+            archived: row.archived_at !== null,
+          };
+        }),
+        soldCopies: copies.value.map((raw) => {
+          const row = listCopyRowSchema.parse(raw);
+          return {
+            copyId: row.id,
+            customerId: row.customer_id,
+            titleId: row.title_id,
+            agreedPrice: row.agreed_price,
+            soldAt: row.sold_at,
+          };
+        }),
+        payments: payments.value.map((raw) => {
+          const row = listPaymentRowSchema.parse(raw);
+          return {
+            customerId: row.customer_id,
+            status: row.status,
+            agreedAmount: row.agreed_amount,
+            paidAmount: row.paid_amount,
+            dueDate: row.due_date,
+            paidAt: row.paid_at,
+          };
+        }),
+      });
+    },
+
     async getDiscardSummary(customerId) {
       const { data, error } = await getClient().rpc('customer_discard_summary', {
         p_customer_id: customerId,
@@ -211,6 +280,31 @@ export function createSupabaseCustomerRepository(getClient: GetSupabaseClient): 
     },
   };
 }
+
+const listCustomerRowSchema = z.object({
+  id: z.uuid(),
+  name: z.string(),
+  avatar_emoji: z.string().nullable(),
+  phone: z.string().nullable(),
+  created_at: instant,
+  updated_at: instant,
+  archived_at: z.string().nullable(),
+});
+const listCopyRowSchema = z.object({
+  id: z.uuid(),
+  customer_id: z.uuid(),
+  title_id: z.uuid(),
+  agreed_price: z.number().int(),
+  sold_at: instant,
+});
+const listPaymentRowSchema = paymentRowSchema.pick({
+  customer_id: true,
+  status: true,
+  agreed_amount: true,
+  paid_amount: true,
+  due_date: true,
+  paid_at: true,
+});
 
 const count = z.number().int().nonnegative();
 const discardSummaryRowsSchema = z

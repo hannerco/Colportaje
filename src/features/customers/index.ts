@@ -9,6 +9,7 @@ export {
   useUpdateInvoice,
   useAssignableCopies,
   useCustomerInfoPhotos,
+  useCustomerList,
   useDeleteCustomerInfoPhoto,
   useDiscardNewCustomer,
   useDiscardSummary,
@@ -24,6 +25,18 @@ export {
   removeCopyDuringCreation,
   type CustomerBooksDeps,
 } from './use-cases/customer-books';
+export { loadCustomerListData, type CustomerListLoaded } from './use-cases/customer-list';
+export {
+  buildCustomerListView,
+  DEFAULT_CUSTOMER_LIST_PARAMS,
+  DEFAULT_SORT_DIR,
+  isDefaultCustomerListView,
+  type CustomerListParams,
+  type CustomerListRow,
+  type CustomerListTab,
+  type CustomerListView,
+  type CustomerSortKey,
+} from '@/domain/customer-list';
 export { discardNewCustomer, getDiscardSummary } from './use-cases/customer-discard';
 export type { DiscardSummary } from '@/repositories';
 export {
