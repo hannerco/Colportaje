@@ -9,6 +9,8 @@ export {
   useCopyDetail,
   useCopyIssueActions,
   useDeleteCopy,
+  useReturnToLeader,
+  useReturnToLeaderCandidates,
   useCopyHistory,
   useFlaggedCopies,
   useInStockCopiesOfTitle,
@@ -24,6 +26,21 @@ export {
   type AgreedPriceResult,
 } from './use-cases/agreed-price';
 export { evaluatePriceChange, validateAgreedPrice } from '@/domain/agreed-price';
+export {
+  loadReturnCandidatesData,
+  returnCandidatesFrom,
+  returnCopiesToLeader,
+  undoReturnToLeader,
+  type ReturnToLeaderDeps,
+} from './use-cases/return-to-leader';
+export {
+  RETURN_TO_LEADER_ERROR_CODES,
+  buildReturnCandidates,
+  returnSelectionSummary,
+  type ReturnCandidates,
+  type ReturnSelection,
+  type ReturnSummary,
+} from '@/domain/return-to-leader';
 export { deleteCopy, undoDeleteCopy, type CopyDeleteDeps } from './use-cases/copy-delete';
 export { COPY_DELETE_ERROR_CODES, deleteNote, isDeletable } from '@/domain/copy-delete';
 export { flagCopy, resolveCopyIssue, undoResolveCopyIssue, type CopyIssueDeps } from './use-cases/copy-issue';

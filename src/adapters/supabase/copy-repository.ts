@@ -1,4 +1,5 @@
 import { COPY_DELETE_ERROR_CODES } from '@/domain/copy-delete';
+import { RETURN_TO_LEADER_ERROR_CODES } from '@/domain/return-to-leader';
 import { COPY_ISSUE_ERROR_CODES } from '@/domain/copy-issue';
 import { z } from 'zod';
 import { ADD_COPIES_ERROR_CODES } from '@/domain/add-batch';
@@ -256,6 +257,23 @@ export function createSupabaseCopyRepository(getClient: GetSupabaseClient): Copy
       return ok(undefined);
     },
 
+    async returnToLeader(input) {
+      const { data, error } = await getClient().rpc('return_copies_to_leader', {
+        p_op_id: input.opId,
+        p_copy_ids: [...input.copyIds],
+        p_minibook_lines: input.minibookLines.map((l) => ({ titleId: l.titleId, quantity: l.quantity })),
+        p_note: input.note,
+      });
+      if (error) return err(mapRpcError(error, RETURN_TO_LEADER_ERRORS, returnToLeaderDetails));
+      return ok({ returnedCopyIds: z.array(z.uuid()).parse(data ?? []) });
+    },
+
+    async undoReturnToLeader(copyId, note) {
+      const { error } = await getClient().rpc('undo_return_to_leader', { p_copy_id: copyId, p_note: note });
+      if (error) return err(mapRpcError(error, RETURN_TO_LEADER_ERRORS));
+      return ok(undefined);
+    },
+
     async delete(copyId, note) {
       const { error } = await getClient().rpc('delete_copy', {
         p_copy_id: copyId,
@@ -419,6 +437,25 @@ const RECEIVED_DATE_ERRORS = [
   COMMON_ERROR_CODES.NOT_FOUND,
   COMMON_ERROR_CODES.FORBIDDEN,
 ];
+
+const RETURN_TO_LEADER_ERRORS = [
+  ...Object.values(RETURN_TO_LEADER_ERROR_CODES),
+  ASSIGN_ERROR_CODES.COPY_NOT_IN_STOCK,
+  COPY_ISSUE_ERROR_CODES.UNDO_NOT_AVAILABLE,
+  COMMON_ERROR_CODES.NOT_FOUND,
+  COMMON_ERROR_CODES.FORBIDDEN,
+  COMMON_ERROR_CODES.VALIDATION,
+];
+
+/** Detalles: ids que ya no están en físico, el minibook sin stock o el campo inválido. */
+const returnToLeaderDetails = (code: string, detail: string | null) => {
+  if (!detail) return undefined;
+  if (code === ASSIGN_ERROR_CODES.COPY_NOT_IN_STOCK)
+    return { copyIds: z.array(z.uuid()).parse(JSON.parse(detail)) };
+  if (code === RETURN_TO_LEADER_ERROR_CODES.NOT_ENOUGH_STOCK) return { titleId: detail };
+  if (code === COMMON_ERROR_CODES.VALIDATION) return { field: detail };
+  return undefined;
+};
 
 const DELETE_ERRORS = [
   COPY_DELETE_ERROR_CODES.COPY_NOT_DELETABLE,

@@ -20,6 +20,13 @@ import { loadCopyDetail, updateReceivedDate } from './use-cases/copy-detail';
 import { restorePublicPrice, updateAgreedPrice } from './use-cases/agreed-price';
 import { flagCopy, resolveCopyIssue, undoResolveCopyIssue } from './use-cases/copy-issue';
 import { deleteCopy, undoDeleteCopy } from './use-cases/copy-delete';
+import {
+  loadReturnCandidatesData,
+  returnCandidatesFrom,
+  returnCopiesToLeader,
+  undoReturnToLeader,
+} from './use-cases/return-to-leader';
+import type { ReturnSelection } from '@/domain/return-to-leader';
 import type { IssueResolution } from '@/domain/copy-issue';
 import { loadFlaggedCopies, loadInStockCopiesOfTitle, loadInStockSummary } from './use-cases/stock';
 
@@ -31,6 +38,7 @@ export const inventoryQueryKeys = {
   flagged: ['inventory', 'flagged'] as const,
   copiesList: ['inventory', 'copies-list'] as const,
   copyDetail: (copyId: string) => ['inventory', 'copy-detail', copyId] as const,
+  returnCandidates: ['inventory', 'return-candidates'] as const,
 };
 
 /** Historial de un ejemplar, del más reciente al más antiguo (HU-INV-01). */
@@ -236,5 +244,46 @@ export function useDeleteCopy() {
     deleteCopy: remove.mutateAsync,
     undoDeleteCopy: undo.mutateAsync,
     isPending: remove.isPending || undo.isPending,
+  };
+}
+
+/**
+ * Candidatos de "Devolver al líder" (HU-INV-09): `{ books, minibooks }`, con búsqueda por título. Lee una vez
+ * y filtra en el teléfono; la selección marcada es estado del front y la búsqueda no la cambia.
+ */
+export function useReturnToLeaderCandidates({ search = '' }: { search?: string } = {}) {
+  const { copies, titles } = useRepositories();
+  return useQuery({
+    queryKey: inventoryQueryKeys.returnCandidates,
+    queryFn: async () => unwrap(await loadReturnCandidatesData({ copies, titles })),
+    select: (data) => returnCandidatesFrom(data, search),
+  });
+}
+
+/**
+ * Devolver al líder en lote y deshacer por ejemplar: `returnCopiesToLeader({ opId, copyIds, minibookLines,
+ * note })` y `undoReturnToLeader({ copyId, note })`. Devuelven `Result`; al terminar bien refrescan Inventario.
+ */
+export function useReturnToLeader() {
+  const { copies, connectivity } = useRepositories();
+  const queryClient = useQueryClient();
+  const deps = { copies, connectivity };
+  const onSuccess = (result: { ok: boolean }) => {
+    if (result.ok) void queryClient.invalidateQueries({ queryKey: inventoryQueryKeys.all });
+  };
+  const send = useMutation({
+    mutationFn: (input: ReturnSelection & { opId: string; note: string }) =>
+      returnCopiesToLeader(deps, input),
+    onSuccess,
+  });
+  const undo = useMutation({
+    mutationFn: (input: { copyId: string; note: string }) =>
+      undoReturnToLeader(deps, input.copyId, input.note),
+    onSuccess,
+  });
+  return {
+    returnCopiesToLeader: send.mutateAsync,
+    undoReturnToLeader: undo.mutateAsync,
+    isPending: send.isPending || undo.isPending,
   };
 }

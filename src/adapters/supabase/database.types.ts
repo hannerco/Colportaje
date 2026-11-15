@@ -837,6 +837,10 @@ export type Database = {
         Returns: undefined;
       };
       restore_customer: { Args: { p_customer_id: string }; Returns: undefined };
+      return_copies_to_leader: {
+        Args: { p_copy_ids: string[]; p_minibook_lines: Json; p_note: string; p_op_id: string };
+        Returns: string[];
+      };
       return_copy_from_customer: { Args: { p_copy_id: string; p_reason: string }; Returns: string };
       schedule_single_payment: {
         Args: { p_agreed_amount: number; p_customer_id: string; p_due_date: string; p_payment_id: string };
@@ -854,6 +858,7 @@ export type Database = {
       today_bogota: { Args: Record<PropertyKey, never>; Returns: string };
       undo_delete_copy: { Args: { p_copy_id: string }; Returns: undefined };
       undo_resolve_copy_issue: { Args: { p_copy_id: string }; Returns: undefined };
+      undo_return_to_leader: { Args: { p_copy_id: string; p_note: string }; Returns: undefined };
       update_agreed_price: {
         Args: { p_copy_id: string; p_price?: number };
         Returns: {
