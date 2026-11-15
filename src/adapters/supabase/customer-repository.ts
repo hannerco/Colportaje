@@ -129,6 +129,21 @@ export function createSupabaseCustomerRepository(getClient: GetSupabaseClient): 
       return data.length > 0 ? ok(undefined) : err(appError(COMMON_ERROR_CODES.NOT_FOUND));
     },
 
+    async setLocation(id, location) {
+      const { data, error } = await getClient()
+        .from('customer')
+        .update({
+          latitude: location?.latitude ?? null,
+          longitude: location?.longitude ?? null,
+          location_accuracy_m: location?.accuracyMeters ?? null,
+        })
+        .eq('id', id)
+        .is('deleted_at', null)
+        .select('id');
+      if (error) return err(mapCustomerWriteError(error));
+      return data.length > 0 ? ok(undefined) : err(appError(COMMON_ERROR_CODES.NOT_FOUND));
+    },
+
     async listRefs() {
       const client = getClient();
       const rows = await selectAll((from, to) =>
@@ -356,6 +371,10 @@ const CHECK_FIELDS: Readonly<Record<string, string>> = {
   customer_name_check: 'name',
   customer_avatar_emoji_check: 'avatarEmoji',
   customer_maps_url_allowed: 'mapsUrl',
+  customer_latitude_check: 'latitude',
+  customer_longitude_check: 'longitude',
+  customer_location_accuracy_m_check: 'accuracyMeters',
+  customer_coordinates_together: 'latitude',
 };
 
 const mapCustomerWriteError = (error: PostgrestError) => {

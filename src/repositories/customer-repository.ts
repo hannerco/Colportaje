@@ -2,6 +2,7 @@ import type { AccountPayment, CustomerAccountInput } from '@/domain/customer';
 import type { CustomerRef } from '@/domain/copies-list';
 import type { CustomerPatch, DuplicateCandidate } from '@/domain/customer-data';
 import type { CustomerListCustomer } from '@/domain/customer-list';
+import type { CustomerLocation } from '@/domain/customer-location';
 import type { Payment } from '@/domain/payment';
 import type { AppError } from '@/domain/shared/errors';
 import type { Result } from '@/domain/shared/result';
@@ -57,6 +58,13 @@ export interface CustomerRepository {
    * `CUSTOMER_ARCHIVED`, `NOT_FOUND`, `NETWORK_ERROR`.
    */
   update(id: string, patch: CustomerPatch): Promise<Result<void, AppError>>;
+
+  /**
+   * Guarda (ya validada) o quita (`null`: coordenadas y precisión vacías) la ubicación; mueve la última
+   * modificación (HU-CLI-06). Errores: `VALIDATION` (`details.field`), `CUSTOMER_ARCHIVED`, `NOT_FOUND`,
+   * `NETWORK_ERROR`.
+   */
+  setLocation(id: string, location: CustomerLocation | null): Promise<Result<void, AppError>>;
 
   /** Clientes no borrados (incluidos archivados) para buscar posibles duplicados (BR-CUS-11). */
   listDuplicateCandidates(): Promise<Result<DuplicateCandidate[], AppError>>;

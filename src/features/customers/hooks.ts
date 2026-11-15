@@ -32,6 +32,13 @@ import { discardNewCustomer, getDiscardSummary } from './use-cases/customer-disc
 import { buildCustomerListView, type CustomerListParams } from '@/domain/customer-list';
 import { todayBogota } from '@/domain/time';
 import { loadCustomerListData } from './use-cases/customer-list';
+import type { CustomerLocation } from '@/domain/customer-location';
+import {
+  clearCustomerLocation,
+  loadInitialPickerCenter,
+  rememberLastChosenPoint,
+  setCustomerLocation,
+} from './use-cases/customer-location';
 
 export const customerQueryKeys = {
   all: ['customers'] as const,
@@ -41,6 +48,7 @@ export const customerQueryKeys = {
   photoUrl: (photoId: string) => ['customers', 'photo-url', photoId] as const,
   invoices: (customerId: string) => ['customers', 'invoices', customerId] as const,
   list: ['customers', 'list'] as const,
+  pickerCenter: (lat: number | null, lng: number | null) => ['customers', 'picker-center', lat, lng] as const,
   discardSummary: (customerId: string) => ['customers', 'discard-summary', customerId] as const,
 };
 
@@ -304,4 +312,60 @@ export function useCustomerList(params: CustomerListParams) {
     queryFn: async () => unwrap(await loadCustomerListData({ customers, titles })),
     select: (data) => buildCustomerListView(data.customers, data.accounts, params, todayBogota(systemClock)),
   });
+}
+
+/**
+ * Guarda la ubicación confirmada en el selector (HU-CLI-06) y la recuerda como último punto elegido.
+ * Devuelve `Result`; al terminar bien refresca Clientes (ficha y lista).
+ */
+export function useSetCustomerLocation() {
+  const repositories = useRepositories();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (input: { customerId: string; location: CustomerLocation }) =>
+      setCustomerLocation(repositories, input.customerId, input.location),
+    onSuccess: (result) => {
+      if (result.ok) void queryClient.invalidateQueries({ queryKey: customerQueryKeys.all });
+    },
+  });
+  return { setCustomerLocation: mutation.mutateAsync, isPending: mutation.isPending };
+}
+
+/** "Quitar" la ubicación. Devuelve `Result`. */
+export function useClearCustomerLocation() {
+  const { customers, connectivity } = useRepositories();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (customerId: string) => clearCustomerLocation({ customers, connectivity }, customerId),
+    onSuccess: (result) => {
+      if (result.ok) void queryClient.invalidateQueries({ queryKey: customerQueryKeys.all });
+    },
+  });
+  return { clearCustomerLocation: mutation.mutateAsync, isPending: mutation.isPending };
+}
+
+/**
+ * Centro inicial del selector (`{ lat, lng, zoom }`; `zoom` solo en la vista de Colombia). Se calcula en el
+ * teléfono, también sin conexión. `customerLocation` = la guardada del cliente ("Cambiar") o `null`.
+ */
+export function useInitialPickerCenter(
+  customerLocation: Pick<CustomerLocation, 'latitude' | 'longitude'> | null,
+) {
+  const { auth, lastPickerPoint } = useRepositories();
+  return useQuery({
+    queryKey: customerQueryKeys.pickerCenter(
+      customerLocation?.latitude ?? null,
+      customerLocation?.longitude ?? null,
+    ),
+    queryFn: () => loadInitialPickerCenter({ auth, lastPickerPoint }, customerLocation),
+    networkMode: 'always', // no usa la red
+    staleTime: 0,
+    gcTime: 0, // no se guarda en la caché del dispositivo
+  });
+}
+
+/** Recuerda un punto elegido en el selector sin guardarlo en un cliente (p. ej. al confirmar en la ficha nueva). */
+export function useRememberLastChosenPoint() {
+  const { auth, lastPickerPoint } = useRepositories();
+  return (point: { lat: number; lng: number }) => rememberLastChosenPoint({ auth, lastPickerPoint }, point);
 }

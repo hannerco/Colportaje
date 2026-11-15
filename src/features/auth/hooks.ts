@@ -76,13 +76,14 @@ export function useSignIn() {
  * (puede usarlo otra persona); si la sesión solo vence, la caché se conserva (AF-83, R4).
  */
 export function useSignOut() {
-  const { auth, offlineCache } = useRepositories();
+  const { auth, offlineCache, lastPickerPoint } = useRepositories();
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: () => auth.signOut(),
     onSuccess: async (result) => {
       if (!result.ok) return;
       queryClient.clear();
+      lastPickerPoint.clear(); // último punto del selector de ubicación: dato personal (HU-CLI-06)
       await offlineCache.clear(); // de inmediato, sin esperar al guardado periódico (HU-BASE-06)
     },
   });
