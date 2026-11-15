@@ -17,6 +17,7 @@ import { useRepositories } from '../shared/repositories-provider';
 import { addCopiesBatch } from './use-cases/add-copies-batch';
 import { loadCopiesListData } from './use-cases/copies-list';
 import { loadCopyDetail, updateReceivedDate } from './use-cases/copy-detail';
+import { restorePublicPrice, updateAgreedPrice } from './use-cases/agreed-price';
 import { loadFlaggedCopies, loadInStockCopiesOfTitle, loadInStockSummary } from './use-cases/stock';
 
 export const inventoryQueryKeys = {
@@ -142,4 +143,35 @@ export function useUpdateReceivedDate() {
     },
   });
   return { updateReceivedDate: mutation.mutateAsync, isPending: mutation.isPending };
+}
+
+/** Lecturas que cambian con el precio acordado: inventario (detalle y lista), clientes, abonos y Dinero. */
+const PRICE_AFFECTED_ROOTS = [['inventory'], ['customers'], ['payments'], ['money']] as const;
+
+/**
+ * Precio acordado de un ejemplar vendido (HU-INV-06): `updateAgreedPrice({ copyId, price })` y
+ * `restorePublicPrice(copyId)`. Devuelven `Result` con la cuenta del cliente y el sobrante (`price_decrease`).
+ */
+export function useAgreedPrice() {
+  const { copies, customers, connectivity } = useRepositories();
+  const queryClient = useQueryClient();
+  const deps = { copies, customers, connectivity, clock: systemClock };
+  const onSuccess = (result: { ok: boolean }) => {
+    if (!result.ok) return;
+    for (const queryKey of PRICE_AFFECTED_ROOTS) void queryClient.invalidateQueries({ queryKey });
+  };
+  const update = useMutation({
+    mutationFn: (input: { copyId: string; price: number }) =>
+      updateAgreedPrice(deps, input.copyId, input.price),
+    onSuccess,
+  });
+  const restore = useMutation({
+    mutationFn: (copyId: string) => restorePublicPrice(deps, copyId),
+    onSuccess,
+  });
+  return {
+    updateAgreedPrice: update.mutateAsync,
+    restorePublicPrice: restore.mutateAsync,
+    isPending: update.isPending || restore.isPending,
+  };
 }
