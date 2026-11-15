@@ -5,6 +5,7 @@ import { createSupabaseAuthRepository } from '@/adapters/supabase/auth-repositor
 import { createSupabaseBrowserClient, type AppSupabaseClient } from '@/adapters/supabase/client';
 import { createSupabaseCopyRepository } from '@/adapters/supabase/copy-repository';
 import { createSupabaseCustomerRepository } from '@/adapters/supabase/customer-repository';
+import { createSupabaseInvoiceRepository } from '@/adapters/supabase/invoice-repository';
 import { createSupabasePaymentRepository } from '@/adapters/supabase/payment-repository';
 import { createSupabasePhotoRepository } from '@/adapters/supabase/photo-repository';
 import { createSupabaseProfileRepository } from '@/adapters/supabase/profile-repository';
@@ -26,6 +27,7 @@ export function createAppRepositories(persister: Persister): Repositories {
     copies: createSupabaseCopyRepository(getClient),
     customers: createSupabaseCustomerRepository(getClient),
     payments: createSupabasePaymentRepository(getClient),
+    invoices: createSupabaseInvoiceRepository(getClient),
     photos: createSupabasePhotoRepository(getClient),
     storage: createSupabaseStorageRepository(getClient),
     imageCodec: canvasImageCodec,

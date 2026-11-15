@@ -20,6 +20,14 @@ import {
   getPhotoUrl,
   listCustomerInfoPhotos,
 } from './use-cases/customer-photos';
+import {
+  addInvoicePhoto,
+  createInvoiceWithPhoto,
+  deleteInvoicePhoto,
+  listCustomerInvoices,
+  updateInvoice,
+} from './use-cases/customer-invoices';
+import type { InvoicePatch } from '@/domain/invoice';
 
 export const customerQueryKeys = {
   all: ['customers'] as const,
@@ -27,6 +35,7 @@ export const customerQueryKeys = {
   assignableCopies: ['customers', 'assignable-copies'] as const,
   infoPhotos: (customerId: string) => ['customers', 'info-photos', customerId] as const,
   photoUrl: (photoId: string) => ['customers', 'photo-url', photoId] as const,
+  invoices: (customerId: string) => ['customers', 'invoices', customerId] as const,
 };
 
 /** Las URL firmadas caducan: las lecturas que las traen se refrescan a mitad de su vida. */
@@ -177,4 +186,70 @@ export function useDeleteCustomerInfoPhoto() {
     },
   });
   return { deleteCustomerInfoPhoto: mutation.mutateAsync, isPending: mutation.isPending };
+}
+
+/**
+ * Facturas del cliente (HU-CLI-08): `[{ invoiceId, number, date, photos: [{ photoId, thumbUrl }] }]`, por
+ * fecha descendente (sin fecha al final). La imagen completa se abre con `usePhotoUrl(photoId)`.
+ */
+export function useCustomerInvoices(customerId: string | null | undefined) {
+  const { invoices, storage } = useRepositories();
+  return useQuery({
+    queryKey: customerQueryKeys.invoices(customerId ?? ''),
+    queryFn: async () => unwrap(await listCustomerInvoices({ invoices, storage }, customerId!)),
+    enabled: Boolean(customerId),
+    staleTime: signedUrlStaleMs,
+  });
+}
+
+/** Mutación de facturas que, al terminar bien, refresca clientes (ficha y lista) y el uso de fotos. */
+function useInvoiceMutation<TInput, TResult extends { ok: boolean }>(
+  run: (repositories: ReturnType<typeof useRepositories>, input: TInput) => Promise<TResult>,
+) {
+  const repositories = useRepositories();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (input: TInput) => run(repositories, input),
+    onSuccess: (result) => {
+      if (!result.ok) return;
+      void queryClient.invalidateQueries({ queryKey: customerQueryKeys.all });
+      void queryClient.invalidateQueries({ queryKey: photoQueryKeys.usage });
+    },
+  });
+  return { mutate: mutation.mutateAsync, isPending: mutation.isPending };
+}
+
+/** Crea una factura con su primera foto (no hay factura sin foto). Devuelve `Result`. */
+export function useCreateInvoiceWithPhoto() {
+  const { mutate, isPending } = useInvoiceMutation(
+    (repositories, input: { invoiceId: string; photoId: string; customerId: string; file: Blob }) =>
+      createInvoiceWithPhoto(repositories, input),
+  );
+  return { createInvoiceWithPhoto: mutate, isPending };
+}
+
+/** Agrega otra foto a una factura. Devuelve `Result`. */
+export function useAddInvoicePhoto() {
+  const { mutate, isPending } = useInvoiceMutation(
+    (repositories, input: { invoiceId: string; photoId: string; file: Blob }) =>
+      addInvoicePhoto(repositories, input),
+  );
+  return { addInvoicePhoto: mutate, isPending };
+}
+
+/** Guarda el N.º o la fecha (vacía con `null`). Devuelve `Result`. */
+export function useUpdateInvoice() {
+  const { mutate, isPending } = useInvoiceMutation(
+    (repositories, input: { invoiceId: string; patch: InvoicePatch }) =>
+      updateInvoice(repositories, input.invoiceId, input.patch),
+  );
+  return { updateInvoice: mutate, isPending };
+}
+
+/** Borra una foto de factura; `invoiceDeleted` dice si era la última y la factura se fue con ella. */
+export function useDeleteInvoicePhoto() {
+  const { mutate, isPending } = useInvoiceMutation((repositories, photoId: string) =>
+    deleteInvoicePhoto(repositories, photoId),
+  );
+  return { deleteInvoicePhoto: mutate, isPending };
 }
