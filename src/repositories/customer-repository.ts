@@ -1,6 +1,7 @@
-import type { CustomerAccountInput } from '@/domain/customer';
+import type { AccountPayment, CustomerAccountInput } from '@/domain/customer';
 import type { CustomerRef } from '@/domain/copies-list';
 import type { CustomerPatch, DuplicateCandidate } from '@/domain/customer-data';
+import type { CustomerListCustomer } from '@/domain/customer-list';
 import type { Payment } from '@/domain/payment';
 import type { AppError } from '@/domain/shared/errors';
 import type { Result } from '@/domain/shared/result';
@@ -8,6 +9,21 @@ import type { Result } from '@/domain/shared/result';
 /** Lo que hace falta para derivar la cuenta de un cliente, con sus abonos completos (sin borrados). */
 export type CustomerAccountData = Omit<CustomerAccountInput, 'payments'> & {
   readonly payments: readonly Payment[];
+};
+
+/** Todo lo de la lista de clientes (HU-CLI-04), sin borrados; los títulos se leen aparte. */
+export type CustomerListData = {
+  readonly customers: readonly CustomerListCustomer[];
+  /** Ejemplares vendidos (no borrados) de cualquier cliente. */
+  readonly soldCopies: readonly {
+    readonly copyId: string;
+    readonly customerId: string;
+    readonly titleId: string;
+    readonly agreedPrice: number;
+    readonly soldAt: Date;
+  }[];
+  /** Abonos no borrados de cualquier cliente. */
+  readonly payments: readonly (AccountPayment & { readonly customerId: string })[];
 };
 
 /**
@@ -50,6 +66,12 @@ export interface CustomerRepository {
 
   /** Nombre y emoji de estos clientes (los que existan y sean del usuario). */
   getRefs(ids: readonly string[]): Promise<Result<CustomerRef[], AppError>>;
+
+  /**
+   * Todos los clientes no borrados (incluidos archivados y prospectos) con sus ejemplares vendidos y abonos,
+   * para calcular la lista en el teléfono (HU-CLI-04, ARCHITECTURE §5). Errores: `NETWORK_ERROR`.
+   */
+  listForCustomerList(): Promise<Result<CustomerListData, AppError>>;
 
   /** Resumen para la confirmación de "Descartar". Errores: `NOT_FOUND`, `NETWORK_ERROR`. */
   getDiscardSummary(customerId: string): Promise<Result<DiscardSummary, AppError>>;

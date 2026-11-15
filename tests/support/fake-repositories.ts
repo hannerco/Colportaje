@@ -33,6 +33,7 @@ export const fakeCustomerRepository = (overrides: Partial<CustomerRepository> = 
   listRefs: vi.fn(),
   getRefs: vi.fn(),
   getDiscardSummary: vi.fn(),
+  listForCustomerList: vi.fn(),
   discardNew: vi.fn(),
   ...overrides,
 });
