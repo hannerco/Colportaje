@@ -104,6 +104,108 @@ export function createSupabaseCustomerRepository(getClient: GetSupabaseClient): 
       });
     },
 
+    async getDetailData(customerId) {
+      const client = getClient();
+      const customer = await client
+        .from('customer')
+        .select(
+          'id, name, avatar_emoji, phone, info, address, maps_url, latitude, longitude, location_accuracy_m, archived_at, created_at',
+        )
+        .eq('id', customerId)
+        .is('deleted_at', null)
+        .maybeSingle();
+      if (customer.error) return err(mapPostgrestError(customer.error));
+      if (!customer.data) return err(appError(COMMON_ERROR_CODES.NOT_FOUND));
+
+      const [copies, payments] = await Promise.all([
+        selectAll((from, to) =>
+          client
+            .from('copy')
+            .select('id, number, agreed_price, public_price_snapshot, sold_at, title(name, category)')
+            .eq('customer_id', customerId)
+            .eq('status', 'sold')
+            .is('deleted_at', null)
+            .order('id')
+            .range(from, to),
+        ),
+        selectAll((from, to) =>
+          client
+            .from('payment')
+            .select(`${PAYMENT_COLUMNS}, leader_deposit_id`)
+            .eq('customer_id', customerId)
+            .is('deleted_at', null)
+            .order('id')
+            .range(from, to),
+        ),
+      ]);
+      if (!copies.ok) return copies;
+      if (!payments.ok) return payments;
+      const paymentRows = payments.value.map((raw) => ({
+        payment: toPayment(raw),
+        depositId: depositLinkSchema.parse(raw).leader_deposit_id,
+      }));
+
+      const depositIds = [...new Set(paymentRows.flatMap((p) => (p.depositId ? [p.depositId] : [])))];
+      const paymentIds = paymentRows.map((p) => p.payment.id);
+      const [deposits, reschedules] = await Promise.all([
+        depositIds.length === 0
+          ? Promise.resolve({ data: [], error: null })
+          : client.from('leader_deposit').select('id, status').in('id', depositIds),
+        paymentIds.length === 0
+          ? Promise.resolve({ data: [], error: null })
+          : client.from('payment_reschedule').select('payment_id').in('payment_id', paymentIds),
+      ]);
+      if (deposits.error) return err(mapPostgrestError(deposits.error));
+      if (reschedules.error) return err(mapPostgrestError(reschedules.error));
+      const depositStatus = new Map(
+        z
+          .array(depositRowSchema)
+          .parse(deposits.data)
+          .map((d) => [d.id, d.status] as const),
+      );
+      const rescheduleCount = new Map<string, number>();
+      for (const r of z.array(rescheduleRowSchema).parse(reschedules.data))
+        rescheduleCount.set(r.payment_id, (rescheduleCount.get(r.payment_id) ?? 0) + 1);
+
+      const row = detailCustomerSchema.parse(customer.data);
+      return ok({
+        customer: {
+          id: row.id,
+          name: row.name,
+          avatarEmoji: row.avatar_emoji,
+          phone: row.phone,
+          info: row.info,
+          address: row.address,
+          mapsUrl: row.maps_url,
+          latitude: row.latitude,
+          longitude: row.longitude,
+          accuracyMeters: row.location_accuracy_m,
+          archived: row.archived_at !== null,
+          createdAt: row.created_at,
+        },
+        soldCopies: copies.value.map((raw) => {
+          const c = detailCopySchema.parse(raw);
+          return {
+            copyId: c.id,
+            titleName: c.title.name,
+            category: c.title.category,
+            number: c.number,
+            agreedPrice: c.agreed_price,
+            publicPriceSnapshot: c.public_price_snapshot,
+            soldAt: c.sold_at,
+          };
+        }),
+        payments: paymentRows.map(({ payment, depositId }) => {
+          const status = depositId ? depositStatus.get(depositId) : undefined;
+          return {
+            ...payment,
+            deposit: depositId && status ? { id: depositId, status } : null,
+            rescheduleCount: rescheduleCount.get(payment.id) ?? 0,
+          };
+        }),
+      });
+    },
+
     async create({ id, name }) {
       const client = getClient();
       const inserted = await client
@@ -355,6 +457,37 @@ const discardSummaryRowsSchema = z
     }),
   )
   .length(1);
+
+// numeric(9,6) llega como número (o texto, según la versión de PostgREST): se normaliza a número.
+const coordinate = z.union([z.number(), z.string()]).transform(Number).nullable();
+
+const detailCustomerSchema = z.object({
+  id: z.uuid(),
+  name: z.string(),
+  avatar_emoji: z.string().nullable(),
+  phone: z.string().nullable(),
+  info: z.string().nullable(),
+  address: z.string().nullable(),
+  maps_url: z.string().nullable(),
+  latitude: coordinate,
+  longitude: coordinate,
+  location_accuracy_m: z.number().int().nullable(),
+  archived_at: z.string().nullable(),
+  created_at: instant,
+});
+
+const detailCopySchema = z.object({
+  id: z.uuid(),
+  number: z.number().int(),
+  agreed_price: z.number().int(),
+  public_price_snapshot: z.number().int().nullable(),
+  sold_at: instant,
+  title: z.object({ name: z.string(), category: z.enum(['cultural', 'religious', 'minibook']) }),
+});
+
+const depositLinkSchema = z.object({ leader_deposit_id: z.uuid().nullable() });
+const depositRowSchema = z.object({ id: z.uuid(), status: z.enum(['draft', 'confirmed']) });
+const rescheduleRowSchema = z.object({ payment_id: z.uuid() });
 
 const refRowSchema = z.object({ id: z.uuid(), name: z.string(), avatar_emoji: z.string().nullable() });
 

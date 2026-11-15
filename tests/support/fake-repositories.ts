@@ -35,6 +35,7 @@ export const fakeCopyRepository = (overrides: Partial<CopyRepository> = {}): Cop
 
 export const fakeCustomerRepository = (overrides: Partial<CustomerRepository> = {}): CustomerRepository => ({
   getAccountData: vi.fn(),
+  getDetailData: vi.fn(),
   create: vi.fn(),
   update: vi.fn(),
   listDuplicateCandidates: vi.fn(),

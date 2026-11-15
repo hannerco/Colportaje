@@ -33,6 +33,7 @@ import { discardNewCustomer, getDiscardSummary } from './use-cases/customer-disc
 import { buildCustomerListView, type CustomerListParams } from '@/domain/customer-list';
 import { todayBogota } from '@/domain/time';
 import { loadCustomerListData } from './use-cases/customer-list';
+import { loadCustomerDetail } from './use-cases/customer-detail';
 import { archiveCustomer, getArchivePreview, restoreCustomer } from './use-cases/customer-archive';
 import type { CustomerLocation } from '@/domain/customer-location';
 import {
@@ -50,6 +51,7 @@ export const customerQueryKeys = {
   photoUrl: (photoId: string) => ['customers', 'photo-url', photoId] as const,
   invoices: (customerId: string) => ['customers', 'invoices', customerId] as const,
   list: ['customers', 'list'] as const,
+  detail: (customerId: string) => ['customers', 'detail', customerId] as const,
   archivePreview: (customerId: string) => ['customers', 'archive-preview', customerId] as const,
   pickerCenter: (lat: number | null, lng: number | null) => ['customers', 'picker-center', lat, lng] as const,
   discardSummary: (customerId: string) => ['customers', 'discard-summary', customerId] as const,
@@ -435,4 +437,22 @@ export function useRestoreCustomer() {
     },
   });
   return { restoreCustomer: mutation.mutateAsync, isPending: mutation.isPending };
+}
+
+/**
+ * Ficha del cliente (HU-CLI-12): datos, contacto, cuenta, libros, abonos (con `can.*`), cancelados, avisos,
+ * ubicación, fotos de información y facturas. Sirve para Crear (ficha viva) y para un cliente guardado; sin
+ * conexión muestra lo último guardado. Las miniaturas firmadas se refrescan a mitad de su vida.
+ */
+export function useCustomerDetail(customerId: string | null | undefined) {
+  const { customers, photos, invoices, storage } = useRepositories();
+  return useQuery({
+    queryKey: customerQueryKeys.detail(customerId ?? ''),
+    queryFn: async () =>
+      unwrap(
+        await loadCustomerDetail({ customers, photos, invoices, storage, clock: systemClock }, customerId!),
+      ),
+    enabled: Boolean(customerId),
+    staleTime: signedUrlStaleMs,
+  });
 }

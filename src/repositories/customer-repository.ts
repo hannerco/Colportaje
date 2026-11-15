@@ -1,6 +1,7 @@
 import type { AccountPayment, CustomerAccountInput } from '@/domain/customer';
 import type { CustomerRef } from '@/domain/copies-list';
 import type { CustomerPatch, DuplicateCandidate } from '@/domain/customer-data';
+import type { CustomerDetailInput } from '@/domain/customer-detail';
 import type { CustomerListCustomer } from '@/domain/customer-list';
 import type { CustomerLocation } from '@/domain/customer-location';
 import type { Payment } from '@/domain/payment';
@@ -46,6 +47,12 @@ export interface CustomerRepository {
    * Errores: `NOT_FOUND` (no existe, no es del usuario o está borrado), `NETWORK_ERROR`.
    */
   getAccountData(customerId: string): Promise<Result<CustomerAccountData, AppError>>;
+
+  /**
+   * Todo lo de la ficha (HU-CLI-12): el cliente, sus ejemplares vendidos con título y sus abonos (también
+   * cancelados) con su Abibono y cuántas prórrogas tuvieron. Errores: `NOT_FOUND`, `NETWORK_ERROR`.
+   */
+  getDetailData(customerId: string): Promise<Result<CustomerDetailInput, AppError>>;
 
   /**
    * Crea el cliente con su nombre (HU-CLI-02). Idempotente por `id`: reintentar no duplica ni pisa lo ya
