@@ -1,3 +1,4 @@
+import { COPY_ISSUE_ERROR_CODES } from '@/domain/copy-issue';
 import { z } from 'zod';
 import { ADD_COPIES_ERROR_CODES } from '@/domain/add-batch';
 import { ASSIGN_ERROR_CODES } from '@/domain/assignable-copies';
@@ -254,6 +255,28 @@ export function createSupabaseCopyRepository(getClient: GetSupabaseClient): Copy
       return ok(undefined);
     },
 
+    async flag(copyId, note) {
+      const { error } = await getClient().rpc('flag_copy', { p_copy_id: copyId, p_note: note });
+      if (error) return err(mapRpcError(error, ISSUE_ERRORS, issueDetails));
+      return ok(undefined);
+    },
+
+    async resolveIssue(copyId, resolution, note) {
+      const { error } = await getClient().rpc('resolve_copy_issue', {
+        p_copy_id: copyId,
+        p_resolution: resolution,
+        ...(note === null ? {} : { p_note: note }),
+      });
+      if (error) return err(mapRpcError(error, ISSUE_ERRORS, issueDetails));
+      return ok(undefined);
+    },
+
+    async undoResolveIssue(copyId) {
+      const { error } = await getClient().rpc('undo_resolve_copy_issue', { p_copy_id: copyId });
+      if (error) return err(mapRpcError(error, ISSUE_ERRORS));
+      return ok(undefined);
+    },
+
     async updateAgreedPrice(copyId, price) {
       const { data, error } = await getClient().rpc('update_agreed_price', {
         p_copy_id: copyId,
@@ -380,6 +403,18 @@ const RECEIVED_DATE_ERRORS = [
   COMMON_ERROR_CODES.NOT_FOUND,
   COMMON_ERROR_CODES.FORBIDDEN,
 ];
+
+const ISSUE_ERRORS = [
+  ...Object.values(COPY_ISSUE_ERROR_CODES),
+  ASSIGN_ERROR_CODES.COPY_NOT_IN_STOCK,
+  COMMON_ERROR_CODES.NOT_FOUND,
+  COMMON_ERROR_CODES.FORBIDDEN,
+  COMMON_ERROR_CODES.VALIDATION,
+];
+
+/** VALIDATION de las novedades: el campo viene en el detail (`note` o `resolution`). */
+const issueDetails = (code: string, detail: string | null) =>
+  code === COMMON_ERROR_CODES.VALIDATION && detail ? { field: detail } : undefined;
 
 const agreedPriceRowsSchema = z
   .array(

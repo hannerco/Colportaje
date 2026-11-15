@@ -800,6 +800,7 @@ export type Database = {
         }[];
       };
       discard_new_customer: { Args: { p_customer_id: string }; Returns: undefined };
+      flag_copy: { Args: { p_copy_id: string; p_note: string }; Returns: undefined };
       is_active_user: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
       lock_scheduled_payment: { Args: { p_owner: string; p_payment_id: string }; Returns: string };
@@ -826,6 +827,10 @@ export type Database = {
           previous_due_date: string;
         }[];
       };
+      resolve_copy_issue: {
+        Args: { p_copy_id: string; p_note?: string; p_resolution: string };
+        Returns: undefined;
+      };
       resolve_schedule_excess: {
         Args: { p_choice: Json; p_customer_id: string; p_trigger: string };
         Returns: undefined;
@@ -846,6 +851,7 @@ export type Database = {
         Returns: undefined;
       };
       today_bogota: { Args: Record<PropertyKey, never>; Returns: string };
+      undo_resolve_copy_issue: { Args: { p_copy_id: string }; Returns: undefined };
       update_agreed_price: {
         Args: { p_copy_id: string; p_price?: number };
         Returns: {
