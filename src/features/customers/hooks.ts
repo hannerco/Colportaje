@@ -28,6 +28,7 @@ import {
   updateInvoice,
 } from './use-cases/customer-invoices';
 import type { InvoicePatch } from '@/domain/invoice';
+import { discardNewCustomer, getDiscardSummary } from './use-cases/customer-discard';
 
 export const customerQueryKeys = {
   all: ['customers'] as const,
@@ -36,6 +37,7 @@ export const customerQueryKeys = {
   infoPhotos: (customerId: string) => ['customers', 'info-photos', customerId] as const,
   photoUrl: (photoId: string) => ['customers', 'photo-url', photoId] as const,
   invoices: (customerId: string) => ['customers', 'invoices', customerId] as const,
+  discardSummary: (customerId: string) => ['customers', 'discard-summary', customerId] as const,
 };
 
 /** Las URL firmadas caducan: las lecturas que las traen se refrescan a mitad de su vida. */
@@ -252,4 +254,36 @@ export function useDeleteInvoicePhoto() {
     deleteInvoicePhoto(repositories, photoId),
   );
   return { deleteInvoicePhoto: mutate, isPending };
+}
+
+/**
+ * Resumen para la confirmación de "Descartar" (HU-CLI-03): `{ books, payments, invoices, photos,
+ * blockedByDeposit }`. Siempre fresco: se pide al abrir la confirmación.
+ */
+export function useDiscardSummary(customerId: string | null | undefined) {
+  const { customers } = useRepositories();
+  return useQuery({
+    queryKey: customerQueryKeys.discardSummary(customerId ?? ''),
+    queryFn: async () => unwrap(await getDiscardSummary({ customers }, customerId!)),
+    enabled: Boolean(customerId),
+    staleTime: 0,
+  });
+}
+
+/**
+ * Descarta el cliente recién creado (solo durante la creación). Devuelve `Result`; al terminar bien refresca
+ * inventario, clientes, abonos, Dinero y el uso de fotos.
+ */
+export function useDiscardNewCustomer() {
+  const { customers, connectivity } = useRepositories();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (customerId: string) => discardNewCustomer({ customers, connectivity }, customerId),
+    onSuccess: (result) => {
+      if (!result.ok) return;
+      for (const queryKey of BOOK_AFFECTED_ROOTS) void queryClient.invalidateQueries({ queryKey });
+      void queryClient.invalidateQueries({ queryKey: photoQueryKeys.usage });
+    },
+  });
+  return { discardNewCustomer: mutation.mutateAsync, isPending: mutation.isPending };
 }

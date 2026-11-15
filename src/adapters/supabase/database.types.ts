@@ -780,6 +780,16 @@ export type Database = {
         };
         Returns: undefined;
       };
+      customer_discard_summary: {
+        Args: { p_customer_id: string };
+        Returns: {
+          blocked_by_deposit: boolean;
+          books: number;
+          invoices: number;
+          payments: number;
+          photos: number;
+        }[];
+      };
       delete_invoice_photo: { Args: { p_photo_id: string }; Returns: boolean };
       delete_payment: {
         Args: { p_payment_id: string };
@@ -788,6 +798,7 @@ export type Database = {
           previous_status: Database['public']['Enums']['payment_status'];
         }[];
       };
+      discard_new_customer: { Args: { p_customer_id: string }; Returns: undefined };
       is_active_user: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
       lock_scheduled_payment: { Args: { p_owner: string; p_payment_id: string }; Returns: string };
