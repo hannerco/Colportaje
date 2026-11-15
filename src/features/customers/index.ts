@@ -10,6 +10,8 @@ export {
   useAssignableCopies,
   useCustomerInfoPhotos,
   useDeleteCustomerInfoPhoto,
+  useDiscardNewCustomer,
+  useDiscardSummary,
   usePhotoUrl,
   useAssignCopyToCustomer,
   useCreateCustomer,
@@ -22,6 +24,8 @@ export {
   removeCopyDuringCreation,
   type CustomerBooksDeps,
 } from './use-cases/customer-books';
+export { discardNewCustomer, getDiscardSummary } from './use-cases/customer-discard';
+export type { DiscardSummary } from '@/repositories';
 export {
   addCustomerInfoPhoto,
   deleteCustomerInfoPhoto,

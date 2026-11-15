@@ -10,6 +10,18 @@ export type CustomerAccountData = Omit<CustomerAccountInput, 'payments'> & {
   readonly payments: readonly Payment[];
 };
 
+/**
+ * Lo que se perderá al descartar un cliente recién creado (HU-CLI-03): ejemplares vendidos, abonos (sin
+ * cancelados), facturas y fotos de información; `blockedByDeposit` = algún abono está en un Abibono.
+ */
+export type DiscardSummary = {
+  readonly books: number;
+  readonly payments: number;
+  readonly invoices: number;
+  readonly photos: number;
+  readonly blockedByDeposit: boolean;
+};
+
 /** Clientes (HU-CLI-*). Cada HU de Clientes agrega aquí sus lecturas y acciones. */
 export interface CustomerRepository {
   /**
@@ -38,4 +50,14 @@ export interface CustomerRepository {
 
   /** Nombre y emoji de estos clientes (los que existan y sean del usuario). */
   getRefs(ids: readonly string[]): Promise<Result<CustomerRef[], AppError>>;
+
+  /** Resumen para la confirmación de "Descartar". Errores: `NOT_FOUND`, `NETWORK_ERROR`. */
+  getDiscardSummary(customerId: string): Promise<Result<DiscardSummary, AppError>>;
+
+  /**
+   * Descarta el cliente en una transacción: libros a físico (`wrong_registration`) y cliente, abonos,
+   * facturas y fotos con `deleted_at` (HU-CLI-03). Errores: `CUSTOMER_DISCARD_BLOCKED`, `NOT_FOUND` (también
+   * si ya se descartó), `CUSTOMER_ARCHIVED`, `NETWORK_ERROR`.
+   */
+  discardNew(customerId: string): Promise<Result<void, AppError>>;
 }

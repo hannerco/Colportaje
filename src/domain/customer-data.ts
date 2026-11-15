@@ -4,7 +4,11 @@ import { validationError, type AppError } from './shared/errors';
 import { err, ok, type Result } from './shared/result';
 import { compareEs, compareIds, normalizeForSearch } from './text';
 
-export const CUSTOMER_ERROR_CODES = { CUSTOMER_ARCHIVED: 'CUSTOMER_ARCHIVED' } as const;
+export const CUSTOMER_ERROR_CODES = {
+  CUSTOMER_ARCHIVED: 'CUSTOMER_ARCHIVED',
+  /** Descartar se rechaza: un abono del cliente ya está en un Abibono (HU-CLI-03 R1). */
+  CUSTOMER_DISCARD_BLOCKED: 'CUSTOMER_DISCARD_BLOCKED',
+} as const;
 
 // ─── Avatar (R2, BR-CUS-15) ────────────────────────────────────────────────────────────────────────
 const graphemes = new Intl.Segmenter('es', { granularity: 'grapheme' });

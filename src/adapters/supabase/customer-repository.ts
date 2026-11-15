@@ -163,6 +163,34 @@ export function createSupabaseCustomerRepository(getClient: GetSupabaseClient): 
       );
     },
 
+    async getDiscardSummary(customerId) {
+      const { data, error } = await getClient().rpc('customer_discard_summary', {
+        p_customer_id: customerId,
+      });
+      if (error) return err(mapRpcError(error, [COMMON_ERROR_CODES.NOT_FOUND]));
+      const row = discardSummaryRowsSchema.parse(data)[0]!;
+      return ok({
+        books: row.books,
+        payments: row.payments,
+        invoices: row.invoices,
+        photos: row.photos,
+        blockedByDeposit: row.blocked_by_deposit,
+      });
+    },
+
+    async discardNew(customerId) {
+      const { error } = await getClient().rpc('discard_new_customer', { p_customer_id: customerId });
+      if (error)
+        return err(
+          mapRpcError(error, [
+            CUSTOMER_ERROR_CODES.CUSTOMER_DISCARD_BLOCKED,
+            CUSTOMER_ERROR_CODES.CUSTOMER_ARCHIVED,
+            COMMON_ERROR_CODES.NOT_FOUND,
+          ]),
+        );
+      return ok(undefined);
+    },
+
     async listDuplicateCandidates() {
       const client = getClient();
       const rows = await selectAll((from, to) =>
@@ -183,6 +211,19 @@ export function createSupabaseCustomerRepository(getClient: GetSupabaseClient): 
     },
   };
 }
+
+const count = z.number().int().nonnegative();
+const discardSummaryRowsSchema = z
+  .array(
+    z.object({
+      books: count,
+      payments: count,
+      invoices: count,
+      photos: count,
+      blocked_by_deposit: z.boolean(),
+    }),
+  )
+  .length(1);
 
 const refRowSchema = z.object({ id: z.uuid(), name: z.string(), avatar_emoji: z.string().nullable() });
 
