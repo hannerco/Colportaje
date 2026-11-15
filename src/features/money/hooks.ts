@@ -24,6 +24,7 @@ import {
   unscheduledCustomersFrom,
   type MoneySummaryData,
 } from './use-cases/money-summary';
+import { confirmDeposit, updateDepositNote } from './use-cases/confirm-deposit';
 import { depositsListFrom } from './use-cases/deposits-list';
 import { paymentsListFrom } from './use-cases/payments-list';
 
@@ -162,4 +163,33 @@ export function useDeleteDepositDraft() {
     },
   });
   return { deleteDepositDraft: mutation.mutateAsync, isPending: mutation.isPending };
+}
+
+/** Guarda y confirma el Abibono (desde un borrador o desde la propuesta). Devuelve `Result<{ depositId }>`. */
+export function useConfirmDeposit() {
+  const { money, connectivity } = useRepositories();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (input: DepositDraftInput) => confirmDeposit({ money, connectivity }, input),
+    onSuccess: (result) => {
+      if (!result.ok) return;
+      for (const queryKey of DEPOSIT_AFFECTED_ROOTS) void queryClient.invalidateQueries({ queryKey });
+    },
+  });
+  return { confirmDeposit: mutation.mutateAsync, isPending: mutation.isPending };
+}
+
+/** Cambia la nota de un borrador o de un confirmado. */
+export function useUpdateDepositNote() {
+  const { money, connectivity } = useRepositories();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (input: { depositId: string; note: string | null }) =>
+      updateDepositNote({ money, connectivity }, input.depositId, input.note),
+    onSuccess: (result) => {
+      if (!result.ok) return;
+      void queryClient.invalidateQueries({ queryKey: moneyQueryKeys.all });
+    },
+  });
+  return { updateDepositNote: mutation.mutateAsync, isPending: mutation.isPending };
 }

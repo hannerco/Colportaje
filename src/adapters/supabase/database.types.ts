@@ -769,6 +769,7 @@ export type Database = {
           paid_amount: number;
         }[];
       };
+      confirm_leader_deposit: { Args: { p_deposit: Json }; Returns: string };
       correct_scheduled_date: { Args: { p_due_date: string; p_payment_id: string }; Returns: string };
       create_invoice_with_photo: {
         Args: {
@@ -802,6 +803,7 @@ export type Database = {
         }[];
       };
       deposit_amount: { Args: { p_value: Json }; Returns: number };
+      deposit_difference: { Args: { p_deposit_id: string }; Returns: number };
       discard_new_customer: { Args: { p_customer_id: string }; Returns: undefined };
       flag_copy: { Args: { p_copy_id: string; p_note: string }; Returns: undefined };
       is_active_user: { Args: Record<PropertyKey, never>; Returns: boolean };
@@ -880,6 +882,7 @@ export type Database = {
         Returns: string;
       };
       update_copy_received_date: { Args: { p_copy_id: string; p_date: string }; Returns: undefined };
+      update_deposit_note: { Args: { p_deposit_id: string; p_note: string }; Returns: undefined };
       update_invoice: { Args: { p_invoice_id: string; p_patch: Json }; Returns: undefined };
       update_scheduled_amount: { Args: { p_agreed_amount: number; p_payment_id: string }; Returns: string };
     };

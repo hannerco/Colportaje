@@ -47,4 +47,18 @@ export interface MoneyRepository {
    * Errores: `DEPOSIT_NOT_DRAFT`, `NETWORK_ERROR`.
    */
   deleteDepositDraft(depositId: string): Promise<Result<{ paths: string[] }, AppError>>;
+
+  /**
+   * Guarda y confirma en una transacción (HU-DIN-05, R1): crea el borrador si no existía (con sus recibos
+   * pendientes), valida los bloqueos, asigna el número la primera vez y pasa los abonos a entregados. Si algo
+   * falla no cambia nada. Errores: los de `saveDepositDraft` y `TOTAL_ZERO`, `NOTE_REQUIRED`, `NO_RECEIPT` (el de
+   * mayor prioridad, en ese orden; `details.blockers` = todos).
+   */
+  confirmDeposit(draft: ValidDepositDraft): Promise<Result<{ depositId: string }, AppError>>;
+
+  /**
+   * Nota de un borrador o de un confirmado (`null` = sin nota). Errores: `NOTE_REQUIRED` (confirmado con
+   * diferencia), `NOT_FOUND`, `NETWORK_ERROR`.
+   */
+  updateDepositNote(depositId: string, note: string | null): Promise<Result<void, AppError>>;
 }

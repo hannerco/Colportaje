@@ -104,5 +104,7 @@ export const fakeMoneyRepository = (overrides: Partial<MoneyRepository> = {}): M
   getDeposit: vi.fn(),
   saveDepositDraft: vi.fn(),
   deleteDepositDraft: vi.fn(),
+  confirmDeposit: vi.fn(),
+  updateDepositNote: vi.fn(),
   ...overrides,
 });
