@@ -1,3 +1,4 @@
+import { COPY_DELETE_ERROR_CODES } from '@/domain/copy-delete';
 import { COPY_ISSUE_ERROR_CODES } from '@/domain/copy-issue';
 import { z } from 'zod';
 import { ADD_COPIES_ERROR_CODES } from '@/domain/add-batch';
@@ -255,6 +256,21 @@ export function createSupabaseCopyRepository(getClient: GetSupabaseClient): Copy
       return ok(undefined);
     },
 
+    async delete(copyId, note) {
+      const { error } = await getClient().rpc('delete_copy', {
+        p_copy_id: copyId,
+        ...(note === null ? {} : { p_note: note }),
+      });
+      if (error) return err(mapRpcError(error, DELETE_ERRORS));
+      return ok(undefined);
+    },
+
+    async undoDelete(copyId) {
+      const { error } = await getClient().rpc('undo_delete_copy', { p_copy_id: copyId });
+      if (error) return err(mapRpcError(error, DELETE_ERRORS));
+      return ok(undefined);
+    },
+
     async flag(copyId, note) {
       const { error } = await getClient().rpc('flag_copy', { p_copy_id: copyId, p_note: note });
       if (error) return err(mapRpcError(error, ISSUE_ERRORS, issueDetails));
@@ -400,6 +416,13 @@ const openIssueDetailSchema = z.object({ note: z.string(), created_at: z.string(
 
 const RECEIVED_DATE_ERRORS = [
   ...Object.values(RECEIVED_DATE_ERROR_CODES),
+  COMMON_ERROR_CODES.NOT_FOUND,
+  COMMON_ERROR_CODES.FORBIDDEN,
+];
+
+const DELETE_ERRORS = [
+  COPY_DELETE_ERROR_CODES.COPY_NOT_DELETABLE,
+  COPY_ISSUE_ERROR_CODES.UNDO_NOT_AVAILABLE,
   COMMON_ERROR_CODES.NOT_FOUND,
   COMMON_ERROR_CODES.FORBIDDEN,
 ];

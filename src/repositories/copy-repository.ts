@@ -93,6 +93,15 @@ export interface CopyRepository {
   /** Deshace la última resolución (reabre la misma novedad). Errores: `UNDO_NOT_AVAILABLE`, `NOT_FOUND`. */
   undoResolveIssue(copyId: string): Promise<Result<void, AppError>>;
 
+  /**
+   * Elimina (HU-INV-08): `note` ya normalizada (o `null`). Errores: `COPY_NOT_DELETABLE`, `NOT_FOUND`,
+   * `NETWORK_ERROR`.
+   */
+  delete(copyId: string, note: string | null): Promise<Result<void, AppError>>;
+
+  /** Deshace la eliminación. Errores: `UNDO_NOT_AVAILABLE`, `NOT_FOUND`, `NETWORK_ERROR`. */
+  undoDelete(copyId: string): Promise<Result<void, AppError>>;
+
   returnFromCustomer(
     copyId: string,
     reason: 'wrong_registration' | 'customer_returned',
