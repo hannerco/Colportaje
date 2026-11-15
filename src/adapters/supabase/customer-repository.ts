@@ -144,6 +144,24 @@ export function createSupabaseCustomerRepository(getClient: GetSupabaseClient): 
       return data.length > 0 ? ok(undefined) : err(appError(COMMON_ERROR_CODES.NOT_FOUND));
     },
 
+    async archive(id) {
+      const { error } = await getClient().rpc('archive_customer', { p_customer_id: id });
+      if (error)
+        return err(
+          mapRpcError(error, [CUSTOMER_ERROR_CODES.CUSTOMER_HAS_BOOKS, COMMON_ERROR_CODES.NOT_FOUND]),
+        );
+      return ok(undefined);
+    },
+
+    async restore(id) {
+      const { error } = await getClient().rpc('restore_customer', { p_customer_id: id });
+      if (error)
+        return err(
+          mapRpcError(error, [CUSTOMER_ERROR_CODES.CUSTOMER_NOT_ARCHIVED, COMMON_ERROR_CODES.NOT_FOUND]),
+        );
+      return ok(undefined);
+    },
+
     async listRefs() {
       const client = getClient();
       const rows = await selectAll((from, to) =>

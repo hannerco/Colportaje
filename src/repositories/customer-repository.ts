@@ -66,6 +66,15 @@ export interface CustomerRepository {
    */
   setLocation(id: string, location: CustomerLocation | null): Promise<Result<void, AppError>>;
 
+  /**
+   * Archiva (HU-CLI-11): cancela sus programados con motivo `customer_archived` y fija `archived_at`, en una
+   * transacción. Ya archivado: no hace nada. Errores: `CUSTOMER_HAS_BOOKS`, `NOT_FOUND`, `NETWORK_ERROR`.
+   */
+  archive(id: string): Promise<Result<void, AppError>>;
+
+  /** Restaura (los cancelados siguen cancelados). Errores: `CUSTOMER_NOT_ARCHIVED`, `NOT_FOUND`, `NETWORK_ERROR`. */
+  restore(id: string): Promise<Result<void, AppError>>;
+
   /** Clientes no borrados (incluidos archivados) para buscar posibles duplicados (BR-CUS-11). */
   listDuplicateCandidates(): Promise<Result<DuplicateCandidate[], AppError>>;
 

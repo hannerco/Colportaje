@@ -3,6 +3,9 @@ export {
   customerQueryKeys,
   useAddCustomerInfoPhoto,
   useAddInvoicePhoto,
+  useArchiveCustomer,
+  useArchivePreview,
+  useRestoreCustomer,
   useCreateInvoiceWithPhoto,
   useCustomerInvoices,
   useDeleteInvoicePhoto,
@@ -55,6 +58,8 @@ export {
   type MapPoint,
   type PickerCenter,
 } from '@/domain/customer-location';
+export { archiveCustomer, getArchivePreview, restoreCustomer } from './use-cases/customer-archive';
+export { buildArchivePreview, type ArchivePreview } from '@/domain/customer-archive';
 export { loadCustomerListData, type CustomerListLoaded } from './use-cases/customer-list';
 export {
   buildCustomerListView,

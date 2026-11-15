@@ -751,6 +751,7 @@ export type Database = {
         Args: { p_customer_id: string; p_items: Json; p_mode: string };
         Returns: undefined;
       };
+      archive_customer: { Args: { p_customer_id: string }; Returns: undefined };
       assert_collected: { Args: { p_paid_amount: number; p_paid_at: string }; Returns: undefined };
       assert_scheduled: { Args: { p_agreed_amount: number; p_due_date: string }; Returns: undefined };
       assign_copy_to_customer: { Args: { p_copy_id: string; p_customer_id: string }; Returns: undefined };
@@ -829,6 +830,7 @@ export type Database = {
         Args: { p_choice: Json; p_customer_id: string; p_trigger: string };
         Returns: undefined;
       };
+      restore_customer: { Args: { p_customer_id: string }; Returns: undefined };
       return_copy_from_customer: { Args: { p_copy_id: string; p_reason: string }; Returns: string };
       schedule_single_payment: {
         Args: { p_agreed_amount: number; p_customer_id: string; p_due_date: string; p_payment_id: string };

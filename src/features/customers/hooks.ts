@@ -33,6 +33,7 @@ import { discardNewCustomer, getDiscardSummary } from './use-cases/customer-disc
 import { buildCustomerListView, type CustomerListParams } from '@/domain/customer-list';
 import { todayBogota } from '@/domain/time';
 import { loadCustomerListData } from './use-cases/customer-list';
+import { archiveCustomer, getArchivePreview, restoreCustomer } from './use-cases/customer-archive';
 import type { CustomerLocation } from '@/domain/customer-location';
 import {
   clearCustomerLocation,
@@ -49,6 +50,7 @@ export const customerQueryKeys = {
   photoUrl: (photoId: string) => ['customers', 'photo-url', photoId] as const,
   invoices: (customerId: string) => ['customers', 'invoices', customerId] as const,
   list: ['customers', 'list'] as const,
+  archivePreview: (customerId: string) => ['customers', 'archive-preview', customerId] as const,
   pickerCenter: (lat: number | null, lng: number | null) => ['customers', 'picker-center', lat, lng] as const,
   discardSummary: (customerId: string) => ['customers', 'discard-summary', customerId] as const,
 };
@@ -391,4 +393,46 @@ export function useInitialPickerCenter(
 export function useRememberLastChosenPoint() {
   const { auth, lastPickerPoint } = useRepositories();
   return (point: { lat: number; lng: number }) => rememberLastChosenPoint({ auth, lastPickerPoint }, point);
+}
+
+/** Vista previa de "Archivar" (HU-CLI-11): `{ canArchive, soldCount, scheduledToCancel }`. Siempre fresca. */
+export function useArchivePreview(customerId: string | null | undefined) {
+  const { customers } = useRepositories();
+  return useQuery({
+    queryKey: customerQueryKeys.archivePreview(customerId ?? ''),
+    queryFn: async () => unwrap(await getArchivePreview({ customers }, customerId!)),
+    enabled: Boolean(customerId),
+    staleTime: 0,
+  });
+}
+
+/** Lecturas que cambian al archivar o restaurar: clientes, abonos y Dinero ("(cliente archivado)"). */
+const ARCHIVE_AFFECTED_ROOTS = [['customers'], ['payments'], ['money']] as const;
+
+/** Archiva el cliente. Devuelve `Result`. */
+export function useArchiveCustomer() {
+  const { customers, connectivity } = useRepositories();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (customerId: string) => archiveCustomer({ customers, connectivity }, customerId),
+    onSuccess: (result) => {
+      if (!result.ok) return;
+      for (const queryKey of ARCHIVE_AFFECTED_ROOTS) void queryClient.invalidateQueries({ queryKey });
+    },
+  });
+  return { archiveCustomer: mutation.mutateAsync, isPending: mutation.isPending };
+}
+
+/** Restaura el cliente. Devuelve `Result`. */
+export function useRestoreCustomer() {
+  const { customers, connectivity } = useRepositories();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (customerId: string) => restoreCustomer({ customers, connectivity }, customerId),
+    onSuccess: (result) => {
+      if (!result.ok) return;
+      for (const queryKey of ARCHIVE_AFFECTED_ROOTS) void queryClient.invalidateQueries({ queryKey });
+    },
+  });
+  return { restoreCustomer: mutation.mutateAsync, isPending: mutation.isPending };
 }
