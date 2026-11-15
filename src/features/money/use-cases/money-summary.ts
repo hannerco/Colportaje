@@ -4,9 +4,9 @@ import {
   computeMoneySummary,
   unscheduledCustomersList,
   type MoneySummary,
-  type SummaryDeposit,
   type UnscheduledCustomer,
 } from '@/domain/money-summary';
+import type { MoneyDeposit } from '@/domain/deposit-draft';
 import type { ListPayment } from '@/domain/payments-list';
 import type { AppError } from '@/domain/shared/errors';
 import { ok, type Result } from '@/domain/shared/result';
@@ -17,7 +17,7 @@ import { loadCustomerListData, type CustomerListLoaded } from '../../customers/u
 export type MoneySummaryData = {
   /** Abonos de clientes no borrados (incluidos archivados), también cancelados. */
   readonly payments: readonly ListPayment[];
-  readonly deposits: readonly SummaryDeposit[];
+  readonly deposits: readonly MoneyDeposit[];
   readonly customers: CustomerListLoaded;
 };
 

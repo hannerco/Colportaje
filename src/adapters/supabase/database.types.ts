@@ -792,6 +792,7 @@ export type Database = {
         }[];
       };
       delete_copy: { Args: { p_copy_id: string; p_note?: string }; Returns: undefined };
+      delete_deposit_draft: { Args: { p_deposit_id: string }; Returns: string[] };
       delete_invoice_photo: { Args: { p_photo_id: string }; Returns: boolean };
       delete_payment: {
         Args: { p_payment_id: string };
@@ -800,6 +801,7 @@ export type Database = {
           previous_status: Database['public']['Enums']['payment_status'];
         }[];
       };
+      deposit_amount: { Args: { p_value: Json }; Returns: number };
       discard_new_customer: { Args: { p_customer_id: string }; Returns: undefined };
       flag_copy: { Args: { p_copy_id: string; p_note: string }; Returns: undefined };
       is_active_user: { Args: Record<PropertyKey, never>; Returns: boolean };
@@ -842,6 +844,7 @@ export type Database = {
         Returns: string[];
       };
       return_copy_from_customer: { Args: { p_copy_id: string; p_reason: string }; Returns: string };
+      save_deposit_draft: { Args: { p_deposit: Json }; Returns: string };
       schedule_single_payment: {
         Args: { p_agreed_amount: number; p_customer_id: string; p_due_date: string; p_payment_id: string };
         Returns: undefined;

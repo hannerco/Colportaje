@@ -31,6 +31,8 @@ export type NewPhoto = {
   readonly bytes: number;
   /** Cliente de la foto: obligatorio en `customer_info` y `customer_invoice` (HU-CLI-07). */
   readonly customerId?: string;
+  /** Abibono del recibo: obligatorio en `deposit_receipt` (HU-DIN-04). */
+  readonly leaderDepositId?: string;
 };
 
 /** Una foto guardada, tal como la necesita una lista (HU-CLI-07). */
@@ -45,12 +47,13 @@ export type StoredPhoto = {
 export interface PhotoRepository {
   /**
    * Idempotente por `id` (AF-91). Con cliente: `NOT_FOUND` si no existe y `CUSTOMER_ARCHIVED` si está
-   * archivado (HU-CLI-07).
+   * archivado (HU-CLI-07). Con Abibono: `NOT_FOUND` si no existe (HU-DIN-04).
    */
   create(photo: NewPhoto): Promise<Result<void, AppError>>;
   /**
    * Borrado lógico; el archivo se conserva (BR-PHO-03). Con `kind`, solo borra una foto de ese tipo
-   * (otra cualquiera da `NOT_FOUND`). Borrar de nuevo una ya borrada no falla.
+   * (otra cualquiera da `NOT_FOUND`). Borrar de nuevo una ya borrada no falla. Un recibo de un Abibono
+   * confirmado da `RECEIPT_LOCKED` (HU-DIN-04).
    */
   softDelete(id: string, options?: { kind?: PhotoKind }): Promise<Result<void, AppError>>;
   /** Fotos vigentes de un tipo de un cliente, la más reciente primero (HU-CLI-07). */
