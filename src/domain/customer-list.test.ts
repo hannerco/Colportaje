@@ -52,6 +52,8 @@ const world = (specs: Spec[]) => {
       name: spec.name ?? `Cliente ${seq}`,
       avatarEmoji: null,
       phone: null,
+      info: null,
+      address: null,
       createdAt: new Date(spec.createdAt ?? '2026-10-01T15:00:00Z'),
       updatedAt: new Date(spec.updatedAt ?? '2026-10-01T15:00:00Z'),
       archived: spec.archived ?? false,
@@ -306,6 +308,7 @@ describe('buildCustomerListView (HU-CLI-04)', () => {
       statusCounts: { current: 0, overdue: 0, settled: 0 },
       isDefaultView: true,
       rows: [],
+      emptySearch: null,
     });
   });
 

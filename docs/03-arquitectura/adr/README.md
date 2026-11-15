@@ -54,6 +54,7 @@ Un ADR por decisión relevante. Formato: contexto → decisión → alternativas
 | 0045 | Plan de abonos: días de pago, corregir frente a prorrogar y cliente existente | Aceptado |
 | 0046 | Dinero según la exploración elegida: tarjeta única, Dinero total y cancelados aparte | Aceptado |
 | 0047 | Fechas del plan sin separación mínima y sin arrastre | Aceptado |
+| 0048 | Librerías de cálculo puro en el dominio | Aceptado |
 
 ## Plantilla
 ```markdown

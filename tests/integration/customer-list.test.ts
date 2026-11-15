@@ -87,7 +87,7 @@ describe('lista de clientes contra Supabase local (HU-CLI-04)', () => {
     const settled = await customer(a.id, 'Saldado');
     await sell(a.id, settled, 100_000);
     await pay(a.id, settled, 100_000);
-    await customer(a.id, 'Prospecto');
+    await customer(a.id, 'Prospecto', `phone = '301 557 9032', address = 'Cra 45, Belén'`);
     const archived = await customer(a.id, 'Archivado', 'archived_at = now()');
     await sell(a.id, archived, 50_000);
     await customer(a.id, 'Descartado', 'deleted_at = now()');
@@ -114,5 +114,17 @@ describe('lista de clientes contra Supabase local (HU-CLI-04)', () => {
       ['Vencido', 'overdue', 100_000, 'Esperanza para hoy'],
     ]);
     expect(v.rows.find((r) => r.name === 'Saldado')!.lastPaymentAt).toBe(today);
+
+    // HU-CLI-05: la carga trae teléfono y dirección para buscar (sin el interruptor de prospectos).
+    const search = (text: string) =>
+      buildCustomerListView(
+        data.value.customers,
+        data.value.accounts,
+        { ...DEFAULT_CUSTOMER_LIST_PARAMS, search: text },
+        localDate(today),
+      ).rows.map((r) => r.name);
+    expect(search('belen')).toEqual(['Prospecto']);
+    expect(search('5579032')).toEqual(['Prospecto']);
+    expect(search('esperanza para hoy').sort()).toEqual(['Pagando', 'Saldado', 'Vencido']);
   }, 30_000);
 });
