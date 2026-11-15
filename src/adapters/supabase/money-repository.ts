@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { DEPOSIT_DRAFT_ERROR_CODES, toDepositPayment } from '@/domain/deposit-draft';
+import { DEPOSIT_BLOCKERS } from '@/domain/deposit';
+import { DEPOSIT_DRAFT_ERROR_CODES, toDepositPayment, type ValidDepositDraft } from '@/domain/deposit-draft';
 import { COMMON_ERROR_CODES } from '@/domain/shared/errors';
 import { err, ok } from '@/domain/shared/result';
 import type { LocalDate } from '@/domain/time';
@@ -71,6 +72,36 @@ const draftDetails = (code: string, detail: string | null) => {
   if (code === COMMON_ERROR_CODES.VALIDATION && detail) return { field: detail };
   return undefined;
 };
+
+const CONFIRM_ERRORS = [...DRAFT_ERRORS, ...Object.values(DEPOSIT_BLOCKERS)];
+const NOTE_ERRORS = [
+  DEPOSIT_BLOCKERS.NOTE_REQUIRED,
+  COMMON_ERROR_CODES.NOT_FOUND,
+  COMMON_ERROR_CODES.FORBIDDEN,
+];
+
+/** Detalles al confirmar: además de los del borrador, todos los bloqueos (el código es el de mayor prioridad). */
+const confirmDetails = (code: string, detail: string | null) =>
+  (Object.values(DEPOSIT_BLOCKERS) as string[]).includes(code) && detail
+    ? { blockers: z.array(z.enum(DEPOSIT_BLOCKERS)).parse(JSON.parse(detail)) }
+    : draftDetails(code, detail);
+
+/** Lo que reciben save_deposit_draft y confirm_leader_deposit. */
+const toDepositPayload = (draft: ValidDepositDraft) => ({
+  id: draft.depositId,
+  title: draft.title,
+  depositDate: draft.depositDate,
+  paymentIds: [...draft.paymentIds],
+  cash: draft.cash,
+  transfer: draft.transfer,
+  note: draft.note,
+  stagedReceipts: draft.stagedReceipts.map((r) => ({
+    photoId: r.photoId,
+    path: r.path,
+    thumbPath: r.thumbPath,
+    bytes: r.bytes,
+  })),
+});
 
 export function createSupabaseMoneyRepository(getClient: GetSupabaseClient): MoneyRepository {
   return {
@@ -188,24 +219,28 @@ export function createSupabaseMoneyRepository(getClient: GetSupabaseClient): Mon
 
     async saveDepositDraft(draft) {
       const { data, error } = await getClient().rpc('save_deposit_draft', {
-        p_deposit: {
-          id: draft.depositId,
-          title: draft.title,
-          depositDate: draft.depositDate,
-          paymentIds: [...draft.paymentIds],
-          cash: draft.cash,
-          transfer: draft.transfer,
-          note: draft.note,
-          stagedReceipts: draft.stagedReceipts.map((r) => ({
-            photoId: r.photoId,
-            path: r.path,
-            thumbPath: r.thumbPath,
-            bytes: r.bytes,
-          })),
-        },
+        p_deposit: toDepositPayload(draft),
       });
       if (error) return err(mapRpcError(error, DRAFT_ERRORS, draftDetails));
       return ok({ depositId: z.uuid().parse(data) });
+    },
+
+    async confirmDeposit(draft) {
+      const { data, error } = await getClient().rpc('confirm_leader_deposit', {
+        p_deposit: toDepositPayload(draft),
+      });
+      if (error) return err(mapRpcError(error, CONFIRM_ERRORS, confirmDetails));
+      return ok({ depositId: z.uuid().parse(data) });
+    },
+
+    async updateDepositNote(depositId, note) {
+      const { error } = await getClient().rpc('update_deposit_note', {
+        p_deposit_id: depositId,
+        // Vacía = sin nota (la función recorta y guarda null).
+        p_note: note ?? '',
+      });
+      if (error) return err(mapRpcError(error, NOTE_ERRORS));
+      return ok(undefined);
     },
 
     async deleteDepositDraft(depositId) {

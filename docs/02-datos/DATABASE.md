@@ -279,7 +279,7 @@ Cambios respecto a la primera versión del borrador (por si el agente anterior y
 Triggers `set_updated_at` en todas las tablas con `updated_at`. Triggers/funciones de servicio adicionales:
 - Asignar `copy.number` desde `copy_counter` (transaccional).
 - Bloquear UPDATE/DELETE de `payment` con `status = 'delivered'` y de `leader_deposit` con `status = 'confirmed'` (salvo `note` y alta de fotos), excepto mediante `reopen_leader_deposit`.
-- Confirmar un Abibono: función `confirm_leader_deposit(id)` que valida recibo, total > 0, nota si hay diferencia, y marca los abonos `delivered` **en una sola transacción**.
+- Confirmar un Abibono: función `confirm_leader_deposit(p_deposit jsonb)` (HU-DIN-05) que guarda el borrador con los datos enviados (lo crea si no existía, con sus recibos pendientes; reutiliza `save_deposit_draft`), valida total > 0, nota si hay diferencia y al menos un recibo activo (error con prioridad `TOTAL_ZERO` > `NOTE_REQUIRED` > `NO_RECEIPT`, todos en el detalle), y marca el Abibono `confirmed` (número la primera vez, por trigger) y los abonos `delivered` **en una sola transacción**. `update_deposit_note(id, note)` edita la nota de un borrador o de un confirmado (en confirmado no queda vacía si hay diferencia).
 - `reopen_leader_deposit(id, reason)`: exige motivo, devuelve el Abibono a `draft` y los abonos a `collected`, y registra `leader_deposit_event` + `payment_event`.
 - `return_copy(id, reason)`: aplica BR-COPY-09 (conserva `received_at`) y registra el evento; el recorte de abonos programados lo confirma el usuario con `resolve_schedule_excess(customer_id, plan)` (cancela/reduce y registra `payment_event`).
 - `return_copies_to_leader(ids[], note)` y su deshacer.

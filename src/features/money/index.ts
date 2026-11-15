@@ -1,6 +1,7 @@
 // API pública de Dinero (HU-DIN-*).
 export {
   moneyQueryKeys,
+  useConfirmDeposit,
   useAddDepositReceipt,
   useDeleteDepositDraft,
   useDeleteDepositReceipt,
@@ -11,9 +12,11 @@ export {
   usePaymentsList,
   useSaveDepositDraft,
   useUnscheduledCustomers,
+  useUpdateDepositNote,
 } from './hooks';
 export { paymentsListFrom } from './use-cases/payments-list';
 export { depositsListFrom } from './use-cases/deposits-list';
+export { confirmDeposit, updateDepositNote } from './use-cases/confirm-deposit';
 export {
   buildDepositsListView,
   DEFAULT_DEPOSITS_LIST_PARAMS,
