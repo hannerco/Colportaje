@@ -1,7 +1,14 @@
 // Repositorios falsos para pruebas de casos de uso: cada método es un `vi.fn()` que se puede sobrescribir.
 // Al agregar un método a un puerto basta con sumarlo aquí (las pruebas que no lo usan no cambian).
 import { vi } from 'vitest';
-import type { CopyRepository, CustomerRepository, PaymentRepository, TitleRepository } from '@/repositories';
+import type {
+  CopyRepository,
+  CustomerRepository,
+  PaymentRepository,
+  PhotoRepository,
+  StorageRepository,
+  TitleRepository,
+} from '@/repositories';
 
 export const fakeCopyRepository = (overrides: Partial<CopyRepository> = {}): CopyRepository => ({
   getHistory: vi.fn(),
@@ -46,5 +53,21 @@ export const fakePaymentRepository = (overrides: Partial<PaymentRepository> = {}
   cancelScheduled: vi.fn(),
   reschedule: vi.fn(),
   collect: vi.fn(),
+  ...overrides,
+});
+
+export const fakePhotoRepository = (overrides: Partial<PhotoRepository> = {}): PhotoRepository => ({
+  create: vi.fn(),
+  softDelete: vi.fn(),
+  listOfCustomer: vi.fn(),
+  getPaths: vi.fn(),
+  totalBytes: vi.fn(),
+  ...overrides,
+});
+
+export const fakeStorageRepository = (overrides: Partial<StorageRepository> = {}): StorageRepository => ({
+  upload: vi.fn(),
+  signedUrl: vi.fn(),
+  remove: vi.fn(),
   ...overrides,
 });

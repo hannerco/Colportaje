@@ -12,12 +12,25 @@ import {
 } from './use-cases/customer-books';
 import { systemClock } from '@/lib/clock';
 import { assignableCopies } from '@/domain/assignable-copies';
+import { businessConfig } from '@/domain/config/business-config';
+import { photoQueryKeys } from '../photos/hooks';
+import {
+  addCustomerInfoPhoto,
+  deleteCustomerInfoPhoto,
+  getPhotoUrl,
+  listCustomerInfoPhotos,
+} from './use-cases/customer-photos';
 
 export const customerQueryKeys = {
   all: ['customers'] as const,
   duplicateCandidates: ['customers', 'duplicate-candidates'] as const,
   assignableCopies: ['customers', 'assignable-copies'] as const,
+  infoPhotos: (customerId: string) => ['customers', 'info-photos', customerId] as const,
+  photoUrl: (photoId: string) => ['customers', 'photo-url', photoId] as const,
 };
+
+/** Las URL firmadas caducan: las lecturas que las traen se refrescan a mitad de su vida. */
+const signedUrlStaleMs = (businessConfig.photos.signedUrlSeconds * 1000) / 2;
 
 /** Crea el cliente con su nombre (ficha viva, HU-CLI-02). Devuelve `Result`. */
 export function useCreateCustomer() {
@@ -113,4 +126,55 @@ export function useRemoveCopyDuringCreation() {
     },
   });
   return { removeCopyDuringCreation: mutation.mutateAsync, isPending: mutation.isPending };
+}
+
+/** "Imágenes" del cliente (HU-CLI-07): `[{ photoId, thumbUrl, createdAt }]`, la más reciente primero. */
+export function useCustomerInfoPhotos(customerId: string | null | undefined) {
+  const { photos, storage } = useRepositories();
+  return useQuery({
+    queryKey: customerQueryKeys.infoPhotos(customerId ?? ''),
+    queryFn: async () => unwrap(await listCustomerInfoPhotos({ photos, storage }, customerId!)),
+    enabled: Boolean(customerId),
+    staleTime: signedUrlStaleMs,
+  });
+}
+
+/** URL firmada de la imagen completa de una foto (al abrirla). */
+export function usePhotoUrl(photoId: string | null | undefined) {
+  const { photos, storage } = useRepositories();
+  return useQuery({
+    queryKey: customerQueryKeys.photoUrl(photoId ?? ''),
+    queryFn: async () => unwrap(await getPhotoUrl({ photos, storage }, photoId!)),
+    enabled: Boolean(photoId),
+    staleTime: signedUrlStaleMs,
+  });
+}
+
+/** Agrega una foto de información (comprimir → subir → fila). Devuelve `Result`; reintentable con el mismo id. */
+export function useAddCustomerInfoPhoto() {
+  const repositories = useRepositories();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (input: { photoId: string; customerId: string; file: Blob }) =>
+      addCustomerInfoPhoto(repositories, input),
+    onSuccess: (result) => {
+      if (!result.ok) return;
+      void queryClient.invalidateQueries({ queryKey: customerQueryKeys.all });
+      void queryClient.invalidateQueries({ queryKey: photoQueryKeys.usage });
+    },
+  });
+  return { addCustomerInfoPhoto: mutation.mutateAsync, isPending: mutation.isPending };
+}
+
+/** Borra (lógico) una foto de información; se puede siempre. Devuelve `Result`. */
+export function useDeleteCustomerInfoPhoto() {
+  const { photos, connectivity } = useRepositories();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (photoId: string) => deleteCustomerInfoPhoto({ photos, connectivity }, photoId),
+    onSuccess: (result) => {
+      if (result.ok) void queryClient.invalidateQueries({ queryKey: customerQueryKeys.all });
+    },
+  });
+  return { deleteCustomerInfoPhoto: mutation.mutateAsync, isPending: mutation.isPending };
 }

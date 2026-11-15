@@ -104,6 +104,8 @@ describe('subida de fotos (HU-BASE-05)', () => {
     create: vi.fn(async () => ok(undefined)),
     softDelete: async () => ok(undefined),
     totalBytes: async () => ok(0),
+    listOfCustomer: vi.fn(),
+    getPaths: vi.fn(),
   });
 
   it('sube archivo y miniatura a {owner}/{kind}/ y luego crea la fila con la suma de bytes', async () => {

@@ -55,10 +55,15 @@ export async function uploadPhotoFiles(
 /** Flujo genérico completo: subir archivos y, solo si ambas subidas terminan, crear la fila `photo` (R4). */
 export async function createPhoto(
   deps: PhotoUploadDeps & { readonly photos: PhotoRepository },
-  input: { photoId: string; kind: PhotoKind; file: Blob },
+  input: { photoId: string; kind: PhotoKind; file: Blob; customerId?: string },
 ): Promise<Result<UploadedPhotoFiles, AppError>> {
   const files = await uploadPhotoFiles(deps, input);
   if (!files.ok) return files;
-  const created = await deps.photos.create({ id: input.photoId, kind: input.kind, ...files.value });
+  const created = await deps.photos.create({
+    id: input.photoId,
+    kind: input.kind,
+    ...files.value,
+    ...(input.customerId ? { customerId: input.customerId } : {}),
+  });
   return created.ok ? files : created;
 }

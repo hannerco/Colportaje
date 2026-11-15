@@ -14,7 +14,14 @@ export type { CopyRepository, CreatedCopy } from './copy-repository';
 export type { CustomerAccountData, CustomerRepository } from './customer-repository';
 export type { OfflineCache } from './offline-cache';
 export type { PaymentRepository } from './payment-repository';
-export type { DecodedImage, ImageCodec, NewPhoto, PhotoRepository, StorageRepository } from './photo-ports';
+export type {
+  DecodedImage,
+  ImageCodec,
+  NewPhoto,
+  PhotoRepository,
+  StorageRepository,
+  StoredPhoto,
+} from './photo-ports';
 export type { ProfileRepository } from './profile-repository';
 export type { TitleRepository } from './title-repository';
 

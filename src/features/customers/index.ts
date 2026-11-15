@@ -1,7 +1,11 @@
 // API pública de Clientes (HU-CLI-*).
 export {
   customerQueryKeys,
+  useAddCustomerInfoPhoto,
   useAssignableCopies,
+  useCustomerInfoPhotos,
+  useDeleteCustomerInfoPhoto,
+  usePhotoUrl,
   useAssignCopyToCustomer,
   useCreateCustomer,
   usePossibleDuplicates,
@@ -13,6 +17,13 @@ export {
   removeCopyDuringCreation,
   type CustomerBooksDeps,
 } from './use-cases/customer-books';
+export {
+  addCustomerInfoPhoto,
+  deleteCustomerInfoPhoto,
+  getPhotoUrl,
+  listCustomerInfoPhotos,
+  type CustomerInfoPhoto,
+} from './use-cases/customer-photos';
 export { ASSIGN_ERROR_CODES, type AssignableCopy } from '@/domain/assignable-copies';
 export {
   createCustomer,

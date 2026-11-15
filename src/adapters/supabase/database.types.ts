@@ -520,6 +520,7 @@ export type Database = {
         Row: {
           bytes: number;
           created_at: string;
+          customer_id: string | null;
           deleted_at: string | null;
           id: string;
           kind: Database['public']['Enums']['photo_kind'];
@@ -533,6 +534,7 @@ export type Database = {
         Insert: {
           bytes: number;
           created_at?: string;
+          customer_id?: string | null;
           deleted_at?: string | null;
           id: string;
           kind: Database['public']['Enums']['photo_kind'];
@@ -545,6 +547,7 @@ export type Database = {
         Update: {
           bytes?: number;
           created_at?: string;
+          customer_id?: string | null;
           deleted_at?: string | null;
           id?: string;
           kind?: Database['public']['Enums']['photo_kind'];
@@ -555,6 +558,13 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: 'photo_customer_same_owner';
+            columns: ['customer_id', 'owner_id'];
+            isOneToOne: false;
+            referencedRelation: 'customer';
+            referencedColumns: ['id', 'owner_id'];
+          },
           {
             foreignKeyName: 'photo_deposit_same_owner';
             columns: ['leader_deposit_id', 'owner_id'];
