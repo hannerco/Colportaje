@@ -171,3 +171,10 @@ export type CopyEvent = {
     readonly previousStatus?: CopyStatus;
   };
 };
+
+/**
+ * R5 de HU-CLI-10 (BR-COPY-09, AF-114): en las estadísticas solo cuenta como devolución un `returned` con
+ * motivo `customer_returned`; `wrong_registration` (error de registro o quitar al crear) no.
+ */
+export const countsAsCustomerReturn = (event: Pick<CopyEvent, 'type' | 'data'>): boolean =>
+  event.type === 'returned' && event.data.reason === 'customer_returned';

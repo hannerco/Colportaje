@@ -14,6 +14,7 @@ import {
   assignCopyToCustomer,
   loadAssignableData,
   removeCopyDuringCreation,
+  returnCopyFromCustomer,
 } from './use-cases/customer-books';
 
 const CUSTOMER = 'c-natalia';
@@ -106,6 +107,69 @@ describe('removeCopyDuringCreation (HU-CLI-09, AF-114)', () => {
     const unreadable = depsWith(accountData(0));
     vi.mocked(unreadable.customers.getAccountData).mockResolvedValue(err(appError('NETWORK_ERROR')));
     expect(await removeCopyDuringCreation(unreadable, 'copy-22')).toEqual(err(appError('NETWORK_ERROR')));
+  });
+});
+
+describe('returnCopyFromCustomer (HU-CLI-10)', () => {
+  const collected = (id: string, amount: number): Payment => ({
+    ...scheduled(id, amount, '2026-11-01'),
+    kind: 'extra',
+    status: 'collected',
+    originalDueDate: null,
+    dueDate: null,
+    paidAt: localDate('2026-11-01'),
+    agreedAmount: null,
+    paidAmount: amount,
+    method: 'cash',
+  });
+
+  it('CA-1: sin libros ni abonos → deuda 0 y becameProspect; pasa el motivo elegido', async () => {
+    const deps = depsWith(accountData(0));
+    const result = await returnCopyFromCustomer(deps, 'copy-1', 'customer_returned');
+    expect(deps.copies.returnFromCustomer).toHaveBeenCalledWith('copy-1', 'customer_returned');
+    expect(result).toEqual(
+      ok({ account: expect.objectContaining({ debt: 0 }), becameProspect: true, excess: null }),
+    );
+  });
+
+  it('CA-2: con 30.000 cobrados queda saldo a favor de 30.000', async () => {
+    const deps = depsWith(accountData(0, [collected('p1', 30_000)]));
+    const result = await returnCopyFromCustomer(deps, 'copy-1', 'wrong_registration');
+    expect(result.ok && result.value.account).toMatchObject({ balance: -30_000, credit: 30_000 });
+  });
+
+  it('CA-5 / R4: saldo 10.000 y 3 programados de 10.000 → modal, más lejano, sobrante 20.000', async () => {
+    const deps = depsWith(
+      accountData(10_000, [
+        scheduled('p1', 10_000, '2026-11-15'),
+        scheduled('p2', 10_000, '2026-11-30'),
+        scheduled('p3', 10_000, '2026-12-15'),
+      ]),
+    );
+    const result = await returnCopyFromCustomer(deps, 'copy-1', 'customer_returned');
+    expect(result.ok && result.value.becameProspect).toBe(false);
+    expect(result.ok && result.value.excess).toMatchObject({
+      trigger: 'return',
+      presentation: 'modal',
+      suggestedOrder: 'farthest',
+      excess: 20_000,
+    });
+  });
+
+  it('errores de la base, al releer la cuenta y sin conexión', async () => {
+    const minibook = depsWith(accountData(0));
+    vi.mocked(minibook.copies.returnFromCustomer).mockResolvedValue(err(appError('COPY_IS_MINIBOOK')));
+    expect(await returnCopyFromCustomer(minibook, 'm', 'customer_returned')).toEqual(
+      err(appError('COPY_IS_MINIBOOK')),
+    );
+    const unreadable = depsWith(accountData(0));
+    vi.mocked(unreadable.customers.getAccountData).mockResolvedValue(err(appError('NETWORK_ERROR')));
+    expect(await returnCopyFromCustomer(unreadable, 'c', 'customer_returned')).toEqual(
+      err(appError('NETWORK_ERROR')),
+    );
+    const offline = depsWith(accountData(0), false);
+    expect(await returnCopyFromCustomer(offline, 'c', 'customer_returned')).toEqual(err(appError('OFFLINE')));
+    expect(offline.copies.returnFromCustomer).not.toHaveBeenCalled();
   });
 });
 

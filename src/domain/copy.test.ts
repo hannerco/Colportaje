@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  countsAsCustomerReturn,
   apply,
   canTransition,
   COPY_ACTIONS,
@@ -169,5 +170,14 @@ describe('copy: precio distinto y diferencia (BR-PRC-01/02)', () => {
     );
     expect(priceDiffers(aCopy())).toBe(false);
     expect(priceDelta(aCopy({ status: 'sold', agreedPrice: null }))).toBeNull();
+  });
+});
+
+describe('countsAsCustomerReturn (HU-CLI-10 R5)', () => {
+  it('solo un returned con customer_returned cuenta como devolución', () => {
+    expect(countsAsCustomerReturn({ type: 'returned', data: { reason: 'customer_returned' } })).toBe(true);
+    expect(countsAsCustomerReturn({ type: 'returned', data: { reason: 'wrong_registration' } })).toBe(false);
+    expect(countsAsCustomerReturn({ type: 'returned', data: {} })).toBe(false);
+    expect(countsAsCustomerReturn({ type: 'sold', data: { reason: 'customer_returned' } })).toBe(false);
   });
 });
