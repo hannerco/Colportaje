@@ -1,22 +1,30 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
+import type { PaymentsListParams } from '@/domain/payments-list';
 import { todayBogota } from '@/domain/time';
 import { systemClock } from '@/lib/clock';
 import { unwrap } from '../shared/app-failure';
 import { useRepositories } from '../shared/repositories-provider';
-import { loadMoneySummaryData, moneySummaryFrom, unscheduledCustomersFrom } from './use-cases/money-summary';
+import {
+  loadMoneySummaryData,
+  moneySummaryFrom,
+  unscheduledCustomersFrom,
+  type MoneySummaryData,
+} from './use-cases/money-summary';
+import { paymentsListFrom } from './use-cases/payments-list';
 
 /** Todas las lecturas de Dinero cuelgan de `['money']`: las acciones de abonos y libros ya la invalidan. */
 export const moneyQueryKeys = {
   all: ['money'] as const,
-  summaryData: ['money', 'summary-data'] as const,
+  /** Abonos, Abibonos y cuentas de los clientes: base del resumen y de la lista (una sola lectura). */
+  data: ['money', 'data'] as const,
 };
 
-function useMoneySummaryData<T>(select: (data: Parameters<typeof moneySummaryFrom>[0]) => T) {
+function useMoneyData<T>(select: (data: MoneySummaryData) => T) {
   const { money, customers, titles } = useRepositories();
   return useQuery({
-    queryKey: moneyQueryKeys.summaryData,
+    queryKey: moneyQueryKeys.data,
     queryFn: async () => unwrap(await loadMoneySummaryData({ money, customers, titles })),
     select,
   });
@@ -27,10 +35,18 @@ function useMoneySummaryData<T>(select: (data: Parameters<typeof moneySummaryFro
  * sus porcentajes, Dinero total, sin programar y total entregado al líder. Funciona sin conexión.
  */
 export function useMoneySummary() {
-  return useMoneySummaryData((data) => moneySummaryFrom(data, todayBogota(systemClock)));
+  return useMoneyData((data) => moneySummaryFrom(data, todayBogota(systemClock)));
 }
 
 /** "Sin programar · N clientes": `[{ customerId, name, avatarEmoji, unscheduled }]`, por monto descendente. */
 export function useUnscheduledCustomers() {
-  return useMoneySummaryData((data) => unscheduledCustomersFrom(data, todayBogota(systemClock)));
+  return useMoneyData((data) => unscheduledCustomersFrom(data, todayBogota(systemClock)));
+}
+
+/**
+ * Lista de abonos de clientes (HU-DIN-03): `{ counts, rows }` por vista, método, chip Vencidos, búsqueda y
+ * orden (por defecto `defaultPaymentsSort(view)`). Ni el filtro ni la búsqueda cambian los conteos.
+ */
+export function usePaymentsList(params: PaymentsListParams) {
+  return useMoneyData((data) => paymentsListFrom(data, params, todayBogota(systemClock)));
 }

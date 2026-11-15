@@ -2,15 +2,10 @@ import { z } from 'zod';
 import { ok } from '@/domain/shared/result';
 import type { MoneyRepository } from '@/repositories';
 import type { GetSupabaseClient } from './client';
+import { PAYMENT_COLUMNS, toPayment } from './customer-repository';
 import { selectAll } from './select-all';
 
-const paymentRowSchema = z.object({
-  customer_id: z.uuid(),
-  status: z.enum(['scheduled', 'collected', 'delivered', 'canceled']),
-  agreed_amount: z.number().int().nullable(),
-  paid_amount: z.number().int().nullable(),
-  method: z.enum(['cash', 'transfer']).nullable(),
-});
+const depositLinkSchema = z.object({ leader_deposit_id: z.uuid().nullable() });
 
 const depositRowSchema = z.object({
   status: z.enum(['draft', 'confirmed']),
@@ -20,28 +15,22 @@ const depositRowSchema = z.object({
 
 export function createSupabaseMoneyRepository(getClient: GetSupabaseClient): MoneyRepository {
   return {
-    async listSummaryPayments() {
+    async listPayments() {
       const client = getClient();
       const rows = await selectAll((from, to) =>
         client
           .from('payment')
-          .select('customer_id, status, agreed_amount, paid_amount, method')
+          .select(`${PAYMENT_COLUMNS}, leader_deposit_id`)
           .is('deleted_at', null)
           .order('id')
           .range(from, to),
       );
       if (!rows.ok) return rows;
       return ok(
-        rows.value.map((raw) => {
-          const row = paymentRowSchema.parse(raw);
-          return {
-            customerId: row.customer_id,
-            status: row.status,
-            agreedAmount: row.agreed_amount,
-            paidAmount: row.paid_amount,
-            method: row.method,
-          };
-        }),
+        rows.value.map((raw) => ({
+          ...toPayment(raw),
+          depositId: depositLinkSchema.parse(raw).leader_deposit_id,
+        })),
       );
     },
 

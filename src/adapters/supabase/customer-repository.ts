@@ -19,7 +19,7 @@ const instant = z.string().transform((value) => new Date(value));
 const customerRowSchema = z.object({ id: z.uuid(), created_at: instant });
 const soldCopyRowSchema = z.object({ agreed_price: z.number().int(), sold_at: instant });
 
-const PAYMENT_COLUMNS =
+export const PAYMENT_COLUMNS =
   'id, customer_id, kind, status, original_due_date, due_date, paid_at, agreed_amount, paid_amount, method, canceled_at, cancel_reason, created_at' as const;
 
 const paymentRowSchema = z.object({

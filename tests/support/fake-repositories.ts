@@ -99,7 +99,7 @@ export const fakeInvoiceRepository = (overrides: Partial<InvoiceRepository> = {}
 });
 
 export const fakeMoneyRepository = (overrides: Partial<MoneyRepository> = {}): MoneyRepository => ({
-  listSummaryPayments: vi.fn(),
+  listPayments: vi.fn(),
   listSummaryDeposits: vi.fn(),
   ...overrides,
 });

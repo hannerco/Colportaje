@@ -5,9 +5,9 @@ import {
   unscheduledCustomersList,
   type MoneySummary,
   type SummaryDeposit,
-  type SummaryPayment,
   type UnscheduledCustomer,
 } from '@/domain/money-summary';
+import type { ListPayment } from '@/domain/payments-list';
 import type { AppError } from '@/domain/shared/errors';
 import { ok, type Result } from '@/domain/shared/result';
 import type { LocalDate } from '@/domain/time';
@@ -15,7 +15,8 @@ import type { CustomerRepository, MoneyRepository, TitleRepository } from '@/rep
 import { loadCustomerListData, type CustomerListLoaded } from '../../customers/use-cases/customer-list';
 
 export type MoneySummaryData = {
-  readonly payments: readonly SummaryPayment[];
+  /** Abonos de clientes no borrados (incluidos archivados), también cancelados. */
+  readonly payments: readonly ListPayment[];
   readonly deposits: readonly SummaryDeposit[];
   readonly customers: CustomerListLoaded;
 };
@@ -30,7 +31,7 @@ export async function loadMoneySummaryData(deps: {
   readonly titles: TitleRepository;
 }): Promise<Result<MoneySummaryData, AppError>> {
   const [payments, deposits, customers] = await Promise.all([
-    deps.money.listSummaryPayments(),
+    deps.money.listPayments(),
     deps.money.listSummaryDeposits(),
     loadCustomerListData(deps),
   ]);
