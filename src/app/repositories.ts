@@ -1,5 +1,6 @@
 import { canvasImageCodec } from '@/adapters/browser/canvas-image-codec';
 import { browserConnectivity } from '@/adapters/browser/connectivity';
+import { createLastPickerPointStore } from '@/adapters/browser/last-picker-point';
 import { offlineCacheFrom } from '@/adapters/browser/query-persister';
 import { createSupabaseAuthRepository } from '@/adapters/supabase/auth-repository';
 import { createSupabaseBrowserClient, type AppSupabaseClient } from '@/adapters/supabase/client';
@@ -33,5 +34,6 @@ export function createAppRepositories(persister: Persister): Repositories {
     imageCodec: canvasImageCodec,
     connectivity: browserConnectivity,
     offlineCache: offlineCacheFrom(persister),
+    lastPickerPoint: createLastPickerPointStore(),
   };
 }

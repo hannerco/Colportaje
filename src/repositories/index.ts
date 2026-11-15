@@ -2,6 +2,7 @@ import type { AuthRepository } from './auth-repository';
 import type { Connectivity } from './connectivity';
 import type { CopyRepository } from './copy-repository';
 import type { CustomerRepository } from './customer-repository';
+import type { LastPickerPointStore } from './last-picker-point';
 import type { InvoiceRepository } from './invoice-repository';
 import type { OfflineCache } from './offline-cache';
 import type { PaymentRepository } from './payment-repository';
@@ -29,6 +30,7 @@ export type {
   StorageRepository,
   StoredPhoto,
 } from './photo-ports';
+export type { LastPickerPointStore } from './last-picker-point';
 export type { ProfileRepository } from './profile-repository';
 export type { TitleRepository } from './title-repository';
 
@@ -50,4 +52,5 @@ export interface Repositories {
   readonly imageCodec: ImageCodec;
   readonly connectivity: Connectivity;
   readonly offlineCache: OfflineCache;
+  readonly lastPickerPoint: LastPickerPointStore;
 }

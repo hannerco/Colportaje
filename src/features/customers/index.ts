@@ -9,7 +9,11 @@ export {
   useUpdateInvoice,
   useAssignableCopies,
   useCustomerInfoPhotos,
+  useClearCustomerLocation,
   useCustomerList,
+  useInitialPickerCenter,
+  useRememberLastChosenPoint,
+  useSetCustomerLocation,
   useDeleteCustomerInfoPhoto,
   useDiscardNewCustomer,
   useDiscardSummary,
@@ -32,6 +36,23 @@ export {
   type SearchHit,
   type SearchableCustomer,
 } from '@/domain/customer-search';
+export {
+  clearCustomerLocation,
+  loadInitialPickerCenter,
+  rememberLastChosenPoint,
+  setCustomerLocation,
+  type CustomerLocationDeps,
+} from './use-cases/customer-location';
+export {
+  APPROXIMATE_ACCURACY_METERS,
+  getInitialPickerCenter,
+  isApproximate,
+  mapsLinkFor,
+  validateLocation,
+  type CustomerLocation,
+  type MapPoint,
+  type PickerCenter,
+} from '@/domain/customer-location';
 export { loadCustomerListData, type CustomerListLoaded } from './use-cases/customer-list';
 export {
   buildCustomerListView,
