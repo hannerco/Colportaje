@@ -1,5 +1,6 @@
 import type { LeaderDeposit } from '@/domain/deposit';
-import type { DepositPayment, MoneyDeposit, ValidDepositDraft } from '@/domain/deposit-draft';
+import type { DepositPayment, ValidDepositDraft } from '@/domain/deposit-draft';
+import type { MoneyDeposit } from '@/domain/deposits-list';
 import type { ListPayment } from '@/domain/payments-list';
 import type { AppError } from '@/domain/shared/errors';
 import type { Result } from '@/domain/shared/result';
@@ -24,8 +25,11 @@ export interface MoneyRepository {
    */
   listPayments(): Promise<Result<ListPayment[], AppError>>;
 
-  /** Abibonos no borrados (borradores y confirmados) con sus montos y número. Errores: `NETWORK_ERROR`. */
-  listSummaryDeposits(): Promise<Result<MoneyDeposit[], AppError>>;
+  /**
+   * Abibonos no borrados (borradores y confirmados) con montos, número, título, fecha y si tienen recibo activo.
+   * Sirve al resumen (HU-DIN-02), a la propuesta (HU-DIN-04) y a la lista (HU-DIN-06). Errores: `NETWORK_ERROR`.
+   */
+  listDeposits(): Promise<Result<MoneyDeposit[], AppError>>;
 
   /** Un Abibono del usuario; `null` si no existe (o es ajeno). Errores: `NETWORK_ERROR`. */
   getDeposit(depositId: string): Promise<Result<DepositRecord | null, AppError>>;

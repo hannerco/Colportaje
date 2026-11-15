@@ -12,7 +12,7 @@ import {
   type LeaderDeposit,
 } from './deposit';
 import { isValidCOP, type COP } from './money';
-import type { SummaryDeposit } from './money-summary';
+import type { MoneyDeposit } from './deposits-list';
 import type { PayMethod } from './payment';
 import type { ListPayment } from './payments-list';
 import { validationError, type AppError } from './shared/errors';
@@ -31,9 +31,6 @@ export const DEPOSIT_DRAFT_ERROR_CODES = {
 
 /** Los montos se guardan en `integer` de Postgres. */
 const MAX_AMOUNT = 2_147_483_647;
-
-/** Un Abibono de la lectura de Dinero, con su número (los borradores no tienen). */
-export type MoneyDeposit = SummaryDeposit & { readonly depositNumber: number | null };
 
 /** Un abono cobrado tal como se muestra en el Abibono. */
 export type DepositPayment = {

@@ -129,9 +129,10 @@ describe('apply_payment_plan (HU-ABO-03)', () => {
       await tx.query('update public.payment set agreed_amount = 40000 where id = $1', [
         existing[0]!.paymentId,
       ]);
-      expect(await apply(tx, owner, customer, 'unscheduled_only', await items(tx, [30_000, 30_000]))).toEqual(
-        { ok: true },
-      );
+      // Los nuevos vencen a los 30 y 45 días: ninguno empata en fecha con el existente (15 días), que si no
+      // quedaría ordenado por su id aleatorio (todos tienen el mismo created_at dentro de la transacción).
+      const later = (await items(tx, [0, 30_000, 30_000])).slice(1);
+      expect(await apply(tx, owner, customer, 'unscheduled_only', later)).toEqual({ ok: true });
       const rows = (await scheduled(tx, customer)).filter((r) => !r.deleted);
       expect(rows.map((r) => r.agreed_amount)).toEqual([40_000, 30_000, 30_000]);
       expect(rows[0]!.id).toBe(existing[0]!.paymentId);

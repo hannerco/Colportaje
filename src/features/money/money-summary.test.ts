@@ -11,6 +11,8 @@ import {
 import { DEFAULT_PAYMENTS_LIST_PARAMS } from '@/domain/payments-list';
 import { loadMoneySummaryData, moneySummaryFrom, unscheduledCustomersFrom } from './use-cases/money-summary';
 import { paymentsListFrom } from './use-cases/payments-list';
+import { depositsListFrom } from './use-cases/deposits-list';
+import { DEFAULT_DEPOSITS_LIST_PARAMS } from '@/domain/deposits-list';
 
 const TODAY = localDate('2026-11-08');
 const customer = (id: string, name: string, archived = false) => ({
@@ -53,8 +55,19 @@ const depsWith = () => ({
         cashPayment('p3', 'descartado', 99_000, 'cash'),
       ]),
     ),
-    listSummaryDeposits: vi.fn(async () =>
-      ok([{ status: 'confirmed' as const, cashAmount: 10_000, transferAmount: 5_000, depositNumber: 1 }]),
+    listDeposits: vi.fn(async () =>
+      ok([
+        {
+          id: 'd1',
+          title: null,
+          status: 'confirmed' as const,
+          cashAmount: 10_000,
+          transferAmount: 5_000,
+          depositNumber: 1,
+          depositDate: localDate('2026-10-20'),
+          hasReceipt: true,
+        },
+      ]),
     ),
   }),
   customers: fakeCustomerRepository({
@@ -116,13 +129,34 @@ describe('resumen de Dinero (HU-DIN-02)', () => {
     ]);
   });
 
+  it('HU-DIN-06: la lista de Abibonos sale de la misma lectura', async () => {
+    const data = await loadMoneySummaryData(depsWith());
+    if (!data.ok) throw new Error(data.error.code);
+    expect(depositsListFrom(data.value, DEFAULT_DEPOSITS_LIST_PARAMS)).toEqual({
+      count: 1,
+      totalDeliveredToLeader: 15_000,
+      rows: [
+        {
+          depositId: 'd1',
+          title: 'Abibono (1)',
+          depositDate: '2026-10-20',
+          total: 15_000,
+          cash: 10_000,
+          transfer: 5_000,
+          status: 'confirmed',
+          hasReceipt: true,
+        },
+      ],
+    });
+  });
+
   it('cualquier lectura que falle se devuelve', async () => {
     for (const fail of ['payments', 'deposits', 'customers'] as const) {
       const deps = depsWith();
       if (fail === 'payments')
         vi.mocked(deps.money.listPayments).mockResolvedValueOnce(err(appError('NETWORK_ERROR')));
       if (fail === 'deposits')
-        vi.mocked(deps.money.listSummaryDeposits).mockResolvedValueOnce(err(appError('NETWORK_ERROR')));
+        vi.mocked(deps.money.listDeposits).mockResolvedValueOnce(err(appError('NETWORK_ERROR')));
       if (fail === 'customers')
         vi.mocked(deps.customers.listForCustomerList).mockResolvedValueOnce(err(appError('NETWORK_ERROR')));
       expect(await loadMoneySummaryData(deps)).toEqual(err(appError('NETWORK_ERROR')));

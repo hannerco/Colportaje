@@ -11,15 +11,19 @@ import { selectAll } from './select-all';
 
 const depositLinkSchema = z.object({ leader_deposit_id: z.uuid().nullable() });
 
+const instant = z.string().transform((value) => new Date(value));
+const localDate = z.string().transform((value) => value as LocalDate);
+
 const depositRowSchema = z.object({
+  id: z.uuid(),
+  title: z.string().nullable(),
   status: z.enum(['draft', 'confirmed']),
   cash_amount: z.number().int(),
   transfer_amount: z.number().int(),
   deposit_number: z.number().int().nullable(),
+  deposit_date: localDate,
+  photo: z.array(z.object({ deleted_at: z.string().nullable() })),
 });
-
-const instant = z.string().transform((value) => new Date(value));
-const localDate = z.string().transform((value) => value as LocalDate);
 
 const depositDetailSchema = z.object({
   id: z.uuid(),
@@ -89,12 +93,14 @@ export function createSupabaseMoneyRepository(getClient: GetSupabaseClient): Mon
       );
     },
 
-    async listSummaryDeposits() {
+    async listDeposits() {
       const client = getClient();
       const rows = await selectAll((from, to) =>
         client
           .from('leader_deposit')
-          .select('status, cash_amount, transfer_amount, deposit_number')
+          .select(
+            'id, title, status, cash_amount, transfer_amount, deposit_number, deposit_date, photo(deleted_at)',
+          )
           .is('deleted_at', null)
           .order('id')
           .range(from, to),
@@ -104,10 +110,15 @@ export function createSupabaseMoneyRepository(getClient: GetSupabaseClient): Mon
         rows.value.map((raw) => {
           const row = depositRowSchema.parse(raw);
           return {
+            id: row.id,
+            title: row.title,
             status: row.status,
             cashAmount: row.cash_amount,
             transferAmount: row.transfer_amount,
             depositNumber: row.deposit_number,
+            depositDate: row.deposit_date,
+            // Solo los recibos se vinculan a un Abibono (check photo_deposit_receipt_linked).
+            hasReceipt: row.photo.some((p) => p.deleted_at === null),
           };
         }),
       );

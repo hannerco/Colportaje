@@ -100,7 +100,7 @@ export const fakeInvoiceRepository = (overrides: Partial<InvoiceRepository> = {}
 
 export const fakeMoneyRepository = (overrides: Partial<MoneyRepository> = {}): MoneyRepository => ({
   listPayments: vi.fn(),
-  listSummaryDeposits: vi.fn(),
+  listDeposits: vi.fn(),
   getDeposit: vi.fn(),
   saveDepositDraft: vi.fn(),
   deleteDepositDraft: vi.fn(),
