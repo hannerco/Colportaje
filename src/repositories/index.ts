@@ -4,6 +4,7 @@ import type { CopyRepository } from './copy-repository';
 import type { CustomerRepository } from './customer-repository';
 import type { LastPickerPointStore } from './last-picker-point';
 import type { InvoiceRepository } from './invoice-repository';
+import type { MoneyRepository } from './money-repository';
 import type { OfflineCache } from './offline-cache';
 import type { PaymentRepository } from './payment-repository';
 import type { ImageCodec, PhotoRepository, StorageRepository } from './photo-ports';
@@ -31,6 +32,7 @@ export type {
   StoredPhoto,
 } from './photo-ports';
 export type { LastPickerPointStore } from './last-picker-point';
+export type { MoneyRepository } from './money-repository';
 export type { ProfileRepository } from './profile-repository';
 export type { TitleRepository } from './title-repository';
 
@@ -46,6 +48,7 @@ export interface Repositories {
   readonly copies: CopyRepository;
   readonly customers: CustomerRepository;
   readonly payments: PaymentRepository;
+  readonly money: MoneyRepository;
   readonly invoices: InvoiceRepository;
   readonly photos: PhotoRepository;
   readonly storage: StorageRepository;

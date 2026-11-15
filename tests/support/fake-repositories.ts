@@ -5,6 +5,7 @@ import type {
   CopyRepository,
   CustomerRepository,
   InvoiceRepository,
+  MoneyRepository,
   PaymentRepository,
   PhotoRepository,
   StorageRepository,
@@ -94,5 +95,11 @@ export const fakeInvoiceRepository = (overrides: Partial<InvoiceRepository> = {}
   addPhoto: vi.fn(),
   update: vi.fn(),
   deletePhoto: vi.fn(),
+  ...overrides,
+});
+
+export const fakeMoneyRepository = (overrides: Partial<MoneyRepository> = {}): MoneyRepository => ({
+  listSummaryPayments: vi.fn(),
+  listSummaryDeposits: vi.fn(),
   ...overrides,
 });
