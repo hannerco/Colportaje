@@ -102,6 +102,21 @@ export interface CopyRepository {
   /** Deshace la eliminación. Errores: `UNDO_NOT_AVAILABLE`, `NOT_FOUND`, `NETWORK_ERROR`. */
   undoDelete(copyId: string): Promise<Result<void, AppError>>;
 
+  /**
+   * Devuelve al líder en una operación (HU-INV-09), ya validada. Idempotente por `opId`. Errores:
+   * `NOTE_REQUIRED`, `SELECTION_EMPTY`, `VALIDATION`, `COPY_NOT_IN_STOCK` (`details.copyIds`),
+   * `NOT_ENOUGH_STOCK` (`details.titleId`), `NETWORK_ERROR`.
+   */
+  returnToLeader(input: {
+    readonly opId: string;
+    readonly copyIds: readonly string[];
+    readonly minibookLines: readonly { readonly titleId: string; readonly quantity: number }[];
+    readonly note: string;
+  }): Promise<Result<{ returnedCopyIds: string[] }, AppError>>;
+
+  /** Deshace la devolución de un ejemplar. Errores: `NOTE_REQUIRED`, `UNDO_NOT_AVAILABLE`, `NOT_FOUND`. */
+  undoReturnToLeader(copyId: string, note: string): Promise<Result<void, AppError>>;
+
   returnFromCustomer(
     copyId: string,
     reason: 'wrong_registration' | 'customer_returned',
