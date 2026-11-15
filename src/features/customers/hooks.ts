@@ -293,8 +293,9 @@ export function useDiscardNewCustomer() {
 }
 
 /**
- * Lista de clientes (HU-CLI-04): `{ counts, statusCounts, isDefaultView, rows }`. Lee una vez todo (cientos
- * de clientes) y calcula pestañas, filtro y orden en el teléfono; sin conexión muestra lo último guardado.
+ * Lista de clientes (HU-CLI-04): `{ counts, statusCounts, isDefaultView, rows, emptySearch }`. Lee una vez
+ * todo (cientos de clientes) y calcula pestañas, filtro, orden y búsqueda difusa (`search`,
+ * `includeArchivedInSearch`, HU-CLI-05) en el teléfono; sin conexión muestra lo último guardado.
  */
 export function useCustomerList(params: CustomerListParams) {
   const { customers, titles } = useRepositories();

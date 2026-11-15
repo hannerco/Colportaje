@@ -66,9 +66,13 @@ export const businessConfig = deepFreeze({
     signedUrlSeconds: 3600,
   },
 
-  /** BR-CUS-07: umbral de la búsqueda difusa; lo fija HU-CLI-05 con su prueba. */
+  /**
+   * BR-CUS-07: umbral de la búsqueda difusa (Fuse.js: 0 = exacto, 1 = cualquier cosa). Fijado en HU-CLI-05 con
+   * su prueba (src/domain/customer-search.test.ts): con 0,3 se toleran errores de una o dos letras ("maria
+   * gomes", "cardenaz") y no aparece ruido ("carlos" no trae a "Marcos", que sí aparece con 0,35).
+   */
   search: {
-    fuzzyThreshold: null as number | null,
+    fuzzyThreshold: 0.3,
   },
 
   /**

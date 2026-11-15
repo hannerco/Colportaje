@@ -12,6 +12,8 @@ const customer = (id: string) => ({
   name: id,
   avatarEmoji: null,
   phone: null,
+  info: null,
+  address: null,
   createdAt: soldAt,
   updatedAt: soldAt,
   archived: false,

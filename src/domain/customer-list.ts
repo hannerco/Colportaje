@@ -1,7 +1,8 @@
 // Lista de clientes (HU-CLI-04, BR-CUS-05/13, BR-GEN-14, BR-GOAL-03 #8). La cuenta de cada cliente se
-// deriva aquí con computeCustomerAccount; nada se guarda (BR-GEN-03).
+// deriva aquí con computeCustomerAccount; nada se guarda (BR-GEN-03). La búsqueda (HU-CLI-05) se combina aquí.
 import { computeCustomerAccount, type AccountPayment, type PaymentStanding, type SoldCopy } from './customer';
 import type { SortDir } from './copies-list';
+import { buildSearchIndex, cleanSearchText, searchCustomers } from './customer-search';
 import type { COP } from './money';
 import { compareEs, compareIds } from './text';
 import type { Instant, LocalDate } from './time';
@@ -17,6 +18,10 @@ export type CustomerListParams = {
   /** Vacío = sin filtro. */
   readonly statusFilter: readonly PaymentStanding[];
   readonly sort: { readonly key: CustomerSortKey; readonly dir: SortDir };
+  /** HU-CLI-05: texto buscado; vacío o ausente = sin búsqueda. */
+  readonly search?: string;
+  /** HU-CLI-05: "Buscar en Archivados" (agrega los archivados que coinciden). */
+  readonly includeArchivedInSearch?: boolean;
 };
 
 /** R4: sentido por defecto de cada criterio. */
@@ -42,6 +47,9 @@ export type CustomerListCustomer = {
   readonly name: string;
   readonly avatarEmoji: string | null;
   readonly phone: string | null;
+  /** Buscables (HU-CLI-05). */
+  readonly info: string | null;
+  readonly address: string | null;
   readonly createdAt: Instant;
   readonly updatedAt: Instant;
   readonly archived: boolean;
@@ -81,6 +89,16 @@ export type CustomerListView = {
   readonly statusCounts: { readonly current: number; readonly overdue: number; readonly settled: number };
   readonly isDefaultView: boolean;
   readonly rows: readonly CustomerListRow[];
+  /**
+   * HU-CLI-05: solo cuando hay búsqueda y ningún resultado. `canSearchArchived` = se puede ampliar con
+   * "Buscar en Archivados" (no se está ya en Archivados ni con archivados incluidos); `createName` = el texto
+   * sin espacios sobrantes para "Crear «texto»" (R5).
+   */
+  readonly emptySearch: {
+    readonly query: string;
+    readonly canSearchArchived: boolean;
+    readonly createName: string;
+  } | null;
 };
 
 type Item = {
@@ -101,6 +119,23 @@ const inTab = (tab: CustomerListTab, includeProspects: boolean, row: CustomerLis
       return !row.archived && row.standing === 'settled';
     case 'archived':
       return row.archived;
+  }
+};
+
+/**
+ * Con búsqueda (I-13): dentro de la pestaña actual; en Todos entran los prospectos que coinciden aunque el
+ * interruptor esté apagado (BR-CUS-14), y con "Buscar en Archivados" también los archivados de la pestaña.
+ */
+const inSearchTab = (tab: CustomerListTab, row: CustomerListRow): boolean => {
+  // Los archivados solo llegan aquí si searchCustomers los incluyó (R4).
+  if (tab === 'archived') return row.archived;
+  switch (tab) {
+    case 'all':
+      return true;
+    case 'debtors':
+      return row.standing === 'overdue' || row.standing === 'current';
+    case 'settled':
+      return row.standing === 'settled';
   }
 };
 
@@ -204,14 +239,35 @@ export const buildCustomerListView = (
     active.filter((i) => i.row.standing === standing).length;
 
   const statuses = new Set(params.statusFilter);
-  const rows = items
-    .filter(
-      (i) =>
-        inTab(params.tab, params.includeProspects, i.row) &&
-        (statuses.size === 0 || (i.row.standing !== null && statuses.has(i.row.standing))),
-    )
-    .sort(comparator(params.sort))
-    .map((i) => i.row);
+  const byStatus = (row: CustomerListRow) =>
+    statuses.size === 0 || (row.standing !== null && statuses.has(row.standing));
+
+  const search = cleanSearchText(params.search ?? '');
+  let rows: CustomerListRow[];
+  let emptySearch: CustomerListView['emptySearch'] = null;
+  if (!search) {
+    rows = items
+      .filter((i) => inTab(params.tab, params.includeProspects, i.row) && byStatus(i.row))
+      .sort(comparator(params.sort))
+      .map((i) => i.row);
+  } else {
+    const includeArchived = params.tab === 'archived' || params.includeArchivedInSearch === true;
+    const titles = new Map(accounts.map((a) => [a.customerId, a.soldCopies.map((c) => c.titleName)]));
+    const hits = searchCustomers(buildSearchIndex(customers, titles), search, { includeArchived });
+    const score = new Map(hits.map((h) => [h.id, h.score]));
+    rows = items
+      .filter((i) => score.has(i.row.id) && inSearchTab(params.tab, i.row) && byStatus(i.row))
+      .sort(
+        (a, b) =>
+          score.get(a.row.id)! - score.get(b.row.id)! ||
+          compareEs(a.row.name, b.row.name) ||
+          compareIds(a.row.id, b.row.id),
+      )
+      .map((i) => i.row);
+    if (rows.length === 0) {
+      emptySearch = { query: search, canSearchArchived: !includeArchived, createName: search };
+    }
+  }
 
   return {
     counts: {
@@ -227,5 +283,6 @@ export const buildCustomerListView = (
     },
     isDefaultView: isDefaultCustomerListView(params),
     rows,
+    emptySearch,
   };
 };

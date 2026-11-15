@@ -32,7 +32,7 @@ ui  ──►  features  ──►  repositories (interfaces)  ──►  domain
 
 | Capa | Contiene | Puede importar | **No** puede importar |
 |---|---|---|---|
-| `domain/` | Tipos, reglas, derivaciones, máquinas de estado, `time`, `money`. **TypeScript puro**. | Nada externo (solo utilidades puras) | React, Next, Supabase, `fetch`, DOM |
+| `domain/` | Tipos, reglas, derivaciones, máquinas de estado, `time`, `money`. **TypeScript puro**. | Nada externo, salvo la lista cerrada de librerías de cálculo puro de ADR-0048 (hoy `fuse.js`) | React, Next, Supabase, `fetch`, DOM |
 | `repositories/` (interfaces) | Contratos: `CustomerRepository`, `CopyRepository`, `PaymentRepository`, `LeaderDepositRepository`, `MinibookSaleRepository`, `TitleRepository`, `VisitRepository`, `TrainingRepository`, `SettingsRepository`, `StorageRepository`… | `domain` | adapters, UI |
 | `adapters/` | Implementaciones: `supabase/*`, `storage/*`, (F2) `local/*`, `sync/*`; mapeo fila↔dominio con Zod | `repositories`, `domain` | UI, features |
 | `features/<área>/` | Casos de uso + hooks + componentes de la funcionalidad: `customers`, `sales`, `inventory`, `payments`, `deposits`, `minibooks`, `calendar`, `totals`, `admin`, `auth` | `domain`, interfaces de `repositories`, `ui` | adapters directamente (se inyectan) |

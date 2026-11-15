@@ -25,6 +25,13 @@ export {
   removeCopyDuringCreation,
   type CustomerBooksDeps,
 } from './use-cases/customer-books';
+export {
+  buildSearchIndex,
+  cleanSearchText,
+  searchCustomers,
+  type SearchHit,
+  type SearchableCustomer,
+} from '@/domain/customer-search';
 export { loadCustomerListData, type CustomerListLoaded } from './use-cases/customer-list';
 export {
   buildCustomerListView,

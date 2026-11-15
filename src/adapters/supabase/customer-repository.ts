@@ -169,7 +169,7 @@ export function createSupabaseCustomerRepository(getClient: GetSupabaseClient): 
         selectAll((from, to) =>
           client
             .from('customer')
-            .select('id, name, avatar_emoji, phone, created_at, updated_at, archived_at')
+            .select('id, name, avatar_emoji, phone, info, address, created_at, updated_at, archived_at')
             .is('deleted_at', null)
             .order('id')
             .range(from, to),
@@ -203,6 +203,8 @@ export function createSupabaseCustomerRepository(getClient: GetSupabaseClient): 
             name: row.name,
             avatarEmoji: row.avatar_emoji,
             phone: row.phone,
+            info: row.info,
+            address: row.address,
             createdAt: row.created_at,
             updatedAt: row.updated_at,
             archived: row.archived_at !== null,
@@ -286,6 +288,8 @@ const listCustomerRowSchema = z.object({
   name: z.string(),
   avatar_emoji: z.string().nullable(),
   phone: z.string().nullable(),
+  info: z.string().nullable(),
+  address: z.string().nullable(),
   created_at: instant,
   updated_at: instant,
   archived_at: z.string().nullable(),

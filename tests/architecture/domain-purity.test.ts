@@ -12,6 +12,9 @@ const sourceFiles = (dir: string): string[] =>
     return /\.tsx?$/.test(entry.name) && !/\.test\.tsx?$/.test(entry.name) ? [path] : [];
   });
 
+/** Librerías de cálculo puro permitidas en el dominio (sin red, DOM ni estado): lista cerrada, ADR-0048. */
+const PURE_PACKAGES: readonly string[] = ['fuse.js'];
+
 const IMPORT = /(?:import|export)\s[^'"]*?from\s*['"]([^'"]+)['"]|import\s*\(\s*['"]([^'"]+)['"]\s*\)/g;
 
 /** APIs que no caben en TypeScript puro: red, DOM, almacenamiento y el reloj real (BR-GEN-05). */
@@ -39,7 +42,7 @@ describe('arquitectura: dominio puro (HU-BASE-01 R1, R3)', () => {
       const specifier = match[1] ?? match[2] ?? '';
       if (specifier.startsWith('@/')) {
         expect(specifier, `${file}: importa ${specifier}`).toMatch(/^@\/domain(\/|$)/);
-      } else {
+      } else if (!PURE_PACKAGES.includes(specifier)) {
         expect(specifier, `${file}: importa el paquete ${specifier}`).toMatch(/^\.{1,2}\//);
         const target = resolve(dirname(file), specifier);
         expect(

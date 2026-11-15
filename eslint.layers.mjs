@@ -30,13 +30,14 @@ const others = (layer) => LAYERS.filter((l) => l !== layer);
 
 /** Capa → patrones prohibidos. */
 const RULES = {
-  // El dominio es TypeScript puro: solo se importa a sí mismo (R1).
+  // El dominio es TypeScript puro: solo se importa a sí mismo (R1) y las librerías de cálculo puro de ADR-0048.
   domain: [
     {
       // vitest y fast-check solo aparecen en pruebas; la prueba de pureza revisa el código sin ellas.
-      regex: '^(?!\\.{1,2}/|@/domain(?:/|$)|vitest$|fast-check$)',
+      // fuse.js: búsqueda difusa (OQ-21), sin red, DOM ni estado (ADR-0048, lista cerrada).
+      regex: '^(?!\\.{1,2}/|@/domain(?:/|$)|vitest$|fast-check$|fuse\\.js$)',
       message:
-        'Límite entre capas: "domain" es TypeScript puro y no importa paquetes externos (ARCHITECTURE §2, HU-BASE-01 R1).',
+        'Límite entre capas: "domain" es TypeScript puro y solo importa las librerías de cálculo puro de ADR-0048 (ARCHITECTURE §2, HU-BASE-01 R1).',
     },
     ...forbidLayers('domain', others('domain')),
   ],
