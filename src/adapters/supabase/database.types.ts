@@ -255,6 +255,48 @@ export type Database = {
         };
         Relationships: [];
       };
+      customer_invoice: {
+        Row: {
+          created_at: string;
+          customer_id: string;
+          deleted_at: string | null;
+          id: string;
+          invoice_date: string | null;
+          invoice_number: string | null;
+          owner_id: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          customer_id: string;
+          deleted_at?: string | null;
+          id: string;
+          invoice_date?: string | null;
+          invoice_number?: string | null;
+          owner_id?: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          customer_id?: string;
+          deleted_at?: string | null;
+          id?: string;
+          invoice_date?: string | null;
+          invoice_number?: string | null;
+          owner_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'customer_invoice_customer_same_owner';
+            columns: ['customer_id', 'owner_id'];
+            isOneToOne: false;
+            referencedRelation: 'customer';
+            referencedColumns: ['id', 'owner_id'];
+          },
+        ];
+      };
       leader_deposit: {
         Row: {
           cash_amount: number;
@@ -523,6 +565,7 @@ export type Database = {
           customer_id: string | null;
           deleted_at: string | null;
           id: string;
+          invoice_id: string | null;
           kind: Database['public']['Enums']['photo_kind'];
           leader_deposit_id: string | null;
           owner_id: string;
@@ -537,6 +580,7 @@ export type Database = {
           customer_id?: string | null;
           deleted_at?: string | null;
           id: string;
+          invoice_id?: string | null;
           kind: Database['public']['Enums']['photo_kind'];
           leader_deposit_id?: string | null;
           owner_id?: string;
@@ -550,6 +594,7 @@ export type Database = {
           customer_id?: string | null;
           deleted_at?: string | null;
           id?: string;
+          invoice_id?: string | null;
           kind?: Database['public']['Enums']['photo_kind'];
           leader_deposit_id?: string | null;
           owner_id?: string;
@@ -570,6 +615,13 @@ export type Database = {
             columns: ['leader_deposit_id', 'owner_id'];
             isOneToOne: false;
             referencedRelation: 'leader_deposit';
+            referencedColumns: ['id', 'owner_id'];
+          },
+          {
+            foreignKeyName: 'photo_invoice_same_owner';
+            columns: ['invoice_id', 'owner_id'];
+            isOneToOne: false;
+            referencedRelation: 'customer_invoice';
             referencedColumns: ['id', 'owner_id'];
           },
         ];
@@ -685,6 +737,16 @@ export type Database = {
           title_id: string;
         }[];
       };
+      add_invoice_photo: {
+        Args: {
+          p_bytes: number;
+          p_invoice_id: string;
+          p_path: string;
+          p_photo_id: string;
+          p_thumb_path: string;
+        };
+        Returns: undefined;
+      };
       apply_payment_plan: {
         Args: { p_customer_id: string; p_items: Json; p_mode: string };
         Returns: undefined;
@@ -707,6 +769,18 @@ export type Database = {
         }[];
       };
       correct_scheduled_date: { Args: { p_due_date: string; p_payment_id: string }; Returns: string };
+      create_invoice_with_photo: {
+        Args: {
+          p_bytes: number;
+          p_customer_id: string;
+          p_invoice_id: string;
+          p_path: string;
+          p_photo_id: string;
+          p_thumb_path: string;
+        };
+        Returns: undefined;
+      };
+      delete_invoice_photo: { Args: { p_photo_id: string }; Returns: boolean };
       delete_payment: {
         Args: { p_payment_id: string };
         Returns: {
@@ -769,6 +843,7 @@ export type Database = {
         Returns: string;
       };
       update_copy_received_date: { Args: { p_copy_id: string; p_date: string }; Returns: undefined };
+      update_invoice: { Args: { p_invoice_id: string; p_patch: Json }; Returns: undefined };
       update_scheduled_amount: { Args: { p_agreed_amount: number; p_payment_id: string }; Returns: string };
     };
     Enums: {

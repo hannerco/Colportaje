@@ -2,6 +2,11 @@
 export {
   customerQueryKeys,
   useAddCustomerInfoPhoto,
+  useAddInvoicePhoto,
+  useCreateInvoiceWithPhoto,
+  useCustomerInvoices,
+  useDeleteInvoicePhoto,
+  useUpdateInvoice,
   useAssignableCopies,
   useCustomerInfoPhotos,
   useDeleteCustomerInfoPhoto,
@@ -24,6 +29,15 @@ export {
   listCustomerInfoPhotos,
   type CustomerInfoPhoto,
 } from './use-cases/customer-photos';
+export {
+  addInvoicePhoto,
+  createInvoiceWithPhoto,
+  deleteInvoicePhoto,
+  listCustomerInvoices,
+  updateInvoice,
+  type CustomerInvoice,
+} from './use-cases/customer-invoices';
+export { sortInvoices, validateInvoicePatch, type InvoicePatch } from '@/domain/invoice';
 export { ASSIGN_ERROR_CODES, type AssignableCopy } from '@/domain/assignable-copies';
 export {
   createCustomer,

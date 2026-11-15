@@ -4,6 +4,7 @@ import { vi } from 'vitest';
 import type {
   CopyRepository,
   CustomerRepository,
+  InvoiceRepository,
   PaymentRepository,
   PhotoRepository,
   StorageRepository,
@@ -69,5 +70,14 @@ export const fakeStorageRepository = (overrides: Partial<StorageRepository> = {}
   upload: vi.fn(),
   signedUrl: vi.fn(),
   remove: vi.fn(),
+  ...overrides,
+});
+
+export const fakeInvoiceRepository = (overrides: Partial<InvoiceRepository> = {}): InvoiceRepository => ({
+  listOfCustomer: vi.fn(),
+  createWithPhoto: vi.fn(),
+  addPhoto: vi.fn(),
+  update: vi.fn(),
+  deletePhoto: vi.fn(),
   ...overrides,
 });

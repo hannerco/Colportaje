@@ -2,6 +2,7 @@ import type { AuthRepository } from './auth-repository';
 import type { Connectivity } from './connectivity';
 import type { CopyRepository } from './copy-repository';
 import type { CustomerRepository } from './customer-repository';
+import type { InvoiceRepository } from './invoice-repository';
 import type { OfflineCache } from './offline-cache';
 import type { PaymentRepository } from './payment-repository';
 import type { ImageCodec, PhotoRepository, StorageRepository } from './photo-ports';
@@ -12,6 +13,7 @@ export type { AuthChange, AuthRepository } from './auth-repository';
 export type { Connectivity } from './connectivity';
 export type { CopyRepository, CreatedCopy } from './copy-repository';
 export type { CustomerAccountData, CustomerRepository } from './customer-repository';
+export type { InvoiceRepository, UploadedInvoicePhoto } from './invoice-repository';
 export type { OfflineCache } from './offline-cache';
 export type { PaymentRepository } from './payment-repository';
 export type {
@@ -37,6 +39,7 @@ export interface Repositories {
   readonly copies: CopyRepository;
   readonly customers: CustomerRepository;
   readonly payments: PaymentRepository;
+  readonly invoices: InvoiceRepository;
   readonly photos: PhotoRepository;
   readonly storage: StorageRepository;
   readonly imageCodec: ImageCodec;

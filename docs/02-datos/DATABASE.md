@@ -290,7 +290,7 @@ Triggers `set_updated_at` en todas las tablas con `updated_at`. Triggers/funcion
 - `delete_copy` / `undo_delete_copy`, `resolve_copy_issue` / `undo_resolve_copy_issue` (BR-COPY-11/17).
 - `apply_payment_plan(customer_id, …)`: crea los abonos del plan; durante la creación reemplaza los programados del cliente, después reparte solo lo sin programar (BR-PAY-15).
 - `discard_new_customer(id)`: descarte atómico; se rechaza si algún abono está en un Abibono (BR-CUS-14).
-- `add_invoice_photo` / `delete_invoice_photo`: crea la factura con su primera foto y la borra al quitar la última (ADR-0042).
+- `create_invoice_with_photo` / `add_invoice_photo` / `update_invoice` / `delete_invoice_photo` (HU-CLI-08): crea la factura con su primera foto, agrega fotos, edita N.º y fecha, y borra la factura al quitar la última foto (ADR-0042).
 - Validar en trigger: `payment.due_date >= hoy` al insertar o cambiar la fecha de un abono `scheduled` (BR-PAY-06/16).
 - **Alcance (ADR-0041):** `visit`, `training`, `reminder`, `minibook_sale` y `leader_deposit_minibook_allocation` (y `record_minibook_sale`) se crean con sus módulos; el resto de este esquema es la primera entrega.
 
