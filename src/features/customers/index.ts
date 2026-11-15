@@ -13,6 +13,7 @@ export {
   useAssignableCopies,
   useCustomerInfoPhotos,
   useClearCustomerLocation,
+  useCustomerDetail,
   useCustomerList,
   useInitialPickerCenter,
   useRememberLastChosenPoint,
@@ -60,6 +61,18 @@ export {
 } from '@/domain/customer-location';
 export { archiveCustomer, getArchivePreview, restoreCustomer } from './use-cases/customer-archive';
 export { buildArchivePreview, type ArchivePreview } from '@/domain/customer-archive';
+export {
+  loadCustomerDetail,
+  type CustomerDetailDeps,
+  type CustomerDetailView,
+} from './use-cases/customer-detail';
+export {
+  buildCustomerDetail,
+  contactLinks,
+  type CustomerDetail,
+  type CustomerDetailInput,
+  type PaymentRow,
+} from '@/domain/customer-detail';
 export { loadCustomerListData, type CustomerListLoaded } from './use-cases/customer-list';
 export {
   buildCustomerListView,
