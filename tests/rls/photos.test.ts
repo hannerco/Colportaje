@@ -17,10 +17,25 @@ const INVALID_ENUM = '22P02';
 beforeAll(assertDatabaseReachable);
 afterAll(() => pool.end());
 
-const insertPhoto = (tx: Tx, owner: string, kind: string, path?: string) =>
+/** Un cliente del dueño: las fotos `customer_info` llevan cliente (HU-CLI-07). */
+const customerOf = async (tx: Tx, owner: string) => {
+  const id = randomUUID();
+  await tx.query(`insert into public.customer (id, owner_id, name) values ($1, $2, 'Natalia')`, [id, owner]);
+  return id;
+};
+
+const insertPhoto = async (tx: Tx, owner: string, kind: string, path?: string) =>
   tx.query(
-    `insert into public.photo (id, owner_id, kind, path, thumb_path, bytes) values ($1, $2, $3, $4, $5, 1000)`,
-    [randomUUID(), owner, kind, path ?? `${owner}/${kind}/a.webp`, `${owner}/${kind}/a.thumb.webp`],
+    `insert into public.photo (id, owner_id, kind, path, thumb_path, bytes, customer_id)
+     values ($1, $2, $3, $4, $5, 1000, $6)`,
+    [
+      randomUUID(),
+      owner,
+      kind,
+      path ?? `${owner}/${kind}/a.webp`,
+      `${owner}/${kind}/a.thumb.webp`,
+      await customerOf(tx, owner),
+    ],
   );
 
 describe('photo: tabla y RLS (HU-BASE-05)', () => {
@@ -70,11 +85,11 @@ describe('photo: tabla y RLS (HU-BASE-05)', () => {
       const a = await createUser(tx);
       const b = await createUser(tx);
       await tx.query(
-        `insert into public.photo (id, owner_id, kind, path, bytes, deleted_at) values
-          ($1, $3::uuid, 'customer_info', $3::text || '/customer_info/1.webp', 150000, null),
-          ($2, $3::uuid, 'customer_info', $3::text || '/customer_info/2.webp', 140000, now()),
-          ($4, $5::uuid, 'customer_info', $5::text || '/customer_info/3.webp', 999999, null)`,
-        [randomUUID(), randomUUID(), a, randomUUID(), b],
+        `insert into public.photo (id, owner_id, kind, path, bytes, deleted_at, customer_id) values
+          ($1, $3::uuid, 'customer_info', $3::text || '/customer_info/1.webp', 150000, null, $6::uuid),
+          ($2, $3::uuid, 'customer_info', $3::text || '/customer_info/2.webp', 140000, now(), $6::uuid),
+          ($4, $5::uuid, 'customer_info', $5::text || '/customer_info/3.webp', 999999, null, $7::uuid)`,
+        [randomUUID(), randomUUID(), a, randomUUID(), b, await customerOf(tx, a), await customerOf(tx, b)],
       );
       await asUser(tx, a, async () => {
         const { rows } = await tx.query<{ total: string }>('select public.photo_total_bytes() as total');

@@ -17,6 +17,7 @@ const userIds: string[] = [];
 afterAll(async () => {
   for (const id of userIds) {
     await pool.query('delete from public.photo where owner_id = $1', [id]);
+    await pool.query('delete from public.customer where owner_id = $1', [id]);
     await admin.auth.admin.deleteUser(id);
   }
   await pool.end();
@@ -64,7 +65,14 @@ describe('escrituras sin conexión (HU-BASE-06)', () => {
     const { data } = await client.auth.getSession();
     const token = data.session!.access_token;
     const photoId = randomUUID();
+    // Las fotos `customer_info` llevan cliente (HU-CLI-07).
+    const customerId = randomUUID();
+    await pool.query(`insert into public.customer (id, owner_id, name) values ($1, $2, 'Natalia')`, [
+      customerId,
+      userId,
+    ]);
     const newPhoto = {
+      customerId,
       id: photoId,
       kind: 'customer_info' as const,
       path: `${userId}/customer_info/${photoId}.webp`,

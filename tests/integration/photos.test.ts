@@ -22,6 +22,7 @@ afterAll(async () => {
     const paths = (data ?? []).map((f) => `${id}/customer_info/${f.name}`);
     if (paths.length > 0) await admin.storage.from(USER_PHOTOS_BUCKET).remove(paths);
     await pool.query('delete from public.photo where owner_id = $1', [id]);
+    await pool.query('delete from public.customer where owner_id = $1', [id]);
     await admin.auth.admin.deleteUser(id);
   }
   await pool.end();
@@ -36,6 +37,16 @@ async function signedInUser() {
   const client = anonClient();
   await createSupabaseAuthRepository(() => client).signIn({ email, password });
   return { userId, client };
+}
+
+/** Las fotos `customer_info` llevan cliente (HU-CLI-07). */
+async function customerOf(userId: string) {
+  const id = randomUUID();
+  await pool.query(`insert into public.customer (id, owner_id, name) values ($1, $2, 'Natalia')`, [
+    id,
+    userId,
+  ]);
+  return id;
 }
 
 const webp = (bytes = 2048) => new Blob([new Uint8Array(bytes)], { type: 'image/webp' });
@@ -98,10 +109,12 @@ describe('Storage de fotos contra Supabase local (HU-BASE-05)', () => {
     const a = await signedInUser();
     const deps = photoDeps(a.client);
     const photoId = randomUUID();
+    const customerId = await customerOf(a.userId);
     const result = await createPhoto(deps, {
       photoId,
       kind: 'customer_info',
       file: photoLikeJpeg(1600, 1200),
+      customerId,
     });
     if (!result.ok) throw new Error(result.error.code);
     expect(result.value.path).toBe(`${a.userId}/customer_info/${photoId}.webp`);
@@ -122,7 +135,14 @@ describe('Storage de fotos contra Supabase local (HU-BASE-05)', () => {
 
     // Reintentar con el mismo id no duplica (AF-91).
     expect(
-      (await createPhoto(deps, { photoId, kind: 'customer_info', file: photoLikeJpeg(800, 600) })).ok,
+      (
+        await createPhoto(deps, {
+          photoId,
+          kind: 'customer_info',
+          file: photoLikeJpeg(800, 600),
+          customerId,
+        })
+      ).ok,
     ).toBe(true);
     const count = await pool.query('select count(*)::int as n from public.photo where id = $1', [photoId]);
     expect(count.rows).toEqual([{ n: 1 }]);
@@ -148,6 +168,7 @@ describe('Storage de fotos contra Supabase local (HU-BASE-05)', () => {
   it('CA-5: con dos fotos de 150 y 140 KB el uso total es su suma; borrar es lógico', async () => {
     const a = await signedInUser();
     const photos = createSupabasePhotoRepository(() => a.client);
+    const customerId = await customerOf(a.userId);
     const [first, second] = [randomUUID(), randomUUID()];
     for (const [id, bytes] of [
       [first!, 150_000],
@@ -161,6 +182,7 @@ describe('Storage de fotos contra Supabase local (HU-BASE-05)', () => {
             path: `${a.userId}/customer_info/${id}.webp`,
             thumbPath: `${a.userId}/customer_info/${id}.thumb.webp`,
             bytes,
+            customerId,
           })
         ).ok,
       ).toBe(true);
