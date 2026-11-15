@@ -8,6 +8,10 @@ export const CUSTOMER_ERROR_CODES = {
   CUSTOMER_ARCHIVED: 'CUSTOMER_ARCHIVED',
   /** Descartar se rechaza: un abono del cliente ya está en un Abibono (HU-CLI-03 R1). */
   CUSTOMER_DISCARD_BLOCKED: 'CUSTOMER_DISCARD_BLOCKED',
+  /** Archivar se rechaza: tiene ejemplares vendidos (HU-CLI-11 R1). */
+  CUSTOMER_HAS_BOOKS: 'CUSTOMER_HAS_BOOKS',
+  /** Restaurar un cliente que no está archivado (HU-CLI-11). */
+  CUSTOMER_NOT_ARCHIVED: 'CUSTOMER_NOT_ARCHIVED',
 } as const;
 
 // ─── Avatar (R2, BR-CUS-15) ────────────────────────────────────────────────────────────────────────

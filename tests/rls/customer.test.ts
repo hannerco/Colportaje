@@ -93,7 +93,14 @@ describe('customer: RLS A/B (HU-CLI-01, BR-GEN-01)', () => {
         expect(
           (await tx.query(`update public.customer set name = 'x' where owner_id = $1`, [b])).rowCount,
         ).toBe(0);
-        expect((await tx.query(`update public.customer set archived_at = now()`)).rowCount).toBe(1);
+        // Archivar ya no es un UPDATE directo (HU-CLI-11): se hace con archive_customer, solo sobre lo suyo.
+        expect(await expectError(tx, `update public.customer set archived_at = now()`)).toBe('P0001');
+        const own = await tx.query<{ id: string }>('select id from public.customer');
+        await tx.query('select public.archive_customer($1)', [own.rows[0]!.id]);
+        expect(
+          (await tx.query('select count(*)::int as n from public.customer where archived_at is not null'))
+            .rows[0].n,
+        ).toBe(1);
         expect(await expectError(tx, 'delete from public.customer')).toBe(INSUFFICIENT_PRIVILEGE);
       });
     });
