@@ -254,6 +254,25 @@ export function createSupabaseCopyRepository(getClient: GetSupabaseClient): Copy
       return ok(undefined);
     },
 
+    async updateAgreedPrice(copyId, price) {
+      const { data, error } = await getClient().rpc('update_agreed_price', {
+        p_copy_id: copyId,
+        ...(price === null ? {} : { p_price: price }),
+      });
+      if (error)
+        return err(
+          mapRpcError(error, ASSIGN_ERRORS, (code) =>
+            code === 'VALIDATION' ? { field: 'price' } : undefined,
+          ),
+        );
+      const row = agreedPriceRowsSchema.parse(data)[0]!;
+      return ok({
+        customerId: row.customer_id,
+        previousPrice: row.previous_price,
+        agreedPrice: row.agreed_price,
+      });
+    },
+
     async assignToCustomer(copyId, customerId) {
       const { error } = await getClient().rpc('assign_copy_to_customer', {
         p_copy_id: copyId,
@@ -361,6 +380,16 @@ const RECEIVED_DATE_ERRORS = [
   COMMON_ERROR_CODES.NOT_FOUND,
   COMMON_ERROR_CODES.FORBIDDEN,
 ];
+
+const agreedPriceRowsSchema = z
+  .array(
+    z.object({
+      customer_id: z.uuid(),
+      previous_price: z.number().int(),
+      agreed_price: z.number().int(),
+    }),
+  )
+  .length(1);
 
 const ASSIGN_ERRORS = [
   ...Object.values(ASSIGN_ERROR_CODES),

@@ -4,6 +4,7 @@ export {
   prepareAddCopies,
   useAddCatalog,
   useAddCopiesBatch,
+  useAgreedPrice,
   useCopiesList,
   useCopyDetail,
   useCopyHistory,
@@ -14,6 +15,13 @@ export {
   useUpdateReceivedDate,
 } from './hooks';
 export { addCopiesBatch, type AddCopiesBatchDeps } from './use-cases/add-copies-batch';
+export {
+  restorePublicPrice,
+  updateAgreedPrice,
+  type AgreedPriceDeps,
+  type AgreedPriceResult,
+} from './use-cases/agreed-price';
+export { evaluatePriceChange, validateAgreedPrice } from '@/domain/agreed-price';
 export {
   RECEIVED_DATE_ERROR_CODES,
   type CopyCapabilities,

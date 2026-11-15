@@ -846,6 +846,14 @@ export type Database = {
         Returns: undefined;
       };
       today_bogota: { Args: Record<PropertyKey, never>; Returns: string };
+      update_agreed_price: {
+        Args: { p_copy_id: string; p_price?: number };
+        Returns: {
+          agreed_price: number;
+          customer_id: string;
+          previous_price: number;
+        }[];
+      };
       update_collected_payment: {
         Args: {
           p_method?: Database['public']['Enums']['pay_method'];

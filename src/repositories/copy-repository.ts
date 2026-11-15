@@ -67,6 +67,16 @@ export interface CopyRepository {
    * `customer_returned`). Devuelve el cliente. Errores: `COPY_NOT_SOLD`, `COPY_IS_MINIBOOK`, `NOT_FOUND`,
    * `NETWORK_ERROR`.
    */
+  /**
+   * Precio acordado de un ejemplar vendido (HU-INV-06): `price` entero ≥ 0, o `null` para restaurar el
+   * precio público copiado. El mismo precio no cambia nada. Devuelve el cliente y los precios anterior y
+   * nuevo. Errores: `VALIDATION` (`price`), `COPY_NOT_SOLD`, `COPY_IS_MINIBOOK`, `NOT_FOUND`, `NETWORK_ERROR`.
+   */
+  updateAgreedPrice(
+    copyId: string,
+    price: number | null,
+  ): Promise<Result<{ customerId: string; previousPrice: number; agreedPrice: number }, AppError>>;
+
   returnFromCustomer(
     copyId: string,
     reason: 'wrong_registration' | 'customer_returned',
