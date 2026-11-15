@@ -7,6 +7,7 @@ export {
   useAgreedPrice,
   useCopiesList,
   useCopyDetail,
+  useCopyIssueActions,
   useCopyHistory,
   useFlaggedCopies,
   useInStockCopiesOfTitle,
@@ -22,6 +23,13 @@ export {
   type AgreedPriceResult,
 } from './use-cases/agreed-price';
 export { evaluatePriceChange, validateAgreedPrice } from '@/domain/agreed-price';
+export { flagCopy, resolveCopyIssue, undoResolveCopyIssue, type CopyIssueDeps } from './use-cases/copy-issue';
+export {
+  COPY_ISSUE_ERROR_CODES,
+  undoableResolution,
+  validateIssueNote,
+  type IssueResolution,
+} from '@/domain/copy-issue';
 export {
   RECEIVED_DATE_ERROR_CODES,
   type CopyCapabilities,

@@ -18,6 +18,8 @@ import { addCopiesBatch } from './use-cases/add-copies-batch';
 import { loadCopiesListData } from './use-cases/copies-list';
 import { loadCopyDetail, updateReceivedDate } from './use-cases/copy-detail';
 import { restorePublicPrice, updateAgreedPrice } from './use-cases/agreed-price';
+import { flagCopy, resolveCopyIssue, undoResolveCopyIssue } from './use-cases/copy-issue';
+import type { IssueResolution } from '@/domain/copy-issue';
 import { loadFlaggedCopies, loadInStockCopiesOfTitle, loadInStockSummary } from './use-cases/stock';
 
 export const inventoryQueryKeys = {
@@ -173,5 +175,38 @@ export function useAgreedPrice() {
     updateAgreedPrice: update.mutateAsync,
     restorePublicPrice: restore.mutateAsync,
     isPending: update.isPending || restore.isPending,
+  };
+}
+
+/**
+ * Novedades de un ejemplar (HU-INV-07): `flagCopy({ copyId, note })`, `resolveCopyIssue({ copyId,
+ * resolution, note? })` y `undoResolveCopyIssue(copyId)`. Devuelven `Result`; al terminar bien refrescan
+ * Inventario (en físico, Por resolver, lista, detalle e historial).
+ */
+export function useCopyIssueActions() {
+  const { copies, connectivity } = useRepositories();
+  const queryClient = useQueryClient();
+  const deps = { copies, connectivity };
+  const onSuccess = (result: { ok: boolean }) => {
+    if (result.ok) void queryClient.invalidateQueries({ queryKey: inventoryQueryKeys.all });
+  };
+  const flag = useMutation({
+    mutationFn: (input: { copyId: string; note: string }) => flagCopy(deps, input.copyId, input.note),
+    onSuccess,
+  });
+  const resolve = useMutation({
+    mutationFn: (input: { copyId: string; resolution: IssueResolution; note?: string | null }) =>
+      resolveCopyIssue(deps, input.copyId, input.resolution, input.note),
+    onSuccess,
+  });
+  const undo = useMutation({
+    mutationFn: (copyId: string) => undoResolveCopyIssue(deps, copyId),
+    onSuccess,
+  });
+  return {
+    flagCopy: flag.mutateAsync,
+    resolveCopyIssue: resolve.mutateAsync,
+    undoResolveCopyIssue: undo.mutateAsync,
+    isPending: flag.isPending || resolve.isPending || undo.isPending,
   };
 }

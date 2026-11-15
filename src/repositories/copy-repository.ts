@@ -77,6 +77,22 @@ export interface CopyRepository {
     price: number | null,
   ): Promise<Result<{ customerId: string; previousPrice: number; agreedPrice: number }, AppError>>;
 
+  /**
+   * Marca con novedad (HU-INV-07): `note` ya validada. Errores: `VALIDATION` (`note`), `COPY_NOT_IN_STOCK`,
+   * `NOT_FOUND`, `NETWORK_ERROR`.
+   */
+  flag(copyId: string, note: string): Promise<Result<void, AppError>>;
+
+  /** Resuelve la novedad abierta. Errores: `COPY_NOT_FLAGGED`, `NOT_FOUND`, `NETWORK_ERROR`. */
+  resolveIssue(
+    copyId: string,
+    resolution: 'found' | 'lost' | 'removed',
+    note: string | null,
+  ): Promise<Result<void, AppError>>;
+
+  /** Deshace la última resolución (reabre la misma novedad). Errores: `UNDO_NOT_AVAILABLE`, `NOT_FOUND`. */
+  undoResolveIssue(copyId: string): Promise<Result<void, AppError>>;
+
   returnFromCustomer(
     copyId: string,
     reason: 'wrong_registration' | 'customer_returned',

@@ -8,6 +8,7 @@ import {
   type CopyEvent,
   type CopyEventType,
 } from './copy';
+import { STATE_EVENT_TYPES, undoableResolution } from './copy-issue';
 import type { CustomerRef } from './copies-list';
 import type { COP } from './money';
 import { appError, type AppError } from './shared/errors';
@@ -60,20 +61,6 @@ export type HistoryItem = {
   readonly undo: HistoryUndo;
 };
 
-/** Eventos que cambian el estado del ejemplar (los demás, precio y fecha de recibido, no). */
-const STATE_EVENTS: ReadonlySet<CopyEventType> = new Set([
-  'sold',
-  'returned',
-  'flagged',
-  'resolved',
-  'undo_resolved',
-  'deleted',
-  'undo_deleted',
-  'minibook_sold',
-  'returned_to_leader',
-  'undo_returned_to_leader',
-]);
-
 /**
  * Solo el cambio de estado más reciente se puede deshacer, y solo si sigue vigente: un "Devuelto al líder"
  * con el ejemplar aún devuelto, o una resolución "Apareció" (sigue en físico) o "Perdido" (sigue perdido).
@@ -83,18 +70,13 @@ const undoableEventId = (
   events: readonly CopyEvent[],
   status: Copy['status'],
 ): { id: string; undo: Exclude<HistoryUndo, 'none'> } | null => {
-  const last = events.find((e) => STATE_EVENTS.has(e.type));
+  const last = events.find((e) => STATE_EVENT_TYPES.has(e.type));
   if (!last) return null;
   if (last.type === 'returned_to_leader' && status === 'returned_to_leader') {
     return { id: last.id, undo: 'returned_to_leader' };
   }
-  if (
-    last.type === 'resolved' &&
-    ((last.data.resolution === 'found' && status === 'in_stock') ||
-      (last.data.resolution === 'lost' && status === 'lost'))
-  ) {
-    return { id: last.id, undo: 'resolution' };
-  }
+  // R4 de HU-INV-07; en el detalle el ejemplar no está borrado, así que Eliminar nunca aparece aquí.
+  if (undoableResolution(events, status)) return { id: last.id, undo: 'resolution' };
   return null;
 };
 

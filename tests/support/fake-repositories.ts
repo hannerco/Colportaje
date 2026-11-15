@@ -23,6 +23,9 @@ export const fakeCopyRepository = (overrides: Partial<CopyRepository> = {}): Cop
   assignToCustomer: vi.fn(),
   returnFromCustomer: vi.fn(),
   updateAgreedPrice: vi.fn(),
+  flag: vi.fn(),
+  resolveIssue: vi.fn(),
+  undoResolveIssue: vi.fn(),
   ...overrides,
 });
 
