@@ -22,11 +22,13 @@ export {
   useCreateCustomer,
   usePossibleDuplicates,
   useRemoveCopyDuringCreation,
+  useReturnCopyFromCustomer,
   useUpdateCustomer,
 } from './hooks';
 export {
   assignCopyToCustomer,
   removeCopyDuringCreation,
+  returnCopyFromCustomer,
   type CustomerBooksDeps,
 } from './use-cases/customer-books';
 export {

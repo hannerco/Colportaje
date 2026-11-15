@@ -9,6 +9,7 @@ import {
   assignCopyToCustomer,
   loadAssignableData,
   removeCopyDuringCreation,
+  returnCopyFromCustomer,
 } from './use-cases/customer-books';
 import { systemClock } from '@/lib/clock';
 import { assignableCopies } from '@/domain/assignable-copies';
@@ -149,6 +150,28 @@ export function useRemoveCopyDuringCreation() {
     },
   });
   return { removeCopyDuringCreation: mutation.mutateAsync, isPending: mutation.isPending };
+}
+
+/**
+ * Devuelve un libro de un cliente ya guardado, con motivo (HU-CLI-10), desde la ficha o desde el detalle del
+ * ejemplar. Devuelve `Result` con la cuenta, `becameProspect` y el sobrante para abrir el modal (`return`).
+ */
+export function useReturnCopyFromCustomer() {
+  const { copies, customers, connectivity } = useRepositories();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (input: { copyId: string; reason: 'customer_returned' | 'wrong_registration' }) =>
+      returnCopyFromCustomer(
+        { copies, customers, connectivity, clock: systemClock },
+        input.copyId,
+        input.reason,
+      ),
+    onSuccess: (result) => {
+      if (!result.ok) return;
+      for (const queryKey of BOOK_AFFECTED_ROOTS) void queryClient.invalidateQueries({ queryKey });
+    },
+  });
+  return { returnCopyFromCustomer: mutation.mutateAsync, isPending: mutation.isPending };
 }
 
 /** "Imágenes" del cliente (HU-CLI-07): `[{ photoId, thumbUrl, createdAt }]`, la más reciente primero. */

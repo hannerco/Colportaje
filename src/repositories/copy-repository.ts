@@ -64,7 +64,8 @@ export interface CopyRepository {
 
   /**
    * Quita un libro de su cliente: vuelve a físico (HU-CLI-09 con `wrong_registration`, HU-CLI-10 con
-   * `customer_returned`). Devuelve el cliente. Errores: `COPY_NOT_SOLD`, `NOT_FOUND`, `NETWORK_ERROR`.
+   * `customer_returned`). Devuelve el cliente. Errores: `COPY_NOT_SOLD`, `COPY_IS_MINIBOOK`, `NOT_FOUND`,
+   * `NETWORK_ERROR`.
    */
   returnFromCustomer(
     copyId: string,

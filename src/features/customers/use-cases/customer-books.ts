@@ -1,4 +1,4 @@
-// Agregar y quitar libros en la ficha (HU-CLI-09, BR-COPY-06/09, AF-114).
+// Agregar, quitar y devolver libros en la ficha (HU-CLI-09, HU-CLI-10, BR-COPY-06/09, AF-01..AF-12, AF-114).
 import { computeCustomerAccount, type CustomerAccount } from '@/domain/customer';
 import { evaluateScheduleExcess, scheduledForExcess, type ExcessEvaluation } from '@/domain/schedule-excess';
 import type { AppError } from '@/domain/shared/errors';
@@ -85,6 +85,34 @@ export async function removeCopyDuringCreation(
         scheduledForExcess(account.value.data),
         'form_edit',
       ),
+    });
+  });
+}
+
+/**
+ * Devuelve un libro de un cliente ya guardado (HU-CLI-10, BR-COPY-09): `customer_returned` (por defecto en
+ * la app) o `wrong_registration` (me equivoqué; no cuenta como devolución). Los abonos cobrados o entregados
+ * y los Abibonos no cambian; lo pagado de más queda como saldo a favor (ADR-0025). Trae la evaluación con
+ * disparador `return` (modal, del más lejano, `book_returned`; R4) y si el cliente quedó como prospecto.
+ * Errores: `OFFLINE`, `COPY_NOT_SOLD`, `COPY_IS_MINIBOOK`, `NOT_FOUND`, `NETWORK_ERROR`.
+ */
+export async function returnCopyFromCustomer(
+  deps: CustomerBooksDeps,
+  copyId: string,
+  reason: 'customer_returned' | 'wrong_registration',
+): Promise<
+  Result<{ account: CustomerAccount; becameProspect: boolean; excess: ExcessEvaluation | null }, AppError>
+> {
+  return runMutation(deps.connectivity, async () => {
+    const returned = await deps.copies.returnFromCustomer(copyId, reason);
+    if (!returned.ok) return returned;
+    const account = await accountOf(deps, returned.value.customerId);
+    if (!account.ok) return account;
+    return ok({
+      account: account.value.account,
+      // Antes tenía al menos este libro: si ya no le queda ninguno, acaba de volverse prospecto (AF-01, AF-09).
+      becameProspect: account.value.account.isProspect,
+      excess: evaluateScheduleExcess(account.value.account, scheduledForExcess(account.value.data), 'return'),
     });
   });
 }
