@@ -3,6 +3,7 @@
 import { useCallback, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { DepositDraftInput } from '@/domain/deposit-draft';
+import type { DepositsListParams } from '@/domain/deposits-list';
 import type { PaymentsListParams } from '@/domain/payments-list';
 import { todayBogota } from '@/domain/time';
 import { systemClock } from '@/lib/clock';
@@ -23,6 +24,7 @@ import {
   unscheduledCustomersFrom,
   type MoneySummaryData,
 } from './use-cases/money-summary';
+import { depositsListFrom } from './use-cases/deposits-list';
 import { paymentsListFrom } from './use-cases/payments-list';
 
 /** Todas las lecturas de Dinero cuelgan de `['money']`: las acciones de abonos y libros ya la invalidan. */
@@ -68,6 +70,14 @@ export function useUnscheduledCustomers() {
  */
 export function usePaymentsList(params: PaymentsListParams) {
   return useMoneyData((data) => paymentsListFrom(data, params, todayBogota(systemClock)));
+}
+
+/**
+ * Lista de Abibonos (HU-DIN-06): `{ count, totalDeliveredToLeader, rows }`; búsqueda por nombre y orden por
+ * `'date' | 'total' | 'name'` (por defecto `DEFAULT_DEPOSITS_LIST_PARAMS`: fecha, más reciente primero).
+ */
+export function useDepositsList(params: DepositsListParams) {
+  return useMoneyData((data) => depositsListFrom(data, params));
 }
 
 /**

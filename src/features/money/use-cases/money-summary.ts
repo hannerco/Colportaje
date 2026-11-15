@@ -6,7 +6,7 @@ import {
   type MoneySummary,
   type UnscheduledCustomer,
 } from '@/domain/money-summary';
-import type { MoneyDeposit } from '@/domain/deposit-draft';
+import type { MoneyDeposit } from '@/domain/deposits-list';
 import type { ListPayment } from '@/domain/payments-list';
 import type { AppError } from '@/domain/shared/errors';
 import { ok, type Result } from '@/domain/shared/result';
@@ -32,7 +32,7 @@ export async function loadMoneySummaryData(deps: {
 }): Promise<Result<MoneySummaryData, AppError>> {
   const [payments, deposits, customers] = await Promise.all([
     deps.money.listPayments(),
-    deps.money.listSummaryDeposits(),
+    deps.money.listDeposits(),
     loadCustomerListData(deps),
   ]);
   if (!payments.ok) return payments;

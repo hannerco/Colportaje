@@ -5,6 +5,7 @@ export {
   useDeleteDepositDraft,
   useDeleteDepositReceipt,
   useDeposit,
+  useDepositsList,
   useMoneySummary,
   useNewDepositProposal,
   usePaymentsList,
@@ -12,6 +13,16 @@ export {
   useUnscheduledCustomers,
 } from './hooks';
 export { paymentsListFrom } from './use-cases/payments-list';
+export { depositsListFrom } from './use-cases/deposits-list';
+export {
+  buildDepositsListView,
+  DEFAULT_DEPOSITS_LIST_PARAMS,
+  type DepositsListParams,
+  type DepositsListRow,
+  type DepositsListView,
+  type DepositsSortKey,
+  type MoneyDeposit,
+} from '@/domain/deposits-list';
 export {
   addDepositReceipt,
   deleteDepositDraft,
