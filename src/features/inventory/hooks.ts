@@ -19,6 +19,7 @@ import { loadCopiesListData } from './use-cases/copies-list';
 import { loadCopyDetail, updateReceivedDate } from './use-cases/copy-detail';
 import { restorePublicPrice, updateAgreedPrice } from './use-cases/agreed-price';
 import { flagCopy, resolveCopyIssue, undoResolveCopyIssue } from './use-cases/copy-issue';
+import { deleteCopy, undoDeleteCopy } from './use-cases/copy-delete';
 import type { IssueResolution } from '@/domain/copy-issue';
 import { loadFlaggedCopies, loadInStockCopiesOfTitle, loadInStockSummary } from './use-cases/stock';
 
@@ -208,5 +209,32 @@ export function useCopyIssueActions() {
     resolveCopyIssue: resolve.mutateAsync,
     undoResolveCopyIssue: undo.mutateAsync,
     isPending: flag.isPending || resolve.isPending || undo.isPending,
+  };
+}
+
+/**
+ * Eliminar un ejemplar desde su detalle (HU-INV-08): `deleteCopy({ copyId, note? })` y `undoDeleteCopy(copyId)`
+ * (desde el aviso de `undo.toastSeconds`). Devuelven `Result`; al terminar bien refrescan Inventario.
+ */
+export function useDeleteCopy() {
+  const { copies, connectivity } = useRepositories();
+  const queryClient = useQueryClient();
+  const deps = { copies, connectivity };
+  const onSuccess = (result: { ok: boolean }) => {
+    if (result.ok) void queryClient.invalidateQueries({ queryKey: inventoryQueryKeys.all });
+  };
+  const remove = useMutation({
+    mutationFn: (input: { copyId: string; note?: string | null }) =>
+      deleteCopy(deps, input.copyId, input.note),
+    onSuccess,
+  });
+  const undo = useMutation({
+    mutationFn: (copyId: string) => undoDeleteCopy(deps, copyId),
+    onSuccess,
+  });
+  return {
+    deleteCopy: remove.mutateAsync,
+    undoDeleteCopy: undo.mutateAsync,
+    isPending: remove.isPending || undo.isPending,
   };
 }

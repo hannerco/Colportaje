@@ -8,6 +8,7 @@ import {
   type CopyEvent,
   type CopyEventType,
 } from './copy';
+import { isDeletable } from './copy-delete';
 import { STATE_EVENT_TYPES, undoableResolution } from './copy-issue';
 import type { CustomerRef } from './copies-list';
 import type { COP } from './money';
@@ -44,7 +45,7 @@ export const copyCapabilities = (copy: CapabilityInput, category: TitleCategory)
     restorePublicPrice: soldBook && priceDelta({ ...copy, category }) !== null,
     editReceivedAt: state !== 'deleted',
     flag: canTransition(state, 'flag'),
-    delete: canTransition(state, 'delete') || canTransition(state, 'resolve_removed'),
+    delete: isDeletable(state), // HU-INV-08
     returnFromCustomer: soldBook && canTransition(state, 'return'),
   };
 };

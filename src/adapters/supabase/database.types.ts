@@ -791,6 +791,7 @@ export type Database = {
           photos: number;
         }[];
       };
+      delete_copy: { Args: { p_copy_id: string; p_note?: string }; Returns: undefined };
       delete_invoice_photo: { Args: { p_photo_id: string }; Returns: boolean };
       delete_payment: {
         Args: { p_payment_id: string };
@@ -851,6 +852,7 @@ export type Database = {
         Returns: undefined;
       };
       today_bogota: { Args: Record<PropertyKey, never>; Returns: string };
+      undo_delete_copy: { Args: { p_copy_id: string }; Returns: undefined };
       undo_resolve_copy_issue: { Args: { p_copy_id: string }; Returns: undefined };
       update_agreed_price: {
         Args: { p_copy_id: string; p_price?: number };

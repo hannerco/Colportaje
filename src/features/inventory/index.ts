@@ -8,6 +8,7 @@ export {
   useCopiesList,
   useCopyDetail,
   useCopyIssueActions,
+  useDeleteCopy,
   useCopyHistory,
   useFlaggedCopies,
   useInStockCopiesOfTitle,
@@ -23,6 +24,8 @@ export {
   type AgreedPriceResult,
 } from './use-cases/agreed-price';
 export { evaluatePriceChange, validateAgreedPrice } from '@/domain/agreed-price';
+export { deleteCopy, undoDeleteCopy, type CopyDeleteDeps } from './use-cases/copy-delete';
+export { COPY_DELETE_ERROR_CODES, deleteNote, isDeletable } from '@/domain/copy-delete';
 export { flagCopy, resolveCopyIssue, undoResolveCopyIssue, type CopyIssueDeps } from './use-cases/copy-issue';
 export {
   COPY_ISSUE_ERROR_CODES,
