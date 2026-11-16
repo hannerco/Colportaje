@@ -1,6 +1,7 @@
 # HU-ABO-01 · Abono: modelo, estados y vencido
 
 > **Épica:** Abonos · **Depende de:** HU-CLI-01 · **Reglas:** BR-PAY-01/02/03/04/08/12, BR-AUD-01, ADR-0009, ADR-0040, ADR-0046 · **Diseño:** estados "Por cobrar", "Cobrado", "Entregado", "Cancelado" y la marca "Vencido · hace N días"
+> **Ajustada por:** HU-ABO-08 (R5: ya no se rechaza la fecha anterior a hoy) · ADR-0049. Esta HU ya está terminada y no se edita; el cambio va en la HU nueva.
 
 ## Historia
 **Como** colportor **quiero** que cada pago de un cliente quede registrado con su tipo, su estado y sus fechas **para** saber qué me deben, qué cobré y qué ya entregué al líder.

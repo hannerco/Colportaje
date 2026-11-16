@@ -82,6 +82,9 @@ Implementar en este orden. Una HU solo empieza cuando sus dependencias están te
 | 10 | [HU-DIN-06](04-dinero/HU-DIN-06-lista-de-abibonos.md) | Lista de Abibonos | DIN-01 |
 | 11 | [HU-DIN-05](04-dinero/HU-DIN-05-confirmar.md) | Confirmar un Abibono | DIN-04 |
 | 12 | [HU-DIN-07](04-dinero/HU-DIN-07-reabrir.md) | Reabrir un Abibono confirmado | DIN-05 |
+| 13 | [HU-CLI-13](02-clientes/HU-CLI-13-fecha-de-venta.md) | Fecha de venta del libro editable (ADR-0049) | CLI-09, INV-05 |
+| 13 | [HU-ABO-08](03-abonos/HU-ABO-08-abonos-con-fecha-pasada.md) | Abonos programados con fecha pasada (ADR-0049) | ABO-03, ABO-04, ABO-05 |
+| 13 | [HU-ABO-09](03-abonos/HU-ABO-09-fecha-de-la-cuota-inicial.md) | Fecha de la cuota inicial en la ficha nueva (ADR-0049) | ABO-02 |
 
 ## Avance
 | HU | Estado | Dónde |
@@ -127,6 +130,9 @@ Implementar en este orden. Una HU solo empieza cuando sus dependencias están te
 | HU-DIN-06 | Terminada (2026-11-15) | `will-dev` |
 | HU-DIN-05 | Terminada (2026-11-15) | `will-dev` |
 | HU-DIN-07 | Terminada (2026-11-15) | `will-dev` |
+| HU-CLI-13 | Pendiente (ADR-0049, ronda 30) | — |
+| HU-ABO-08 | Pendiente (ADR-0049, ronda 30) | — |
+| HU-ABO-09 | Pendiente (ADR-0049, ronda 30) | — |
 
 **Flujo de trabajo del back (desde 2026-11-13):** las HU se programan en la rama `will-dev`, con un commit por HU y la CI corriendo en cada push. No se abre un PR a `main` por cada HU; `main` se actualiza con un PR desde `will-dev` cuando se acuerde con el dueño. Antes de cada commit: `pnpm lint && pnpm typecheck && pnpm test && pnpm test:rls && pnpm build`.
 

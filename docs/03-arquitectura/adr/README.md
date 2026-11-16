@@ -55,6 +55,7 @@ Un ADR por decisión relevante. Formato: contexto → decisión → alternativas
 | 0046 | Dinero según la exploración elegida: tarjeta única, Dinero total y cancelados aparte | Aceptado |
 | 0047 | Fechas del plan sin separación mínima y sin arrastre | Aceptado |
 | 0048 | Librerías de cálculo puro en el dominio | Aceptado |
+| 0049 | Registrar el pasado (empezar a usar la app a mitad de campaña) | Aceptado |
 
 ## Plantilla
 ```markdown

@@ -1,6 +1,7 @@
 # HU-ABO-04 · Programar, editar, corregir, borrar y cancelar abonos programados
 
 > **Épica:** Abonos · **Depende de:** HU-ABO-07, HU-CLI-02 · **Reglas:** BR-PAY-06/11/13/14/15/16, ADR-0045, AF-107 · **Diseño:** "Cambiar fecha de abono · calendario abierto / fecha cambiada" (con "Correr también los siguientes"); "Programar abono" de la ficha sin formulario (FC-10, FC-11)
+> **Ajustada por:** HU-ABO-08 (las fechas pueden ser anteriores a hoy, con aviso) · ADR-0049. Esta HU ya está terminada y no se edita; el cambio va en la HU nueva.
 
 ## Historia
 **Como** colportor **quiero** programar un abono suelto y ajustar los programados (valor, fecha mal escrita, borrar o cancelar) **para** que el plan refleje lo que acordé con el cliente.

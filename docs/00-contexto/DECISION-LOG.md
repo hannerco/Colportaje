@@ -512,6 +512,21 @@ El dueño revisó las 27 interpretaciones de `07-historias-usuario/INTERPRETACIO
 
 ---
 
+## Ronda 30 — Registrar el pasado: la app entra a mitad de campaña (2026-11-16)
+
+| # | Tema | Resultado |
+|---|---|---|
+| 1 | Fecha de venta del libro | **"Claro, debo poder decir y cambiar la fecha en la que vendí el libro, eso debería estar."** [D] `sold_at` editable (no futura, no anterior al recibido, con historial). HU-CLI-13. |
+| 2 | Abonos programados con fecha pasada | **"Sí debo poder ponerlos anteriores a hoy, simplemente que me aparezca un aviso de que la fecha es anterior, pero debo poder ponerla."** [D] Reemplaza «ninguna fecha anterior a hoy» (ADR-0045). Un abono con fecha pasada nace **vencido**. HU-ABO-08. |
+| 3 | Plan automático | **"Está bien que el cliente tenga que editarlo, porque es una ayuda, mas no una camisa de fuerza."** [D] El plan sigue sugiriendo desde el siguiente día de pago; no hay plan «hacia atrás». |
+| 4 | Cuota inicial de la ficha nueva | **"Exacto."** [D] Campo de fecha (Hoy por defecto, no futura). HU-ABO-09. |
+| 5 | Abibono sin foto de recibo | **"Ese caso no va a suceder, así que no te preocupes."** [D] Sin cambios: la foto sigue siendo obligatoria. |
+| 6 | Cuota vencida al cargar | Ante el ejemplo de una cuota del 15 de noviembre sin pagar, **"quiero que aparezca vencida desde el 15."** [D] |
+
+*Consecuencias:* ADR-0049; BR-GEN-16, BR-COPY-06, BR-PAY-06/15/16; HU nuevas CLI-13, ABO-08 y ABO-09 (las HU terminadas no se editan: llevan una nota «Ajustada por»); I-09 sin efecto; I-32 e I-33.
+
+---
+
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.
 2. **Repositorio de GitHub: `Colportaje`** (2026-11-04). Se pensó en `colportor`, pero el dueño ya había creado `hannerco/Colportaje` y pidió dejar todo con ese nombre.
