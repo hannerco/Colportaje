@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { DEPOSIT_BLOCKERS } from '@/domain/deposit';
+import { DEPOSIT_REOPEN_ERROR_CODES } from '@/domain/deposit-reopen';
 import { DEPOSIT_DRAFT_ERROR_CODES, toDepositPayment, type ValidDepositDraft } from '@/domain/deposit-draft';
 import { COMMON_ERROR_CODES } from '@/domain/shared/errors';
 import { err, ok } from '@/domain/shared/result';
@@ -55,6 +56,14 @@ const depositDetailSchema = z.object({
       deleted_at: z.string().nullable(),
     }),
   ),
+  leader_deposit_event: z.array(
+    z.object({
+      seq: z.number().int(),
+      type: z.enum(['confirmed', 'reopened']),
+      reason: z.string().nullable(),
+      at: instant,
+    }),
+  ),
 });
 
 const DRAFT_ERRORS = [
@@ -74,6 +83,11 @@ const draftDetails = (code: string, detail: string | null) => {
 };
 
 const CONFIRM_ERRORS = [...DRAFT_ERRORS, ...Object.values(DEPOSIT_BLOCKERS)];
+const REOPEN_ERRORS = [
+  ...Object.values(DEPOSIT_REOPEN_ERROR_CODES),
+  COMMON_ERROR_CODES.NOT_FOUND,
+  COMMON_ERROR_CODES.FORBIDDEN,
+];
 const NOTE_ERRORS = [
   DEPOSIT_BLOCKERS.NOTE_REQUIRED,
   COMMON_ERROR_CODES.NOT_FOUND,
@@ -163,7 +177,8 @@ export function createSupabaseMoneyRepository(getClient: GetSupabaseClient): Mon
           .select(
             `id, title, deposit_number, deposit_date, cash_amount, transfer_amount, note, status, confirmed_at,
              payment(id, paid_at, paid_amount, method, deleted_at, customer(name)),
-             photo(id, path, thumb_path, created_at, deleted_at)`,
+             photo(id, path, thumb_path, created_at, deleted_at),
+             leader_deposit_event(seq, type, reason, at)`,
           )
           .eq('id', depositId)
           .is('deleted_at', null)
@@ -209,6 +224,9 @@ export function createSupabaseMoneyRepository(getClient: GetSupabaseClient): Mon
             thumbPath: p.thumb_path ?? p.path,
             createdAt: p.created_at,
           })),
+        history: row.leader_deposit_event
+          .sort((a, b) => a.seq - b.seq)
+          .map((e) => ({ type: e.type, reason: e.reason, at: e.at })),
         lastNumber: z
           .number()
           .int()
@@ -231,6 +249,15 @@ export function createSupabaseMoneyRepository(getClient: GetSupabaseClient): Mon
       });
       if (error) return err(mapRpcError(error, CONFIRM_ERRORS, confirmDetails));
       return ok({ depositId: z.uuid().parse(data) });
+    },
+
+    async reopenDeposit(depositId, reason) {
+      const { error } = await getClient().rpc('reopen_leader_deposit', {
+        p_deposit_id: depositId,
+        p_reason: reason,
+      });
+      if (error) return err(mapRpcError(error, REOPEN_ERRORS));
+      return ok(undefined);
     },
 
     async updateDepositNote(depositId, note) {

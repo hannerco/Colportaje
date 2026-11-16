@@ -9,6 +9,7 @@ export {
   useDepositsList,
   useMoneySummary,
   useNewDepositProposal,
+  useReopenDeposit,
   usePaymentsList,
   useSaveDepositDraft,
   useUnscheduledCustomers,
@@ -16,7 +17,8 @@ export {
 } from './hooks';
 export { paymentsListFrom } from './use-cases/payments-list';
 export { depositsListFrom } from './use-cases/deposits-list';
-export { confirmDeposit, updateDepositNote } from './use-cases/confirm-deposit';
+export { confirmDeposit, reopenDeposit, updateDepositNote } from './use-cases/confirm-deposit';
+export { DEPOSIT_REOPEN_ERROR_CODES, validateReopenReason, type DepositEvent } from '@/domain/deposit-reopen';
 export {
   buildDepositsListView,
   DEFAULT_DEPOSITS_LIST_PARAMS,

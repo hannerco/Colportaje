@@ -43,7 +43,7 @@ export async function loadDeposit(
   const record = await deps.money.getDeposit(depositId);
   if (!record.ok) return record;
   if (!record.value) return err(appError(COMMON_ERROR_CODES.NOT_FOUND));
-  const { deposit, payments, receipts, lastNumber } = record.value;
+  const { deposit, payments, receipts, lastNumber, history } = record.value;
   const urls = await Promise.all(receipts.map((r) => deps.storage.signedUrl(r.thumbPath, signedUrlSeconds)));
   const thumbs: { photoId: string; thumbUrl: string }[] = [];
   for (const [i, url] of urls.entries()) {
@@ -51,7 +51,13 @@ export async function loadDeposit(
     thumbs.push({ photoId: receipts[i]!.id, thumbUrl: url.value });
   }
   return ok(
-    buildDepositView({ deposit, payments, receipts: thumbs, nextNumber: nextDepositNumber([lastNumber]) }),
+    buildDepositView({
+      deposit,
+      payments,
+      receipts: thumbs,
+      nextNumber: nextDepositNumber([lastNumber]),
+      history,
+    }),
   );
 }
 
