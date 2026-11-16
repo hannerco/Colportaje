@@ -100,6 +100,7 @@ Workflow `.github/workflows/backup.yml` (cada 2 días al inicio, luego semanal, 
 1. `supabase db dump` (esquema + datos) → archivo comprimido y **cifrado** (clave en secrets).
 2. Copia del bucket `user-photos` → almacenamiento privado (repositorio privado de backups, o bucket de otro proveedor).
 3. Retención: 8 semanas (o 30 copias).
+**Destino (OQ-42, decidido 2026-11-16):** repositorio privado de GitHub solo para backups cifrados. **Umbral de migración: al llegar a 3 GB en total, pasar a Cloudflare R2.** El workflow avisa desde 2,5 GB para dar tiempo a crear la cuenta de R2 (la crea el dueño). Mientras tanto, la retención se mantiene para que el repositorio no crezca sin control.
 **Restauración (probar al menos una vez antes de abrir a los colportores):** crear proyecto vacío → `supabase db push` (esquema) → restaurar datos con `psql`/`pg_restore` → restaurar fotos → verificar conteos. Documentar el resultado de la prueba aquí.
 
 ## 9. Monitoreo y operación

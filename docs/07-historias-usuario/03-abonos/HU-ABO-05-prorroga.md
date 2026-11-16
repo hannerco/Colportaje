@@ -1,6 +1,7 @@
 # HU-ABO-05 · Prórroga
 
 > **Épica:** Abonos · **Depende de:** HU-ABO-01 · **Reglas:** BR-PAY-06, BR-PAY-15, ADR-0033, ADR-0045, OQ-31, AF-24 · **Diseño:** sin pantalla (`FALTA-CLIENTES.md` FC-12)
+> **Ajustada por:** HU-ABO-08 (la nueva fecha ya no necesita ser ≥ hoy; sigue siendo posterior a la actual) · ADR-0049. Esta HU ya está terminada y no se edita; el cambio va en la HU nueva.
 
 ## Historia
 **Como** colportor **quiero** darle más plazo a un cliente que me lo pide, conservando la fecha que acordamos al principio **para** saber cuántas veces ha aplazado y desde cuándo.

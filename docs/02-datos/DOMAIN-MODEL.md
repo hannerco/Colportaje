@@ -84,7 +84,7 @@ Lectura: todo autenticado. Escritura: admin.
 | `public_price_snapshot` | `integer null` | copia del título al recibirse (nulo en minibooks sin precio) |
 | `colportor_price_snapshot` | `integer` | copia del título al recibirse |
 | `received_at` | `date` | por defecto hoy; editable (BR-COPY-04); `≤ hoy` y `≤ sold_at` |
-| `sold_at` | `timestamptz null` | |
+| `sold_at` | `timestamptz null` | fecha de venta elegida por el colportor; no futura ni anterior a `received_at`; editable con historial (ADR-0049) |
 
 Checks: `status <> 'sold' ⇒ customer_id, agreed_price, sold_at, minibook_sale_id nulos`. `customer_id not null ⇒ status = 'sold'`.
 Índices: `(owner_id,status)`, `(owner_id,title_id,status)`, `(customer_id)`.
@@ -267,7 +267,7 @@ minibooks.net      = income − cost
 **Payment**
 - `scheduled → collected` (cobrar) · `scheduled → canceled` (alerta BR-PAY-13, archivar cliente o manual)
 - `collected → delivered` (solo al confirmar su Abibono) · `delivered → collected` (solo al reabrir el Abibono, con motivo)
-- `scheduled` mantiene `due_date` editable: **corrección** durante la creación del cliente (cambia también `original_due_date`, sin historial) o **prórroga** después (BR-PAY-06). Ninguna fecha anterior a hoy.
+- `scheduled` mantiene `due_date` editable: **corrección** durante la creación del cliente (cambia también `original_due_date`, sin historial) o **prórroga** después (BR-PAY-06). Las fechas pueden ser anteriores a hoy (nace vencido, con aviso; ADR-0049).
 - `canceled` y `delivered` (mientras esté confirmado) no se editan.
 
 **LeaderDeposit:** `draft → confirmed` (con recibo, total > 0, nota si hay diferencia) · `confirmed → draft` (**Reabrir**, con motivo; queda en historial).
