@@ -138,7 +138,7 @@ Cada vez que se termina una de estas HU, quien la hizo **avisa al dueño** con e
 | **HU-BASE-01** (CI corrió al menos una vez en GitHub) | "BASE-01 lista, la CI ya corrió" | En GitHub: *Settings → Rules → proteger-main → Require status checks* y agrega `ci`. Prueba con un PR que la CI en rojo no se pueda fusionar |
 | **HU-BASE-03** (sesión con usuarios locales) | "BASE-03 lista" | Completa su `.env.local` con los valores de **staging** (guía 2.7) y crea su usuario admin: `pnpm user:create --email <correo> --name "<nombre>" --admin` (sin `--password` genera una clave y la muestra una vez; ver README del repositorio) |
 | **HU-BASE-04** (catálogo y script de carga) | "BASE-04 lista" | Entrega la lista real de títulos (nombre, autor, categoría, precios) en el formato de `scripts/data/catalog.example.json`, como `scripts/data/catalog.json`; se carga con `pnpm catalog:load scripts/data/catalog.json`, primero a staging y después a producción |
-| **Antes de empezar HU-BASE-07** | "Voy a empezar BASE-07" | Decide el destino de los backups (OQ-42) |
+| **Antes de empezar HU-BASE-07** | "Voy a empezar BASE-07" | Crea el repositorio privado de backups (OQ-42 ya decidido: GitHub; migrar a Cloudflare R2 al llegar a 3 GB) |
 | **HU-BASE-07**, workflows escritos | "BASE-07 lista, faltan los secrets" | Carga los secrets en GitHub y Vercel; importa el proyecto en Vercel (guía 3.3); pone la URL en Supabase (3.5); verifica la restauración del backup |
 | **HU-BASE-06** (PWA y sin conexión) y primer despliegue | "BASE-06 lista y desplegada" | Instala la app en su celular y prueba con y sin internet |
 
