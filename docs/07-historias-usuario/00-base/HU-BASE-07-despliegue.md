@@ -41,7 +41,7 @@
 
 ## Casos borde y errores
 - Si staging y producción quedaran con migraciones distintas por una falla a medias, el workflow DEBE informar cuál es cuál y no seguir; la corrección es una **nueva** migración, nunca editar la aplicada.
-- El destino del backup está **por decidir** (OQ-42): hasta que el dueño lo elija, `backup.yml` queda preparado pero **desactivado**; la IA se detiene y pregunta.
+- El destino del backup **está decidido** (OQ-42, 2026-11-16): repositorio privado de GitHub solo para backups cifrados; el dueño crea ese repositorio y entrega el token (como secret, nunca en el chat). El destino queda aislado en un solo paso del workflow, porque **al llegar a 3 GB en total se migra a Cloudflare R2**; el workflow avisa desde 2,5 GB.
 
 ## Datos
 Sin tablas nuevas. No toca el esquema de negocio.
@@ -53,4 +53,4 @@ Sin tablas nuevas. No toca el esquema de negocio.
 ## Terminado cuando
 Se cumple §10 de las reglas comunes (en lo que aplique a workflows) y los CA-1 a CA-9 están verificados y anotados en `05-operacion/DEPLOYMENT.md` (estado de las conexiones, §2).
 
-**Al terminar, avisa al dueño, en este orden:** (1) antes de empezar, que el dueño decida el destino del backup (OQ-42); (2) cuando los workflows estén listos, que él cargue los valores de los secrets en GitHub y en Vercel (nombres en el Contrato); (3) que él importe el proyecto en Vercel (guía, paso 3.3) y configure la URL en Supabase (paso 3.5); (4) que él marque el *check* `ci` como obligatorio si aún no lo hizo (CA-8); (5) que él verifique la prueba de restauración (CA-6).
+**Al terminar, avisa al dueño, en este orden:** (1) antes de empezar, que el dueño cree el repositorio privado de backups (OQ-42 ya decidido: GitHub; migrar a R2 al llegar a 3 GB); (2) cuando los workflows estén listos, que él cargue los valores de los secrets en GitHub y en Vercel (nombres en el Contrato); (3) que él importe el proyecto en Vercel (guía, paso 3.3) y configure la URL en Supabase (paso 3.5); (4) que él marque el *check* `ci` como obligatorio si aún no lo hizo (CA-8); (5) que él verifique la prueba de restauración (CA-6).
