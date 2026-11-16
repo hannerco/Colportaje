@@ -1,5 +1,6 @@
-// Confirmar un Abibono y editar su nota (HU-DIN-05, BR-DEP-05/06/07/09/12, BR-PAY-10).
+// Confirmar, editar la nota y reabrir un Abibono (HU-DIN-05 y 07, BR-DEP-05/06/07/09/12, BR-PAY-10).
 import { validateDepositDraft, type DepositDraftInput } from '@/domain/deposit-draft';
+import { validateReopenReason } from '@/domain/deposit-reopen';
 import type { AppError } from '@/domain/shared/errors';
 import type { Result } from '@/domain/shared/result';
 import type { Connectivity, MoneyRepository } from '@/repositories';
@@ -37,4 +38,21 @@ export async function updateDepositNote(
   return runMutation(deps.connectivity, () =>
     deps.money.updateDepositNote(depositId, trimmed === '' ? null : trimmed),
   );
+}
+
+/**
+ * Reabre un Abibono confirmado con un motivo (HU-DIN-07): vuelve a borrador (conserva su número) y sus abonos a
+ * cobrados; después se corrige con `saveDepositDraft` y se confirma otra vez con `confirmDeposit`.
+ * Errores: `OFFLINE`, `REASON_REQUIRED`, `DEPOSIT_NOT_CONFIRMED`, `NOT_FOUND`, `NETWORK_ERROR`.
+ */
+export async function reopenDeposit(
+  deps: Deps,
+  depositId: string,
+  reason: string,
+): Promise<Result<void, AppError>> {
+  return runMutation(deps.connectivity, async () => {
+    const valid = validateReopenReason(reason);
+    if (!valid.ok) return valid;
+    return deps.money.reopenDeposit(depositId, valid.value);
+  });
 }

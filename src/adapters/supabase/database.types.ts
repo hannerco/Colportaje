@@ -823,6 +823,7 @@ export type Database = {
         };
         Returns: undefined;
       };
+      reopen_leader_deposit: { Args: { p_deposit_id: string; p_reason: string }; Returns: undefined };
       require_active_user: { Args: Record<PropertyKey, never>; Returns: string };
       reschedule_payment: {
         Args: { p_confirmed?: boolean; p_new_due_date: string; p_note?: string; p_payment_id: string };

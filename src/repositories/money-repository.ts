@@ -1,5 +1,6 @@
 import type { LeaderDeposit } from '@/domain/deposit';
 import type { DepositPayment, ValidDepositDraft } from '@/domain/deposit-draft';
+import type { DepositEvent } from '@/domain/deposit-reopen';
 import type { MoneyDeposit } from '@/domain/deposits-list';
 import type { ListPayment } from '@/domain/payments-list';
 import type { AppError } from '@/domain/shared/errors';
@@ -15,6 +16,8 @@ export type DepositRecord = {
   readonly receipts: readonly StoredPhoto[];
   /** Mayor número asignado del colportor (`null` si ninguno): da el nombre sugerido de un borrador. */
   readonly lastNumber: number | null;
+  /** Confirmaciones y reaperturas, de la más antigua a la más reciente (HU-DIN-07). */
+  readonly history: readonly DepositEvent[];
 };
 
 /** Dinero (HU-DIN-*). Cada HU de Dinero agrega aquí sus lecturas y acciones. */
@@ -61,4 +64,11 @@ export interface MoneyRepository {
    * diferencia), `NOT_FOUND`, `NETWORK_ERROR`.
    */
   updateDepositNote(depositId: string, note: string | null): Promise<Result<void, AppError>>;
+
+  /**
+   * Reabre un confirmado (HU-DIN-07): vuelve a borrador conservando su número, y sus abonos a cobrados (siguen
+   * vinculados), con el motivo en el historial. Errores: `REASON_REQUIRED`, `DEPOSIT_NOT_CONFIRMED`, `NOT_FOUND`,
+   * `NETWORK_ERROR`.
+   */
+  reopenDeposit(depositId: string, reason: string): Promise<Result<void, AppError>>;
 }

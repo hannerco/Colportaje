@@ -24,7 +24,7 @@ import {
   unscheduledCustomersFrom,
   type MoneySummaryData,
 } from './use-cases/money-summary';
-import { confirmDeposit, updateDepositNote } from './use-cases/confirm-deposit';
+import { confirmDeposit, reopenDeposit, updateDepositNote } from './use-cases/confirm-deposit';
 import { depositsListFrom } from './use-cases/deposits-list';
 import { paymentsListFrom } from './use-cases/payments-list';
 
@@ -192,4 +192,19 @@ export function useUpdateDepositNote() {
     },
   });
   return { updateDepositNote: mutation.mutateAsync, isPending: mutation.isPending };
+}
+
+/** Reabre un Abibono confirmado con un motivo (HU-DIN-07). Devuelve `Result<void>`. */
+export function useReopenDeposit() {
+  const { money, connectivity } = useRepositories();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (input: { depositId: string; reason: string }) =>
+      reopenDeposit({ money, connectivity }, input.depositId, input.reason),
+    onSuccess: (result) => {
+      if (!result.ok) return;
+      for (const queryKey of DEPOSIT_AFFECTED_ROOTS) void queryClient.invalidateQueries({ queryKey });
+    },
+  });
+  return { reopenDeposit: mutation.mutateAsync, isPending: mutation.isPending };
 }

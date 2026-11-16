@@ -12,6 +12,7 @@ import {
   type LeaderDeposit,
 } from './deposit';
 import { isValidCOP, type COP } from './money';
+import type { DepositEvent } from './deposit-reopen';
 import type { MoneyDeposit } from './deposits-list';
 import type { PayMethod } from './payment';
 import type { ListPayment } from './payments-list';
@@ -178,6 +179,8 @@ export type DepositView = {
   /** Por qué aún no se puede confirmar (HU-DIN-01). */
   readonly blockers: readonly DepositBlocker[];
   readonly can: { edit: boolean; confirm: boolean; reopen: boolean; delete: boolean };
+  /** Confirmaciones y reaperturas (con su motivo), de la más antigua a la más reciente (HU-DIN-07). */
+  readonly history: readonly DepositEvent[];
 };
 
 /**
@@ -189,6 +192,7 @@ export const buildDepositView = (input: {
   payments: readonly DepositPayment[];
   receipts: readonly { photoId: string; thumbUrl: string }[];
   nextNumber: number;
+  history?: readonly DepositEvent[];
 }): DepositView => {
   const { deposit } = input;
   const contributions = depositContributions(
@@ -217,5 +221,6 @@ export const buildDepositView = (input: {
       reopen: !draft,
       delete: draft && deposit.depositNumber === null,
     },
+    history: input.history ?? [],
   };
 };

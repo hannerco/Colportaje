@@ -59,6 +59,7 @@ const record: DepositRecord = {
     },
   ],
   lastNumber: 2,
+  history: [{ type: 'confirmed', reason: null, at: new Date('2026-11-05T15:00:00Z') }],
 };
 
 const draftInput = {
@@ -117,6 +118,7 @@ describe('loadDeposit (HU-DIN-04)', () => {
       cash: 231_000,
       calculated: { cash: 236_000, transfer: 0 },
       receipts: [{ photoId: 'f1', thumbUrl: 'https://x/u-1/deposit_receipt/f1.thumb.webp' }],
+      history: [{ type: 'confirmed', reason: null }],
     });
   });
 

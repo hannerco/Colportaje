@@ -3,7 +3,7 @@ import { appError } from '@/domain/shared/errors';
 import { err, ok } from '@/domain/shared/result';
 import { fakeConnectivity } from '../../../tests/support/fake-connectivity';
 import { fakeMoneyRepository } from '../../../tests/support/fake-repositories';
-import { confirmDeposit, updateDepositNote } from './use-cases/confirm-deposit';
+import { confirmDeposit, reopenDeposit, updateDepositNote } from './use-cases/confirm-deposit';
 
 const input = {
   depositId: 'd1',
@@ -58,6 +58,24 @@ describe('updateDepositNote (HU-DIN-05)', () => {
     vi.mocked(money.updateDepositNote).mockResolvedValueOnce(err(appError('NOTE_REQUIRED')));
     expect(await updateDepositNote(deps, 'd1', '')).toEqual(err(appError('NOTE_REQUIRED')));
     expect(await updateDepositNote({ money, connectivity: fakeConnectivity(false) }, 'd1', 'x')).toEqual(
+      err(appError('OFFLINE')),
+    );
+  });
+});
+
+describe('reopenDeposit (HU-DIN-07)', () => {
+  it('valida el motivo antes de ir a la base; los errores de la base pasan tal cual', async () => {
+    const money = fakeMoneyRepository({ reopenDeposit: vi.fn(async () => ok(undefined)) });
+    const deps = { money, connectivity: fakeConnectivity(true) };
+    expect(await reopenDeposit(deps, 'd1', '  Incluí un abono de otro cliente ')).toEqual(ok(undefined));
+    expect(money.reopenDeposit).toHaveBeenCalledWith('d1', 'Incluí un abono de otro cliente');
+
+    expect(await reopenDeposit(deps, 'd1', '   ')).toEqual(err(appError('REASON_REQUIRED')));
+    expect(money.reopenDeposit).toHaveBeenCalledTimes(1);
+
+    vi.mocked(money.reopenDeposit).mockResolvedValueOnce(err(appError('DEPOSIT_NOT_CONFIRMED')));
+    expect(await reopenDeposit(deps, 'd1', 'otra vez')).toEqual(err(appError('DEPOSIT_NOT_CONFIRMED')));
+    expect(await reopenDeposit({ money, connectivity: fakeConnectivity(false) }, 'd1', 'x')).toEqual(
       err(appError('OFFLINE')),
     );
   });

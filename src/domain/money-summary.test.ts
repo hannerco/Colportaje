@@ -51,7 +51,11 @@ describe('percentagesSummingTo100 (R2)', () => {
         (amounts) => {
           const pcts = percentagesSummingTo100(amounts);
           const total = amounts.reduce((s, a) => s + a, 0);
-          if (total === 0) return expect(pcts.every((p) => p === 0)).toBe(true);
+          // Sin devolver la aserción: fast-check toma su valor de retorno como resultado de la propiedad.
+          if (total === 0) {
+            expect(pcts.every((p) => p === 0)).toBe(true);
+            return;
+          }
           expect(pcts.reduce((s, p) => s + p, 0)).toBe(100);
           pcts.forEach((p, i) => {
             expect(Number.isInteger(p) && p >= 0).toBe(true);
