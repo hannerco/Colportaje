@@ -171,7 +171,7 @@ UI y componentes visibles; textos de pantalla; Hoy; Calendario, visitas, capacit
    3. la sección «Cómo iteramos» de abajo.
    Luego abre el lienzo (`https://claude.ai/artifact/RgxEeQ7BZExzaJVcih3AZV`), página **«Biblioteca de componentes»**: cada HU cita la ficha (`Lib-…`) que debe copiar.
 3. **Programa en el orden de la tabla**, empezando por **HU-UI-01**, con una HU por sesión y un *commit* por HU en `will-dev`. Si usas una IA, pégale el texto de «Cómo pedirle a una IA…».
-4. **Al terminar HU-UI-01**, avisa al dueño para que cree el proyecto del Storybook en Vercel (pasos en la HU). Desde entonces cada *push* publica el Storybook.
+4. **El proyecto del Storybook en Vercel ya existe** (`colportor-storybook`). Se publica solo en cuanto HU-UI-01 agregue el script `build-storybook`; desde entonces, cada *push* a `will-dev` publica el Storybook.
 5. **Al terminar cada bloque** (A, B, C…), mándale al dueño el enlace del Storybook y actualiza la tabla «Avance del front».
 6. **Las correcciones llegan como *issues* «Corrección de diseño».** Ciérralas con el *commit* que las arregla (`fix(ui): … (#N)`). Si una corrección cambia una prop, un estado o una regla, anótala en «Cambios por iteración» de la HU.
 7. **Si el diseño y una HU no coinciden, o falta algo, no inventes:** pregúntale al dueño y anótalo en `06-planificacion/OPEN-QUESTIONS.md`.
@@ -186,7 +186,7 @@ UI y componentes visibles; textos de pantalla; Hoy; Calendario, visitas, capacit
 ### Cómo iteramos (William y el dueño)
 El ciclo más sencillo, sin instalar nada del lado del dueño:
 
-1. **William termina una HU** y hace *push* a `will-dev`. El Storybook se publica solo, en la misma URL de siempre (HU-UI-01).
+1. **William termina una HU** y hace *push* a `will-dev`. El Storybook se publica solo, en la misma URL de siempre: `colportor-storybook-git-will-dev-emprendum.vercel.app` (pide iniciar sesión en Vercel).
 2. **William avisa al terminar cada bloque** (no cada componente): «Átomos listos: <enlace>». Así el dueño revisa de una vez un grupo de piezas parecidas.
 3. **El dueño revisa** cada componente:
    - cambia **Tema** (claro/oscuro), **Plataforma** (móvil/escritorio, o las dos lado a lado) y **Letra** en la barra superior;
@@ -292,7 +292,7 @@ Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesió
 ### Puntos de entrega del front
 | Cuando se termina… | Se avisa al dueño | El dueño hace |
 |---|---|---|
-| **HU-UI-01** | «UI-01 lista, falta el proyecto de Storybook en Vercel» | Crea el proyecto `colportor-storybook` en Vercel (pasos en la HU) y pasa la URL de la rama |
+| **HU-UI-01** | «UI-01 lista: <enlace del Storybook>» | Abre el enlace (inicia sesión en Vercel con la cuenta Emprendum), prueba Tema, Plataforma y Letra, y abre un *issue* de prueba. El proyecto `colportor-storybook` ya está creado (2026-11-17) |
 | **Cada bloque (A a I)** | «Bloque <X> listo: <enlace>» | Revisa en el Storybook y reporta correcciones (ver «Cómo iteramos») |
 | **HU-PAN-CLI-06** | «Falta el proveedor del mapa» | Decide SG-09 y prueba la ubicación en su iPhone |
 | **HU-PAN-BASE-01 y primer despliegue** | «La app ya se puede abrir» | Prueba en su celular (necesita HU-PAN-BASE-02, que espera su diseño) |

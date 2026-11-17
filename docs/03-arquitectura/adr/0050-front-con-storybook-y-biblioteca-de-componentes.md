@@ -40,7 +40,7 @@ El dueño quiere una arquitectura impecable y un **Storybook** donde se vea cada
 - Nuevas dependencias de desarrollo: `storybook`, `@storybook/nextjs-vite`, `@storybook/addon-a11y`, `@storybook/addon-vitest` (o el equivalente vigente al instalar, siempre con versión exacta) y `stylelint`. Dependencias de ejecución: `lucide-react` y los paquetes de Radix que se usen. Antes de instalar, HU-UI-01 comprueba que las versiones sean compatibles con Next 16.4, React 19.3 y Vitest 5.
 - `src/ui/` se organiza en `tokens/`, `icons/`, `atoms/`, `molecules/`, `organisms/`, `templates/` y `platform/`. Una regla de ESLint impide que un nivel importe uno superior.
 - Pruebas de arquitectura nuevas: todo componente de `src/ui/` y toda pantalla de presentación tiene su story, y no hay colores ni tamaños literales fuera de `tokens.css`.
-- El Storybook se publica en Vercel desde la rama de trabajo, en un proyecto aparte que crea el dueño. Las correcciones se hacen por *issues* de GitHub con una plantilla.
+- El Storybook se publica en Vercel desde la rama de trabajo, en el proyecto aparte `colportor-storybook` (creado el 2026-11-17 en la cuenta Emprendum). Las correcciones se hacen por *issues* de GitHub con una plantilla.
 - La fila «Estilos / UI» de `ARCHITECTURE.md`, la regla de `CONVENTIONS.md` §4 sobre `ViewBar` y OQ-22 se actualizan en el mismo cambio.
 
 ## Referencias
