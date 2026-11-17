@@ -168,8 +168,46 @@
 | Archivar | `archived_at` | Oculta un cliente sin ejemplares vendidos; reversible |
 | Reabrir (Abibono) | `reopen` | Devuelve un Abibono confirmado a borrador con motivo |
 | Alerta de abonos que no cuadran | `schedule_excess_alert` | BR-PAY-13 |
-| Barra de vista | `ViewBar` | Componente único de pestañas, filtro, orden y búsqueda en todos los módulos |
+| Barra de vista | `ViewBar` | Composición única de pestañas, búsqueda, filtro, orden y chips activos en todos los módulos; vive en la Plantilla de lista (ADR-0029, ADR-0050) |
 | Cuadre | *(concepto)* | Reconciliación de cuentas con el líder |
 | Campaña | `campaign` | **Backlog**; ~3 meses |
 | Formato de hora | `time_format` | `12h` (por defecto) o `24h`, elegido en Ajustes |
 | Bonificación | *(concepto)* | Regalo de la casa publicadora al alcanzar la meta de compra cultural |
+
+## Componentes de la interfaz (diseño ↔ código)
+Biblioteca de componentes del lienzo (v1.1, 17/11/2026) ↔ código (ADR-0050). En el Storybook se ven con el nombre en español y la jerarquía del diseño. Los 46 nombres de íconos están en `07-historias-usuario/05-ui/HU-UI-03-icono.md`.
+
+| En el diseño | Nivel | Código | Dónde |
+|---|---|---|---|
+| Fundamentos (`tok()`, `size()`) | Fundamentos | tokens CSS (`--color-*`, `--text-*`, `--size-*`…) | `src/ui/tokens/tokens.css` |
+| Ícono (`Icono`) | Átomo | `Icon` | `src/ui/icons/` |
+| Botón (`Boton`) | Átomo | `Button` | `src/ui/atoms/` |
+| Pastilla de estado (`Pastilla`) | Átomo | `StatusPill` | `src/ui/atoms/` |
+| Chip | Átomo | `Chip` | `src/ui/atoms/` |
+| Etiqueta | Átomo | `DataTag` | `src/ui/atoms/` |
+| Avatar | Átomo | `Avatar` | `src/ui/atoms/` |
+| Campo de formulario (`Campo`) | Átomo | `Field` | `src/ui/atoms/` |
+| Selección (`Seleccion`) | Átomo | `Choice`, `ChoiceGroup` | `src/ui/atoms/` |
+| Pestañas (`Pestanas`) | Molécula | `Tabs` | `src/ui/molecules/` |
+| Buscador | Molécula | `SearchBox` | `src/ui/molecules/` |
+| Fila de dato (`FilaDato`) | Molécula | `DataRow` | `src/ui/molecules/` |
+| Fila de lista (`FilaLista`) | Molécula | `ListRow`, `ListTable` | `src/ui/molecules/` |
+| Aviso | Molécula | `Toast`, `ToastProvider` | `src/ui/molecules/` |
+| Franja | Molécula | `Banner` | `src/ui/molecules/` |
+| Tarjeta de métrica (`TarjetaMetrica`) | Molécula | `MetricCard` | `src/ui/molecules/` |
+| Medidor | Molécula | `Gauge` | `src/ui/molecules/` |
+| Historial | Molécula | `HistoryTimeline` | `src/ui/molecules/` |
+| Menú (`Menu`) | Molécula | `Menu`, `SelectField` | `src/ui/molecules/` |
+| Encabezado | Organismo | `PageHeader` | `src/ui/organisms/` |
+| Isla | Organismo | `Island` | `src/ui/organisms/` |
+| Navegación (`Navegacion`) | Organismo | `AppNav` | `src/ui/organisms/` |
+| Diálogo (`Dialogo`) | Organismo | `ConfirmDialog` | `src/ui/organisms/` |
+| Resumen de dinero (`ResumenDinero`) | Organismo | `MoneySummary` | `src/features/money/components/` |
+| Estado vacío y de carga (`EstadoVacio`) | Organismo | `EmptyState`, `ListSkeleton` | `src/ui/organisms/` |
+| Ventana de detalle (`VentanaDetalle`) | Organismo | `DetailWindow` | `src/ui/organisms/` |
+| Barra de vista (composición) | Organismo | `ViewBar` | `src/ui/organisms/` |
+| Plantilla de lista | Plantilla | `ListTemplate` | `src/ui/templates/` |
+| Plantilla de detalle en islas | Plantilla | `DetailTemplate` | `src/ui/templates/` |
+
+Valores de las props: en inglés, con su equivalente del diseño en cada HU (p. ej. `variant="primary"` = `variante="primario"`; `mode="side"` = `modo="lateral"`). Tema, plataforma y escala no son props: son `data-theme`, `data-platform` y `--font-scale` (ADR-0050).
+
