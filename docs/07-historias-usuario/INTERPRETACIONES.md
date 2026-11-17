@@ -39,3 +39,17 @@ Detalles que los docs no fijaban y que el asistente decidió al escribir las his
 | I-31 | La secuencia es del colportor (no global) y sigue la regla «mayor número asignado + 1»; reabrir un Abibono conserva su número | HU-DIN-01, 07 | Sin huecos: solo se pueden borrar borradores, que nunca tuvieron número |
 | I-32 | `sold_at` (timestamptz) guarda el instante actual si la fecha de venta elegida es hoy, o las 12:00 del día elegido en America/Bogota; las comparaciones por día se hacen en Bogotá | HU-CLI-13 | Mantiene el tipo existente sin migrar datos; el mediodía evita saltos de día por zona horaria |
 | I-33 | El aviso «Esta fecha ya pasó» es solo de pantalla: el back no exige confirmación de fechas pasadas | HU-ABO-08 | El dueño: «debo poder ponerla, solo que aparezca un aviso»; un viaje de confirmación por abono estorbaría al cargar un plan |
+
+## Front · iteración 1 (2026-11-17)
+Detalles que el asistente decidió al escribir las HU del front (`05-ui/`, `06-pantallas/`). **Confirmadas por el dueño el 2026-11-17** (ronda 31: «estoy de acuerdo con todo lo que mencionas»).
+
+| ID | Qué se decidió | Dónde | Por qué |
+|---|---|---|---|
+| I-34 | El Aviso con «Deshacer» dura `undo.toastSeconds` de la configuración (hoy **6 s**), no los 5 s que dice su ficha | HU-UI-15 | Ya estaba decidido en `business-config` (BR-COPY-11/17, I-03); cambiarlo es un solo valor |
+| I-35 | Los textos de sin conexión dicen «Sin conexión: puedes consultar, pero no registrar». No se usan los ejemplos del diseño («los cambios se guardan en este dispositivo», «se envían cuando vuelva la señal») | HU-UI-16, HU-UI-26 | Esos ejemplos describen la escritura sin conexión de la fase 2; en la fase 1 manda BR-GEN-08 |
+| I-36 | Por debajo de **768 px** de ancho la app es «móvil» (barra inferior, hojas); desde 768 px es «escritorio» (barra lateral, ventanas) | HU-UI-02, HU-PAN-BASE-01 | El diseño solo define 390 y 1440; 768 es el corte habitual de tableta vertical |
+| I-37 | La navegación solo muestra los módulos con pantalla (Clientes, Inventario, Dinero), y `/` lleva a Clientes mientras Hoy no tenga diseño. El Storybook muestra la navegación completa del diseño | HU-UI-23, HU-PAN-BASE-01 | No dejar botones que llevan a pantallas vacías («no se deja nada a medias») |
+| I-38 | El tema claro u oscuro sigue al del celular o el computador; elegirlo a mano espera al diseño de Ajustes | HU-PAN-BASE-01 | El diseño tiene los dos temas pero no dice cómo se elige |
+| I-39 | En Libros en físico se usa el tablero principal (Inv-d-fisico), no la variante «Agregar a la izquierda» | HU-PAN-INV-01 | El lienzo la marca como variante |
+| I-40 | En Devolver al líder (escritorio) se usa la variante **angosta**, no el modal | HU-PAN-INV-05 | Es la que tiene completos los estados de minibooks y resumen |
+| I-41 | Lo que una pantalla del lienzo dibuja y la biblioteca no tiene (calendario, mapa, fotos, fila que se desliza…) se programa igual que en el lienzo, como pieza del módulo, y se pide subirlo a la biblioteca | `00-REGLAS-COMUNES-FRONT.md` §1 | Está diseñado, así que no se inventa; esperar a la biblioteca frenaría las pantallas |

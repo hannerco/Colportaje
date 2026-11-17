@@ -11,7 +11,8 @@ Principios: **escalable, probada, sin "parche sobre parche", decisiones lógicas
 | Hosting | **Vercel Hobby** (cuenta nueva), región de funciones por defecto **iad1 (Washington D.C.)**, la más cercana a us-east-1 | Sin funciones exclusivas de Vercel (migrable). Render descartado (se duerme) |
 | Paquetes | **pnpm** | |
 | Node | **22 LTS** (`.nvmrc`, `engines`) | |
-| Estilos / UI | Tailwind CSS + componentes accesibles (shadcn/ui sobre Radix) | Propuesto; cambiar solo con ADR |
+| Estilos / UI | **CSS Modules + tokens** (`src/ui/tokens/tokens.css`) + **Radix Primitives** solo para el comportamiento accesible; íconos **Lucide** (`lucide-react`, trazo 1,8) | ADR-0050 (reemplaza la propuesta de Tailwind + shadcn/ui) |
+| Catálogo de componentes | **Storybook** (`@storybook/nextjs-vite`) con Tema, Plataforma y Letra en la barra superior; las stories también son pruebas (Vitest + accesibilidad) | ADR-0050 |
 | Datos en cliente | **TanStack Query** (caché, optimista) con **persistencia en IndexedDB** del caché de lecturas (lectura sin conexión, BR-GEN-08) | |
 | Formularios | React Hook Form + **Zod** | Zod también valida en el límite de los repositorios |
 | Fechas | `date-fns` + `date-fns-tz` (America/Bogota) | Todo "hoy" pasa por `domain/time` |
@@ -36,7 +37,7 @@ ui  ──►  features  ──►  repositories (interfaces)  ──►  domain
 | `repositories/` (interfaces) | Contratos: `CustomerRepository`, `CopyRepository`, `PaymentRepository`, `LeaderDepositRepository`, `MinibookSaleRepository`, `TitleRepository`, `VisitRepository`, `TrainingRepository`, `SettingsRepository`, `StorageRepository`… | `domain` | adapters, UI |
 | `adapters/` | Implementaciones: `supabase/*`, `storage/*`, (F2) `local/*`, `sync/*`; mapeo fila↔dominio con Zod | `repositories`, `domain` | UI, features |
 | `features/<área>/` | Casos de uso + hooks + componentes de la funcionalidad: `customers`, `sales`, `inventory`, `payments`, `deposits`, `minibooks`, `calendar`, `totals`, `admin`, `auth` | `domain`, interfaces de `repositories`, `ui` | adapters directamente (se inyectan) |
-| `ui/` | Componentes compartidos sin lógica de negocio (botones, hojas, tablas, tooltips, iconos, formato) | `domain/money`, `domain/time` solo para formato | features, adapters |
+| `ui/` | Componentes compartidos sin lógica de negocio, por niveles: `tokens/`, `icons/`, `platform/`, `atoms/`, `molecules/`, `organisms/`, `templates/` (ADR-0050; un nivel no importa uno superior) | `domain/money`, `domain/time` solo para formato; `copy` | features, adapters |
 
 **Regla de oro:** la UI nunca habla con Supabase. Todo acceso a datos pasa por una interfaz de `repositories`, y se inyecta la implementación (contexto/provider). Un linter (`eslint-plugin-boundaries` o `import/no-restricted-paths`) hace cumplir esto en CI.
 
@@ -97,6 +98,7 @@ ui  ──►  features  ──►  repositories (interfaces)  ──►  domain
   @media (min-width: 1024px) { :root { --text-figure: calc(2.5rem*var(--font-scale)); --text-title: calc(2rem*var(--font-scale)); --text-body: calc(1rem*var(--font-scale)); --text-secondary: calc(0.875rem*var(--font-scale)); } }
   ```
   (valores iniciales de `04-diseno/DESIGN-BRIEF.md` §5b; provisionales, RV-05).
+- **Tema y plataforma** se aplican con `data-theme` y `data-platform` en un ancestro (no son props); los componentes que cambian de forma leen `usePlatform()` (ADR-0050).
 - **Los componentes solo usan roles** (`text-body`, `text-secondary`…), nunca `px`, `rem` ni `#hex`. Si se usa Tailwind, su `theme` se mapea a estas variables y se **prohíben** clases con valores literales (`text-[17px]`, `bg-[#092e53]`).
 - **Cumplimiento automático:** una prueba de arquitectura/regla de lint falla si aparece un tamaño de fuente o un color literal en `src/` fuera de `tokens.css` (ver `03-arquitectura/TESTING.md`).
 - **Futuro:** una preferencia "Tamaño del texto" en Ajustes solo tendría que escribir `--font-scale` (0.9 / 1 / 1.1); fuera de la v1.

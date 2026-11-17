@@ -35,7 +35,7 @@ Un ADR por decisión relevante. Formato: contexto → decisión → alternativas
 | 0026 | Elección de ejemplares uno por uno | Aceptado (ampliado por ADR-0044) |
 | 0027 | Invitaciones y restablecimiento por enlace desde el panel de admin | Aceptado |
 | 0028 | Pérdidas, "A responder al líder" y devolución al líder | Reemplazado en parte por ADR-0043 |
-| 0029 | Estilo Notion, barra de vista única y navegación por íconos | Aceptado |
+| 0029 | Estilo Notion, barra de vista única y navegación por íconos | Aceptado (stack de UI reemplazado por ADR-0050) |
 | 0030 | Formato regional y preferencias de usuario | Aceptado |
 | 0031 | Tarjeta "Por entregar" en Hoy | Aceptado (revisado) |
 | 0032 | Principios de diseño: minimalismo, color con propósito, anti-IA | Aceptado |
@@ -56,6 +56,7 @@ Un ADR por decisión relevante. Formato: contexto → decisión → alternativas
 | 0047 | Fechas del plan sin separación mínima y sin arrastre | Aceptado |
 | 0048 | Librerías de cálculo puro en el dominio | Aceptado |
 | 0049 | Registrar el pasado (empezar a usar la app a mitad de campaña) | Aceptado |
+| 0050 | Front con Storybook y la biblioteca de componentes del diseño (CSS Modules + tokens + Radix, Lucide, nombres en inglés) | Aceptado |
 
 ## Plantilla
 ```markdown

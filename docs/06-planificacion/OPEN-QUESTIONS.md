@@ -1,6 +1,6 @@
 # Preguntas abiertas, supuestos y seguimientos
 
-**Estado actual: no queda ninguna pregunta abierta de producto ni de arquitectura, salvo las decisiones de diseño (§3), OQ-34 (con el módulo Minibooks) y OQ-40/41 (Hoy). En la ronda 26 se confirmaron OQ-30, 31, 32, 35 y 36 y se resolvió OQ-33.** Todas las dudas del documento original se resolvieron en la entrevista (ver `00-contexto/DECISION-LOG.md`, rondas 7–9). Este archivo conserva:
+**Estado actual: no queda ninguna pregunta abierta de producto ni de arquitectura, salvo las decisiones de diseño (§3), OQ-34 (con el módulo Minibooks), OQ-40/41 (Hoy) y OQ-44 (pantalla de Iniciar sesión, ronda 31). En la ronda 26 se confirmaron OQ-30, 31, 32, 35 y 36 y se resolvió OQ-33.** Todas las dudas del documento original se resolvieron en la entrevista (ver `00-contexto/DECISION-LOG.md`, rondas 7–9). Este archivo conserva:
 
 1. **Seguimientos (SG-*)** — cosas ya decididas que requieren una acción concreta, con responsable.
 2. **Cosas por revisar (RV-*)** — decisiones que el dueño quiere reevaluar con uso real.
@@ -88,7 +88,7 @@ Ver `04-diseno/DESIGN-BRIEF.md` §13: DT-01 (total de deuda en Clientes), DT-02 
 | OQ-16 | Abonos programados tras devolución | Alerta y recorte; `canceled` conservado (BR-PAY-13) |
 | OQ-20 | Número de ejemplar offline (F2) | Provisional con marca; puede cambiar al sincronizar (BR-COPY-05) |
 | OQ-21 | Búsqueda | Fuse.js |
-| OQ-22 | UI | Tailwind + shadcn/ui, estilo Notion |
+| OQ-22 | UI | ~~Tailwind + shadcn/ui~~ → **CSS Modules + tokens + Radix, íconos Lucide y Storybook** (ADR-0050, ronda 31); estilo Notion |
 | OQ-23 | Captura de fotos | `<input type=file capture>` |
 | OQ-24 | Invitaciones | Desde el panel de admin: enlace copiable (BR-USR-05) |
 | OQ-25 | Nombre de la app | **Colportor** (marca de Emprendum) |
@@ -115,3 +115,4 @@ El código que los aplicaba se descartó el 2026-11-04; los supuestos quedan com
 | OQ-41 | **¿Qué son las «figuras geométricas» del calendario?** Supuesto: los microíconos de tipo de evento (cobro / visita / capacitación), cada uno con una forma propia; la forma exacta la define Claude Design | `BR-CAL-07`, DT-07 | **Por confirmar** (ronda 25) |
 | OQ-42 | **¿Dónde se guardan los backups?** Opciones: un repositorio privado de GitHub solo para backups cifrados, o un bucket de otro proveedor (p. ej. Cloudflare R2, gratis hasta 10 GB). Supuesto del asistente: repositorio privado aparte, con el archivo cifrado, mientras pese poco | `DEPLOYMENT.md` §8, HU-BASE-07 | **Resuelto (2026-11-16):** repositorio privado de GitHub solo para backups cifrados; **al llegar a 3 GB se migra a Cloudflare R2** (ver DECISION-LOG, derivada 49) |
 | OQ-43 | **Fotos en iPhone: ¿Safari codifica WebP?** La compresión usa el canvas del navegador (`toBlob('image/webp')`). Si un navegador no sabe codificar WebP, entrega otro formato; hoy la app lo rechaza con `IMAGE_ENCODING_FAILED` para no subir el original (BR-PHO-01) y el bucket solo acepta WebP. Supuesto del asistente: verificarlo en un iPhone real junto con SG-09; si falla, agregar un codificador WebP en WebAssembly como respaldo (no cambia el contrato de `ImageCodec`) | `BR-PHO-01`, HU-BASE-05 | **Por verificar** en dispositivo real |
+| OQ-44 | **Pantalla de Iniciar sesión sin diseño.** El back de sesión está hecho (HU-BASE-03), pero sin esta pantalla nadie puede usar la app fuera del Storybook. Supuesto: se diseña con la biblioteca actual (una isla con correo, contraseña, botón principal y la franja de sin conexión). Mientras tanto, HU-PAN-BASE-02 queda bloqueada | `04-diseno/pendientes/FALTA-TRANSVERSAL.md`, HU-PAN-BASE-02 | **Abierta:** el dueño la diseña en Claude Design |
