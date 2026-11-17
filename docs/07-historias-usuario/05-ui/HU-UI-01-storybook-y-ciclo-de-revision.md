@@ -56,7 +56,7 @@
      - `lucide-react` solo dentro de `src/ui/icons/`;
      - `@radix-ui/*` solo dentro de `src/ui/`.
   9. **Prueba de arquitectura** `tests/architecture/stories.test.ts`: todo componente de `src/ui/{atoms,molecules,organisms,templates}/*/` y toda pantalla de `src/features/*/screens/` tiene su `.stories.tsx`.
-  10. **Publicación.** Archivo de configuración para un proyecto de Vercel aparte que construye `pnpm build-storybook` y sirve `storybook-static/`. Se publica la rama de trabajo como *preview* protegido por la autenticación de Vercel, en la URL estable de la rama. Lo crea el dueño (punto de entrega).
+  10. **Publicación.** El proyecto de Vercel `colportor-storybook` ya está creado y conectado (ver «Proyecto de Vercel»). Esta HU solo agrega los scripts. Se publica la rama de trabajo como *preview*, protegido por la autenticación de Vercel, en la URL estable de la rama.
 - **No incluye:** tokens ni componentes (HU-UI-02 en adelante); revisión visual automatizada por capturas (Chromatic u otro); el punto de corte y los atributos en `<html>` de la app (HU-PAN-BASE-01).
 
 ## Reglas (el sistema DEBE…)
@@ -75,12 +75,24 @@
 - **CA-7.** **Dado** un *push* a la rama de trabajo, **cuando** termina el despliegue, **entonces** la URL estable del Storybook muestra el cambio y pide iniciar sesión en Vercel a quien no es del equipo.
 - **CA-8.** **Dado** una story con un botón sin nombre accesible, **cuando** corro `pnpm test`, **entonces** la prueba de accesibilidad de esa story falla.
 
-## Punto de entrega
-Al terminar, William avisa: **«UI-01 lista, falta el proyecto de Storybook en Vercel»**. El dueño:
-1. Crea en Vercel (cuenta nueva, SG-02) un proyecto importando el repositorio `Colportaje` con el nombre `colportor-storybook`.
-2. En *Build & Output Settings* elige *Framework: Other*, *Build Command* `pnpm build-storybook` y *Output Directory* `storybook-static`.
-3. Deja *Deployment Protection* en *Standard Protection*.
-4. Le pasa a William la URL de la rama de trabajo (`colportor-storybook-git-<rama>-<cuenta>.vercel.app`).
+## Proyecto de Vercel (ya creado, 2026-11-17)
+El proyecto **`colportor-storybook`** ya existe en la cuenta de Vercel **Emprendum** (plan Hobby), conectado a `hannerco/Colportaje`:
+
+| Ajuste | Valor |
+|---|---|
+| Framework | Ninguno (Other) |
+| Install Command | `corepack enable && pnpm install --frozen-lockfile` (con `ENABLE_EXPERIMENTAL_COREPACK=1`) |
+| Build Command | `pnpm build-storybook` |
+| Output Directory | `storybook-static` |
+| Node.js | 22.x |
+| Ignored Build Step | No construye mientras `package.json` no tenga el script `build-storybook` (por eso hoy no despliega nada) |
+| Protección | Vercel Authentication en todos los despliegues: solo entra quien inicia sesión en la cuenta |
+| Rama de producción | `main`. La rama de trabajo se publica como *preview* en `colportor-storybook-git-will-dev-emprendum.vercel.app` |
+
+Lo que hace William en esta HU:
+1. Agregar los scripts `storybook` y `build-storybook`. Con eso, el siguiente *push* a `will-dev` despliega solo.
+2. Si el primer despliegue falla por la instalación (pnpm 12 con corepack), revisar el registro en Vercel. Cambiar los ajustes del proyecto solo en `vercel.json` / `vercel.ts` dentro del repositorio, y avisar al dueño.
+3. Avisar al dueño con el enlace: **«UI-01 lista: <enlace del Storybook>»**.
 
 Nadie pega claves en el chat.
 
