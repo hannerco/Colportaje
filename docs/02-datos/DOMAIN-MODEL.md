@@ -150,7 +150,7 @@ Checks: `status in ('scheduled','canceled') ⇒ kind = 'scheduled' ∧ agreed_am
 `payment_id`, `previous_due_date date`, `new_due_date date`, `changed_at timestamptz`, `note text null`.
 
 ## `payment_event` (solo inserción)
-`payment_id`, `type enum('amount_reduced','canceled','reopened')`, `data jsonb` (p. ej. `{previous_amount, new_amount, trigger}`), `at timestamptz`. Registra los recortes de la alerta BR-PAY-13.
+`payment_id`, `type enum('amount_reduced','canceled','reopened')`, `data jsonb` (p. ej. `{previous_amount, new_amount, trigger}`), `at timestamptz`. Registra toda bajada del valor acordado de un abono por cobrar (recortes de la alerta BR-PAY-13 y ediciones manuales; aprobado 2026-11-16, DECISION-LOG #15).
 
 ## `leader_deposit` (Abibono 🔶 — "Entrega al líder")
 | Columna | Tipo | Restricciones |
