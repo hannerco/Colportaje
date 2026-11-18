@@ -292,6 +292,9 @@
   --size-bottom-bar-item: 52px;
   --bar-blur: 16px;
   --layer-nav: 30; /* barra inferior y botón flotante, debajo de las hojas */
+  --dialog-width: 440px; /* diálogo en escritorio (HU-UI-24) */
+  --dialog-padding: 24px;
+  --dialog-sheet-padding: 10px 20px 28px; /* diálogo como hoja en móvil */
   --data-row-label-width: 170px; /* columna de etiquetas de la fila de dato en escritorio (HU-UI-13) */
 }
 
