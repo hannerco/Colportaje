@@ -53,6 +53,21 @@ export const copy = {
     header: {
       back: (to: string) => `Volver a ${to}`,
     },
+    /** Barra de vista (HU-UI-28). */
+    viewBar: {
+      region: 'Vista de la lista',
+      sheetTitle: 'Filtrar y ordenar',
+      filterTab: 'Filtrar',
+      sortTab: 'Ordenar',
+      clear: 'Limpiar',
+      clearFilters: 'Quitar filtros',
+      summary: (n: number) => `Filtros (${n})`,
+      sortBy: 'Ordenar por',
+      direction: 'Sentido',
+      asc: 'Ascendente',
+      desc: 'Descendente',
+      done: 'Listo',
+    },
     /** Ventana de detalle (HU-UI-27). */
     detailWindow: {
       close: 'Cerrar',

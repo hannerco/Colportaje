@@ -1,0 +1,55 @@
+/* Plantilla de lista (HU-UI-28). R1: orden fijo; R3: en escritorio solo la lista se desplaza. */
+
+/* ─── Escritorio: barra lateral + columna principal de alto fijo ─── */
+.template {
+  display: flex;
+  box-sizing: border-box;
+  height: var(--template-height);
+  background: var(--color-page);
+  color: var(--color-text);
+}
+
+.main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+  min-height: 0;
+  padding: var(--space-4) var(--space-8) 0;
+}
+
+.top {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.list {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 0;
+  padding-bottom: var(--space-6);
+  overflow-y: auto;
+}
+
+/* ─── Móvil: una columna; se desplaza la página y la barra inferior flota encima ─── */
+.template[data-shape='mobile'] {
+  display: block;
+  height: auto;
+  min-height: var(--template-height);
+  background: var(--color-page-mobile);
+}
+
+.template[data-shape='mobile'] .main {
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4)
+    calc(var(--size-bottom-bar-item) + var(--bottom-bar-inset) + var(--space-12));
+}
+
+.template[data-shape='mobile'] .list {
+  overflow: visible;
+}
