@@ -246,6 +246,8 @@
   --radius-pill: 999px;
 
   --size-touch: 44px; /* área táctil mínima */
+  --size-fab: 56px; /* botón flotante (HU-UI-04) */
+  --opacity-disabled: 0.4; /* control deshabilitado (HU-UI-04) */
 }
 
 /* ─── Por plataforma · escritorio ───────────────────────────────────────────────────────────────── */
