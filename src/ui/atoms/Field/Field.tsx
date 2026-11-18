@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useState, type CSSProperties } from 'react';
+import { useId, useState, type CSSProperties, type ReactElement, type ReactNode } from 'react';
 import { groupCOP, parseTypedCOP, type COP } from '@/domain/money';
 import { formatDate, parseDisplayDate, type LocalDate } from '@/domain/time';
 import { Icon } from '../../icons';
@@ -32,6 +32,11 @@ export type FieldProps = FieldValue & {
   onOpen?: () => void;
   /** Solo `select`: si la lista está abierta (`aria-expanded`). */
   expanded?: boolean;
+  /**
+   * Solo `select`: envuelve el botón de la caja, p. ej. en el disparador del Menú (`SelectField`, HU-UI-20). Entonces
+   * es el disparador quien pone `aria-haspopup` y `aria-expanded`.
+   */
+  renderSelect?: (control: ReactElement) => ReactNode;
   className?: string;
 };
 
@@ -134,15 +139,21 @@ function Control(props: FieldProps & { control: ControlAttributes }) {
           />
         </>
       );
-    case 'select':
-      return (
+    case 'select': {
+      const wrapped = props.renderSelect !== undefined;
+      const button = (
         <button
           {...control}
           type="button"
           className={styles.select}
-          aria-haspopup="listbox"
-          aria-expanded={props.expanded ?? false}
-          onClick={props.onOpen}
+          // Envuelto, sin estas claves: el Slot de Radix dejaría que un `undefined` pisara las suyas.
+          {...(wrapped
+            ? {}
+            : {
+                'aria-haspopup': 'listbox' as const,
+                'aria-expanded': props.expanded ?? false,
+                onClick: props.onOpen,
+              })}
         >
           <span className={props.value ? styles.selectValue : styles.placeholder}>
             {props.value || placeholder}
@@ -150,6 +161,8 @@ function Control(props: FieldProps & { control: ControlAttributes }) {
           <Icon name="expand" tone="tertiary" />
         </button>
       );
+      return wrapped ? props.renderSelect!(button) : button;
+    }
     case 'textarea':
       return (
         <textarea

@@ -24,6 +24,8 @@
 }
 
 .sb-frame__body {
+  /* Lo fijo (hoja inferior, fondo del menú, aviso) se coloca dentro de su marco y no en la ventana del Storybook. */
+  transform: translateZ(0);
   box-sizing: border-box;
   padding: 24px;
   border: 1px solid rgba(31, 30, 29, 0.12);

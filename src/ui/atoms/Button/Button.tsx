@@ -1,6 +1,6 @@
 'use client';
 
-import type { MouseEvent } from 'react';
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes, MouseEvent, Ref } from 'react';
 import { copy } from '@/copy/es';
 import { Icon, type IconName } from '../../icons';
 import styles from './Button.module.css';
@@ -30,7 +30,12 @@ export type ButtonProps = {
   /** Con enlace se pinta como `<a>` con el mismo aspecto. */
   href?: string;
   className?: string;
-};
+  /**
+   * Para que un componente que abre algo (Menú, Diálogo) use el botón como disparador: Radix le pasa su `ref` y sus
+   * atributos (`aria-expanded`, `onKeyDown`, `data-state`…).
+   */
+  ref?: Ref<HTMLButtonElement & HTMLAnchorElement>;
+} & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children' | 'onClick' | 'type' | 'className'>;
 
 /** R5: tamaño del ícono (`undefined` = automático, `--size-icon`). */
 const iconSizeFor = (variant: ButtonVariant, size: 'normal' | 'compact'): number | undefined =>
@@ -53,6 +58,8 @@ export function Button({
   type = 'button',
   href,
   className,
+  ref,
+  ...rest
 }: ButtonProps) {
   const onlyIcon = iconOnly || variant === 'fab';
   const shownIcon = icon ?? (onlyIcon ? (variant === 'fab' ? 'new-customer' : 'more') : undefined);
@@ -80,6 +87,8 @@ export function Button({
   );
 
   const shared = {
+    ...rest,
+    ref,
     className: [
       styles.button,
       styles[variant],
@@ -99,7 +108,7 @@ export function Button({
   } as const;
 
   return href ? (
-    <a {...shared} href={href}>
+    <a {...(shared as typeof shared & AnchorHTMLAttributes<HTMLAnchorElement>)} href={href}>
       {content}
     </a>
   ) : (

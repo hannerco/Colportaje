@@ -49,13 +49,17 @@ export const copy = {
     metric: {
       percent: (n: number) => `${n}\u00a0%`,
     },
+    /** Menú (HU-UI-20): título de la hoja móvil cuando no se da otro. */
+    menu: {
+      title: 'Opciones',
+    },
     /** Historial (HU-UI-19). */
     history: {
       showAll: 'Ver todo',
       /** Lo que oye el lector después de «Deshacer»: qué deshace. */
       undoTarget: (text: string) => `: ${text}`,
     },
-    /** Medidor (HU-UI-18): etiqueta del centro y descripci\u00f3n para el lector. */
+    /** Medidor (HU-UI-18): etiqueta del centro y descripción para el lector. */
     gauge: {
       caption: 'entregado',
       description: (delivered: number, collected: number, pending: number) =>

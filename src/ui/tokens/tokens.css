@@ -278,6 +278,12 @@
   --radius-swatch: 3px;
   --size-metric-bar: 6px;
   --size-history-dot: 10px; /* punto del historial (HU-UI-19) */
+  --menu-width: 260px; /* menú flotante (HU-UI-20) */
+  --menu-padding: 6px;
+  --sheet-padding: 10px 12px 24px; /* hoja inferior del menú en móvil */
+  --sheet-handle-width: 36px;
+  --sheet-handle-height: 4px;
+  --layer-overlay: 40; /* fondo y hoja, debajo del aviso */
   --data-row-label-width: 170px; /* columna de etiquetas de la fila de dato en escritorio (HU-UI-13) */
 }
 
@@ -318,6 +324,7 @@
   --size-toast: 48px; /* aviso (HU-UI-15) */
   --radius-toast: 12px;
   --size-banner: 40px; /* franja (HU-UI-16) */
+  --size-menu-item: 40px; /* opción del menú (HU-UI-20) */
 }
 
 /* ─── Por plataforma · móvil ────────────────────────────────────────────────────────────────────── */
@@ -356,6 +363,7 @@
   --size-toast: 52px;
   --radius-toast: 14px;
   --size-banner: 44px;
+  --size-menu-item: 52px;
 }
 
 /* Sin data-platform en ningún ancestro: móvil por debajo de 768 px (mismos valores que [data-platform='mobile']). */
@@ -395,6 +403,7 @@
     --size-toast: 52px;
     --radius-toast: 14px;
     --size-banner: 44px;
+    --size-menu-item: 52px;
   }
 }
 
