@@ -251,6 +251,7 @@
   --pill-padding-start: 8px; /* pastilla de estado (HU-UI-05) */
   --pill-padding-end: 10px;
   --pill-gap: 6px;
+  --radius-chip-book: 8px; /* chip de libro (HU-UI-06) */
 }
 
 /* ─── Por plataforma · escritorio ───────────────────────────────────────────────────────────────── */
@@ -276,6 +277,7 @@
   --size-icon: 18px;
   --gap-control: 10px;
   --size-pill: 28px; /* pastilla de estado (HU-UI-05) */
+  --size-chip-sm: 24px; /* chip de libro y de conteo (HU-UI-06) */
 }
 
 /* ─── Por plataforma · móvil ────────────────────────────────────────────────────────────────────── */
@@ -300,6 +302,7 @@
   --size-icon: 20px;
   --gap-control: 12px;
   --size-pill: 30px;
+  --size-chip-sm: 26px;
 }
 
 /* Sin data-platform en ningún ancestro: móvil por debajo de 768 px (mismos valores que [data-platform='mobile']). */
@@ -325,6 +328,7 @@
     --size-icon: 20px;
     --gap-control: 12px;
     --size-pill: 30px;
+    --size-chip-sm: 26px;
   }
 }
 

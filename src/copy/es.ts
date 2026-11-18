@@ -5,6 +5,8 @@ export const copy = {
   ui: {
     /** Texto por defecto del botón mientras se guarda (HU-UI-04). */
     saving: 'Guardando…',
+    /** Nombre accesible de la ✕ de un chip de filtro (HU-UI-06). */
+    removeFilter: (filter: string) => `Quitar filtro ${filter}`,
   },
   /** Palabra de cada estado en la Pastilla de estado (HU-UI-05, glosario «Estados»). */
   status: {
