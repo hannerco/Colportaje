@@ -2,12 +2,12 @@
 import { defineConfig, globalIgnores } from 'eslint/config';
 import nextVitals from 'eslint-config-next/core-web-vitals';
 import nextTs from 'eslint-config-next/typescript';
-import { LAYER_RULES } from './eslint.layers.mjs';
+import { LAYER_RULES, UI_RULES } from './eslint.layers.mjs';
 
 export default defineConfig([
   ...nextVitals,
   ...nextTs,
-  globalIgnores(['.next/**', 'out/**', 'coverage/**', 'next-env.d.ts', 'docs/**']),
+  globalIgnores(['.next/**', 'out/**', 'coverage/**', 'next-env.d.ts', 'docs/**', 'storybook-static/**']),
   {
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
@@ -20,4 +20,5 @@ export default defineConfig([
     },
   },
   ...LAYER_RULES,
+  ...UI_RULES,
 ]);

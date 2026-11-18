@@ -1,0 +1,54 @@
+/*
+ * Tokens del diseño (ADR-0034, ADR-0050): el ÚNICO lugar con valores visuales.
+ *
+ * HU-UI-01 deja aquí solo lo que necesita el Storybook (fondo de página, texto y el rol --text-body con
+ * --font-scale), con los valores de HU-UI-02. HU-UI-02 completa todas las tablas (colores, tipografía,
+ * espacio, forma, alturas y sombras) y los estilos base.
+ *
+ * Claro y escritorio por defecto; oscuro con [data-theme="dark"] (o el sistema si no hay data-theme);
+ * móvil con [data-platform="mobile"] (o por debajo de 768 px si no hay data-platform).
+ *
+ * Letra: cada rol tiene un valor base por plataforma (--text-*-base, en rem) y el rol vale base × --font-scale.
+ * El rol se recalcula en :root y en cada ámbito [data-ui-scope] (ThemeScope): una variable CSS que usa var() se
+ * resuelve donde se declara, así que sin recalcularla un --font-scale puesto en un marco no la cambiaría.
+ */
+
+:root {
+  --font-scale: 1;
+  --leading: 1.4;
+
+  --color-page: #f5f4f1;
+  --color-page-mobile: #f4f2ee;
+  --color-text: #1f1e1d;
+
+  --text-body-base: 1rem;
+}
+
+:root,
+[data-ui-scope] {
+  --text-body: calc(var(--text-body-base) * var(--font-scale, 1));
+}
+
+[data-theme='dark'] {
+  --color-page: #181817;
+  --color-page-mobile: #111110;
+  --color-text: #edebe8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --color-page: #181817;
+    --color-page-mobile: #111110;
+    --color-text: #edebe8;
+  }
+}
+
+[data-platform='mobile'] {
+  --text-body-base: 1.0625rem;
+}
+
+@media (max-width: 767px) {
+  :root:not([data-platform]) {
+    --text-body-base: 1.0625rem;
+  }
+}

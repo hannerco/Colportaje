@@ -1,0 +1,12 @@
+.scope {
+  color: var(--color-text);
+  line-height: var(--leading);
+}
+
+.page {
+  background: var(--color-page);
+}
+
+.page[data-platform='mobile'] {
+  background: var(--color-page-mobile);
+}

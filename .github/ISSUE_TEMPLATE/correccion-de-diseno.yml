@@ -1,0 +1,61 @@
+name: Corrección de diseño
+description: Algo de un componente o pantalla del Storybook que hay que corregir (ADR-0050).
+title: '[Componente] '
+labels: ['diseño', 'iteración-1']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Una corrección por *issue*. Si se puede, agrega una captura.
+  - type: input
+    id: componente
+    attributes:
+      label: Componente o pantalla
+      description: Por ejemplo «Botón» o «Pantallas/Clientes/Lista».
+    validations:
+      required: true
+  - type: input
+    id: enlace
+    attributes:
+      label: Enlace de la story
+      description: El enlace del Storybook donde se ve el problema.
+    validations:
+      required: true
+  - type: dropdown
+    id: tipo
+    attributes:
+      label: Tipo
+      options:
+        - No se parece al diseño
+        - Quiero cambiar el diseño
+    validations:
+      required: true
+  - type: dropdown
+    id: donde
+    attributes:
+      label: Tema y plataforma donde se ve
+      multiple: true
+      options:
+        - Escritorio · Claro
+        - Escritorio · Oscuro
+        - Móvil · Claro
+        - Móvil · Oscuro
+    validations:
+      required: true
+  - type: textarea
+    id: que-esta-mal
+    attributes:
+      label: Qué está mal
+    validations:
+      required: true
+  - type: textarea
+    id: como-deberia
+    attributes:
+      label: Cómo debería verse
+    validations:
+      required: true
+  - type: textarea
+    id: captura
+    attributes:
+      label: Captura (opcional)
+      description: Arrastra aquí una imagen.

@@ -39,6 +39,10 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      # Las stories corren como pruebas en Chromium (HU-UI-01, ADR-0050).
+      - name: Navegador de las pruebas de componentes
+        run: pnpm exec playwright install --with-deps chromium
+
       - name: Pruebas
         run: pnpm test
 
@@ -56,3 +60,6 @@ jobs:
 
       - name: Build
         run: pnpm build
+
+      - name: Build del Storybook
+        run: pnpm build-storybook

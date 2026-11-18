@@ -17,6 +17,9 @@ next-env.d.ts
 supabase/.temp/
 supabase/.branches/
 
+# Storybook
+storybook-static/
+
 # Vercel
 .vercel/
 
