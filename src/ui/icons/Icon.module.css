@@ -1,0 +1,35 @@
+/* El lado sale de --size-icon (18 escritorio, 20 móvil) salvo que se pida otro con --icon-size. */
+.icon {
+  flex: none;
+  width: var(--icon-size, var(--size-icon));
+  height: var(--icon-size, var(--size-icon));
+  vertical-align: middle;
+}
+
+.current {
+  color: currentColor;
+}
+
+.text {
+  color: var(--color-text);
+}
+
+.secondary {
+  color: var(--color-text-2);
+}
+
+.tertiary {
+  color: var(--color-text-3);
+}
+
+.accent {
+  color: var(--color-accent-text);
+}
+
+.ok {
+  color: var(--color-ok);
+}
+
+.bad {
+  color: var(--color-bad);
+}

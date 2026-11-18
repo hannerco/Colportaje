@@ -5,3 +5,5 @@ engineStrict: true
 allowBuilds:
   esbuild: false
   '@swc/core': false
+minimumReleaseAgeExclude:
+  - lucide-react@1.74.0
