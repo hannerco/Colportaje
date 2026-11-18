@@ -1,0 +1,229 @@
+/* Fila de lista (HU-UI-14). R1: escritorio; R2: móvil; R3: seleccionada; R4: «…»; R5: tabla o lista. */
+
+/* ─── R5: plantilla de columnas por tipo (proporciones del diseño) ─── */
+.table {
+  display: grid;
+}
+
+.table[data-kind='customer'] {
+  --list-columns: minmax(0, 1.7fr) minmax(0, 0.8fr) minmax(0, 1.5fr) minmax(0, 0.7fr) minmax(0, 0.8fr)
+    minmax(0, 0.8fr);
+}
+
+.table[data-kind='payment'] {
+  --list-columns: minmax(0, 2fr) minmax(0, 0.6fr) minmax(0, 1fr) minmax(0, 0.8fr) minmax(0, 0.9fr);
+}
+
+.table[data-kind='copy'] {
+  --list-columns: minmax(0, 1.8fr) minmax(0, 0.9fr) minmax(0, 0.8fr) minmax(0, 1.4fr) minmax(0, 0.9fr);
+}
+
+/* ─── Escritorio ─── */
+.row {
+  display: grid;
+  grid-template-columns: var(--list-columns);
+  align-items: center;
+  gap: var(--space-4);
+  min-height: var(--size-list-row);
+  padding: 0 var(--space-4);
+  border-top: 1px solid var(--color-row-line);
+  color: var(--color-text);
+  font-size: var(--text-body);
+}
+
+.row[data-selected] {
+  background: var(--color-row-selected);
+}
+
+.header {
+  min-height: var(--size-control-sm);
+  border-top: 0;
+  color: var(--color-text-3);
+  font-size: var(--text-secondary);
+  font-weight: var(--weight-medium);
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  color: var(--color-text-2);
+}
+
+.cell:first-child {
+  color: var(--color-text);
+}
+
+.end {
+  justify-content: flex-end;
+  text-align: end;
+}
+
+.amount {
+  color: var(--color-text);
+  font-variant-numeric: var(--font-numeric);
+  white-space: nowrap;
+}
+
+.name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.name > :global(*) {
+  flex: none;
+}
+
+.name > .titleLink,
+.name > .ellipsis,
+.name > .name {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+/* R1: el nombre va subrayado y es el enlace al detalle. */
+.titleLink {
+  display: inline-flex;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: var(--weight-medium);
+  text-align: start;
+  text-decoration: underline solid var(--color-underline);
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.titleLink:focus-visible {
+  border-radius: var(--radius-xs);
+  outline: 3px solid var(--color-ring);
+}
+
+/* R4: una sola línea; lo que no cabe se corta con «…». */
+.ellipsis {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.books {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.muted {
+  color: var(--color-text-3);
+}
+
+/* ─── Móvil ─── */
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: block;
+}
+
+.group {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-4) var(--space-2);
+  color: var(--color-text);
+  font-size: var(--text-secondary);
+  font-weight: var(--weight-strong);
+}
+
+.groupCount {
+  color: var(--color-text-3);
+  font-weight: var(--weight-regular);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.mobileRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--size-list-row);
+  padding: var(--space-2) var(--space-4);
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-body);
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* R3: en móvil, la seleccionada lleva margen y radio. */
+.mobileRow[data-selected] {
+  width: auto;
+  margin: 0 var(--space-2);
+  padding: var(--space-2) var(--space-2);
+  border-radius: var(--radius-md);
+  background: var(--color-row-selected);
+}
+
+.mobileRow:focus-visible {
+  border-radius: var(--radius-md);
+  outline: 3px solid var(--color-ring);
+  outline-offset: -3px;
+}
+
+.mobileRow > :global(*) {
+  flex: none;
+}
+
+.mobileRow > .lines {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.mobileTitle {
+  font-weight: var(--weight-medium);
+}
+
+.secondary {
+  display: flex;
+  gap: var(--space-1);
+  min-width: 0;
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.secondary > span:last-child:not(:first-child) {
+  flex: none;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+}
+
+.side .amount {
+  font-weight: var(--weight-medium);
+}
+
+/* CA-2: el saldo $0 va en gris. */
+.side .zero {
+  color: var(--color-text-3);
+}

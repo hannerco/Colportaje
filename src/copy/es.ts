@@ -24,6 +24,23 @@ export const copy = {
       edit: (label: string) => `Editar ${label}, `,
       previous: 'antes ',
     },
+    /** Fila de lista (HU-UI-14): títulos de columna en escritorio y textos fijos de la fila móvil. */
+    listRow: {
+      columns: {
+        customer: ['Cliente', 'Teléfono', 'Libro(s)', 'Saldo pendiente', 'Último abono', 'Estado'],
+        payment: ['Cliente', 'Cuota', 'Fecha acordada', 'Monto', 'Estado'],
+        copy: ['Ejemplar', 'Recibido el', 'Precio', 'Cliente', 'Estado'],
+      },
+      /** Sobre el saldo pendiente en la fila móvil de clientes (BR-CUS-13). */
+      owes: 'Debe',
+      /** En lugar del libro, para un cliente sin ventas (BR-CUS-13). */
+      prospect: 'Prospecto',
+      /** Celda sin dato (cliente sin abonos, prospecto sin estado, ejemplar sin cliente). */
+      empty: '—',
+      /** Segunda línea del ejemplar en móvil. */
+      received: (date: string) => `Recibido ${date}`,
+      more: (n: number) => `+${n}`,
+    },
   },
   /** Palabra de cada estado en la Pastilla de estado (HU-UI-05, glosario «Estados»). */
   status: {
