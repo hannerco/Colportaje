@@ -7,6 +7,8 @@ export const copy = {
     saving: 'Guardando…',
     /** Nombre accesible de la ✕ de un chip de filtro (HU-UI-06). */
     removeFilter: (filter: string) => `Quitar filtro ${filter}`,
+    /** Nombre accesible de la cuota de un abono, «2/4» (HU-UI-07). */
+    installment: (index: number, total: number) => `Cuota ${index} de ${total}`,
   },
   /** Palabra de cada estado en la Pastilla de estado (HU-UI-05, glosario «Estados»). */
   status: {

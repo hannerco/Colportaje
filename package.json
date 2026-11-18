@@ -15,7 +15,7 @@
     "lint": "eslint . --max-warnings=0 && stylelint \"src/**/*.css\" && prettier --check .",
     "format": "prettier --write .",
     "typecheck": "next typegen && tsc --noEmit",
-    "test": "vitest run --coverage",
+    "test": "vitest run --project unit --coverage && vitest run --project storybook",
     "test:watch": "vitest",
     "test:rls": "vitest run --config vitest.rls.config.mts",
     "storybook": "storybook dev -p 6006",
