@@ -6,4 +6,18 @@ export const copy = {
     /** Texto por defecto del botón mientras se guarda (HU-UI-04). */
     saving: 'Guardando…',
   },
+  /** Palabra de cada estado en la Pastilla de estado (HU-UI-05, glosario «Estados»). */
+  status: {
+    scheduled: 'Por cobrar',
+    overdue: 'Vencido',
+    collected: 'Cobrado',
+    delivered: 'Entregado',
+    canceled: 'Cancelado',
+    draft: 'Borrador',
+    current: 'Pagando',
+    settled: 'Saldado',
+    in_stock: 'En físico',
+    sold: 'Vendido',
+    flagged: 'Con novedad',
+  },
 } as const;

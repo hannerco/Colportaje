@@ -248,6 +248,9 @@
   --size-touch: 44px; /* área táctil mínima */
   --size-fab: 56px; /* botón flotante (HU-UI-04) */
   --opacity-disabled: 0.4; /* control deshabilitado (HU-UI-04) */
+  --pill-padding-start: 8px; /* pastilla de estado (HU-UI-05) */
+  --pill-padding-end: 10px;
+  --pill-gap: 6px;
 }
 
 /* ─── Por plataforma · escritorio ───────────────────────────────────────────────────────────────── */
@@ -272,6 +275,7 @@
   --size-data-row: 44px;
   --size-icon: 18px;
   --gap-control: 10px;
+  --size-pill: 28px; /* pastilla de estado (HU-UI-05) */
 }
 
 /* ─── Por plataforma · móvil ────────────────────────────────────────────────────────────────────── */
@@ -295,6 +299,7 @@
   --size-data-row: 48px;
   --size-icon: 20px;
   --gap-control: 12px;
+  --size-pill: 30px;
 }
 
 /* Sin data-platform en ningún ancestro: móvil por debajo de 768 px (mismos valores que [data-platform='mobile']). */
@@ -319,6 +324,7 @@
     --size-data-row: 48px;
     --size-icon: 20px;
     --gap-control: 12px;
+    --size-pill: 30px;
   }
 }
 

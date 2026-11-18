@@ -1,0 +1,71 @@
+/* Pastilla de estado (HU-UI-05). R1: píldora; R2: forma texto. */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pill-gap);
+  height: var(--size-pill);
+  padding: 0 var(--pill-padding-end) 0 var(--pill-padding-start);
+  border: 1px solid var(--color-neutral-border);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.pill .icon {
+  color: var(--color-text-3);
+}
+
+/* ─── Tonos ─── */
+.bad {
+  border-color: var(--color-bad-border);
+  background: var(--color-bad-bg);
+  color: var(--color-bad);
+}
+
+.ok {
+  border-color: var(--color-ok-border);
+  background: var(--color-ok-bg);
+  color: var(--color-ok);
+}
+
+.accent {
+  border-color: var(--color-accent-border);
+  background: var(--color-accent-bg);
+  color: var(--color-accent-text);
+}
+
+.draft {
+  border-style: dashed;
+}
+
+.bad .icon,
+.ok .icon,
+.accent .icon {
+  color: inherit;
+}
+
+/* ─── Forma texto (R2): sin borde ni fondo, leyenda en text-3; el ícono conserva el color del tono ─── */
+.pill.text {
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-3);
+  font-size: var(--text-caption);
+}
+
+.text.bad .icon {
+  color: var(--color-bad);
+}
+
+.text.ok .icon {
+  color: var(--color-ok);
+}
+
+.text.accent .icon {
+  color: var(--color-accent-text);
+}
