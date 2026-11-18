@@ -307,7 +307,8 @@ Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesió
 | HU-UI-23 | Terminada (2026-11-18) | `will-dev` |
 | HU-UI-24 | Terminada (2026-11-18) | `will-dev` |
 | HU-UI-25 | Terminada (2026-11-18) | `will-dev` |
-| HU-UI-26 a HU-UI-29 | Pendientes | — |
+| HU-UI-26 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-27 a HU-UI-29 | Pendientes | — |
 | HU-PAN-BASE-01 | Pendiente | — |
 | HU-PAN-BASE-02 | Bloqueada (espera diseño, OQ-44) | — |
 | HU-PAN-CLI-01 a 06, HU-PAN-INV-01 a 05, HU-PAN-DIN-01 a 05 | Pendientes | — |

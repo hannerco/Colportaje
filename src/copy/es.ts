@@ -53,6 +53,12 @@ export const copy = {
     header: {
       back: (to: string) => `Volver a ${to}`,
     },
+    /** Estado vacío y de carga (HU-UI-26). */
+    empty: {
+      loading: 'Cargando…',
+      /** Junto a una acción que escribe, deshabilitada sin conexión (BR-GEN-08). */
+      needsConnection: 'Necesita conexión',
+    },
     /** Navegación (HU-UI-23): nombres de los módulos (glosario) y de los grupos. */
     nav: {
       label: 'Principal',

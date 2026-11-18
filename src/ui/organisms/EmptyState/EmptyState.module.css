@@ -1,0 +1,108 @@
+/* Estado vacío y de carga (HU-UI-26). R1: ícono, título, texto y acción; R2: esqueleto. */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-8) var(--space-4);
+  color: var(--color-text);
+  text-align: center;
+}
+
+.circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-empty-icon);
+  height: var(--size-empty-icon);
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-tone);
+  color: var(--color-text-2);
+}
+
+.empty[data-kind='error'] .circle {
+  color: var(--color-bad);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--text-body);
+  font-weight: var(--weight-strong);
+}
+
+.text {
+  max-width: var(--empty-text-width);
+  margin: 0;
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}
+
+.action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-3);
+}
+
+.note {
+  color: var(--color-text-3);
+  font-size: var(--text-secondary);
+}
+
+/* ─── R2: esqueleto ─── */
+.skeleton {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--size-list-row);
+  padding: 0 var(--space-4);
+}
+
+.avatar {
+  flex: none;
+  width: var(--size-avatar);
+  height: var(--size-avatar);
+  border-radius: var(--radius-pill);
+  background: var(--color-skeleton);
+}
+
+.bars {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.bar {
+  width: 45%;
+  height: var(--size-skeleton-bar);
+  border-radius: var(--radius-pill);
+  background: var(--color-skeleton);
+}
+
+.bar[data-long] {
+  width: 60%;
+}
+
+.short {
+  width: 30%;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
