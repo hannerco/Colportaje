@@ -1,54 +1,348 @@
 /*
- * Tokens del diseño (ADR-0034, ADR-0050): el ÚNICO lugar con valores visuales.
+ * Tokens del diseño (HU-UI-02, ADR-0034, ADR-0050): el ÚNICO lugar con valores visuales de src/.
+ * Los nombres de la izquierda de cada comentario son los de tok() / size() del diseño v1.1.
  *
- * HU-UI-01 deja aquí solo lo que necesita el Storybook (fondo de página, texto y el rol --text-body con
- * --font-scale), con los valores de HU-UI-02. HU-UI-02 completa todas las tablas (colores, tipografía,
- * espacio, forma, alturas y sombras) y los estilos base.
- *
- * Claro y escritorio por defecto; oscuro con [data-theme="dark"] (o el sistema si no hay data-theme);
- * móvil con [data-platform="mobile"] (o por debajo de 768 px si no hay data-platform).
+ * Tema: claro por defecto; oscuro con [data-theme="dark"] o, si nadie fija data-theme, con el sistema.
+ * Plataforma: escritorio por defecto; móvil con [data-platform="mobile"] o, si nadie fija data-platform, por
+ * debajo de 768 px (I-36, breakpoints.ts).
+ * Los valores claros y de escritorio se repiten en [data-theme="light"] y [data-platform="desktop"]: así un marco
+ * claro dentro de un sistema oscuro, o uno de escritorio en una ventana angosta, no hereda lo contrario (R3, R4).
  *
  * Letra: cada rol tiene un valor base por plataforma (--text-*-base, en rem) y el rol vale base × --font-scale.
  * El rol se recalcula en :root y en cada ámbito [data-ui-scope] (ThemeScope): una variable CSS que usa var() se
- * resuelve donde se declara, así que sin recalcularla un --font-scale puesto en un marco no la cambiaría.
+ * resuelve donde se declara, así que sin recalcularla un --font-scale puesto en un marco no la cambiaría (R2).
+ * Las alturas de control son medidas, no letra: van en px y no se multiplican por --font-scale.
  */
 
-:root {
-  --font-scale: 1;
-  --leading: 1.4;
-
-  --color-page: #f5f4f1;
-  --color-page-mobile: #f4f2ee;
-  --color-text: #1f1e1d;
-
-  --text-body-base: 1rem;
-}
-
+/* ─── Color · claro ─────────────────────────────────────────────────────────────────────────────── */
 :root,
-[data-ui-scope] {
-  --text-body: calc(var(--text-body-base) * var(--font-scale, 1));
+[data-theme='light'] {
+  /* Superficies */
+  --color-page: #f5f4f1; /* page */
+  --color-page-mobile: #f4f2ee; /* mbg */
+  --color-card: #ffffff; /* card */
+  --color-panel: #ffffff; /* panel */
+  --color-sheet: #ffffff; /* sheet */
+  --color-input-bg: #ffffff; /* inBg */
+  --color-control-bg: #ffffff; /* ctlBg */
+  --color-tone: #f6f5f2; /* tone */
+  --color-track: #f1efeb; /* track */
+  --color-tab-track: #f4f3f0; /* tabTrack */
+  --color-row-selected: #f4f3f0; /* selRow */
+  --color-active-bg: #ffffff; /* activeBg */
+  --color-table-head: #f4f3f0; /* head */
+  /* Líneas */
+  --color-line: #e6e3de; /* line */
+  --color-row-line: #efede9; /* rowLine */
+  --color-card-border: rgba(31, 30, 29, 0.08); /* cardBorder */
+  --color-neutral-border: rgba(31, 30, 29, 0.16); /* neuBd */
+  --color-input-border: rgba(31, 30, 29, 0.16); /* inBd */
+  --color-control-border: rgba(31, 30, 29, 0.1); /* ctlBorder */
+  --color-ring: rgba(9, 46, 83, 0.12); /* ring */
+  --color-underline: rgba(31, 30, 29, 0.25); /* underline */
+  /* Texto */
+  --color-text: #1f1e1d; /* text */
+  --color-text-2: #5f5c57; /* text2 */
+  --color-text-3: #716d66; /* text3 */
+  /* Acento */
+  --color-accent: #092e53; /* accent */
+  --color-accent-text: #092e53; /* accentText */
+  --color-on-accent: #ffffff; /* onAccent */
+  --color-accent-bg: rgba(9, 46, 83, 0.05); /* accBg */
+  --color-accent-border: rgba(9, 46, 83, 0.3); /* accBd */
+  --color-accent-bg-2: rgba(9, 46, 83, 0.08); /* accBg2 */
+  /* Semánticos */
+  --color-ok: #1d6b40; /* green */
+  --color-ok-bg: rgba(29, 107, 64, 0.05); /* okBg */
+  --color-ok-border: rgba(29, 107, 64, 0.32); /* okBd */
+  --color-bad: #b42318; /* red */
+  --color-danger: #b42318; /* danger */
+  --color-on-danger: #ffffff; /* onDanger */
+  --color-bad-bg: rgba(180, 35, 24, 0.04); /* badBg */
+  --color-bad-border: rgba(180, 35, 24, 0.28); /* badBd */
+  /* Datos */
+  --color-data-delivered: #092e53; /* prBar */
+  --color-data-collected: #1d6b40; /* okBar */
+  --color-data-pending: #c4c0b8; /* pendBar */
+  --color-avatar-bg: #edebe7; /* avatarBg */
+  --color-avatar-fg: #55524d; /* avatarFg */
+  --color-skeleton: #eeece8; /* skel */
+  /* Capas */
+  --color-scrim: rgba(31, 30, 29, 0.3); /* scrim */
+  --color-toast: #1f1e1d; /* toast */
+  --color-on-toast: #ffffff; /* onToast */
+  --color-toast-link: #a9c8ea; /* toastLink */
+  --color-toast-ok: #7bcf9b; /* toastOk */
+  --color-toast-bad: #f2877c; /* toastBad */
+  --color-bar: rgba(255, 255, 255, 0.92); /* bar */
+  --color-bar-active: #edebe6; /* barActive */
+  /* Elevación */
+  --shadow-control: 0 1px 2px rgba(31, 30, 29, 0.05); /* ctlShadow */
+  --shadow-card: 0 1px 2px rgba(31, 30, 29, 0.04); /* shadow */
+  --shadow-modal: 0 20px 60px rgba(31, 30, 29, 0.2); /* modalShadow */
+  --shadow-bar: 0 8px 24px rgba(31, 30, 29, 0.1); /* barShadow */
+
+  color-scheme: light;
 }
 
+/* ─── Color · oscuro ────────────────────────────────────────────────────────────────────────────── */
 [data-theme='dark'] {
   --color-page: #181817;
   --color-page-mobile: #111110;
+  --color-card: #1e1e1d;
+  --color-panel: #1e1e1d;
+  --color-sheet: #1f1f1e;
+  --color-input-bg: #232322;
+  --color-control-bg: #232322;
+  --color-tone: #262625;
+  --color-track: #2b2a28;
+  --color-tab-track: #262625;
+  --color-row-selected: #262625;
+  --color-active-bg: #363634;
+  --color-table-head: #232322;
+  --color-line: #363532;
+  --color-row-line: #2b2a28;
+  --color-card-border: rgba(255, 255, 255, 0.07);
+  --color-neutral-border: rgba(255, 255, 255, 0.16);
+  --color-input-border: rgba(255, 255, 255, 0.12);
+  --color-control-border: rgba(255, 255, 255, 0.08);
+  --color-ring: rgba(169, 200, 234, 0.25);
+  --color-underline: rgba(237, 235, 232, 0.3);
   --color-text: #edebe8;
+  --color-text-2: #aba79f;
+  --color-text-3: #96928b;
+  --color-accent: #1d4c7c;
+  --color-accent-text: #a9c8ea;
+  --color-on-accent: #ffffff;
+  --color-accent-bg: rgba(169, 200, 234, 0.08);
+  --color-accent-border: rgba(169, 200, 234, 0.4);
+  --color-accent-bg-2: rgba(169, 200, 234, 0.12);
+  --color-ok: #7bcf9b;
+  --color-ok-bg: rgba(123, 207, 155, 0.06);
+  --color-ok-border: rgba(123, 207, 155, 0.38);
+  --color-bad: #f2877c;
+  --color-danger: #c2392c;
+  --color-on-danger: #ffffff;
+  --color-bad-bg: rgba(242, 135, 124, 0.07);
+  --color-bad-border: rgba(242, 135, 124, 0.4);
+  --color-data-delivered: #a9c8ea;
+  --color-data-collected: #7bcf9b;
+  --color-data-pending: #5a5751;
+  --color-avatar-bg: #2c2c2a;
+  --color-avatar-fg: #c2beb7;
+  --color-skeleton: #2b2a28;
+  --color-scrim: rgba(0, 0, 0, 0.55);
+  --color-toast: #edebe8;
+  --color-on-toast: #1f1e1d;
+  --color-toast-link: #092e53;
+  --color-toast-ok: #1d6b40;
+  --color-toast-bad: #b42318;
+  --color-bar: rgba(30, 30, 29, 0.92);
+  --color-bar-active: #363634;
+  --shadow-control: none;
+  --shadow-card: none;
+  --shadow-modal: 0 24px 64px rgba(0, 0, 0, 0.6);
+  --shadow-bar: 0 8px 24px rgba(0, 0, 0, 0.45);
+
+  color-scheme: dark;
 }
 
+/* Sin data-theme en ningún ancestro: sigue al sistema (mismos valores que [data-theme='dark']). */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
     --color-page: #181817;
     --color-page-mobile: #111110;
+    --color-card: #1e1e1d;
+    --color-panel: #1e1e1d;
+    --color-sheet: #1f1f1e;
+    --color-input-bg: #232322;
+    --color-control-bg: #232322;
+    --color-tone: #262625;
+    --color-track: #2b2a28;
+    --color-tab-track: #262625;
+    --color-row-selected: #262625;
+    --color-active-bg: #363634;
+    --color-table-head: #232322;
+    --color-line: #363532;
+    --color-row-line: #2b2a28;
+    --color-card-border: rgba(255, 255, 255, 0.07);
+    --color-neutral-border: rgba(255, 255, 255, 0.16);
+    --color-input-border: rgba(255, 255, 255, 0.12);
+    --color-control-border: rgba(255, 255, 255, 0.08);
+    --color-ring: rgba(169, 200, 234, 0.25);
+    --color-underline: rgba(237, 235, 232, 0.3);
     --color-text: #edebe8;
+    --color-text-2: #aba79f;
+    --color-text-3: #96928b;
+    --color-accent: #1d4c7c;
+    --color-accent-text: #a9c8ea;
+    --color-on-accent: #ffffff;
+    --color-accent-bg: rgba(169, 200, 234, 0.08);
+    --color-accent-border: rgba(169, 200, 234, 0.4);
+    --color-accent-bg-2: rgba(169, 200, 234, 0.12);
+    --color-ok: #7bcf9b;
+    --color-ok-bg: rgba(123, 207, 155, 0.06);
+    --color-ok-border: rgba(123, 207, 155, 0.38);
+    --color-bad: #f2877c;
+    --color-danger: #c2392c;
+    --color-on-danger: #ffffff;
+    --color-bad-bg: rgba(242, 135, 124, 0.07);
+    --color-bad-border: rgba(242, 135, 124, 0.4);
+    --color-data-delivered: #a9c8ea;
+    --color-data-collected: #7bcf9b;
+    --color-data-pending: #5a5751;
+    --color-avatar-bg: #2c2c2a;
+    --color-avatar-fg: #c2beb7;
+    --color-skeleton: #2b2a28;
+    --color-scrim: rgba(0, 0, 0, 0.55);
+    --color-toast: #edebe8;
+    --color-on-toast: #1f1e1d;
+    --color-toast-link: #092e53;
+    --color-toast-ok: #1d6b40;
+    --color-toast-bad: #b42318;
+    --color-bar: rgba(30, 30, 29, 0.92);
+    --color-bar-active: #363634;
+    --shadow-control: none;
+    --shadow-card: none;
+    --shadow-modal: 0 24px 64px rgba(0, 0, 0, 0.6);
+    --shadow-bar: 0 8px 24px rgba(0, 0, 0, 0.45);
+
+    color-scheme: dark;
   }
 }
 
-[data-platform='mobile'] {
-  --text-body-base: 1.0625rem;
+/* ─── Tipografía, espacio y forma comunes ───────────────────────────────────────────────────────── */
+:root {
+  --font-scale: 1;
+  --font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-numeric: tabular-nums;
+  --leading: 1.4;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-strong: 600;
+  --weight-heading: 600;
+  --weight-title: 700;
+  --weight-figure: 700;
+
+  /* Espaciado (múltiplos de 4) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  /* Radios */
+  --radius-xs: 6px; /* etiqueta, portada */
+  --radius-sm: 10px; /* ítem de menú, campo escritorio */
+  --radius-md: 12px; /* campo móvil, fila */
+  --radius-lg: 14px; /* tarjeta métrica, menú */
+  --radius-xl: 18px; /* isla, buscador móvil */
+  --radius-2xl: 20px; /* panel, diálogo */
+  --radius-sheet: 28px; /* hoja inferior */
+  --radius-pill: 999px;
+
+  --size-touch: 44px; /* área táctil mínima */
 }
 
+/* ─── Por plataforma · escritorio ───────────────────────────────────────────────────────────────── */
+:root,
+[data-platform='desktop'] {
+  --text-figure-base: 2.5rem; /* fig 40 */
+  --text-title-base: 2rem; /* title 32 */
+  --text-heading-base: 1.375rem; /* h 22 */
+  --text-body-base: 1rem; /* body 16 */
+  --text-secondary-base: 0.875rem; /* sec 14 */
+  --text-caption-base: 0.8125rem; /* cap 13 */
+  --text-sidebar-base: 0.9375rem; /* barra lateral 15 */
+
+  --size-primary: 40px;
+  --radius-primary: 999px;
+  --size-control: 40px;
+  --size-control-sm: 32px;
+  --size-field: 40px;
+  --radius-field: 10px;
+  --size-search: 40px;
+  --size-list-row: 64px;
+  --size-data-row: 44px;
+  --size-icon: 18px;
+  --gap-control: 10px;
+}
+
+/* ─── Por plataforma · móvil ────────────────────────────────────────────────────────────────────── */
+[data-platform='mobile'] {
+  --text-figure-base: 2.25rem; /* 36 */
+  --text-title-base: 1.75rem; /* 28 */
+  --text-heading-base: 1.25rem; /* 20 */
+  --text-body-base: 1.0625rem; /* 17 */
+  --text-secondary-base: 0.9375rem; /* 15 */
+  --text-caption-base: 0.8125rem; /* 13 */
+  --text-sidebar-base: 0.9375rem; /* sin barra lateral en móvil: igual que escritorio */
+
+  --size-primary: 52px;
+  --radius-primary: 16px;
+  --size-control: 44px;
+  --size-control-sm: 36px;
+  --size-field: 48px;
+  --radius-field: 12px;
+  --size-search: 52px;
+  --size-list-row: 72px;
+  --size-data-row: 48px;
+  --size-icon: 20px;
+  --gap-control: 12px;
+}
+
+/* Sin data-platform en ningún ancestro: móvil por debajo de 768 px (mismos valores que [data-platform='mobile']). */
 @media (max-width: 767px) {
   :root:not([data-platform]) {
+    --text-figure-base: 2.25rem;
+    --text-title-base: 1.75rem;
+    --text-heading-base: 1.25rem;
     --text-body-base: 1.0625rem;
+    --text-secondary-base: 0.9375rem;
+    --text-caption-base: 0.8125rem;
+    --text-sidebar-base: 0.9375rem;
+
+    --size-primary: 52px;
+    --radius-primary: 16px;
+    --size-control: 44px;
+    --size-control-sm: 36px;
+    --size-field: 48px;
+    --radius-field: 12px;
+    --size-search: 52px;
+    --size-list-row: 72px;
+    --size-data-row: 48px;
+    --size-icon: 20px;
+    --gap-control: 12px;
   }
+}
+
+/* ─── Roles de texto = base × --font-scale (R2) ─────────────────────────────────────────────────── */
+:root,
+[data-ui-scope] {
+  --text-figure: calc(var(--text-figure-base) * var(--font-scale, 1));
+  --text-title: calc(var(--text-title-base) * var(--font-scale, 1));
+  --text-heading: calc(var(--text-heading-base) * var(--font-scale, 1));
+  --text-body: calc(var(--text-body-base) * var(--font-scale, 1));
+  --text-secondary: calc(var(--text-secondary-base) * var(--font-scale, 1));
+  --text-caption: calc(var(--text-caption-base) * var(--font-scale, 1));
+  --text-sidebar: calc(var(--text-sidebar-base) * var(--font-scale, 1));
+}
+
+/* ─── Estilos base ──────────────────────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: var(--font-family);
+  line-height: var(--leading);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

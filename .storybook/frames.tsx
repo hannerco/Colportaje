@@ -53,7 +53,8 @@ export const withFrames: Decorator = (Story, context) => {
       style={{ gridTemplateColumns: `repeat(${columns}, max-content)` }}
     >
       {combos.map((combo) => (
-        <figure key={combo.label} className="sb-frame" aria-label={combo.label}>
+        // La clave incluye la Letra: al cambiarla, el marco se vuelve a montar y lo de adentro se mide otra vez.
+        <figure key={`${combo.label}·${fontScale}`} className="sb-frame" aria-label={combo.label}>
           <figcaption className="sb-frame__label">{combo.label}</figcaption>
           <ThemeScope
             theme={combo.theme}
