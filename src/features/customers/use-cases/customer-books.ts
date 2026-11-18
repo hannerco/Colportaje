@@ -1,9 +1,10 @@
 // Agregar, quitar y devolver libros en la ficha (HU-CLI-09, HU-CLI-10, BR-COPY-06/09, AF-01..AF-12, AF-114).
 import { computeCustomerAccount, type CustomerAccount } from '@/domain/customer';
 import { evaluateScheduleExcess, scheduledForExcess, type ExcessEvaluation } from '@/domain/schedule-excess';
+import { validateSoldAt } from '@/domain/copy-detail';
 import type { AppError } from '@/domain/shared/errors';
 import { ok, type Result } from '@/domain/shared/result';
-import { todayBogota, type Clock } from '@/domain/time';
+import { todayBogota, type Clock, type LocalDate } from '@/domain/time';
 import type { Title } from '@/domain/title';
 import type { CopiesListCopy } from '@/domain/copies-list';
 import type { Connectivity, CopyRepository, CustomerRepository, TitleRepository } from '@/repositories';
@@ -47,16 +48,23 @@ const accountOf = async (
 
 /**
  * Agrega (vende) un ejemplar en físico al cliente por su precio público copiado (R1, R2). Agregar nunca
- * genera sobrante: la deuda sube. Errores: `OFFLINE`, `COPY_NOT_IN_STOCK`, `COPY_IS_MINIBOOK`,
- * `CUSTOMER_ARCHIVED`, `NOT_FOUND`, `NETWORK_ERROR`.
+ * genera sobrante: la deuda sube. `soldOn` es el día de la venta (HU-CLI-13); sin él, hoy.
+ * Errores: `OFFLINE`, `SOLD_IN_FUTURE` (sin intentar), `SOLD_BEFORE_RECEIVED`, `COPY_NOT_IN_STOCK`,
+ * `COPY_IS_MINIBOOK`, `CUSTOMER_ARCHIVED`, `NOT_FOUND`, `NETWORK_ERROR`.
  */
 export async function assignCopyToCustomer(
   deps: CustomerBooksDeps,
   copyId: string,
   customerId: string,
+  options: { readonly soldOn?: LocalDate } = {},
 ): Promise<Result<{ account: CustomerAccount }, AppError>> {
   return runMutation(deps.connectivity, async () => {
-    const assigned = await deps.copies.assignToCustomer(copyId, customerId);
+    if (options.soldOn) {
+      // El recibido no se conoce aquí: la base revisa que la venta no quede antes (SOLD_BEFORE_RECEIVED).
+      const valid = validateSoldAt(options.soldOn, null, todayBogota(deps.clock));
+      if (!valid.ok) return valid;
+    }
+    const assigned = await deps.copies.assignToCustomer(copyId, customerId, options.soldOn);
     if (!assigned.ok) return assigned;
     const account = await accountOf(deps, customerId);
     if (!account.ok) return account;
@@ -114,5 +122,27 @@ export async function returnCopyFromCustomer(
       becameProspect: account.value.account.isProspect,
       excess: evaluateScheduleExcess(account.value.account, scheduledForExcess(account.value.data), 'return'),
     });
+  });
+}
+
+/**
+ * Cambia la fecha de venta de un libro vendido (HU-CLI-13 R3, R4): solo esa fecha y la última modificación del
+ * cliente; el precio, el estado y los abonos no cambian. Devuelve la cuenta recalculada («Cliente desde», R6).
+ * Errores: `OFFLINE`, `SOLD_IN_FUTURE` (sin intentar), `SOLD_BEFORE_RECEIVED`, `COPY_NOT_SOLD`,
+ * `COPY_IS_MINIBOOK`, `NOT_FOUND`, `NETWORK_ERROR`.
+ */
+export async function updateSoldAt(
+  deps: CustomerBooksDeps,
+  copyId: string,
+  soldOn: LocalDate,
+): Promise<Result<{ account: CustomerAccount }, AppError>> {
+  return runMutation(deps.connectivity, async () => {
+    const valid = validateSoldAt(soldOn, null, todayBogota(deps.clock));
+    if (!valid.ok) return valid;
+    const updated = await deps.copies.updateSoldAt(copyId, valid.value);
+    if (!updated.ok) return updated;
+    const account = await accountOf(deps, updated.value.customerId);
+    if (!account.ok) return account;
+    return ok({ account: account.value.account });
   });
 }

@@ -22,10 +22,18 @@ export const RECEIVED_DATE_ERROR_CODES = {
   DATE_AFTER_SALE: 'DATE_AFTER_SALE',
 } as const;
 
+/** HU-CLI-13: errores de la fecha de venta (además de `COPY_NOT_SOLD` y `COPY_IS_MINIBOOK` de ASSIGN_ERROR_CODES). */
+export const SOLD_DATE_ERROR_CODES = {
+  SOLD_IN_FUTURE: 'SOLD_IN_FUTURE',
+  SOLD_BEFORE_RECEIVED: 'SOLD_BEFORE_RECEIVED',
+} as const;
+
 export type CopyCapabilities = {
   readonly editAgreedPrice: boolean;
   readonly restorePublicPrice: boolean;
   readonly editReceivedAt: boolean;
+  /** HU-CLI-13: la fecha de venta se edita en un libro vendido (no minibook). */
+  readonly editSoldAt: boolean;
   readonly flag: boolean;
   readonly delete: boolean;
   readonly returnFromCustomer: boolean;
@@ -44,6 +52,7 @@ export const copyCapabilities = (copy: CapabilityInput, category: TitleCategory)
     editAgreedPrice: soldBook,
     restorePublicPrice: soldBook && priceDelta({ ...copy, category }) !== null,
     editReceivedAt: state !== 'deleted',
+    editSoldAt: soldBook,
     flag: canTransition(state, 'flag'),
     delete: isDeletable(state), // HU-INV-08
     returnFromCustomer: soldBook && canTransition(state, 'return'),
@@ -162,6 +171,28 @@ export const buildCopyDetail = (input: {
     can: copyCapabilities(copy, title.category),
   };
 };
+
+/**
+ * HU-CLI-13 R2 / BR-COPY-06: la fecha de venta no es futura ni anterior al día de recibido (días de Bogotá).
+ * Sin `receivedAt` (no se conoce aún), solo se revisa que no sea futura; la base vuelve a validar todo.
+ * Errores: `SOLD_IN_FUTURE`, `SOLD_BEFORE_RECEIVED`.
+ */
+export const validateSoldAt = (
+  soldOn: LocalDate,
+  receivedAt: LocalDate | null,
+  today: LocalDate,
+): Result<LocalDate, AppError> => {
+  if (soldOn > today) return err(appError(SOLD_DATE_ERROR_CODES.SOLD_IN_FUTURE));
+  if (receivedAt && soldOn < receivedAt) return err(appError(SOLD_DATE_ERROR_CODES.SOLD_BEFORE_RECEIVED));
+  return ok(soldOn);
+};
+
+/**
+ * I-32: el instante que se guarda para un día de venta. Hoy: el instante actual; otro día: las 12:00 de ese día
+ * en Bogotá (UTC−5 todo el año, sin horario de verano). La MISMA regla que `public.sold_instant` en la base.
+ */
+export const soldAtInstant = (soldOn: LocalDate, now: Instant): Instant =>
+  soldOn === toBogotaDate(now) ? now : new Date(`${soldOn}T17:00:00.000Z`);
 
 /**
  * R1 / BR-COPY-04: la fecha de recibido no es futura (Bogotá) ni posterior al día de la venta.

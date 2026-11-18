@@ -134,7 +134,7 @@ Implementar en este orden. Una HU solo empieza cuando sus dependencias están te
 | HU-DIN-06 | Terminada (2026-11-15) | `will-dev` |
 | HU-DIN-05 | Terminada (2026-11-15) | `will-dev` |
 | HU-DIN-07 | Terminada (2026-11-15) | `will-dev` |
-| HU-CLI-13 | Pendiente (ADR-0049, ronda 30) | — |
+| HU-CLI-13 | Terminada (2026-11-18) | `will-dev` |
 | HU-ABO-08 | Pendiente (ADR-0049, ronda 30) | — |
 | HU-ABO-09 | Pendiente (ADR-0049, ronda 30) | — |
 

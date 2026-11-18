@@ -58,9 +58,17 @@ export interface CopyRepository {
 
   /**
    * Vende un ejemplar en físico a un cliente por su precio público copiado (HU-CLI-09). Idempotente.
-   * Errores: `COPY_NOT_IN_STOCK`, `COPY_IS_MINIBOOK`, `CUSTOMER_ARCHIVED`, `NOT_FOUND`, `NETWORK_ERROR`.
+   * `soldOn`: el día de la venta (HU-CLI-13); sin él, hoy. Errores: `COPY_NOT_IN_STOCK`, `COPY_IS_MINIBOOK`,
+   * `CUSTOMER_ARCHIVED`, `SOLD_IN_FUTURE`, `SOLD_BEFORE_RECEIVED`, `NOT_FOUND`, `NETWORK_ERROR`.
    */
-  assignToCustomer(copyId: string, customerId: string): Promise<Result<void, AppError>>;
+  assignToCustomer(copyId: string, customerId: string, soldOn?: LocalDate): Promise<Result<void, AppError>>;
+
+  /**
+   * Cambia la fecha de venta de un ejemplar vendido (HU-CLI-13, función `update_sold_at`). El mismo día no cambia
+   * nada. Devuelve el cliente. Errores: `COPY_NOT_SOLD`, `COPY_IS_MINIBOOK`, `SOLD_IN_FUTURE`,
+   * `SOLD_BEFORE_RECEIVED`, `VALIDATION`, `NOT_FOUND`, `FORBIDDEN`, `NETWORK_ERROR`.
+   */
+  updateSoldAt(copyId: string, soldOn: LocalDate): Promise<Result<{ customerId: string }, AppError>>;
 
   /**
    * Quita un libro de su cliente: vuelve a físico (HU-CLI-09 con `wrong_registration`, HU-CLI-10 con
