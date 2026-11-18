@@ -1,0 +1,134 @@
+/* Historial (HU-UI-19). R1: punto, línea, texto, nota y fecha; R2: Deshacer; R3: Ver todo. */
+.history {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.list {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.item:focus-visible {
+  border-radius: var(--radius-xs);
+  outline: 3px solid var(--color-ring);
+}
+
+/* La columna del punto; la línea vertical une este punto con el siguiente (salvo en la última entrada). */
+.rail {
+  position: relative;
+  display: flex;
+  flex: none;
+  justify-content: center;
+  width: var(--size-history-dot);
+}
+
+.item:not(:last-child) .rail::after {
+  position: absolute;
+  top: calc(var(--space-2) + var(--size-history-dot));
+  bottom: 0;
+  left: calc(50% - 0.5px);
+  width: 1px;
+  background: var(--color-line);
+  content: '';
+}
+
+.dot {
+  box-sizing: border-box;
+  width: var(--size-history-dot);
+  height: var(--size-history-dot);
+  margin-top: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-neutral-border);
+}
+
+.item[data-latest] .dot {
+  background: var(--color-accent-text);
+}
+
+.body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  min-width: 0;
+  padding-bottom: var(--space-4);
+}
+
+.item:last-child .body {
+  padding-bottom: 0;
+}
+
+.line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-3);
+  width: 100%;
+}
+
+.text {
+  min-width: 0;
+  color: var(--color-text);
+  font-size: var(--text-body);
+}
+
+.date,
+.note {
+  color: var(--color-text-3);
+  font-size: var(--text-secondary);
+}
+
+.date {
+  font-variant-numeric: var(--font-numeric);
+  white-space: nowrap;
+}
+
+/* R2 y R3: botones con aspecto de enlace. */
+.undo,
+.showAll {
+  min-height: var(--size-control-sm);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-accent-text);
+  font: inherit;
+  font-size: var(--text-secondary);
+  font-weight: var(--weight-strong);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.showAll {
+  margin-left: calc(var(--size-history-dot) + var(--space-3));
+}
+
+.undo:focus-visible,
+.showAll:focus-visible {
+  border-radius: var(--radius-xs);
+  outline: 3px solid var(--color-ring);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

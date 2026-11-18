@@ -277,6 +277,7 @@
   --size-swatch: 10px; /* cuadro de color del grupo (tarjeta de métrica y medidor) */
   --radius-swatch: 3px;
   --size-metric-bar: 6px;
+  --size-history-dot: 10px; /* punto del historial (HU-UI-19) */
   --data-row-label-width: 170px; /* columna de etiquetas de la fila de dato en escritorio (HU-UI-13) */
 }
 

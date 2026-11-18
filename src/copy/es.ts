@@ -49,6 +49,12 @@ export const copy = {
     metric: {
       percent: (n: number) => `${n}\u00a0%`,
     },
+    /** Historial (HU-UI-19). */
+    history: {
+      showAll: 'Ver todo',
+      /** Lo que oye el lector después de «Deshacer»: qué deshace. */
+      undoTarget: (text: string) => `: ${text}`,
+    },
     /** Medidor (HU-UI-18): etiqueta del centro y descripci\u00f3n para el lector. */
     gauge: {
       caption: 'entregado',
