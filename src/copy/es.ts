@@ -53,6 +53,15 @@ export const copy = {
     header: {
       back: (to: string) => `Volver a ${to}`,
     },
+    /** Ventana de detalle (HU-UI-27). */
+    detailWindow: {
+      close: 'Cerrar',
+      modeGroup: 'Forma de la ventana',
+      modes: { side: 'Lateral', center: 'Centrada', page: 'Página' },
+      prev: 'Anterior',
+      next: 'Siguiente',
+      breadcrumb: 'Ruta',
+    },
     /** Estado vacío y de carga (HU-UI-26). */
     empty: {
       loading: 'Cargando…',

@@ -300,6 +300,11 @@
   --size-empty-icon: 48px; /* círculo del estado vacío (HU-UI-26) */
   --empty-text-width: 360px;
   --size-skeleton-bar: 10px;
+  --window-side-width: 780px; /* ventana de detalle lateral (HU-UI-27) */
+  --window-center-width: 940px;
+  --window-page-max: 900px;
+  --window-sheet-height: 80%;
+  --size-window-bar: 52px;
   --data-row-label-width: 170px; /* columna de etiquetas de la fila de dato en escritorio (HU-UI-13) */
 }
 
@@ -344,6 +349,7 @@
   --size-header: 56px; /* encabezado de pantalla (HU-UI-21) */
   --size-header-summary: 36px;
   --radius-island: 18px; /* isla (HU-UI-22) */
+  --radius-window: 20px; /* ventana de detalle (HU-UI-27) */
   --island-padding: 18px 24px 10px;
 }
 
@@ -387,6 +393,7 @@
   --size-header: 52px;
   --size-header-summary: 40px;
   --radius-island: 16px;
+  --radius-window: 16px;
   --island-padding: 14px 16px 8px;
 }
 
@@ -431,6 +438,7 @@
     --size-header: 52px;
     --size-header-summary: 40px;
     --radius-island: 16px;
+    --radius-window: 16px;
     --island-padding: 14px 16px 8px;
   }
 }

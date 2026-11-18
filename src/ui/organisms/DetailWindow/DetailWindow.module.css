@@ -1,0 +1,211 @@
+/* Ventana de detalle (HU-UI-27). R1: barra; R2: contenedores; R3: móvil. */
+
+.window {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background: var(--color-page);
+  color: var(--color-text);
+  outline: none;
+}
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--layer-overlay);
+  background: var(--color-scrim);
+}
+
+/* ─── R2: lateral, pegada a la derecha y a todo el alto ─── */
+.side {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--layer-overlay);
+  width: var(--window-side-width);
+  max-width: 100%;
+  border-radius: var(--radius-window) 0 0 var(--radius-window);
+  box-shadow: var(--shadow-modal);
+}
+
+/* ─── R2: centrada sobre el fondo oscurecido ─── */
+.center {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: var(--layer-overlay);
+  width: var(--window-center-width);
+  max-width: calc(100% - var(--space-8));
+  max-height: calc(100% - var(--space-12));
+  border-radius: var(--radius-window);
+  box-shadow: var(--shadow-modal);
+  transform: translate(-50%, -50%);
+}
+
+/* ─── R2: página, en el área de contenido y sin sombra ─── */
+.page {
+  width: 100%;
+  background: transparent;
+}
+
+.pageBody {
+  width: 100%;
+  max-width: var(--window-page-max);
+  margin: 0 auto;
+}
+
+/* ─── R3: móvil ─── */
+.mobilePage {
+  min-height: 100%;
+  background: var(--color-page-mobile);
+}
+
+.mobilePage > header {
+  padding: 0 var(--space-2);
+}
+
+.sheet {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: var(--layer-overlay);
+  height: var(--window-sheet-height);
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  background: var(--color-page-mobile);
+  box-shadow: var(--shadow-modal);
+  transform: translateY(var(--sheet-drag, 0));
+}
+
+.grip {
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--space-2);
+  touch-action: none;
+  cursor: grab;
+}
+
+.handle {
+  align-self: center;
+  width: var(--sheet-handle-width);
+  height: var(--sheet-handle-height);
+  border-radius: var(--radius-pill);
+  background: var(--color-neutral-border);
+}
+
+/* ─── R1: barra superior ─── */
+.bar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: var(--size-window-bar);
+  padding: 0 var(--space-3);
+}
+
+.group,
+.tools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.tools {
+  flex: none;
+  gap: var(--space-2);
+}
+
+.title {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  font-size: var(--text-body);
+  font-weight: var(--weight-strong);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  color: var(--color-text-3);
+}
+
+.breadcrumb a {
+  color: var(--color-text-2);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb a:focus-visible {
+  border-radius: var(--radius-xs);
+  outline: 3px solid var(--color-ring);
+}
+
+.breadcrumb .title {
+  color: var(--color-text);
+}
+
+/* Selector de forma: segmento de tres opciones con ícono. */
+.modes {
+  display: flex;
+  gap: var(--tab-gap);
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  background: var(--color-tab-track);
+}
+
+.mode {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-control-sm);
+  height: var(--size-control-sm);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-segment);
+  background: transparent;
+  color: var(--color-text-2);
+  cursor: pointer;
+}
+
+.mode[data-state='checked'] {
+  background: var(--color-active-bg);
+  box-shadow: var(--shadow-control);
+  color: var(--color-text);
+}
+
+.mode:focus-visible {
+  outline: 3px solid var(--color-ring);
+}
+
+/* ─── Contenido: la pila de islas ─── */
+.body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 0;
+  padding: var(--space-2) var(--space-4) var(--space-6);
+  overflow-y: auto;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

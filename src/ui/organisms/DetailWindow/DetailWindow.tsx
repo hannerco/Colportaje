@@ -1,0 +1,315 @@
+'use client';
+
+import * as Dialog from '@radix-ui/react-dialog';
+import * as RadioGroup from '@radix-ui/react-radio-group';
+import {
+  useCallback,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+  type PointerEvent,
+  type ReactElement,
+  type ReactNode,
+} from 'react';
+import { copy } from '@/copy/es';
+import { Button } from '../../atoms/Button';
+import { Icon } from '../../icons';
+import { usePlatform, type Platform } from '../../platform';
+import { PageHeader } from '../PageHeader';
+import styles from './DetailWindow.module.css';
+
+export type DetailWindowMode = 'side' | 'center' | 'page' | 'sheet';
+type DesktopMode = 'side' | 'center' | 'page';
+
+/** R4: dónde se guarda en el dispositivo la última forma elegida en escritorio (FT-04). */
+export const DETAIL_WINDOW_MODE_KEY = 'colportor.detail-window-mode';
+
+const DESKTOP_MODES: DesktopMode[] = ['side', 'center', 'page'];
+const isDesktopMode = (value: unknown): value is DesktopMode => DESKTOP_MODES.includes(value as DesktopMode);
+
+/** La forma guardada; sin nada guardado (o sin acceso al almacenamiento), lateral. */
+export function readStoredDetailWindowMode(): DesktopMode {
+  try {
+    const stored = typeof window === 'undefined' ? null : window.localStorage.getItem(DETAIL_WINDOW_MODE_KEY);
+    return isDesktopMode(stored) ? stored : 'side';
+  } catch {
+    return 'side';
+  }
+}
+
+function storeMode(mode: DesktopMode) {
+  try {
+    window.localStorage.setItem(DETAIL_WINDOW_MODE_KEY, mode);
+  } catch {
+    // Sin almacenamiento (modo privado, bloqueado): la forma vale solo mientras la ventana esté abierta.
+  }
+}
+
+/** Una forma que no existe en la plataforma se convierte: lateral o centrada → página en móvil; hoja → lateral. */
+export function resolveDetailWindowMode(mode: DetailWindowMode, platform: Platform): DetailWindowMode {
+  if (platform === 'mobile') return mode === 'sheet' ? 'sheet' : 'page';
+  return mode === 'sheet' ? 'side' : mode;
+}
+
+export type DetailWindowProps = {
+  /** Forma (`modo`). Sin valor: en escritorio la última elegida en el dispositivo (R4); en móvil, página. */
+  mode?: DetailWindowMode;
+  /** Al elegir otra forma en el selector (escritorio). La forma también queda guardada en el dispositivo. */
+  onModeChange?: (mode: DetailWindowMode) => void;
+  /** Nombre con número, p. ej. «Psiconutrición #6». */
+  title: string;
+  /** Ruta de vuelta en modo página («Inventario»); en móvil, a dónde lleva Volver. */
+  breadcrumb: { label: string; href: string };
+  onClose: () => void;
+  /** Registro anterior (también con J). Sin función, el botón queda deshabilitado. */
+  onPrev?: () => void;
+  /** Registro siguiente (también con K). Sin función, el botón queda deshabilitado. */
+  onNext?: () => void;
+  /** Menú «Más acciones» (un `Menu` con disparador `more`). */
+  moreActions?: ReactElement;
+  /** Las islas del registro. La acción principal (p. ej. Cobrar) va en la isla de identidad, no en la barra (R7). */
+  children: ReactNode;
+  className?: string;
+};
+
+/** Distancia en px que hay que deslizar la hoja hacia abajo para cerrarla (CA-5). */
+const SWIPE_TO_CLOSE = 96;
+
+const isTyping = (target: EventTarget | null) =>
+  target instanceof HTMLElement &&
+  (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName));
+
+/**
+ * Ventana de detalle (HU-UI-27, ficha Lib-VentanaDetalle): abre el detalle de un registro sin perder la lista.
+ * Escritorio: lateral (780, sin bloquear la lista), centrada (940 sobre fondo oscurecido) o página. Móvil: página
+ * completa con Volver, u hoja inferior al 80 % para una vista rápida. Nunca se abre una encima de otra: abrir otro
+ * registro reemplaza el contenido (R6).
+ */
+export function DetailWindow(props: DetailWindowProps) {
+  const { mode, onModeChange, title, breadcrumb, onClose, onPrev, onNext, moreActions, children, className } =
+    props;
+  const platform = usePlatform();
+  const mobile = platform === 'mobile';
+  const [stored, setStored] = useState<DesktopMode>(readStoredDetailWindowMode);
+  const resolved = resolveDetailWindowMode(mode ?? (mobile ? 'page' : stored), platform);
+
+  const changeMode = (next: DesktopMode) => {
+    setStored(next);
+    storeMode(next);
+    onModeChange?.(next);
+  };
+
+  // Esc devuelve el foco a quien abrió la ventana (la fila de la lista): se recuerda al abrirse.
+  const opener = useRef<HTMLElement | null>(null);
+  useLayoutEffect(() => {
+    opener.current = document.activeElement as HTMLElement | null;
+  }, []);
+  const restoreFocus = (event: Event) => {
+    event.preventDefault();
+    opener.current?.focus();
+  };
+
+  // Las capas flotantes se pintan en el ámbito de tema y plataforma más cercano (un marco del Storybook) o en el body.
+  const [container, setContainer] = useState<HTMLElement | null>(null);
+  const findScope = useCallback(
+    (node: HTMLSpanElement | null) => setContainer(node?.closest<HTMLElement>('[data-ui-scope]') ?? null),
+    [],
+  );
+
+  // R5: J anterior y K siguiente, con el foco dentro y sin un campo de texto enfocado.
+  const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    if (event.altKey || event.ctrlKey || event.metaKey || isTyping(event.target)) return;
+    const key = event.key.toLowerCase();
+    if (key === 'k' && onNext) {
+      event.preventDefault();
+      onNext();
+    } else if (key === 'j' && onPrev) {
+      event.preventDefault();
+      onPrev();
+    }
+  };
+
+  const titleId = useId();
+  const [drag, setDrag] = useState(0);
+  const body = <div className={styles.body}>{children}</div>;
+  const navButtons = (
+    <span className={styles.group}>
+      <Button variant="tertiary" iconOnly icon="back" state={onPrev ? 'normal' : 'disabled'} onClick={onPrev}>
+        {copy.ui.detailWindow.prev}
+      </Button>
+      <Button variant="tertiary" iconOnly icon="next" state={onNext ? 'normal' : 'disabled'} onClick={onNext}>
+        {copy.ui.detailWindow.next}
+      </Button>
+    </span>
+  );
+  const toolbar = (
+    <span className={styles.tools}>
+      {!mobile && <ModeSelector value={resolved as DesktopMode} onChange={changeMode} />}
+      {!mobile && navButtons}
+      {moreActions}
+    </span>
+  );
+  const rootClass = (shape: string) => [styles.window, styles[shape], className].filter(Boolean).join(' ');
+
+  // ─── Página ───
+  if (resolved === 'page') {
+    if (mobile)
+      return (
+        <section className={rootClass('mobilePage')} aria-label={title} onKeyDown={handleKeyDown}>
+          <PageHeader
+            kind="detail"
+            title={title}
+            back={{ label: breadcrumb.label, href: breadcrumb.href }}
+            moreActions={moreActions}
+          />
+          {body}
+        </section>
+      );
+    return (
+      <section className={rootClass('page')} aria-labelledby={titleId} onKeyDown={handleKeyDown}>
+        <div className={styles.bar}>
+          <nav aria-label={copy.ui.detailWindow.breadcrumb} className={styles.breadcrumb}>
+            <a href={breadcrumb.href}>{breadcrumb.label}</a>
+            <span aria-hidden="true">/</span>
+            <h1 id={titleId} className={styles.title}>
+              {title}
+            </h1>
+          </nav>
+          {toolbar}
+        </div>
+        <div className={styles.pageBody}>{body}</div>
+      </section>
+    );
+  }
+
+  // ─── Lateral, centrada y hoja: Radix Dialog ───
+  const modal = resolved !== 'side';
+  return (
+    <>
+      <span ref={findScope} hidden />
+      <Dialog.Root
+        open
+        modal={modal}
+        onOpenChange={(open) => {
+          if (!open) onClose();
+        }}
+      >
+        <Dialog.Portal container={container ?? undefined}>
+          {modal && <Dialog.Overlay className={styles.scrim} />}
+          <Dialog.Content
+            className={rootClass(resolved)}
+            aria-describedby={undefined}
+            // Centrada y hoja bloquean lo de atrás: se dice explícitamente (Radix solo lo oculta con `aria-hidden`).
+            aria-modal={modal || undefined}
+            data-dragging={drag > 0 || undefined}
+            style={drag > 0 ? ({ '--sheet-drag': `${drag}px` } as CSSProperties) : undefined}
+            onKeyDown={handleKeyDown}
+            onCloseAutoFocus={restoreFocus}
+            // Lateral: la lista sigue viva detrás; tocarla (abrir otra fila) no cierra la ventana (R6).
+            onInteractOutside={(event) => {
+              if (!modal) event.preventDefault();
+            }}
+          >
+            {resolved === 'sheet' ? (
+              <SheetGrip onDrag={setDrag} onClose={onClose}>
+                <Dialog.Title className={styles.title}>{title}</Dialog.Title>
+                {toolbar}
+              </SheetGrip>
+            ) : (
+              <div className={styles.bar}>
+                <span className={styles.group}>
+                  <Button variant="tertiary" iconOnly icon="close" onClick={onClose}>
+                    {copy.ui.detailWindow.close}
+                  </Button>
+                  <Dialog.Title className={styles.title}>{title}</Dialog.Title>
+                </span>
+                {toolbar}
+              </div>
+            )}
+            {body}
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+    </>
+  );
+}
+
+/** R1: selector de forma, un grupo de radios con ícono (escritorio). */
+function ModeSelector({ value, onChange }: { value: DesktopMode; onChange: (mode: DesktopMode) => void }) {
+  const icons = { side: 'window-side', center: 'window-center', page: 'window-page' } as const;
+  return (
+    <RadioGroup.Root
+      className={styles.modes}
+      value={value}
+      onValueChange={(next) => {
+        if (isDesktopMode(next)) onChange(next);
+      }}
+      orientation="horizontal"
+      aria-label={copy.ui.detailWindow.modeGroup}
+    >
+      {DESKTOP_MODES.map((mode) => (
+        <RadioGroup.Item
+          key={mode}
+          value={mode}
+          className={styles.mode}
+          title={copy.ui.detailWindow.modes[mode]}
+        >
+          <Icon name={icons[mode]} tone="current" />
+          <span className={styles.visuallyHidden}>{copy.ui.detailWindow.modes[mode]}</span>
+        </RadioGroup.Item>
+      ))}
+    </RadioGroup.Root>
+  );
+}
+
+/** R3 y CA-5: la parte de arriba de la hoja (asa y barra) se puede deslizar hacia abajo para cerrarla. */
+function SheetGrip({
+  onDrag,
+  onClose,
+  children,
+}: {
+  onDrag: (distance: number) => void;
+  onClose: () => void;
+  children: ReactNode;
+}) {
+  const start = useRef<number | null>(null);
+  const distance = useRef(0);
+
+  const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    if ((event.target as HTMLElement).closest('button, a, [role="radio"]')) return;
+    start.current = event.clientY;
+    distance.current = 0;
+    try {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    } catch {
+      // Algunos punteros simulados no se pueden capturar; el gesto sigue funcionando.
+    }
+  };
+  const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    if (start.current === null) return;
+    distance.current = Math.max(0, event.clientY - start.current);
+    onDrag(distance.current);
+  };
+  const onPointerUp = () => {
+    if (start.current === null) return;
+    start.current = null;
+    onDrag(0);
+    if (distance.current >= SWIPE_TO_CLOSE) onClose();
+  };
+
+  return (
+    <div
+      className={styles.grip}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerUp}
+    >
+      <span className={styles.handle} aria-hidden="true" data-part="handle" />
+      <div className={styles.bar}>{children}</div>
+    </div>
+  );
+}
