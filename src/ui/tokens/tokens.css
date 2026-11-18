@@ -266,6 +266,10 @@
   --switch-inset: 2px; /* holgura de la perilla del interruptor (HU-UI-10) */
   --tab-gap: 2px; /* separación de las opciones dentro del carril (HU-UI-11) */
   --radius-segment: 8px; /* opción del segmento; su carril usa --radius-sm */
+  --search-width: 300px; /* ancho del buscador en escritorio (HU-UI-12) */
+  --search-padding-start-mobile: 16px; /* relleno izquierdo del buscador en móvil */
+  --search-padding-end: 14px;
+  --size-search-clear: 24px; /* botón ✕ del buscador */
 }
 
 /* ─── Por plataforma · escritorio ───────────────────────────────────────────────────────────────── */

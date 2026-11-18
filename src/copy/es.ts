@@ -11,6 +11,14 @@ export const copy = {
     installment: (index: number, total: number) => `Cuota ${index} de ${total}`,
     /** Nombre accesible del avatar cuando no se da otro (HU-UI-08). */
     avatar: { person: 'Cliente', cover: 'Portada', brand: 'Colportor' },
+    /** Buscador (HU-UI-12). */
+    search: {
+      label: 'Buscar',
+      clear: 'Borrar búsqueda',
+      filters: (active: number) =>
+        active === 0 ? 'Filtros' : `Filtros, ${active} ${active === 1 ? 'activo' : 'activos'}`,
+      shortcut: '⌘K',
+    },
   },
   /** Palabra de cada estado en la Pastilla de estado (HU-UI-05, glosario «Estados»). */
   status: {
