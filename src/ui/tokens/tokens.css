@@ -295,6 +295,8 @@
   --dialog-width: 440px; /* diálogo en escritorio (HU-UI-24) */
   --dialog-padding: 24px;
   --dialog-sheet-padding: 10px 20px 28px; /* diálogo como hoja en móvil */
+  --money-summary-width: 1100px; /* resumen de dinero en escritorio (HU-UI-25) */
+  --money-summary-mobile-width: 358px; /* columna del resumen en la hoja móvil */
   --data-row-label-width: 170px; /* columna de etiquetas de la fila de dato en escritorio (HU-UI-13) */
 }
 

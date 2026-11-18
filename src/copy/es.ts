@@ -103,4 +103,19 @@ export const copy = {
     sold: 'Vendido',
     flagged: 'Con novedad',
   },
+  /** Módulo Dinero (BR-DEP-14, ADR-0046). */
+  money: {
+    /** Resumen de dinero (HU-UI-25). */
+    summary: {
+      toDeliver: 'Por entregar',
+      toDeliverInfo: 'Qué es Por entregar',
+      cash: 'Efectivo',
+      transfer: 'Transferencia',
+      deliver: 'Entregar al líder',
+      nothingToDeliver: 'No hay dinero por entregar',
+      delivered: 'Entregado',
+      toCollect: 'Por cobrar',
+      total: 'Dinero total',
+    },
+  },
 } as const;
