@@ -49,6 +49,12 @@ export const copy = {
     metric: {
       percent: (n: number) => `${n}\u00a0%`,
     },
+    /** Medidor (HU-UI-18): etiqueta del centro y descripci\u00f3n para el lector. */
+    gauge: {
+      caption: 'entregado',
+      description: (delivered: number, collected: number, pending: number) =>
+        `${delivered}\u00a0% entregado; ${collected}\u00a0% cobrado sin entregar; ${pending}\u00a0% por cobrar`,
+    },
   },
   /** Palabra de cada estado en la Pastilla de estado (HU-UI-05, glosario «Estados»). */
   status: {
