@@ -53,6 +53,25 @@ export const copy = {
     header: {
       back: (to: string) => `Volver a ${to}`,
     },
+    /** Navegación (HU-UI-23): nombres de los módulos (glosario) y de los grupos. */
+    nav: {
+      label: 'Principal',
+      items: {
+        today: 'Hoy',
+        customers: 'Clientes',
+        inventory: 'Inventario',
+        minibooks: 'Minibooks',
+        calendar: 'Calendario',
+        money: 'Dinero',
+        stocktake: 'Hacer inventario',
+        settings: 'Ajustes',
+        admin: 'Admin',
+      },
+      groups: { work: 'Trabajo', money: 'Dinero', account: 'Cuenta' },
+      search: 'Buscar',
+      newCustomer: 'Nuevo cliente',
+      more: 'Más',
+    },
     /** Menú (HU-UI-20): título de la hoja móvil cuando no se da otro. */
     menu: {
       title: 'Opciones',

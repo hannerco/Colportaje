@@ -284,6 +284,14 @@
   --sheet-handle-width: 36px;
   --sheet-handle-height: 4px;
   --layer-overlay: 40; /* fondo y hoja, debajo del aviso */
+  --sidebar-width: 248px; /* barra lateral (HU-UI-23) */
+  --sidebar-padding: 12px;
+  --size-sidebar-item: 34px;
+  --size-nav-square: 22px; /* cuadro de «Nuevo cliente» */
+  --bottom-bar-inset: 12px; /* la barra inferior flota a esta distancia de los bordes */
+  --size-bottom-bar-item: 52px;
+  --bar-blur: 16px;
+  --layer-nav: 30; /* barra inferior y botón flotante, debajo de las hojas */
   --data-row-label-width: 170px; /* columna de etiquetas de la fila de dato en escritorio (HU-UI-13) */
 }
 
