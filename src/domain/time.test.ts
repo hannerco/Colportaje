@@ -9,6 +9,7 @@ import {
   formatTime,
   lastDayOfMonth,
   localDate,
+  parseDisplayDate,
   parseLocalDate,
   startOfWeek,
   todayBogota,
@@ -87,6 +88,27 @@ describe('time', () => {
   describe('formatDate', () => {
     it('BR-GEN-07: dd/mm/aaaa', () => {
       expect(formatDate(d('2026-11-07'))).toBe('07/11/2026');
+    });
+  });
+
+  describe('parseDisplayDate', () => {
+    it('HU-UI-09: dd/mm/aaaa y d/m/aaaa de un día real', () => {
+      expect(parseDisplayDate('05/11/2026')).toEqual({ ok: true, value: d('2026-11-05') });
+      expect(parseDisplayDate(' 5/1/2026 ')).toEqual({ ok: true, value: d('2026-01-05') });
+      expect(parseDisplayDate('29/02/2028')).toEqual({ ok: true, value: d('2028-02-29') });
+    });
+
+    it('HU-UI-09: un día que no existe o un formato distinto no es fecha', () => {
+      for (const text of [
+        '32/11/2026',
+        '29/02/2026',
+        '00/11/2026',
+        '05/13/2026',
+        '2026-11-05',
+        '05/11/26',
+        '',
+      ])
+        expect(parseDisplayDate(text).ok).toBe(false);
     });
   });
 

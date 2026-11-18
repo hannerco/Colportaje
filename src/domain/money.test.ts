@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatCOP, isValidCOP, parseCOP } from './money';
+import { formatCOP, groupCOP, isValidCOP, parseCOP, parseTypedCOP } from './money';
 
 describe('money', () => {
   it('CA-3: formatCOP(1250000) da "$1.250.000"', () => {
@@ -58,5 +58,21 @@ describe('money', () => {
     expect(isValidCOP(-1)).toBe(false);
     expect(isValidCOP(1.5)).toBe(false);
     expect(isValidCOP(Number.MAX_SAFE_INTEGER + 1)).toBe(false);
+  });
+
+  it('HU-UI-09: groupCOP agrupa de a tres con punto y sin «$»', () => {
+    expect(groupCOP(93_000)).toBe('93.000');
+    expect(groupCOP(0)).toBe('0');
+    expect(groupCOP(1_250_000)).toBe('1.250.000');
+  });
+
+  it('HU-UI-09: parseTypedCOP toma solo los dígitos; sin dígitos da null', () => {
+    expect(parseTypedCOP('93000')).toBe(93_000);
+    expect(parseTypedCOP('93.000')).toBe(93_000);
+    expect(parseTypedCOP('$ 1.250.000')).toBe(1_250_000);
+    expect(parseTypedCOP('0093')).toBe(93);
+    expect(parseTypedCOP('')).toBeNull();
+    expect(parseTypedCOP('$ .')).toBeNull();
+    expect(parseTypedCOP('9'.repeat(20))).toBe(999_999_999_999_999);
   });
 });
