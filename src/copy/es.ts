@@ -41,6 +41,10 @@ export const copy = {
       received: (date: string) => `Recibido ${date}`,
       more: (n: number) => `+${n}`,
     },
+    /** Franja (HU-UI-16): texto por defecto de sin conexión (BR-GEN-08, I-35). */
+    banner: {
+      offline: 'Sin conexión: puedes consultar, pero no registrar',
+    },
   },
   /** Palabra de cada estado en la Pastilla de estado (HU-UI-05, glosario «Estados»). */
   status: {
