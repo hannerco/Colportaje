@@ -270,6 +270,7 @@
   --search-padding-start-mobile: 16px; /* relleno izquierdo del buscador en móvil */
   --search-padding-end: 14px;
   --size-search-clear: 24px; /* botón ✕ del buscador */
+  --data-row-label-width: 170px; /* columna de etiquetas de la fila de dato en escritorio (HU-UI-13) */
 }
 
 /* ─── Por plataforma · escritorio ───────────────────────────────────────────────────────────────── */

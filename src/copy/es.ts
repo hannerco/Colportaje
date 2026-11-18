@@ -19,6 +19,11 @@ export const copy = {
         active === 0 ? 'Filtros' : `Filtros, ${active} ${active === 1 ? 'activo' : 'activos'}`,
       shortcut: '⌘K',
     },
+    /** Fila de dato (HU-UI-13): lo que oye el lector antes del valor editable y del valor anterior. */
+    dataRow: {
+      edit: (label: string) => `Editar ${label}, `,
+      previous: 'antes ',
+    },
   },
   /** Palabra de cada estado en la Pastilla de estado (HU-UI-05, glosario «Estados»). */
   status: {
