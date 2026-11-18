@@ -1,6 +1,10 @@
-# Historias de usuario del back: Clientes, Inventario y Dinero
+# Historias de usuario: back y front de Clientes, Inventario y Dinero
 
-Historias de usuario (HU) para construir **toda la lógica** (todo lo que no es UI) de los tres módulos diseñados: **Clientes, Inventario y Dinero**, más unos cimientos mínimos (ADR-0041). Las escribió un asistente de IA el 2026-11-08, después de cruzar el diseño exportado con los docs (DECISION-LOG ronda 26).
+Este archivo tiene dos partes:
+- **Back** (carpetas `00-base` a `04-dinero`): toda la lógica que no es UI de los tres módulos diseñados, más unos cimientos mínimos (ADR-0041). Las escribió un asistente de IA el 2026-11-08 (DECISION-LOG ronda 26).
+- **Front · iteración 1** (carpetas `05-ui` y `06-pantallas`): el Storybook, los componentes de la biblioteca del diseño y las pantallas, escritas el 2026-11-17 (ronda 31, ADR-0050). Ver la sección [«Front · iteración 1»](#front--iteración-1).
+
+Las secciones siguientes, hasta «Fuera de alcance de todas estas HU», son del back.
 
 ## Cómo están escritas (y por qué)
 El formato sigue lo que coinciden en recomendar las guías de desarrollo guiado por especificaciones para agentes de IA:
@@ -82,6 +86,9 @@ Implementar en este orden. Una HU solo empieza cuando sus dependencias están te
 | 10 | [HU-DIN-06](04-dinero/HU-DIN-06-lista-de-abibonos.md) | Lista de Abibonos | DIN-01 |
 | 11 | [HU-DIN-05](04-dinero/HU-DIN-05-confirmar.md) | Confirmar un Abibono | DIN-04 |
 | 12 | [HU-DIN-07](04-dinero/HU-DIN-07-reabrir.md) | Reabrir un Abibono confirmado | DIN-05 |
+| 13 | [HU-CLI-13](02-clientes/HU-CLI-13-fecha-de-venta.md) | Fecha de venta del libro editable (ADR-0049) | CLI-09, INV-05 |
+| 13 | [HU-ABO-08](03-abonos/HU-ABO-08-abonos-con-fecha-pasada.md) | Abonos programados con fecha pasada (ADR-0049) | ABO-03, ABO-04, ABO-05 |
+| 13 | [HU-ABO-09](03-abonos/HU-ABO-09-fecha-de-la-cuota-inicial.md) | Fecha de la cuota inicial en la ficha nueva (ADR-0049) | ABO-02 |
 
 ## Avance
 | HU | Estado | Dónde |
@@ -127,6 +134,9 @@ Implementar en este orden. Una HU solo empieza cuando sus dependencias están te
 | HU-DIN-06 | Terminada (2026-11-15) | `will-dev` |
 | HU-DIN-05 | Terminada (2026-11-15) | `will-dev` |
 | HU-DIN-07 | Terminada (2026-11-15) | `will-dev` |
+| HU-CLI-13 | Pendiente (ADR-0049, ronda 30) | — |
+| HU-ABO-08 | Pendiente (ADR-0049, ronda 30) | — |
+| HU-ABO-09 | Pendiente (ADR-0049, ronda 30) | — |
 
 **Flujo de trabajo del back (desde 2026-11-13):** las HU se programan en la rama `will-dev`, con un commit por HU y la CI corriendo en cada push. No se abre un PR a `main` por cada HU; `main` se actualiza con un PR desde `will-dev` cuando se acuerde con el dueño. Antes de cada commit: `pnpm lint && pnpm typecheck && pnpm test && pnpm test:rls && pnpm build`.
 
@@ -144,5 +154,148 @@ Cada vez que se termina una de estas HU, quien la hizo **avisa al dueño** con e
 
 Mientras tanto, el dueño diseña lo que falta (Hoy, Calendario, Minibooks, Hacer inventario, Admin): no bloquea al back.
 
-## Fuera de alcance de todas estas HU
+## Fuera de alcance de todas estas HU (back)
 UI y componentes visibles; textos de pantalla; Hoy; Calendario, visitas, capacitaciones y recordatorios; ventas de minibooks, asignaciones a Abibonos y canje de saldo a favor; Hacer inventario y totalizadores; invitaciones, restablecimiento de contraseña y panel de admin; escritura sin conexión y push (fase 2); vista de líder (fase 3). Lo que falta por diseñar está en `04-diseno/pendientes/`.
+
+---
+
+## Front · iteración 1
+
+> **Primera iteración (2026-11-17).** Estas HU describen la primera versión del front, hecha con la **Biblioteca de componentes v1.1** del lienzo. El diseño **va a cambiar**: las correcciones se hacen por *issues* y los cambios de diseño se anotan en la sección «Cambios por iteración» de cada HU (`00-REGLAS-COMUNES-FRONT.md` §2). La decisión de fondo está en ADR-0050.
+
+### Empieza aquí (William)
+1. **Trae los documentos a tu rama:** `git switch will-dev && git pull && git merge origin/main`. Resuelve conflictos si los hay; el código del back no cambia.
+2. **Lee, en este orden:**
+   1. ADR-0050;
+   2. `00-REGLAS-COMUNES-FRONT.md`;
+   3. la sección «Cómo iteramos» de abajo.
+   Luego abre el lienzo (`https://claude.ai/artifact/RgxEeQ7BZExzaJVcih3AZV`), página **«Biblioteca de componentes»**: cada HU cita la ficha (`Lib-…`) que debe copiar.
+3. **Programa en el orden de la tabla**, empezando por **HU-UI-01**, con una HU por sesión y un *commit* por HU en `will-dev`. Si usas una IA, pégale el texto de «Cómo pedirle a una IA…».
+4. **El proyecto del Storybook en Vercel ya existe** (`colportor-storybook`). Se publica solo en cuanto HU-UI-01 agregue el script `build-storybook`; desde entonces, cada *push* a `will-dev` publica el Storybook.
+5. **Al terminar cada bloque** (A, B, C…), mándale al dueño el enlace del Storybook y actualiza la tabla «Avance del front».
+6. **Las correcciones llegan como *issues* «Corrección de diseño».** Ciérralas con el *commit* que las arregla (`fix(ui): … (#N)`). Si una corrección cambia una prop, un estado o una regla, anótala en «Cambios por iteración» de la HU.
+7. **Si el diseño y una HU no coinciden, o falta algo, no inventes:** pregúntale al dueño y anótalo en `06-planificacion/OPEN-QUESTIONS.md`.
+
+### Archivos comunes del front
+| Archivo | Para qué |
+|---|---|
+| `00-REGLAS-COMUNES-FRONT.md` | Reglas de **todas** las HU del front: fuentes de verdad, iteración, capas de `src/ui`, tema y plataforma, tokens, íconos, textos, accesibilidad, stories obligatorias, pruebas y definición de terminado |
+| `PLANTILLA-FRONT.md` | Plantilla para HU nuevas del front (un componente o una pantalla) |
+| `INTERPRETACIONES.md` | Desde I-34: detalles del front que decidió el asistente (vetables) |
+
+### Cómo iteramos (William y el dueño)
+El ciclo más sencillo, sin instalar nada del lado del dueño:
+
+1. **William termina una HU** y hace *push* a `will-dev`. El Storybook se publica solo, en la misma URL de siempre: `colportor-storybook-git-will-dev-emprendum.vercel.app` (pide iniciar sesión en Vercel).
+2. **William avisa al terminar cada bloque** (no cada componente): «Átomos listos: <enlace>». Así el dueño revisa de una vez un grupo de piezas parecidas.
+3. **El dueño revisa** cada componente:
+   - cambia **Tema** (claro/oscuro), **Plataforma** (móvil/escritorio, o las dos lado a lado) y **Letra** en la barra superior;
+   - lo compara con su ficha en el lienzo (el nombre de la ficha está en la página del componente).
+4. **Por cada cosa que corregir**, pulsa **«Reportar corrección»** en la página del componente. Se abre un *issue* en GitHub con el componente ya escrito, y elige el tipo:
+   - **«No se parece al diseño»:** William lo corrige; nada más cambia.
+   - **«Quiero cambiar el diseño»:** primero se cambia la ficha en el lienzo (con Claude Design), para que el diseño siga siendo la fuente. Si es un color o un tamaño, basta cambiar el token. William actualiza la HU («Cambios por iteración») y lo programa.
+5. **William cierra el *issue*** con el *commit* que lo arregla (`fix(ui): … (#12)`). El dueño lo verifica en el mismo enlace.
+
+Regla práctica: **una corrección por *issue***, con captura si se puede. Lo que se decide en una conversación también se anota en el *issue*, para que no se pierda.
+
+### Cómo pedirle a una IA que implemente una HU del front
+```text
+Implementa la HU docs/07-historias-usuario/<05-ui|06-pantallas>/<archivo>.md.
+Antes de escribir código, lee AGENTS.md, docs/07-historias-usuario/00-REGLAS-COMUNES-FRONT.md, la HU completa,
+ADR-0050 y la ficha del diseño que cita (lienzo, página «Biblioteca de componentes»). Respeta el "No incluye".
+Usa solo tokens, <Icon> y textos de copy/es.ts. Escribe las stories de la sección «Stories» y las pruebas
+de los criterios de aceptación; corre pnpm lint && pnpm typecheck && pnpm test && pnpm build-storybook.
+Si el diseño y la HU no coinciden, o falta un dato, detente y pregúntame; no inventes. Al terminar, recorre
+cada criterio de aceptación y dime cómo quedó verificado, con el enlace de cada story.
+```
+
+### Orden de implementación
+Una HU empieza cuando sus dependencias están terminadas. Las del mismo bloque sin dependencia entre sí pueden ir en paralelo.
+
+| Bloque | HU | Título | Depende de |
+|---|---|---|---|
+| A · Cimientos | [HU-UI-01](05-ui/HU-UI-01-storybook-y-ciclo-de-revision.md) | Storybook, estructura de `src/ui` y ciclo de revisión | BASE-01 |
+| A | [HU-UI-02](05-ui/HU-UI-02-tokens-y-fundamentos.md) | Tokens y fundamentos | UI-01 |
+| A | [HU-UI-03](05-ui/HU-UI-03-icono.md) | Ícono (Lucide) | UI-02 |
+| B · Átomos | [HU-UI-04](05-ui/HU-UI-04-boton.md) | Botón | UI-03 |
+| B | [HU-UI-05](05-ui/HU-UI-05-pastilla-de-estado.md) | Pastilla de estado | UI-03 |
+| B | [HU-UI-06](05-ui/HU-UI-06-chip.md) | Chip | UI-03 |
+| B | [HU-UI-07](05-ui/HU-UI-07-etiqueta.md) | Etiqueta | UI-03 |
+| B | [HU-UI-08](05-ui/HU-UI-08-avatar.md) | Avatar | UI-03 |
+| B | [HU-UI-09](05-ui/HU-UI-09-campo.md) | Campo de formulario | UI-03 |
+| B | [HU-UI-10](05-ui/HU-UI-10-seleccion.md) | Selección (casilla, radio, interruptor) | UI-03 |
+| C · Moléculas | [HU-UI-11](05-ui/HU-UI-11-pestanas.md) | Pestañas | UI-02 |
+| C | [HU-UI-12](05-ui/HU-UI-12-buscador.md) | Buscador | UI-04 |
+| C | [HU-UI-13](05-ui/HU-UI-13-fila-de-dato.md) | Fila de dato | UI-03 |
+| C | [HU-UI-14](05-ui/HU-UI-14-fila-de-lista.md) | Fila de lista | UI-05..08 |
+| C | [HU-UI-15](05-ui/HU-UI-15-aviso.md) | Aviso (con Deshacer) | UI-04 |
+| C | [HU-UI-16](05-ui/HU-UI-16-franja.md) | Franja | UI-03 |
+| C | [HU-UI-17](05-ui/HU-UI-17-tarjeta-de-metrica.md) | Tarjeta de métrica | UI-02 |
+| C | [HU-UI-18](05-ui/HU-UI-18-medidor.md) | Medidor | UI-02 |
+| C | [HU-UI-19](05-ui/HU-UI-19-historial.md) | Historial | UI-04 |
+| C | [HU-UI-20](05-ui/HU-UI-20-menu.md) | Menú y campo de selección | UI-09 |
+| D · Organismos | [HU-UI-21](05-ui/HU-UI-21-encabezado.md) | Encabezado | UI-04 |
+| D | [HU-UI-22](05-ui/HU-UI-22-isla.md) | Isla | UI-13, UI-19 |
+| D | [HU-UI-23](05-ui/HU-UI-23-navegacion.md) | Navegación | UI-04, UI-08 |
+| D | [HU-UI-24](05-ui/HU-UI-24-dialogo.md) | Diálogo | UI-04 |
+| D | [HU-UI-25](05-ui/HU-UI-25-resumen-de-dinero.md) | Resumen de dinero | UI-17, UI-18, UI-24 |
+| D | [HU-UI-26](05-ui/HU-UI-26-estado-vacio.md) | Estado vacío y de carga | UI-04 |
+| D | [HU-UI-27](05-ui/HU-UI-27-ventana-de-detalle.md) | Ventana de detalle | UI-11, UI-21, UI-22 |
+| E · Plantillas | [HU-UI-28](05-ui/HU-UI-28-plantilla-de-lista.md) | Plantilla de lista y Barra de vista | C y D |
+| E | [HU-UI-29](05-ui/HU-UI-29-plantilla-de-detalle.md) | Plantilla de detalle en islas | UI-16, UI-22, UI-27 |
+| F · App | [HU-PAN-BASE-01](06-pantallas/HU-PAN-BASE-01-armazon-de-la-app.md) | Armazón: rutas, navegación, avisos y textos | UI-23, UI-15, UI-16, UI-26 |
+| F | [HU-PAN-BASE-02](06-pantallas/HU-PAN-BASE-02-iniciar-sesion.md) | Iniciar sesión | **Bloqueada: espera diseño (OQ-44)** |
+| G · Clientes | [HU-PAN-CLI-01](06-pantallas/HU-PAN-CLI-01-lista-de-clientes.md) | Lista de clientes | UI-28, PAN-BASE-01 |
+| G | [HU-PAN-CLI-02](06-pantallas/HU-PAN-CLI-02-ficha-de-cliente.md) | Ficha de cliente | UI-29, PAN-CLI-01 |
+| G | [HU-PAN-CLI-03](06-pantallas/HU-PAN-CLI-03-crear-y-editar-cliente.md) | Crear cliente (ficha viva), guardar y descartar | PAN-CLI-02 |
+| G | [HU-PAN-CLI-04](06-pantallas/HU-PAN-CLI-04-agregar-y-quitar-libros.md) | Agregar libro, quitarlo y devolverlo | PAN-CLI-02 |
+| G | [HU-PAN-CLI-05](06-pantallas/HU-PAN-CLI-05-abonos-en-la-ficha.md) | Abonos en la ficha: cambiar fecha | PAN-CLI-03 |
+| G | [HU-PAN-CLI-06](06-pantallas/HU-PAN-CLI-06-informacion-direccion-y-ubicacion.md) | Información, dirección y ubicación | PAN-CLI-02 |
+| H · Inventario | [HU-PAN-INV-01](06-pantallas/HU-PAN-INV-01-libros-en-fisico-y-por-resolver.md) | Libros en físico y Por resolver | UI-28, PAN-BASE-01 |
+| H | [HU-PAN-INV-02](06-pantallas/HU-PAN-INV-02-lista-de-ejemplares.md) | Lista de ejemplares | UI-28 |
+| H | [HU-PAN-INV-03](06-pantallas/HU-PAN-INV-03-detalle-de-ejemplar.md) | Detalle de un ejemplar y sus acciones | UI-29, PAN-INV-02 |
+| H | [HU-PAN-INV-04](06-pantallas/HU-PAN-INV-04-agregar-al-inventario.md) | Agregar al inventario | PAN-INV-01 |
+| H | [HU-PAN-INV-05](06-pantallas/HU-PAN-INV-05-devolver-al-lider.md) | Devolver al líder | PAN-INV-01 |
+| I · Dinero | [HU-PAN-DIN-01](06-pantallas/HU-PAN-DIN-01-dinero-y-abonos-de-clientes.md) | Dinero: resumen y abonos de clientes | UI-25, UI-28, PAN-BASE-01 |
+| I | [HU-PAN-DIN-02](06-pantallas/HU-PAN-DIN-02-detalle-de-abono-cobrar-y-mas-plazo.md) | Detalle de un abono: cobrar y dar más plazo | UI-29, PAN-DIN-01 |
+| I | [HU-PAN-DIN-03](06-pantallas/HU-PAN-DIN-03-lista-de-abibonos.md) | Lista de Abibonos | PAN-DIN-01 |
+| I | [HU-PAN-DIN-04](06-pantallas/HU-PAN-DIN-04-nuevo-abibono-y-borradores.md) | Nuevo Abibono, borradores y confirmar | PAN-DIN-03, UI-27 |
+| I | [HU-PAN-DIN-05](06-pantallas/HU-PAN-DIN-05-abibono-entregado-y-reabrir.md) | Abibono entregado y reabrir | PAN-DIN-04 |
+
+Los bloques G, H e I pueden ir en paralelo cuando terminan A–F. HU-PAN-CLI-03, CLI-04 y CLI-05 usan HU del back aún pendientes (CLI-13, ABO-08, ABO-09): la parte que depende de ellas se activa cuando el back esté listo.
+
+### Lo que la biblioteca aún no tiene
+Piezas que las **pantallas** del lienzo dibujan pero que no están en la **biblioteca**. Se programan como piezas del módulo (`00-REGLAS-COMUNES-FRONT.md` §1) y se le piden al diseño para subirlas a la biblioteca:
+
+| Pieza | Dónde aparece | HU |
+|---|---|---|
+| Calendario para elegir fecha | Cambiar fecha de abono; Dar más plazo | PAN-CLI-05, PAN-DIN-02 |
+| Plan de abonos (frecuencia, valor, lista previa) | Crear cliente | PAN-CLI-03 |
+| Mapa y selector de ubicación | Información y dirección; Elegir ubicación | PAN-CLI-06 |
+| Fila que se desliza (móvil) | Dinero (Cobrar / Más plazo); Por resolver | PAN-DIN-02, PAN-INV-01 |
+| Botón de título con imagen y contador; cantidad | Agregar al inventario | PAN-INV-04 |
+| Fotos (miniaturas, agregar, quitar) | Recibos del Abibono; facturas; fotos de información | PAN-DIN-04, PAN-CLI-02 |
+| Tipo «abibono» en la Fila de lista | Lista de Abibonos | PAN-DIN-03 (se pide antes de programar) |
+
+Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesión** (OQ-44), selector de emoji (FC-02), los formularios de abonos de FC-09 a FC-12, y lo demás de `04-diseno/pendientes/FALTA-*.md`.
+
+### Avance del front
+| HU | Estado | Dónde |
+|---|---|---|
+| HU-UI-01 a HU-UI-29 | Pendientes | — |
+| HU-PAN-BASE-01 | Pendiente | — |
+| HU-PAN-BASE-02 | Bloqueada (espera diseño, OQ-44) | — |
+| HU-PAN-CLI-01 a 06, HU-PAN-INV-01 a 05, HU-PAN-DIN-01 a 05 | Pendientes | — |
+
+**Flujo de trabajo del front:** igual que el back, en `will-dev`, un *commit* por HU. Antes de cada *commit*: `pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm build-storybook`.
+
+### Puntos de entrega del front
+| Cuando se termina… | Se avisa al dueño | El dueño hace |
+|---|---|---|
+| **HU-UI-01** | «UI-01 lista: <enlace del Storybook>» | Abre el enlace (inicia sesión en Vercel con la cuenta Emprendum), prueba Tema, Plataforma y Letra, y abre un *issue* de prueba. El proyecto `colportor-storybook` ya está creado (2026-11-17) |
+| **Cada bloque (A a I)** | «Bloque <X> listo: <enlace>» | Revisa en el Storybook y reporta correcciones (ver «Cómo iteramos») |
+| **HU-PAN-CLI-06** | «Falta el proveedor del mapa» | Decide SG-09 y prueba la ubicación en su iPhone |
+| **HU-PAN-BASE-01 y primer despliegue** | «La app ya se puede abrir» | Prueba en su celular (necesita HU-PAN-BASE-02, que espera su diseño) |
+
+### Fuera de alcance del front (iteración 1)
+Pantallas sin diseño (Hoy, Calendario, Minibooks, Hacer inventario, Admin, Iniciar sesión, Ajustes); escritura sin conexión (fase 2); vista de líder (fase 3); revisión visual automatizada por capturas.

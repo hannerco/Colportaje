@@ -1,5 +1,5 @@
 # ADR-0045: Plan de abonos: días de pago, corregir frente a prorrogar y cliente existente
-Estado: Aceptado (separación mínima y arrastre de fechas reemplazados por ADR-0047) · Fecha: 2026-11-08 · Amplía ADR-0039
+Estado: Aceptado (separación mínima y arrastre de fechas reemplazados por ADR-0047; «ninguna fecha anterior a hoy» reemplazada por ADR-0049) · Fecha: 2026-11-08 · Amplía ADR-0039
 
 ## Contexto
 ADR-0039 dejó abiertas las fechas que sugiere el plan y trató todo cambio de fecha como prórroga. Al revisar el diseño (ronda 26) el dueño explicó que "quincenal" y "mensual" en Colombia se refieren a los días de pago (el 15 y el 30), que al crear un cliente un cambio de fecha es solo una corrección, y que la ficha de un cliente existente también debe poder programar.

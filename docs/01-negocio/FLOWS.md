@@ -51,7 +51,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 - **Contexto:** botón global **"Nuevo cliente"** (persona con "+"); cubre al cliente nuevo y al prospecto. Para uno existente: Clientes → ficha → "Agregar libro". Reemplaza al antiguo asistente "+ Vender" (ADR-0035).
 - **Pasos:** el botón abre una **ficha en blanco que se guarda sola**. Se escribe el **nombre** (obligatorio; aviso no bloqueante de posible duplicado, AF-70) y teléfono. Luego, en línea y en el orden habitual (no obligatorio):
   1. **Libros:** "Agregar libro del inventario" → **cada ejemplar en físico** ordenado por título y luego por el más antiguo, con búsqueda por título o número; "+" lo asigna al instante (BR-COPY-06); el precio acordado nace igual al precio público y se edita en el ejemplar (F-08).
-  2. **Abonos:** **Cuota inicial** (valor y método, Transferencia por defecto; con $0 no se crea abono) → `collected`; **plan automático** (frecuencia, valor de cada abono, primer abono sugerido el próximo 15 o 30 → tabla "Así quedan los abonos", BR-PAY-15). Las fechas se **corrigen** una a una con un calendario (solo se mueve ese abono, BR-PAY-06, ADR-0047).
+  2. **Abonos:** **Cuota inicial** (valor, fecha —Hoy por defecto, no futura— y método, Transferencia por defecto; con $0 no se crea abono) → `collected`; **plan automático** (frecuencia, valor de cada abono, primer abono sugerido el próximo 15 o 30 → tabla "Así quedan los abonos", BR-PAY-15). Las fechas se **corrigen** una a una con un calendario (solo se mueve ese abono, BR-PAY-06, ADR-0047).
   3. **Factura:** "Foto de la factura" crea la factura; luego N.º (opcional) y fecha (se llena sola con el día de la foto); más fotos o más facturas después (BR-CUS-17).
   4. Visitas, información, dirección y fotos: normalmente de noche.
   5. **Cierre:** la pantalla **Resumen** muestra qué se metió y qué falta; **"Guardar cliente"** cierra la ficha y **"Seguir editando"** vuelve a ella. **"Descartar"** (cabecera) elimina al cliente recién creado tras una confirmación que resume lo que se pierde (AF-112).
@@ -71,7 +71,7 @@ Cada flujo indica: contexto, pasos, reglas aplicadas (`BR-*`), resultado y borde
 
 ## F-13 Registrar y cobrar abonos
 - **Cuota inicial / extra:** ficha → "Registrar abono" → monto, método (Transferencia por defecto), fecha (hoy, no futura) → `collected` (evalúa F-29).
-- **Programar:** monto + fecha (no anterior a hoy) → `scheduled`; o un plan, que con el cliente ya guardado reparte solo lo sin programar (BR-PAY-15/16).
+- **Programar:** monto + fecha (puede ser pasada, con aviso «Esta fecha ya pasó», ADR-0049) → `scheduled`; o un plan, que con el cliente ya guardado reparte solo lo sin programar (BR-PAY-15/16).
 - **Cobrar uno programado:** desde la ficha, Dinero o Hoy → "Cobrar" → monto real (por defecto el acordado), fecha real, método (Transferencia por defecto) → `collected`.
 - **Parcial:** aviso no intrusivo para programar el faltante (AF-22). **Mayor al acordado:** AF-21.
 - **Reglas:** BR-PAY-01..07.

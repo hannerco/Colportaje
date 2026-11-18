@@ -1,6 +1,7 @@
 # HU-ABO-03 · Plan de abonos automático
 
 > **Épica:** Abonos · **Depende de:** HU-ABO-01, HU-CLI-02 · **Reglas:** BR-PAY-15, BR-GEN-15, ADR-0039, ADR-0045, AF-113, AF-116 · **Diseño:** "Plan para el saldo de $X" (frecuencia, valor de cada abono, primer abono, "Así quedan los abonos") en Crear cliente
+> **Ajustada por:** HU-ABO-08 (el primer abono y las fechas pueden ser anteriores a hoy) · ADR-0049. Esta HU ya está terminada y no se edita; el cambio va en la HU nueva.
 
 ## Historia
 **Como** colportor **quiero** decir cada cuánto y cuánto pagará el cliente, y que la app arme los abonos con fechas que coincidan con sus días de pago **para** no calcular fechas ni valores a mano.

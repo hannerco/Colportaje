@@ -512,6 +512,38 @@ El dueño revisó las 27 interpretaciones de `07-historias-usuario/INTERPRETACIO
 
 ---
 
+## Ronda 30 — Registrar el pasado: la app entra a mitad de campaña (2026-11-16)
+
+| # | Tema | Resultado |
+|---|---|---|
+| 1 | Fecha de venta del libro | **"Claro, debo poder decir y cambiar la fecha en la que vendí el libro, eso debería estar."** [D] `sold_at` editable (no futura, no anterior al recibido, con historial). HU-CLI-13. |
+| 2 | Abonos programados con fecha pasada | **"Sí debo poder ponerlos anteriores a hoy, simplemente que me aparezca un aviso de que la fecha es anterior, pero debo poder ponerla."** [D] Reemplaza «ninguna fecha anterior a hoy» (ADR-0045). Un abono con fecha pasada nace **vencido**. HU-ABO-08. |
+| 3 | Plan automático | **"Está bien que el cliente tenga que editarlo, porque es una ayuda, mas no una camisa de fuerza."** [D] El plan sigue sugiriendo desde el siguiente día de pago; no hay plan «hacia atrás». |
+| 4 | Cuota inicial de la ficha nueva | **"Exacto."** [D] Campo de fecha (Hoy por defecto, no futura). HU-ABO-09. |
+| 5 | Abibono sin foto de recibo | **"Ese caso no va a suceder, así que no te preocupes."** [D] Sin cambios: la foto sigue siendo obligatoria. |
+| 6 | Cuota vencida al cargar | Ante el ejemplo de una cuota del 15 de noviembre sin pagar, **"quiero que aparezca vencida desde el 15."** [D] |
+
+*Consecuencias:* ADR-0049; BR-GEN-16, BR-COPY-06, BR-PAY-06/15/16; HU nuevas CLI-13, ABO-08 y ABO-09 (las HU terminadas no se editan: llevan una nota «Ajustada por»); I-09 sin efecto; I-32 e I-33.
+
+---
+
+## Ronda 31 — Front: Storybook y biblioteca de componentes, iteración 1 (2026-11-17)
+
+| # | Tema | Resultado |
+|---|---|---|
+| 1 | Storybook para cada componente | **"Necesito crear un storybook para cada componente, para que se puedan reutilizar en diferente páginas con sus variantes, pero que puedan verse en un storybook todas."** [D] Storybook en el repositorio; cada componente con sus variantes y estados (ADR-0050). |
+| 2 | Recomendaciones del asistente | **"aprubeo lo que dices"** [D] Se aprueban: (a) código en inglés y Storybook en español con la jerarquía del diseño; (b) CSS Modules + tokens + Radix Primitives, sin Tailwind ni shadcn/ui; (c) tema, plataforma y escala resueltos una sola vez, no como props. |
+| 3 | Librería de íconos | Decidido en el diseño y aceptado por el dueño: **Lucide** (`lucide-react`), trazo 1,8, 46 íconos con nombre propio en español. |
+| 4 | Ventana lateral, centrada y página | El dueño pidió al diseño mostrar los componentes en esas tres formas: nace **Ventana de detalle** (`VentanaDetalle`), que reemplaza a la «Ventana» anterior. |
+| 5 | Tema y plataforma en el Storybook | **"En el storybook debo poder cambiar de claro a oscuro. Además, en cada componente debo poder verlo tanto en movil como en desktop."** [D] Barra superior con Tema, Plataforma (y lado a lado) y Letra; story «Matriz» en cada componente. |
+| 6 | Iteración | **"deja claro que es la primera iteración, pero va a ir cambiando."** [D] Las HU del front son la iteración 1; las correcciones van por *issues* «Corrección de diseño» y los cambios de diseño se anotan en «Cambios por iteración». |
+| 8 | Interpretaciones del front y ciclo de revisión | **"estoy de acuerdo con todo lo que mencionas"** [D] Se confirman I-34 a I-41 y el ciclo «Reportar corrección» por *issues*. Las HU del front pasan a `main` para que William empiece. |
+| 7 | Quién y cómo | **"esto lo va a desarrollar william. Él me va a mostrar el storybook y yo el voy a dar correciones de diseño"** [D] Storybook publicado en Vercel desde `will-dev`; William avisa por bloque; el dueño reporta con «Reportar corrección». |
+
+*Consecuencias:* ADR-0050 (reemplaza en parte ADR-0029); `07-historias-usuario/00-REGLAS-COMUNES-FRONT.md`, `05-ui/` (HU-UI-01 a 29) y `06-pantallas/` (HU-PAN-*); interpretaciones I-34 a I-41 (confirmadas); OQ-44 (Iniciar sesión sin diseño); OQ-22 actualizada; glosario «Componentes de la interfaz».
+
+---
+
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.
 2. **Repositorio de GitHub: `Colportaje`** (2026-11-04). Se pensó en `colportor`, pero el dueño ya había creado `hannerco/Colportaje` y pidió dejar todo con ese nombre.

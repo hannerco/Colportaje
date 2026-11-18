@@ -28,7 +28,7 @@ docs/
 │  ├─ CONVENTIONS.md              idioma, nombres, TypeScript, UI, git, cómo trabaja un agente
 │  ├─ TESTING.md                  estrategia y casos de prueba
 │  ├─ SECURITY.md                 amenazas, secretos, políticas
-│  └─ adr/                        decisiones de arquitectura (ADR-0001 … ADR-0046) + README con índice
+│  └─ adr/                        decisiones de arquitectura (ADR-0001 … ADR-0050) + README con índice
 ├─ 04-diseno/
 │  ├─ DESIGN-BRIEF.md             brief v2 para Claude Design (estilo Notion, lista negra anti-IA, densidad, wireframes)
 │  ├─ PROMPT-CLAUDE-DESIGN.md     prompt v3 listo para pegar (empieza por Clientes)
@@ -42,12 +42,15 @@ docs/
 ├─ 06-planificacion/              CUÁNDO y QUÉ queda
 │  ├─ ROADMAP.md                  plan de 14 días, fases 1–3, backlog
 │  └─ OPEN-QUESTIONS.md           sin preguntas abiertas; seguimientos SG-*, revisiones RV-*, decisiones de diseño
-└─ 07-historias-usuario/          HISTORIAS DE USUARIO del back (Clientes, Inventario, Dinero + cimientos)
+└─ 07-historias-usuario/          HISTORIAS DE USUARIO del back y del front (Clientes, Inventario, Dinero + cimientos)
    ├─ README.md                   índice, orden de implementación y cómo pedírselas a una IA
    ├─ 00-REGLAS-COMUNES.md        reglas que aplican a todas las HU (capas, errores, configuración, terminado)
    ├─ INTERPRETACIONES.md         detalles decididos al escribir las HU (vetables por el dueño)
    ├─ PLANTILLA.md                plantilla para HU nuevas
-   └─ 00-base/ 01-inventario/ 02-clientes/ 03-abonos/ 04-dinero/   una HU por archivo
+   ├─ 00-REGLAS-COMUNES-FRONT.md  reglas de todas las HU del front (Storybook, tokens, capas de ui, iteración)
+   ├─ PLANTILLA-FRONT.md          plantilla para HU del front
+   ├─ 00-base/ 01-inventario/ 02-clientes/ 03-abonos/ 04-dinero/   back: una HU por archivo
+   └─ 05-ui/ 06-pantallas/        front (iteración 1): componentes de la biblioteca y pantallas
 ```
 
 ## Orden de lectura recomendado
@@ -64,7 +67,7 @@ docs/
 11. [`04-diseno/DESIGN-BRIEF.md`](04-diseno/DESIGN-BRIEF.md) — brief v2 para Claude Design · [`04-diseno/PROMPT-CLAUDE-DESIGN.md`](04-diseno/PROMPT-CLAUDE-DESIGN.md) — prompt listo para pegar.
 12. [`05-operacion/DEPLOYMENT.md`](05-operacion/DEPLOYMENT.md) y [`05-operacion/GUIA-DESPLIEGUE-PASO-A-PASO.md`](05-operacion/GUIA-DESPLIEGUE-PASO-A-PASO.md) (para el dueño, explicada) · [`05-operacion/AVISO-DATOS-PLANTILLA.md`](05-operacion/AVISO-DATOS-PLANTILLA.md).
 13. [`06-planificacion/ROADMAP.md`](06-planificacion/ROADMAP.md) — plan de 14 días, fases y backlog · [`06-planificacion/OPEN-QUESTIONS.md`](06-planificacion/OPEN-QUESTIONS.md) — **sin preguntas de producto abiertas**, salvo las decisiones de diseño (DT) y los supuestos OQ-30..36 por confirmar; también seguimientos (SG) y cosas por revisar (RV).
-14. [`07-historias-usuario/README.md`](07-historias-usuario/README.md) — **para programar el back:** una HU por archivo, en orden, con su contrato, reglas y criterios de aceptación.
+14. [`07-historias-usuario/README.md`](07-historias-usuario/README.md) — **para programar el back y el front:** una HU por archivo, en orden, con su contrato, reglas y criterios de aceptación. El front (iteración 1) sigue además `00-REGLAS-COMUNES-FRONT.md` y ADR-0050.
 
 ## Si buscas algo concreto
 | Quiero… | Ve a |
@@ -90,7 +93,7 @@ Si encuentras una contradicción, **arréglala** en el mismo cambio y anótala e
 
 ## Estado del proyecto
 - Documentación: **completa y sin preguntas abiertas** (fase 0, revisada el 2026-10-28). El código empezó el 2026-11-11 con HU-BASE-01 (proyecto por capas); se programa solo el back de los módulos ya diseñados, porque las decisiones cambian al diseñar (decisión del dueño, 2026-11-04).
-- **Diseño de Clientes, Inventario y Dinero cerrado** (exportación del 05/11/2026, revisada contra los docs en la ronda 26). Las **historias de usuario del back** de esos tres módulos están en `07-historias-usuario/` (2026-11-08); lo que falta por diseñar, en `04-diseno/pendientes/`.
+- **Diseño de Clientes, Inventario y Dinero cerrado** (exportación del 05/11/2026, revisada contra los docs en la ronda 26). Las **historias de usuario del back** de esos tres módulos están en `07-historias-usuario/` (2026-11-08) y las del **front** (iteración 1, Storybook y Biblioteca de componentes v1.1), en `07-historias-usuario/05-ui/` y `06-pantallas/` (2026-11-17, ADR-0050); lo que falta por diseñar, en `04-diseno/pendientes/`.
 - **Plazo: 14 días** para la fase 1 completa (`06-planificacion/ROADMAP.md`). Avance del back (proyecto, base de datos con RLS, sesión): ver "Avance" en `07-historias-usuario/README.md`; el trabajo se acumula en la rama `will-dev`.
 - Pendientes con el dueño: repositorio `Colportaje` ya creado en GitHub (SG-03, **privado** desde 2026-11-10), Supabase creado (prod y staging en us-east-1), Vercel pendiente (SG-02, guía paso a paso), diseño (SG-04).
 - Dueño del producto: colportor-desarrollador, primer usuario y admin. Idioma de trabajo: español.

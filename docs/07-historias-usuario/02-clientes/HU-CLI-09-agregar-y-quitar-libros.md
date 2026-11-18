@@ -1,6 +1,7 @@
 # HU-CLI-09 · Agregar y quitar libros en la ficha
 
 > **Épica:** Clientes · **Depende de:** HU-CLI-02, HU-INV-01, HU-ABO-07 · **Reglas:** BR-COPY-06/08/09, BR-CUS-02/16, BR-PAY-13 (disparador "edición de la ficha"), ADR-0026, ADR-0044, AF-114 · **Diseño:** "Agregar libro · escritorio · ejemplares en físico", "tocar para seleccionar", "de vuelta en la ficha"
+> **Ajustada por:** HU-CLI-13 (`sold_at` ya no es «ahora»: lo elige el colportor) · ADR-0049. Esta HU ya está terminada y no se edita; el cambio va en la HU nueva.
 
 ## Historia
 **Como** colportor que acaba de vender **quiero** buscar en mi inventario el ejemplar que le dejé al cliente y agregarlo a su ficha **para** que su deuda y mi inventario se actualicen en el momento.

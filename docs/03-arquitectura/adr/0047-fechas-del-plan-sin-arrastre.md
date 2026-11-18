@@ -1,5 +1,5 @@
 # ADR-0047: Fechas del plan sin separación mínima y sin arrastre
-Estado: Aceptado · Fecha: 2026-11-11 · Reemplaza parte de ADR-0039 y ADR-0045
+Estado: Aceptado (la regla «ninguna fecha anterior a hoy» fue reemplazada por ADR-0049) · Fecha: 2026-11-11 · Reemplaza parte de ADR-0039 y ADR-0045
 
 ## Contexto
 ADR-0045 fijó una separación mínima entre abonos sugeridos (7 días en quincenal, 20 en mensual) y ADR-0039 una opción «Correr también los siguientes». Al cerrar las interpretaciones de las HU (ronda 28) el dueño aclaró que el cliente suele pedir «paso mañana y te pago», así que dos cobros seguidos son normales, y que mover fechas no debe arrastrar a las demás.

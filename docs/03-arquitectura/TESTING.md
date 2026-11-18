@@ -7,7 +7,7 @@ Requisito del dueño: **la app debe tener pruebas**. Se escriben **junto con** e
 |---|---|---|---|
 | **Unitarias de dominio** | Vitest | Todas las reglas `BR-*` y derivaciones (sin red, sin UI) | Cada commit (pre-push) y CI |
 | **Integración de datos/RLS** | Vitest + Supabase local (`supabase start`) | Políticas RLS, checks, triggers, funciones RPC (vender, confirmar Abibono, entrada de minibooks), numeración de ejemplares | CI |
-| **Componentes** | Testing Library | Formularios críticos, tooltips, estados vacíos | CI |
+| **Componentes** | Storybook + Vitest (funciones `play`) + Testing Library | Cada variante y estado de la biblioteca; interacción y teclado de cada ficha (ADR-0050) | Cada commit y CI |
 | **E2E** | Playwright (viewport móvil + escritorio) | Flujos clave de `01-negocio/FLOWS.md` | CI (antes de desplegar) |
 | **Accesibilidad / PWA** | axe + Lighthouse CI | Contraste, instalable, rendimiento | CI (informativo → bloqueante al madurar) |
 
@@ -74,6 +74,9 @@ Datos de prueba sembrados y reiniciables. Flujos mínimos:
 ## Pruebas de arquitectura (UI)
 - **Sin valores visuales literales (BR-GEN-13):** un test recorre `src/` (excluyendo `src/ui/tokens/tokens.css`) y falla si encuentra `font-size` con `px`/`rem` literales, clases de Tailwind con valores arbitrarios de tamaño o color (`text-[..]`, `bg-[#..]`) o colores `#hex`/`rgb()` fuera de los tokens.
 - **Escala cambiable:** un test de componente comprueba que cambiar `--font-scale` en la raíz cambia el tamaño calculado de los roles (`--text-body`, etc.).
+- **Una story por componente:** todo componente de `src/ui/` y toda pantalla de `features/*/screens/` tiene su `.stories.tsx` (HU-UI-01).
+- **Accesibilidad en cada story:** el complemento de accesibilidad del Storybook corre como prueba y falla ante una violación.
+- **Íconos y niveles:** `lucide-react` solo en `src/ui/icons/`; un nivel de `ui/` no importa uno superior (ESLint).
 - Se mantienen las pruebas de límites entre capas (ESLint).
 
 ## Convenciones de pruebas

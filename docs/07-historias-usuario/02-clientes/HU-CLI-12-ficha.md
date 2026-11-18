@@ -47,7 +47,7 @@ PaymentRow = { paymentId, kind, status, agreedAmount, dueDate, originalDueDate (
 - **R5.** Los avisos DEBEN derivarse de la cuenta (HU-CLI-01); "Dejar como está" no guarda nada: la franja persiste mientras haya sobrante.
 
 ## Criterios de aceptación
-- **CA-1.** **Dado** María Camila Henao (3 libros por 460.000, cuota inicial de 80.000 por transferencia el 03/10, abonos de 60.000 el 17/10 vencido, 31/10 y 14/11, un cancelado), **cuando** se abre la ficha el 05/11, **entonces** saldo 380.000, abonado 80.000, deuda 460.000, 4 abonos activos en orden de fecha con el del 17/10 `isOverdue`, `canCollect` en los tres por cobrar y 1 en `canceledPayments`.
+- **CA-1.** **Dado** María Camila Henao (3 libros por 460.000, cuota inicial de 80.000 por transferencia el 03/10, abonos de 60.000 el 17/10 vencido, 31/10 y 14/11, un cancelado), **cuando** se abre la ficha el 05/11, **entonces** saldo 380.000, abonado 80.000, deuda 460.000, 4 abonos activos en orden de fecha con el del 17/10 y el del 31/10 `isOverdue` (ambos siguen por cobrar y ya pasaron; corregido el 2026-11-16 tras la observación de William, decisión 42c), `canCollect` en los tres por cobrar y 1 en `canceledPayments`.
 - **CA-2.** **Dado** el teléfono "301 557 9032", **entonces** `telLink = "tel:3015579032"` y `whatsappLink = "https://wa.me/573015579032"`.
 - **CA-3.** **Dado** un abono prorrogado del 17/10 al 31/10, **entonces** `dueDate = 31/10`, `originalDueDate = 17/10` y `rescheduleCount = 1`.
 - **CA-4.** **Dado** un abono en un Abibono confirmado, **entonces** `can.edit = false`, `can.delete = false` y `deposit.status = 'confirmed'`.
