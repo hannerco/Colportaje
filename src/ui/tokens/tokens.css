@@ -264,6 +264,8 @@
   --size-textarea: 104px; /* área de texto del campo (HU-UI-09) */
   --opacity-field-disabled: 0.6; /* campo deshabilitado (HU-UI-09) */
   --switch-inset: 2px; /* holgura de la perilla del interruptor (HU-UI-10) */
+  --tab-gap: 2px; /* separación de las opciones dentro del carril (HU-UI-11) */
+  --radius-segment: 8px; /* opción del segmento; su carril usa --radius-sm */
 }
 
 /* ─── Por plataforma · escritorio ───────────────────────────────────────────────────────────────── */
@@ -298,6 +300,8 @@
   --size-switch-w: 36px;
   --size-switch-h: 22px;
   --size-choice-row: 32px;
+  --size-tab: 36px; /* pestaña (HU-UI-11) */
+  --tab-padding: 14px;
 }
 
 /* ─── Por plataforma · móvil ────────────────────────────────────────────────────────────────────── */
@@ -331,6 +335,8 @@
   --size-switch-w: 44px;
   --size-switch-h: 26px;
   --size-choice-row: 44px;
+  --size-tab: 40px;
+  --tab-padding: 16px;
 }
 
 /* Sin data-platform en ningún ancestro: móvil por debajo de 768 px (mismos valores que [data-platform='mobile']). */
@@ -365,6 +371,8 @@
     --size-switch-w: 44px;
     --size-switch-h: 26px;
     --size-choice-row: 44px;
+    --size-tab: 40px;
+    --tab-padding: 16px;
   }
 }
 

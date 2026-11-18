@@ -1,0 +1,88 @@
+/* Pestañas (HU-UI-11). R1: carril; R2: opción; R3: segmento a partes iguales. */
+.root {
+  width: var(--tabs-width);
+  max-width: 100%;
+}
+
+.list {
+  display: flex;
+  gap: var(--tab-gap);
+  padding: var(--space-1);
+  border-radius: var(--radius-pill);
+  background: var(--color-tab-track);
+}
+
+.list[data-variant='segmented'] {
+  border-radius: var(--radius-sm);
+}
+
+/* R1: los óvalos en móvil van sin carril, con separación 4 y desplazamiento horizontal. */
+:global([data-platform='mobile']) .list[data-variant='pills'] {
+  gap: var(--space-1);
+  padding: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  /* Sin carril: el fondo es el de la página móvil, donde van las listas (y así las opciones que quedan fuera de la
+     vista al desplazarse tienen un fondo conocido para medir su contraste). */
+  background: var(--color-page-mobile);
+}
+
+.tab {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pill-gap);
+  height: var(--size-tab);
+  padding: 0 var(--tab-padding);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-text-2);
+  font: inherit;
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* R3: segmento, opciones a partes iguales. */
+.list[data-variant='segmented'] .tab {
+  flex: 1 1 0;
+  min-width: 0;
+  border-radius: var(--radius-segment);
+}
+
+.tab:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: -1px;
+}
+
+.count {
+  color: var(--color-text-3);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.tab[data-state='active'] {
+  background: var(--color-active-bg);
+  box-shadow: var(--shadow-control);
+  color: var(--color-accent-text);
+  font-weight: var(--weight-strong);
+}
+
+.tab[data-state='active'] .count {
+  color: var(--color-accent-text);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
