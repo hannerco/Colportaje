@@ -3,6 +3,8 @@ export {
   DetailWindow,
   readStoredDetailWindowMode,
   resolveDetailWindowMode,
+  useDetailWindow,
+  type DetailWindowContextValue,
   type DetailWindowMode,
   type DetailWindowProps,
 } from './DetailWindow';

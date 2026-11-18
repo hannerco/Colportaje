@@ -3,7 +3,9 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import * as RadioGroup from '@radix-ui/react-radio-group';
 import {
+  createContext,
   useCallback,
+  useContext,
   useId,
   useLayoutEffect,
   useRef,
@@ -72,8 +74,25 @@ export type DetailWindowProps = {
   moreActions?: ReactElement;
   /** Las islas del registro. La acción principal (p. ej. Cobrar) va en la isla de identidad, no en la barra (R7). */
   children: ReactNode;
+  /**
+   * El encabezado del detalle lo pone el contenido (la isla de identidad de la Plantilla de detalle, HU-UI-29): la
+   * barra muestra el título como texto, sin `<h1>`/`<h2>`, y el diálogo sigue nombrado por él.
+   */
+  headingInContent?: boolean;
   className?: string;
 };
+
+/** Lo que el contenido necesita saber de la ventana que lo contiene. */
+export type DetailWindowContextValue = {
+  mode: DetailWindowMode;
+  /** Nivel del encabezado del contenido: `h1` en la página de escritorio; `h2` en las demás formas. */
+  heading: 'h1' | 'h2';
+};
+
+const DetailWindowContext = createContext<DetailWindowContextValue | null>(null);
+
+/** La forma de la ventana que contiene a este componente (o `null` fuera de una ventana de detalle). */
+export const useDetailWindow = () => useContext(DetailWindowContext);
 
 /** Distancia en px que hay que deslizar la hoja hacia abajo para cerrarla (CA-5). */
 const SWIPE_TO_CLOSE = 96;
@@ -89,8 +108,19 @@ const isTyping = (target: EventTarget | null) =>
  * registro reemplaza el contenido (R6).
  */
 export function DetailWindow(props: DetailWindowProps) {
-  const { mode, onModeChange, title, breadcrumb, onClose, onPrev, onNext, moreActions, children, className } =
-    props;
+  const {
+    mode,
+    onModeChange,
+    title,
+    breadcrumb,
+    onClose,
+    onPrev,
+    onNext,
+    moreActions,
+    children,
+    headingInContent = false,
+    className,
+  } = props;
   const platform = usePlatform();
   const mobile = platform === 'mobile';
   const [stored, setStored] = useState<DesktopMode>(readStoredDetailWindowMode);
@@ -134,7 +164,17 @@ export function DetailWindow(props: DetailWindowProps) {
 
   const titleId = useId();
   const [drag, setDrag] = useState(0);
-  const body = <div className={styles.body}>{children}</div>;
+  // En móvil la página ya tiene el `<h1>` del Encabezado; en escritorio, solo si el contenido no pone el suyo.
+  const context: DetailWindowContextValue = {
+    mode: resolved,
+    heading: resolved === 'page' && !mobile ? 'h1' : 'h2',
+  };
+  const body = (
+    <DetailWindowContext.Provider value={context}>
+      <div className={styles.body}>{children}</div>
+    </DetailWindowContext.Provider>
+  );
+  const PageTitle = headingInContent ? 'span' : 'h1';
   const navButtons = (
     <span className={styles.group}>
       <Button variant="tertiary" iconOnly icon="back" state={onPrev ? 'normal' : 'disabled'} onClick={onPrev}>
@@ -174,9 +214,9 @@ export function DetailWindow(props: DetailWindowProps) {
           <nav aria-label={copy.ui.detailWindow.breadcrumb} className={styles.breadcrumb}>
             <a href={breadcrumb.href}>{breadcrumb.label}</a>
             <span aria-hidden="true">/</span>
-            <h1 id={titleId} className={styles.title}>
+            <PageTitle id={titleId} className={styles.title}>
               {title}
-            </h1>
+            </PageTitle>
           </nav>
           {toolbar}
         </div>
@@ -187,6 +227,13 @@ export function DetailWindow(props: DetailWindowProps) {
 
   // ─── Lateral, centrada y hoja: Radix Dialog ───
   const modal = resolved !== 'side';
+  const dialogTitle = headingInContent ? (
+    <Dialog.Title asChild>
+      <span className={styles.title}>{title}</span>
+    </Dialog.Title>
+  ) : (
+    <Dialog.Title className={styles.title}>{title}</Dialog.Title>
+  );
   return (
     <>
       <span ref={findScope} hidden />
@@ -215,7 +262,7 @@ export function DetailWindow(props: DetailWindowProps) {
           >
             {resolved === 'sheet' ? (
               <SheetGrip onDrag={setDrag} onClose={onClose}>
-                <Dialog.Title className={styles.title}>{title}</Dialog.Title>
+                {dialogTitle}
                 {toolbar}
               </SheetGrip>
             ) : (
@@ -224,7 +271,7 @@ export function DetailWindow(props: DetailWindowProps) {
                   <Button variant="tertiary" iconOnly icon="close" onClick={onClose}>
                     {copy.ui.detailWindow.close}
                   </Button>
-                  <Dialog.Title className={styles.title}>{title}</Dialog.Title>
+                  {dialogTitle}
                 </span>
                 {toolbar}
               </div>

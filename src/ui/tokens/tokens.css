@@ -306,6 +306,7 @@
   --window-sheet-height: 80%;
   --size-window-bar: 52px;
   --filter-panel-width: 280px; /* menú de filtros de la barra de vista (HU-UI-28) */
+  --detail-max-width: 900px; /* contenido de la plantilla de detalle en escritorio (HU-UI-29) */
   --template-height: 100dvh; /* alto de la plantilla de lista (la lista se desplaza por dentro en escritorio) */
   --data-row-label-width: 170px; /* columna de etiquetas de la fila de dato en escritorio (HU-UI-13) */
 }

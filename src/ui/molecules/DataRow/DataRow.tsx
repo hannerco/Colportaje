@@ -1,4 +1,4 @@
-import type { MouseEvent, ReactNode } from 'react';
+import { Children, type MouseEvent, type ReactNode } from 'react';
 import { copy } from '@/copy/es';
 import { Icon, type IconName } from '../../icons';
 import styles from './DataRow.module.css';
@@ -86,7 +86,14 @@ function Value(props: DataRowProps) {
   }
 }
 
+/** HU-UI-29 R5: más filas por isla se dividen en otra isla. */
+const MAX_ROWS = 7;
+
 /** La lista de filas de dato: un `<dl>` sin estilo propio (la isla pone el fondo y el borde). */
 export function DataList({ children, className }: { children: ReactNode; className?: string }) {
+  const rows = Children.count(children);
+  if (process.env.NODE_ENV !== 'production' && rows > MAX_ROWS)
+    // eslint-disable-next-line no-console -- HU-UI-29 R5: aviso de error de uso solo en desarrollo.
+    console.warn(`DataList: ${rows} rows; split the island (at most ${MAX_ROWS}).`);
   return <dl className={[styles.list, className].filter(Boolean).join(' ')}>{children}</dl>;
 }
