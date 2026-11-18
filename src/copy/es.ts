@@ -49,6 +49,10 @@ export const copy = {
     metric: {
       percent: (n: number) => `${n}\u00a0%`,
     },
+    /** Encabezado (HU-UI-21): nombre del botón volver, que dice a dónde. */
+    header: {
+      back: (to: string) => `Volver a ${to}`,
+    },
     /** Menú (HU-UI-20): título de la hoja móvil cuando no se da otro. */
     menu: {
       title: 'Opciones',

@@ -325,6 +325,8 @@
   --radius-toast: 12px;
   --size-banner: 40px; /* franja (HU-UI-16) */
   --size-menu-item: 40px; /* opción del menú (HU-UI-20) */
+  --size-header: 56px; /* encabezado de pantalla (HU-UI-21) */
+  --size-header-summary: 36px;
 }
 
 /* ─── Por plataforma · móvil ────────────────────────────────────────────────────────────────────── */
@@ -364,6 +366,8 @@
   --radius-toast: 14px;
   --size-banner: 44px;
   --size-menu-item: 52px;
+  --size-header: 52px;
+  --size-header-summary: 40px;
 }
 
 /* Sin data-platform en ningún ancestro: móvil por debajo de 768 px (mismos valores que [data-platform='mobile']). */
@@ -404,6 +408,8 @@
     --radius-toast: 14px;
     --size-banner: 44px;
     --size-menu-item: 52px;
+    --size-header: 52px;
+    --size-header-summary: 40px;
   }
 }
 

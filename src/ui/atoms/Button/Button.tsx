@@ -101,7 +101,8 @@ export function Button({
       .filter(Boolean)
       .join(' '),
     onClick: handleClick,
-    'aria-label': onlyIcon ? children : undefined,
+    // Con texto visible, quien lo usa puede dar un nombre más completo que lo incluya («Volver a Clientes»).
+    'aria-label': onlyIcon ? children : rest['aria-label'],
     'aria-disabled': state === 'disabled' ? true : undefined,
     'aria-busy': loading ? true : undefined,
     'data-variant': variant,
