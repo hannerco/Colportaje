@@ -45,6 +45,10 @@ export const copy = {
     banner: {
       offline: 'Sin conexión: puedes consultar, pero no registrar',
     },
+    /** Tarjeta de métrica (HU-UI-17): «52 %», con espacio (que no se parte) antes del signo. */
+    metric: {
+      percent: (n: number) => `${n}\u00a0%`,
+    },
   },
   /** Palabra de cada estado en la Pastilla de estado (HU-UI-05, glosario «Estados»). */
   status: {

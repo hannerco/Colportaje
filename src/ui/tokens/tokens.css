@@ -272,6 +272,10 @@
   --size-search-clear: 24px; /* botón ✕ del buscador */
   --toast-width: 380px; /* aviso en escritorio (HU-UI-15) */
   --layer-toast: 50; /* el aviso queda sobre el contenido */
+  --metric-card-width: 240px; /* tarjeta de métrica (HU-UI-17) */
+  --size-swatch: 10px; /* cuadro de color del grupo (tarjeta de métrica y medidor) */
+  --radius-swatch: 3px;
+  --size-metric-bar: 6px;
   --data-row-label-width: 170px; /* columna de etiquetas de la fila de dato en escritorio (HU-UI-13) */
 }
 
