@@ -270,6 +270,8 @@
   --search-padding-start-mobile: 16px; /* relleno izquierdo del buscador en móvil */
   --search-padding-end: 14px;
   --size-search-clear: 24px; /* botón ✕ del buscador */
+  --toast-width: 380px; /* aviso en escritorio (HU-UI-15) */
+  --layer-toast: 50; /* el aviso queda sobre el contenido */
   --data-row-label-width: 170px; /* columna de etiquetas de la fila de dato en escritorio (HU-UI-13) */
 }
 
@@ -307,6 +309,8 @@
   --size-choice-row: 32px;
   --size-tab: 36px; /* pestaña (HU-UI-11) */
   --tab-padding: 14px;
+  --size-toast: 48px; /* aviso (HU-UI-15) */
+  --radius-toast: 12px;
 }
 
 /* ─── Por plataforma · móvil ────────────────────────────────────────────────────────────────────── */
@@ -342,6 +346,8 @@
   --size-choice-row: 44px;
   --size-tab: 40px;
   --tab-padding: 16px;
+  --size-toast: 52px;
+  --radius-toast: 14px;
 }
 
 /* Sin data-platform en ningún ancestro: móvil por debajo de 768 px (mismos valores que [data-platform='mobile']). */
@@ -378,6 +384,8 @@
     --size-choice-row: 44px;
     --size-tab: 40px;
     --tab-padding: 16px;
+    --size-toast: 52px;
+    --radius-toast: 14px;
   }
 }
 
