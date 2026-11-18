@@ -255,6 +255,12 @@
   --size-tag: 24px; /* etiqueta (HU-UI-07) */
   --radius-tag-date: 8px;
   --tag-padding-end: 10px;
+  --size-avatar-sm: 24px; /* avatar (HU-UI-08) */
+  --size-avatar-md: 32px;
+  --size-avatar-lg: 40px;
+  --size-avatar-xl: 56px;
+  --radius-brand: 9px; /* marca de menos de 40 px; desde 40, --radius-md */
+  --avatar-emoji-ratio: 0.72; /* el emoji del avatar mide el 72 % del lado */
 }
 
 /* ─── Por plataforma · escritorio ───────────────────────────────────────────────────────────────── */
@@ -282,6 +288,7 @@
   --size-pill: 28px; /* pastilla de estado (HU-UI-05) */
   --size-chip-sm: 24px; /* chip de libro y de conteo (HU-UI-06) */
   --size-tag-date: 28px; /* etiqueta de fecha (HU-UI-07) */
+  --size-avatar: 32px; /* avatar automático (HU-UI-08) */
 }
 
 /* ─── Por plataforma · móvil ────────────────────────────────────────────────────────────────────── */
@@ -308,6 +315,7 @@
   --size-pill: 30px;
   --size-chip-sm: 26px;
   --size-tag-date: 30px;
+  --size-avatar: 40px;
 }
 
 /* Sin data-platform en ningún ancestro: móvil por debajo de 768 px (mismos valores que [data-platform='mobile']). */
@@ -335,6 +343,7 @@
     --size-pill: 30px;
     --size-chip-sm: 26px;
     --size-tag-date: 30px;
+    --size-avatar: 40px;
   }
 }
 

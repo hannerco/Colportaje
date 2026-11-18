@@ -1,0 +1,88 @@
+/* Avatar (HU-UI-08). --avatar-side es el lado; cada tipo deriva de él su forma y su ícono (R1–R5). */
+.avatar {
+  --avatar-side: var(--size-avatar);
+
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--avatar-side);
+  height: var(--avatar-side);
+  overflow: hidden;
+  vertical-align: middle;
+}
+
+.avatar[data-size='sm'] {
+  --avatar-side: var(--size-avatar-sm);
+}
+
+.avatar[data-size='md'] {
+  --avatar-side: var(--size-avatar-md);
+}
+
+.avatar[data-size='lg'] {
+  --avatar-side: var(--size-avatar-lg);
+}
+
+.avatar[data-size='xl'] {
+  --avatar-side: var(--size-avatar-xl);
+}
+
+/* R5: trazo 2 cuando el lado es ≤ 28 (solo sm); 1,8 en los demás (el de Icon). */
+.avatar[data-size='sm'] .glyph {
+  stroke-width: 2;
+}
+
+/* R1: persona. */
+.avatar[data-kind='person'] {
+  --icon-size: calc(var(--avatar-side) * 0.5);
+
+  border-radius: var(--radius-pill);
+  background: var(--color-avatar-bg);
+  color: var(--color-avatar-fg);
+}
+
+/* R2: emoji. */
+.avatar[data-kind='emoji'] {
+  border-radius: var(--radius-pill);
+  background: transparent;
+}
+
+.emoji {
+  font-size: calc(var(--avatar-side) * var(--avatar-emoji-ratio));
+  line-height: 1;
+}
+
+/* R3: portada, 80 % de ancho; 125 % de alto en xl. */
+.avatar[data-kind='cover'] {
+  --icon-size: calc(var(--avatar-side) * 0.42);
+
+  width: round(nearest, calc(var(--avatar-side) * 0.8), 1px);
+  border-radius: var(--radius-xs);
+  background: var(--color-avatar-bg);
+  color: var(--color-avatar-fg);
+}
+
+.avatar[data-kind='cover'][data-size='xl'] {
+  height: calc(var(--avatar-side) * 1.25);
+  border-radius: var(--radius-sm);
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* R4: marca; radio 9, y 12 desde 40 px. */
+.avatar[data-kind='brand'] {
+  --icon-size: calc(var(--avatar-side) * 0.5);
+
+  border-radius: var(--radius-brand);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.avatar[data-kind='brand']:is([data-size='lg'], [data-size='xl']) {
+  border-radius: var(--radius-md);
+}

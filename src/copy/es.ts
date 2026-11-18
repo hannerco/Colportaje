@@ -9,6 +9,8 @@ export const copy = {
     removeFilter: (filter: string) => `Quitar filtro ${filter}`,
     /** Nombre accesible de la cuota de un abono, «2/4» (HU-UI-07). */
     installment: (index: number, total: number) => `Cuota ${index} de ${total}`,
+    /** Nombre accesible del avatar cuando no se da otro (HU-UI-08). */
+    avatar: { person: 'Cliente', cover: 'Portada', brand: 'Colportor' },
   },
   /** Palabra de cada estado en la Pastilla de estado (HU-UI-05, glosario «Estados»). */
   status: {
