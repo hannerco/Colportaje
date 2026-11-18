@@ -263,6 +263,7 @@
   --avatar-emoji-ratio: 0.72; /* el emoji del avatar mide el 72 % del lado */
   --size-textarea: 104px; /* área de texto del campo (HU-UI-09) */
   --opacity-field-disabled: 0.6; /* campo deshabilitado (HU-UI-09) */
+  --switch-inset: 2px; /* holgura de la perilla del interruptor (HU-UI-10) */
 }
 
 /* ─── Por plataforma · escritorio ───────────────────────────────────────────────────────────────── */
@@ -291,6 +292,12 @@
   --size-chip-sm: 24px; /* chip de libro y de conteo (HU-UI-06) */
   --size-tag-date: 28px; /* etiqueta de fecha (HU-UI-07) */
   --size-avatar: 32px; /* avatar automático (HU-UI-08) */
+  --size-choice: 18px; /* casilla y radio (HU-UI-10) */
+  --radius-choice: 5px;
+  --size-radio-dot: 8px;
+  --size-switch-w: 36px;
+  --size-switch-h: 22px;
+  --size-choice-row: 32px;
 }
 
 /* ─── Por plataforma · móvil ────────────────────────────────────────────────────────────────────── */
@@ -318,6 +325,12 @@
   --size-chip-sm: 26px;
   --size-tag-date: 30px;
   --size-avatar: 40px;
+  --size-choice: 22px;
+  --radius-choice: 6px;
+  --size-radio-dot: 10px;
+  --size-switch-w: 44px;
+  --size-switch-h: 26px;
+  --size-choice-row: 44px;
 }
 
 /* Sin data-platform en ningún ancestro: móvil por debajo de 768 px (mismos valores que [data-platform='mobile']). */
@@ -346,6 +359,12 @@
     --size-chip-sm: 26px;
     --size-tag-date: 30px;
     --size-avatar: 40px;
+    --size-choice: 22px;
+    --radius-choice: 6px;
+    --size-radio-dot: 10px;
+    --size-switch-w: 44px;
+    --size-switch-h: 26px;
+    --size-choice-row: 44px;
   }
 }
 
