@@ -106,7 +106,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Ícono de Lucide (licencia ISC, versión 1.74) con nombre propio de Colportor: 46 íconos, siempre con trazo 1,8 sobre 24 × 24. Cambiar el ícono Lucide asignado a un nombre lo cambia en toda la web. Decorativo por defecto; con «etiqueta» se anuncia.',
+          'Ícono de Lucide (licencia ISC) con nombre propio de Colportor: 46 íconos, siempre con trazo 1,8 sobre 24 × 24. Cambiar el ícono Lucide asignado a un nombre lo cambia en toda la web. Decorativo por defecto; con «etiqueta» se anuncia.',
       },
     },
   },
