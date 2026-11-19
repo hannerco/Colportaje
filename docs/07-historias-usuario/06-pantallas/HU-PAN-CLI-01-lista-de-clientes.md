@@ -39,10 +39,10 @@ Agregar libro desde la lista; acciones por fila en escritorio.
 - **CA-2.** **Dado** el filtro «Vencido» y el orden «Saldo pendiente» descendente, **entonces** se ven los chips activos, la lista ordenada y «Limpiar»; al pulsar «Limpiar» vuelve la vista por defecto.
 - **CA-3.** **Dado** móvil, **entonces** cada fila muestra emoji o persona, nombre, primer libro + «+N» y «Debe» sobre el saldo, y el botón flotante es «Nuevo cliente».
 - **CA-4.** **Dado** escritorio, **cuando** pulso un nombre, **entonces** la ficha se abre en la Ventana de detalle y la fila queda marcada.
-- **CA-5.** **Dado** una búsqueda sin coincidencias, **entonces** se ve «Sin resultados para «Marta»» con «Quitar filtros».
+- **CA-5.** **Dado** una búsqueda sin coincidencias, **entonces** se ve «Nadie coincide con «Marta»», «Busqué por nombre, teléfono, información, dirección y libros.», «Crear «Marta»» (abre Nuevo cliente con ese nombre) y, si se puede, «Buscar en Archivados» (HU-CLI-05).
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-18 (decisiones del dueño al programarla):** (1) CA-5 sigue a HU-CLI-05 y su diseño «Escritorio · sin resultados» en vez de «Sin resultados para «Marta»» con «Quitar filtros»; (2) el orden por saldo se llama «Saldo pendiente» (se actualizó BR-CUS-05, que decía «Mayor deuda»).
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E «Búsqueda difusa de clientes» (TESTING.md, flujo 8) pasa en móvil y escritorio.

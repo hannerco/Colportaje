@@ -6,6 +6,8 @@ export const ROUTES = {
   signIn: '/entrar',
   customers: '/clientes',
   newCustomer: '/clientes/nuevo',
+  /** «Crear «texto»» de la búsqueda sin resultados: Nuevo cliente con ese nombre (BR-CUS-14, HU-CLI-05). */
+  newCustomerNamed: (name: string) => `/clientes/nuevo?nombre=${encodeURIComponent(name)}`,
   customer: (id: string) => `/clientes/${encodeURIComponent(id)}`,
   inventory: '/inventario',
   addToInventory: '/inventario/agregar',

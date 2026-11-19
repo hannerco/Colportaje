@@ -20,6 +20,8 @@ export type EmptyStateProps = {
    * que escribe, sin conexión), lleva al lado «Necesita conexión» (R4).
    */
   action?: { label: string; icon?: IconName; onClick: () => void; disabled?: boolean };
+  /** Segunda salida, como enlace debajo de la acción (p. ej. «Buscar en Archivados» en «Sin resultados»). */
+  secondaryAction?: { label: string; onClick: () => void };
   /** Ícono del caso. Por defecto: `customers`, `search`, `offline` o `alert`. */
   icon?: IconName;
   /** Solo `loading`: filas del esqueleto. */
@@ -38,7 +40,16 @@ const ICON: Record<Exclude<EmptyStateKind, 'loading'>, IconName> = {
  * Estado vacío y de carga (HU-UI-26, ficha Lib-EstadoVacio): lo que se ve en lugar de las filas cuando una lista no
  * tiene nada que mostrar (vacía, sin resultados, sin conexión, con error) o mientras carga (esqueleto).
  */
-export function EmptyState({ kind, title, text, action, icon, rows, className }: EmptyStateProps) {
+export function EmptyState({
+  kind,
+  title,
+  text,
+  action,
+  secondaryAction,
+  icon,
+  rows,
+  className,
+}: EmptyStateProps) {
   const noteId = useId();
   if (kind === 'loading') return <ListSkeleton rows={rows} className={className} />;
   const disabled = action?.disabled ?? false;
@@ -70,6 +81,11 @@ export function EmptyState({ kind, title, text, action, icon, rows, className }:
             </span>
           )}
         </span>
+      )}
+      {secondaryAction && (
+        <Button variant="link" size="compact" onClick={secondaryAction.onClick}>
+          {secondaryAction.label}
+        </Button>
       )}
     </div>
   );

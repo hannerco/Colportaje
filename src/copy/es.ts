@@ -135,6 +135,50 @@ export const copy = {
     sold: 'Vendido',
     flagged: 'Con novedad',
   },
+  /** Módulo Clientes. */
+  customers: {
+    /** Lista de clientes (HU-PAN-CLI-01, BR-CUS-05). */
+    list: {
+      title: 'Clientes',
+      newCustomer: 'Nuevo cliente',
+      tabsLabel: 'Vistas de clientes',
+      tabs: { all: 'Todos', debtors: 'Deudores', settled: 'Saldados', archived: 'Archivados' },
+      search: 'Buscar cliente',
+      results: (n: number) => (n === 1 ? '1 cliente' : `${n} clientes`),
+      filter: 'Estado',
+      /** Casilla del filtro de estado con su conteo. */
+      statusOption: (status: string, n: number) => `${status} (${n})`,
+      includeProspects: 'Incluir prospectos',
+      /** Chip del interruptor «Incluir prospectos» encendido. */
+      prospectsChip: 'Con prospectos',
+      sort: {
+        recent: 'Más recientes',
+        modified: 'Última modificación',
+        name: 'Nombre',
+        balance: 'Saldo pendiente',
+        next_due: 'Próximo abono',
+      },
+      /** BR-CUS-09 / FC-14: junto al nombre de un cliente archivado. */
+      archived: (name: string) => `${name} (cliente archivado)`,
+      empty: {
+        title: 'Todavía no tienes clientes',
+        text: 'Cuando crees un cliente, aparece aquí con lo que te debe.',
+      },
+      /** Una pestaña sin clientes (p. ej. Archivados), sin búsqueda ni filtros. */
+      emptyTab: { title: 'No hay clientes en esta vista' },
+      /** Con filtros y sin búsqueda, nadie cumple. */
+      filtered: { title: 'Ningún cliente cumple estos filtros', text: 'Quita algún filtro para ver más.' },
+      /** HU-CLI-05: búsqueda sin coincidencias. */
+      noResults: {
+        title: (query: string) => `Nadie coincide con «${query}»`,
+        text: 'Busqué por nombre, teléfono, información, dirección y libros.',
+        searchArchived: 'Buscar en Archivados',
+        create: (name: string) => `Crear «${name}»`,
+      },
+      offline: { title: 'Sin conexión', text: 'Puedes consultar lo guardado, pero no registrar.' },
+      error: { title: 'No se pudo cargar', text: 'Inténtalo otra vez.' },
+    },
+  },
   /** Módulo Dinero (BR-DEP-14, ADR-0046). */
   money: {
     /** Resumen de dinero (HU-UI-25). */

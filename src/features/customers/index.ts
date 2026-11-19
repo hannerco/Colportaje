@@ -119,3 +119,5 @@ export {
   type CustomerPatch,
   type PossibleDuplicate,
 } from '@/domain/customer-data';
+export { customerListParamsFromUrl, customerListParamsToUrl } from './customer-list-url';
+export { CustomerListScreen, type CustomerListScreenProps } from './screens/CustomerListScreen';

@@ -645,6 +645,40 @@ El dueño revisó las 27 interpretaciones de `07-historias-usuario/INTERPRETACIO
     - (e) **En móvil, «Nuevo cliente» es el botón flotante de cada pantalla.** El armazón solo lo deshabilita en la barra lateral; HU-PAN-CLI-01 hace lo mismo con su botón flotante.
     - (f) **Una sesión vencida también va a `/entrar`**, y la caché se conserva (AF-83).
     - (g) **`@playwright/test` 1.65.1** se agregó como dependencia de desarrollo.
+83. **(2026-11-18, HU-PAN-CLI-01)** Lista de clientes:
+    - **Pantalla.** `CustomerListScreen`, en `src/features/customers/screens/`, va sobre `ListTemplate`. Su contenedor es `src/app/(app)/clientes/page.tsx` y la story está en `Pantallas/Clientes/Lista`.
+    - **Vista en la URL (R3).** `customerListParamsFromUrl` / `ToUrl` usan `?tab=…&status=…&sort=balance-desc&q=…&prospects=1&archived=1` y omiten lo que está por defecto. La URL se actualiza con `router.replace`, así que escribir en el buscador no llena el historial; «atrás» vuelve a la misma vista.
+    - **Estados.** Los decide `customerListScreenState`: cargando, error, sin conexión sin datos, con datos, vacío, pestaña vacía, filtros sin coincidencias y búsqueda sin resultados.
+    - **Abrir un cliente.** En escritorio, la Ventana de detalle se abre en la forma recordada, marca la fila y permite pasar al anterior y al siguiente; si se elige «Página», va a `/clientes/[id]`. En móvil, la fila lleva a `/clientes/[id]`. El contenido de la ficha llega con HU-PAN-CLI-02.
+    - **«Crear «texto»»** abre `/clientes/nuevo?nombre=…`; HU-PAN-CLI-03 debe leer ese `nombre`.
+    - **Cambios en la biblioteca:**
+      - `EmptyState.secondaryAction`, un enlace debajo de la acción;
+      - `AppNav.fab.disabled`, con «Necesita conexión» para el lector;
+      - el menú «Estado» de `ViewBar` ya tiene nombre accesible (antes era un diálogo sin nombre, error de HU-UI-28).
+    - **E2E** en móvil y escritorio:
+      - flujo 8, búsqueda difusa por nombre con errores y por teléfono, más «Crear «…»»;
+      - «atrás» con la vista;
+      - consulta sin conexión.
+
+    **Decisiones del dueño (2026-11-18):** (1) sin resultados va como HU-CLI-05 y su diseño, no como CA-5 original; (2) el orden se llama «Saldo pendiente» (BR-CUS-05 actualizado).
+
+    **Decisiones a validar:**
+    - (a) **El orden distinto del de por defecto se ve como un chip más** («Saldo pendiente»), junto a los de estado y «Con prospectos». Así «Limpiar» aparece siempre que la vista no es la de por defecto, como en el estado del diseño «Filtros activos (Vencido y Saldado, Mayor deuda)».
+    - (b) **«Limpiar» devuelve filtros, prospectos y orden a lo de por defecto**, pero conserva la pestaña y la búsqueda.
+    - (c) **Al cambiar de criterio de orden, se usa su sentido por defecto** (BR-CUS-05); el sentido elegido se conserva solo si no cambia el criterio.
+    - (d) **Las casillas de estado llevan el conteo** «Vencido (9)», a partir de `statusCounts`.
+    - (e) **Textos que redacté sin dibujo:**
+      - pestaña vacía: «No hay clientes en esta vista»;
+      - filtros sin coincidencias: «Ningún cliente cumple estos filtros» / «Quita algún filtro para ver más.»;
+      - chip «Con prospectos».
+    - (f) **Un saldo a favor se ve como $0** en la lista (el saldo a favor está en la ficha); un prospecto ve «—».
+    - (g) **«(cliente archivado)» va pegado al nombre** en toda fila archivada.
+    - (h) **En «Sin resultados», «Crear «…»» es el botón** y «Buscar en Archivados» el enlace de debajo.
+    - (i) **Restaurar** desde Archivados queda en la ficha («Más acciones», HU-PAN-CLI-02).
+84. **(2026-11-18, HU-BASE-06, hallado en HU-PAN-CLI-01)** **La lectura sin conexión fallaba a veces al reabrir la app.**
+    - **Causa.** `gcTime` era de 30 días (2.592.000.000 ms), más que el máximo de `setTimeout` (2.147.483.647 ms). El navegador disparaba el temporizador de limpieza enseguida, y las lecturas restauradas de IndexedDB que ninguna pantalla miraba en ese instante se borraban: la lista se quedaba en «Cargando…» sin red.
+    - **Corrección.** `gcTime: Infinity` (no se borra de memoria; el plazo de 30 días lo sigue poniendo `maxAge` del guardado).
+    - **Pruebas.** Una de regresión (`query-client.test.ts`) y la E2E de consulta sin conexión.
 
 ## Correcciones al propio asistente (para no repetir errores)
 0. **(Ronda 19)** Se recomendó quitar la etiqueta "Debe" y renombrar "Pagando" como verde sin conocer el motivo del dueño (el número era ambiguo); además se pasó por alto que el generador de plan de abonos tenía que ser solo del cálculo automático. Se verificó con el dueño antes de editar.

@@ -139,7 +139,13 @@ function FilterPopover({ filters }: { filters: ViewBarFilters }) {
         </Button>
       </Popover.Trigger>
       <Popover.Portal container={container}>
-        <Popover.Content className={styles.popover} align="start" sideOffset={6} collisionPadding={8}>
+        <Popover.Content
+          className={styles.popover}
+          align="start"
+          sideOffset={6}
+          collisionPadding={8}
+          aria-label={filters.label}
+        >
           {filters.panel}
         </Popover.Content>
       </Popover.Portal>

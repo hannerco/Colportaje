@@ -88,6 +88,27 @@ export const SinResultados: Story = {
   },
 };
 
+/** Dos salidas: la acción y, debajo, un enlace (la búsqueda de clientes sin resultados, HU-CLI-05). */
+export const SinResultadosDosSalidas: Story = {
+  name: 'Sin resultados · dos salidas',
+  args: {
+    kind: 'no-results',
+    title: 'Nadie coincide con «Hernán Valencia»',
+    text: 'Busqué por nombre, teléfono, información, dirección y libros.',
+    action: { label: 'Crear «Hernán Valencia»', icon: 'new-customer', onClick: fn() },
+    secondaryAction: { label: 'Buscar en Archivados', onClick: fn() },
+  },
+  play: async ({ canvasElement, args }) => {
+    for (const frame of frames(canvasElement)) {
+      const buttons = [...stateOf(frame).querySelectorAll('button')];
+      expect(buttons.map((b) => b.textContent)).toEqual(['Crear «Hernán Valencia»', 'Buscar en Archivados']);
+      expect(buttons[1]!.dataset.variant).toBe('link');
+      await userEvent.click(buttons[1]!);
+    }
+    expect(args.secondaryAction!.onClick).toHaveBeenCalledTimes(frames(canvasElement).length);
+  },
+};
+
 /** R3 y R4: «puedes consultar lo guardado, pero no registrar»; la acción que escribe va deshabilitada. */
 export const SinConexion: Story = {
   name: 'Sin conexión',
