@@ -34,7 +34,14 @@ FI-01 (devolver a inventario un ejemplar vendido desde aquí) si no está dibuja
 - **CA-4.** **Dado** un ejemplar vendido, **entonces** «Eliminar» no aparece en Más acciones (según `CopyCapabilities`).
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-19 (al programarla; lienzo leído en `InvEscritorio` e `InvMovil`, vistas ejemplar-*):**
+  - **Pantalla:** `CopyDetailScreen` sobre la Plantilla de detalle (identidad, datos e historial); contenedor `/inventario/ejemplares/[id]` como página (la lista no abre la Ventana de detalle, ver INV-02). Si el ejemplar no carga, la ventana muestra «No se pudo cargar» con «Reintentar».
+  - **Datos:** cliente (enlace a su ficha), precio acordado editable con el público tachado y «Diferencia −$5.000 · descuento», vendido el y recibido el. Un ejemplar en físico muestra «Precio» (el público copiado).
+  - **Editar el precio y la fecha** usa diálogos de la biblioteca en lugar del campo en línea del lienzo: «Precio acordado» (campo de dinero y «Restaurar precio de inventario $98.000») y «Fecha de recibido» (Hoy, Ayer, Anteayer u otra fecha en el calendario de HU-PAN-CLI-05, nunca futura ni posterior a la venta).
+  - **Más acciones:** el lienzo ofrece **Marcar con novedad** (nota obligatoria: sin ella el diálogo sigue abierto con «Escribe una nota») y **Eliminar** (nota opcional; Aviso con «Deshacer», vuelve a la lista). Según `CopyCapabilities`: un vendido no ofrece Eliminar (CA-4). **«Devolver al líder» no está aquí**: el lienzo lo trae en su propia pantalla por lotes (HU-PAN-INV-05), y «Abrir como página» es el selector de forma de la Ventana.
+  - **Historial:** texto de cada evento desde `copy/es.ts`; «Deshacer» en la primera entrada si el back lo permite: Apareció / Perdido deshacen directo; «Devuelto al líder» pide la nota obligatoria (BR-COPY-16, CA-3).
+  - **Sin la Franja** «Vendido el … · N días después de recibido» que dice la HU: el lienzo no la dibuja. Anterior / siguiente quedan deshabilitados (el detalle no conoce la lista).
+  - **Fuera:** FI-01 (devolver al inventario un vendido, FI no dibujada), editar la fecha de venta (HU-CLI-13 en el back; el lienzo no la hace editable aquí), el modal de abonos que no cuadran tras bajar el precio (FC-05, no dibujado; la franja de la ficha del cliente ya avisa) y los minibooks (FI-09).
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13.

@@ -329,7 +329,8 @@ Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesió
 | HU-PAN-CLI-06 | Programada (2026-11-19); no se da por terminada hasta que el dueño decida el proveedor del mapa y la pruebe en su iPhone (SG-09) | `will-dev` |
 | HU-PAN-INV-01 | Terminada (2026-11-19); «Devolver al líder» llega con INV-05 y el panel Agregar con INV-04 | `will-dev` |
 | HU-PAN-INV-02 | Terminada (2026-11-19); abrir una fila espera INV-03 | `will-dev` |
-| HU-PAN-INV-03 a 05, HU-PAN-DIN-01 a 05 | Pendientes | — |
+| HU-PAN-INV-03 | Terminada (2026-11-19); sin Franja ni «Devolver al líder» (INV-05) | `will-dev` |
+| HU-PAN-INV-04 a 05, HU-PAN-DIN-01 a 05 | Pendientes | — |
 
 **Flujo de trabajo del front:** igual que el back, en `will-dev`, un *commit* por HU. Antes de cada *commit*: `pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm build-storybook`.
 

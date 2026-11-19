@@ -85,3 +85,5 @@ export { SwipeRow, type SwipeRowProps } from './components/SwipeRow';
 // HU-PAN-INV-02: lista de ejemplares.
 export { CopiesListScreen, type CopiesListScreenProps } from './screens/CopiesListScreen';
 export { copiesListParamsFromUrl, copiesListParamsToUrl } from './copies-list-url';
+// HU-PAN-INV-03: detalle de un ejemplar.
+export { CopyDetailScreen, historyText, type CopyDetailScreenProps } from './screens/CopyDetailScreen';
