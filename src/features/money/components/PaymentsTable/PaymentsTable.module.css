@@ -1,0 +1,134 @@
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--color-text);
+  font-size: var(--text-body);
+}
+
+.table th {
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  font-weight: var(--weight-medium);
+  text-align: start;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.table td {
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--color-row-line);
+  vertical-align: middle;
+  font-variant-numeric: var(--font-numeric);
+}
+
+.row:hover {
+  background: var(--color-row-selected);
+}
+
+.end {
+  text-align: end !important;
+  white-space: nowrap;
+}
+
+.customer {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.link {
+  color: inherit;
+  font-weight: var(--weight-medium);
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.link:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+.muted {
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}
+
+.overdue {
+  display: block;
+  color: var(--color-bad);
+  font-size: var(--text-caption);
+}
+
+.method {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ─── Móvil ─── */
+.group {
+  display: flex;
+  flex-direction: column;
+}
+
+.groupName {
+  margin: var(--space-3) 0 var(--space-1);
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  font-weight: var(--weight-medium);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list > li + li {
+  border-top: 1px solid var(--color-row-line);
+}
+
+.mobileRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-height: var(--size-list-row);
+  padding: var(--space-2) 0;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.mobileRow:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: -3px;
+}
+
+.mobileMain {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.mobileAmount {
+  font-weight: var(--weight-strong);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.mobileName {
+  flex: 1;
+  min-width: 0;
+  font-weight: var(--weight-medium);
+}
+
+.mobileDate {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}

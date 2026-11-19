@@ -71,3 +71,7 @@ export {
   type SummaryDeposit,
   type UnscheduledCustomer,
 } from '@/domain/money-summary';
+// HU-PAN-DIN-01: Dinero, resumen y abonos de clientes.
+export { MoneyScreen, type MoneyScreenProps } from './screens/MoneyScreen';
+export { PaymentsTable, type PaymentsTableProps } from './components/PaymentsTable';
+export { paymentsListParamsFromUrl, paymentsListParamsToUrl } from './payments-list-url';

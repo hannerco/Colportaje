@@ -35,7 +35,12 @@ Deslizar en móvil (HU-PAN-DIN-02); el «Totalizador B» del lienzo (`Dinero-d-t
 - **CA-4.** **Dado** móvil, **cuando** pulso «Por entregar $385.000», **entonces** sube la hoja con el medidor y las tarjetas en forma leyenda.
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-19 (al programarla; lienzo leído en `DineroEscritorio` y `DineroMovil`):**
+  - **Pantalla en `/dinero`** (`MoneyScreen`): encabezado «Dinero», segmento «Abonos de clientes | Abibonos», pestañas Todos / Por cobrar / Por entregar / Entregados / Cancelados con conteos que no cambian con la búsqueda, buscador por cliente, filtro Método (efectivo / transferencia; no aplica en Por cobrar ni Cancelados) y «Solo vencidos» (solo en Por cobrar), orden (fecha acordada, fecha real, valor acordado, valor real, cliente) con «Limpiar». La vista vive en la URL (`?vista=por-cobrar&vencidos=1&orden=cliente-asc&q=ana`).
+  - **Resumen:** escritorio con `MoneySummary` arriba de la lista (se desplaza con ella) y el ⓘ de «Por entregar»; móvil con el botón del Encabezado «Por entregar $385.000» que abre la hoja (`DetailWindow` en forma hoja).
+  - **Por cobrar:** «Programado» y «Sin programar» con el botón «Sin programar $… · N clientes», que cambia la lista por los clientes sin programar (cada uno lleva a su ficha) y «Volver a Por cobrar».
+  - **Tabla de abonos como pieza del módulo (`PaymentsTable`), por decisión del dueño (2026-11-19):** la Fila de lista «payment» de la biblioteca (Cliente · Cuota · Fecha acordada · Monto · Estado) no tiene las columnas del lienzo ni la cuota «2/4» que el back no entrega; por eso la tabla sigue el lienzo: Cliente · Valor acordado · Fecha acordada · Estado · Fecha real · Valor real · Método, con «Vencido» + «hace N días» bajo la fecha. Móvil: filas de dos líneas agrupadas por estado en Todos. Se anota en el README para que el diseño la suba a la biblioteca.
+  - **Fuera / pendiente:** la acción «Cobrar» de la fila y «Más plazo» al deslizar (HU-PAN-DIN-02); «Entregar al líder» lleva a `/dinero/abibonos/nuevo` (armazón hasta HU-PAN-DIN-04) y abrir una fila, al armazón del abono (HU-PAN-DIN-02); el «Totalizador B» y los grupos «Vencidos» de la lista (el lienzo los separa; aquí el vencido es la Pastilla y el filtro).
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13.

@@ -19,6 +19,8 @@ export const ROUTES = {
   money: '/dinero',
   payment: (id: string) => `/dinero/abonos/${encodeURIComponent(id)}`,
   deposits: '/dinero/abibonos',
+  /** Nuevo Abibono precargado (HU-PAN-DIN-04): hasta entonces es el armazón de la ruta de un Abibono. */
+  newDeposit: '/dinero/abibonos/nuevo',
   deposit: (id: string) => `/dinero/abibonos/${encodeURIComponent(id)}`,
 } as const;
 
