@@ -121,3 +121,4 @@ export {
 } from '@/domain/customer-data';
 export { customerListParamsFromUrl, customerListParamsToUrl } from './customer-list-url';
 export { CustomerListScreen, type CustomerListScreenProps } from './screens/CustomerListScreen';
+export { CustomerDetailScreen, type CustomerDetailScreenProps } from './screens/CustomerDetailScreen';

@@ -9,6 +9,8 @@ export const ROUTES = {
   /** «Crear «texto»» de la búsqueda sin resultados: Nuevo cliente con ese nombre (BR-CUS-14, HU-CLI-05). */
   newCustomerNamed: (name: string) => `/clientes/nuevo?nombre=${encodeURIComponent(name)}`,
   customer: (id: string) => `/clientes/${encodeURIComponent(id)}`,
+  /** La lista con la ficha abierta en la Ventana de detalle (escritorio). */
+  customerInList: (id: string) => `/clientes?cliente=${encodeURIComponent(id)}`,
   inventory: '/inventario',
   addToInventory: '/inventario/agregar',
   copies: '/inventario/ejemplares',

@@ -42,7 +42,12 @@ Cliente con deuda y abonos (Pagando) · Vencido · Saldado con saldo a favor · 
 - **CA-5.** **Dado** un prospecto, **entonces** se ve la franja «Aún no tiene libro».
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-18 (al programarla; diferencias con el lienzo, manda la biblioteca, 00-REGLAS-COMUNES-FRONT §1.2):**
+  - **Cuatro islas** (límite de la Plantilla de detalle): identidad con la cuenta adentro (saldo, abonado, deuda total, saldo a favor, sin programar y «Abono vencido desde…»), Libros, Abonos y Datos, en una columna. El lienzo pone el saldo en una tarjeta aparte y, en escritorio, dos columnas (Datos a la derecha; en la ventana lateral, primero).
+  - **No se muestran todavía** los botones que escriben y llegan con otras HU: «Registrar abono», «Programar abono» y «Cobrar» (HU-PAN-CLI-05, HU-PAN-DIN-02), «Quitar» y «Agregar libro del inventario» (HU-PAN-CLI-04), «Editar», el mapa y «Cambiar / Quitar» ubicación (HU-PAN-CLI-03 y 06) y «Agregar imagen». Tampoco «Revisar» del sobrante (abre el modal de HU-ABO-07, sin pantalla aún) ni Visitas (FC-19).
+  - **Abrir un abono** (reemplazando la ventana) llega con HU-PAN-DIN-02.
+  - **CA-5 sigue a BR-PAY-14:** «Aún no tiene libro» sale si el cliente tiene abonos y ningún libro (el back ya lo calcula así), no en todo prospecto.
+  - **«Lo programado supera el saldo en $X»** lleva el monto, como en FLOWS.
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E «Archivar y restaurar» (TESTING.md, flujo 14) pasa.

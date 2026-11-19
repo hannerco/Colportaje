@@ -178,6 +178,68 @@ export const copy = {
       offline: { title: 'Sin conexión', text: 'Puedes consultar lo guardado, pero no registrar.' },
       error: { title: 'No se pudo cargar', text: 'Inténtalo otra vez.' },
     },
+    /** Ficha de cliente (HU-PAN-CLI-02, diseño «2 · Ficha de cliente»). */
+    detail: {
+      call: 'Llamar',
+      whatsapp: 'WhatsApp',
+      moreActions: 'Más acciones',
+      account: {
+        balance: 'Saldo pendiente',
+        paid: 'Abonado',
+        debt: 'Deuda total',
+        paidPct: (pct: number) => `Abonado el ${pct}\u00a0% de la deuda`,
+        credit: 'Saldo a favor',
+        unscheduled: 'Sin programar',
+        overdueSince: (date: string) => `Abono vencido desde el ${date}`,
+      },
+      books: { title: 'Libros' },
+      payments: {
+        title: 'Abonos',
+        empty: 'Sin abonos',
+        overdueAgo: (days: number) => (days === 1 ? 'hace 1 día' : `hace ${days} días`),
+        /** Fecha acordada antes de una prórroga (BR-PAY-14), tachada. */
+        before: (date: string) => `antes ${date}`,
+        kind: { down_payment: 'Cuota inicial', extra: 'Abono extra', scheduled: '' },
+        method: { cash: 'Efectivo', transfer: 'Transferencia' },
+        canceled: (n: number) => `Cancelados ${n}`,
+      },
+      data: {
+        title: 'Datos',
+        phone: 'Teléfono',
+        address: 'Dirección',
+        openMaps: 'Abrir en Maps',
+        info: 'Información',
+        images: 'Imágenes',
+        image: (n: number) => `Foto ${n}`,
+        invoice: 'Factura',
+        invoicePhoto: (date: string, n: number) => `Factura ${date}, foto ${n}`,
+        since: 'Cliente desde',
+      },
+      notices: {
+        noBook: 'Aún no tiene libro',
+        /** BR-PAY-13 (FLOWS): con el monto del sobrante. */
+        excess: (amount: string) => `Lo programado supera el saldo en ${amount}`,
+        archived: 'Cliente archivado',
+      },
+      archive: {
+        action: 'Archivar',
+        restore: 'Restaurar',
+        title: '¿Archivar el cliente?',
+        cancelLabel: 'Cancelar',
+        /** BR-CUS-09 / BR-PAY-13: qué abonos programados se cancelarán. */
+        message: (n: number) =>
+          n === 0
+            ? 'Deja de verse en las listas; lo encuentras en Archivados y puedes restaurarlo.'
+            : `Se cancelarán ${n === 1 ? '1 abono programado' : `${n} abonos programados`}. Deja de verse en las listas; lo encuentras en Archivados.`,
+        /** HU-CLI-11 R1: con libros vendidos no se archiva. */
+        hasBooksTitle: 'Primero devuelve sus libros',
+        hasBooks: (n: number) =>
+          `Tiene ${n === 1 ? '1 libro vendido' : `${n} libros vendidos`}. Devuélvelos para poder archivarlo.`,
+        understood: 'Entendido',
+        done: 'Cliente archivado',
+        restored: 'Cliente restaurado',
+      },
+    },
   },
   /** Módulo Dinero (BR-DEP-14, ADR-0046). */
   money: {

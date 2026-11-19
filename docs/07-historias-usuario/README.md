@@ -276,6 +276,8 @@ Piezas que las **pantallas** del lienzo dibujan pero que no están en la **bibli
 | Botón de título con imagen y contador; cantidad | Agregar al inventario | PAN-INV-04 |
 | Fotos (miniaturas, agregar, quitar) | Recibos del Abibono; facturas; fotos de información | PAN-DIN-04, PAN-CLI-02 |
 | Tipo «abibono» en la Fila de lista | Lista de Abibonos | PAN-DIN-03 (se pide antes de programar) |
+| Barra de avance «Abonado el N %» (pieza `CustomerAccountSummary`) | Ficha de cliente | PAN-CLI-02 |
+| Isla de identidad sin Pastilla (prospecto) y con contenido a todo el ancho (`details`) | Ficha de cliente | PAN-CLI-02 (ya en `ui/`: subirlo a Lib-Plantilla-Detalle) |
 | Segunda salida del Estado vacío (enlace debajo de la acción); botón flotante deshabilitado sin conexión | Búsqueda de clientes sin resultados (HU-CLI-05); Clientes sin conexión | PAN-CLI-01 (ya en `ui/`: subirlo a las fichas Lib-EstadoVacio y Lib-Navegacion) |
 
 Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesión** (OQ-44), selector de emoji (FC-02), los formularios de abonos de FC-09 a FC-12, y lo demás de `04-diseno/pendientes/FALTA-*.md`.
@@ -315,7 +317,8 @@ Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesió
 | HU-PAN-BASE-01 | Terminada (2026-11-18); falta probar en el celular del dueño (necesita HU-PAN-BASE-02) | `will-dev` |
 | HU-PAN-BASE-02 | Bloqueada (espera diseño, OQ-44) | — |
 | HU-PAN-CLI-01 | Terminada (2026-11-18); la ficha que abre llega con HU-PAN-CLI-02 | `will-dev` |
-| HU-PAN-CLI-02 a 06, HU-PAN-INV-01 a 05, HU-PAN-DIN-01 a 05 | Pendientes | — |
+| HU-PAN-CLI-02 | Terminada (2026-11-18); los botones que escriben llegan con CLI-03 a 06 y DIN-02 | `will-dev` |
+| HU-PAN-CLI-03 a 06, HU-PAN-INV-01 a 05, HU-PAN-DIN-01 a 05 | Pendientes | — |
 
 **Flujo de trabajo del front:** igual que el back, en `will-dev`, un *commit* por HU. Antes de cada *commit*: `pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm build-storybook`.
 

@@ -15,6 +15,7 @@ export const E2E_USER_NAME = 'Prueba E2E';
 export const E2E_CUSTOMERS = [
   { name: 'María Gómez', phone: '301 557 9032' },
   { name: 'Hernán Pérez', phone: '312 000 1111' },
+  { name: 'Rubén Darío Vélez', phone: '300 111 2233' },
 ];
 
 export default async function globalSetup() {

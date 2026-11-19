@@ -1,0 +1,207 @@
+/* Ficha de cliente (HU-PAN-CLI-02). */
+
+/* «Llamar» y «WhatsApp»: enlaces con aspecto de botón secundario (diseño: dos botones lado a lado). */
+.contact {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.contactLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--size-control);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-card);
+  box-shadow: var(--shadow-card);
+  color: var(--color-text);
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  text-decoration: none;
+}
+
+.contactLink:focus-visible,
+.book:focus-visible,
+.mapsLink:focus-visible,
+.toggle:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 1px;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list > li + li {
+  border-top: 1px solid var(--color-row-line);
+}
+
+/* ─── Libros ─── */
+.book {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--size-touch);
+  padding: var(--space-2) 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.bookText {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.bookTitle {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-width: 0;
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+}
+
+.ellipsis {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.muted {
+  flex: none;
+  color: var(--color-text-2);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.secondary {
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  font-variant-numeric: var(--font-numeric);
+}
+
+/* ─── Abonos ─── */
+.payment {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+}
+
+.paymentMain {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.paymentSide {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+}
+
+.date,
+.overdueDate,
+.amount {
+  font-size: var(--text-body);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.overdueDate,
+.overdueAgo {
+  color: var(--color-bad);
+}
+
+.overdueAgo {
+  font-size: var(--text-secondary);
+}
+
+.empty {
+  margin: 0;
+  padding: var(--space-3) 0;
+  color: var(--color-text-2);
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--size-touch);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-2);
+  font: inherit;
+  font-size: var(--text-secondary);
+  cursor: pointer;
+}
+
+/* ─── Datos ─── */
+.address,
+.invoice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.mapsLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--size-control-sm);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--radius-pill);
+  color: var(--color-accent-text);
+  font-size: var(--text-secondary);
+  font-weight: var(--weight-medium);
+  text-decoration: none;
+}
+
+.photos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.photo {
+  width: var(--size-photo-thumb-width);
+  height: var(--size-photo-thumb-height);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  object-fit: cover;
+}
+
+/* ─── Diálogo de archivar: los abonos que se cancelarán ─── */
+.toCancel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}
+
+.toCancel li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}

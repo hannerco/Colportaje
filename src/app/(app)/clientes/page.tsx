@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useCallback, useMemo, useState } from 'react';
+import { Suspense, useCallback, useMemo } from 'react';
 import { copy } from '@/copy/es';
 import type { CustomerListParams } from '@/domain/customer-list';
 import {
@@ -11,10 +11,18 @@ import {
   useCustomerList,
 } from '@/features/customers';
 import { ROUTES, useAppShell } from '@/features/shell';
-import { DetailWindow } from '@/ui/organisms/DetailWindow';
+import { readStoredDetailWindowMode } from '@/ui/organisms/DetailWindow';
 import { usePlatform } from '@/ui/platform';
+import { CustomerDetailContainer } from './customer-detail-container';
 
-/** Contenedor de la lista de clientes (HU-PAN-CLI-01): la vista vive en la URL (R3) y los datos salen del back. */
+/** El cliente abierto en la Ventana de detalle va en la URL (`?cliente=id`): «atrás» la cierra. */
+const OPEN = 'cliente';
+
+/**
+ * Contenedor de la lista de clientes (HU-PAN-CLI-01): la vista vive en la URL (R3) y los datos salen del back. En
+ * escritorio, la ficha (HU-PAN-CLI-02) se abre en la Ventana de detalle o, si la forma recordada es «Página», en
+ * `/clientes/[id]` (CA-3); en móvil, siempre en `/clientes/[id]`.
+ */
 function CustomersRoute() {
   const { nav, isOnline, offlineBanner } = useAppShell();
   const router = useRouter();
@@ -26,20 +34,27 @@ function CustomersRoute() {
     [searchParams],
   );
   const list = useCustomerList(params);
-  const [selectedId, setSelectedId] = useState<string>();
+  const selectedId = searchParams.get(OPEN) ?? undefined;
+
+  const urlFor = useCallback(
+    (next: CustomerListParams, open: string | undefined) => {
+      const query = customerListParamsToUrl(next);
+      if (open) query.set(OPEN, open);
+      const text = query.toString();
+      return text ? `${pathname}?${text}` : pathname;
+    },
+    [pathname],
+  );
 
   // R3: la vista se escribe en la URL sin agregar pasos al historial (escribir en el buscador no llena «atrás»).
   const onParamsChange = useCallback(
-    (next: CustomerListParams) => {
-      const query = customerListParamsToUrl(next).toString();
-      router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
-    },
-    [router, pathname],
+    (next: CustomerListParams) => router.replace(urlFor(next, selectedId), { scroll: false }),
+    [router, urlFor, selectedId],
   );
+  const select = (id: string | undefined) => router.replace(urlFor(params, id), { scroll: false });
 
   const rows = list.data?.rows ?? [];
   const index = rows.findIndex((row) => row.id === selectedId);
-  const open = index >= 0 ? rows[index] : undefined;
 
   return (
     <CustomerListScreen
@@ -52,25 +67,30 @@ function CustomersRoute() {
       loading={list.isPending}
       error={list.isError}
       onRetry={() => void list.refetch()}
-      selectedId={open?.id}
+      selectedId={selectedId}
       customerHref={ROUTES.customer}
-      onOpenCustomer={(id) => (platform === 'mobile' ? router.push(ROUTES.customer(id)) : setSelectedId(id))}
+      onOpenCustomer={(id) =>
+        platform === 'mobile' || readStoredDetailWindowMode() === 'page'
+          ? router.push(ROUTES.customer(id))
+          : select(id)
+      }
       onNewCustomer={(name) => router.push(name ? ROUTES.newCustomerNamed(name) : ROUTES.newCustomer)}
       detail={
-        open ? (
-          // La ficha (contenido) llega con HU-PAN-CLI-02; la ventana ya se abre en la forma recordada.
-          <DetailWindow
-            title={open.name}
-            breadcrumb={{ label: copy.customers.list.title, href: ROUTES.customers }}
-            onClose={() => setSelectedId(undefined)}
-            onPrev={index > 0 ? () => setSelectedId(rows[index - 1]!.id) : undefined}
-            onNext={index < rows.length - 1 ? () => setSelectedId(rows[index + 1]!.id) : undefined}
-            onModeChange={(mode) => {
-              if (mode === 'page') router.push(ROUTES.customer(open.id));
+        selectedId && platform === 'desktop' ? (
+          <CustomerDetailContainer
+            key={selectedId}
+            customerId={selectedId}
+            fallbackTitle={rows[index]?.name}
+            window={{
+              breadcrumb: { label: copy.customers.list.title, href: ROUTES.customers },
+              onClose: () => select(undefined),
+              onPrev: index > 0 ? () => select(rows[index - 1]!.id) : undefined,
+              onNext: index >= 0 && index < rows.length - 1 ? () => select(rows[index + 1]!.id) : undefined,
+              onModeChange: (mode) => {
+                if (mode === 'page') router.push(ROUTES.customer(selectedId));
+              },
             }}
-          >
-            {null}
-          </DetailWindow>
+          />
         ) : undefined
       }
     />

@@ -309,6 +309,10 @@
   --detail-max-width: 900px; /* contenido de la plantilla de detalle en escritorio (HU-UI-29) */
   --template-height: 100dvh; /* alto de la plantilla de lista (la lista se desplaza por dentro en escritorio) */
   --data-row-label-width: 170px; /* columna de etiquetas de la fila de dato en escritorio (HU-UI-13) */
+  --size-progress: 8px; /* barra «Abonado el N %» de la ficha de cliente (HU-PAN-CLI-02) */
+  --radius-progress: 4px;
+  --size-photo-thumb-width: 80px; /* miniatura de foto de la ficha de cliente */
+  --size-photo-thumb-height: 64px;
 }
 
 /* ─── Por plataforma · escritorio ───────────────────────────────────────────────────────────────── */

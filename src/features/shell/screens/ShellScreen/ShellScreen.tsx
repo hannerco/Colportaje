@@ -9,24 +9,27 @@ import styles from './ShellScreen.module.css';
 export type ShellScreenProps = {
   /** La navegación del armazón (`useAppShell().nav`). */
   nav: AppNavProps;
-  /** Título de la pantalla (el nombre del módulo, de `copy/es.ts`). */
-  title: string;
+  /** Título de la pantalla (el nombre del módulo, de `copy/es.ts`). Sin título, no hay encabezado. */
+  title?: string;
   /** Franja de sin conexión (`useAppShell().offlineBanner`). */
   banner?: ReactNode;
+  /** Contenido (p. ej. un detalle como página en escritorio, que trae su propio encabezado). */
+  children?: ReactNode;
 };
 
 /**
  * Armazón de una ruta cuya pantalla todavía no está hecha (HU-PAN-BASE-01): navegación, encabezado y la Franja de sin
  * conexión. Cada HU de pantalla la reemplaza por su plantilla (lista o detalle) con su contenido.
  */
-export function ShellScreen({ nav, title, banner }: ShellScreenProps) {
+export function ShellScreen({ nav, title, banner, children }: ShellScreenProps) {
   const mobile = usePlatform() === 'mobile';
   return (
     <div className={styles.shell} data-shape={mobile ? 'mobile' : 'desktop'}>
       <AppNav {...nav} />
       <main className={styles.main}>
-        <PageHeader kind="root" title={title} />
+        {title && <PageHeader kind="root" title={title} />}
         {banner}
+        {children}
       </main>
     </div>
   );
