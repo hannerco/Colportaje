@@ -96,6 +96,12 @@ export const toBogotaDate = (instant: Instant): LocalDate => {
 /** El día de hoy en America/Bogota (BR-GEN-05). */
 export const todayBogota = (clock: Clock): LocalDate => toBogotaDate(clock.now());
 
+/**
+ * HU-ABO-08 / ADR-0049: la fecha ya pasó (es anterior a hoy, por día de Bogotá). El front muestra con ella el
+ * aviso «Esta fecha ya pasó»; el back no bloquea.
+ */
+export const isPastDate = (date: LocalDate, today: LocalDate): boolean => date < today;
+
 /** `2026-11-07` → `07/11/2026` (BR-GEN-07). */
 export const formatDate = (d: LocalDate): string => {
   const { year, month, day } = toParts(d);

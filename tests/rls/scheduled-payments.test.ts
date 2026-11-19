@@ -94,13 +94,13 @@ describe('schedule_single_payment', () => {
       ).toBe(1);
     }));
 
-  it('CA-4: con fecha de ayer → VALIDATION en dueDate; valor 0 → agreedAmount; archivado → CUSTOMER_ARCHIVED', () =>
+  it('HU-ABO-08 CA-1: con fecha de ayer se guarda por cobrar; valor 0 → agreedAmount; archivado → CUSTOMER_ARCHIVED', () =>
     inTransaction(async (tx) => {
       const { owner, customer } = await setup(tx);
-      expect(await schedule(tx, owner, randomUUID(), customer, 1, await day(tx, -1))).toMatchObject({
-        code: 'VALIDATION',
-        detail: 'dueDate',
-      });
+      const past = randomUUID();
+      const yesterday = await day(tx, -1);
+      expect(await schedule(tx, owner, past, customer, 30_000, yesterday)).toMatchObject({ ok: true });
+      expect(await row(tx, past)).toMatchObject({ status: 'scheduled', due: yesterday, original: yesterday });
       expect(await schedule(tx, owner, randomUUID(), customer, 0, await day(tx, 1))).toMatchObject({
         detail: 'agreedAmount',
       });
@@ -147,15 +147,17 @@ describe('update_scheduled_amount y correct_scheduled_date', () => {
       ).toBe('');
     }));
 
-  it('CA-4: corregir a ayer → VALIDATION en dueDate', () =>
+  it('HU-ABO-08 CA-2: corregir a una fecha pasada mueve la fecha y la original, sin prórroga', () =>
     inTransaction(async (tx) => {
       const { owner, customer } = await setup(tx);
       const id = randomUUID();
-      await schedule(tx, owner, id, customer, 10_000, await day(tx, 5));
-      expect(await correct(tx, owner, id, await day(tx, -1))).toMatchObject({
-        code: 'VALIDATION',
-        detail: 'dueDate',
-      });
+      await schedule(tx, owner, id, customer, 10_000, await day(tx, 4));
+      const past = await day(tx, -6);
+      expect(await correct(tx, owner, id, past)).toMatchObject({ ok: true });
+      expect(await row(tx, id)).toMatchObject({ status: 'scheduled', due: past, original: past });
+      expect(
+        (await tx.query('select 1 from public.payment_reschedule where payment_id = $1', [id])).rowCount,
+      ).toBe(0);
     }));
 
   it('un abono cobrado, cancelado o ajeno no se edita ni se corrige', () =>

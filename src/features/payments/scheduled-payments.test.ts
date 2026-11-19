@@ -67,27 +67,29 @@ describe('abonos programados (HU-ABO-04)', () => {
     });
   });
 
-  it('CA-4: con fecha de ayer no llega a la base (programar ni corregir); sin conexión → OFFLINE', async () => {
+  it('HU-ABO-08 CA-1 / CA-2: con fecha de ayer sí llega a la base (programar y corregir)', async () => {
     const deps = depsWith();
     const yesterday = localDate('2026-11-07');
-    expect(
-      await scheduleSinglePayment(deps, {
-        paymentId: 'p',
-        customerId: CUSTOMER,
-        agreedAmount: 1,
-        dueDate: yesterday,
-      }),
-    ).toMatchObject({ ok: false, error: { details: { field: 'dueDate' } } });
-    expect(await correctScheduledDate(deps, 'p', yesterday)).toMatchObject({
-      ok: false,
-      error: { details: { field: 'dueDate' } },
+    await scheduleSinglePayment(deps, {
+      paymentId: 'p',
+      customerId: CUSTOMER,
+      agreedAmount: 30_000,
+      dueDate: yesterday,
     });
+    await correctScheduledDate(deps, 'p', yesterday);
+    expect(deps.payments.scheduleSingle).toHaveBeenCalledWith(
+      expect.objectContaining({ dueDate: yesterday }),
+    );
+    expect(deps.payments.correctScheduledDate).toHaveBeenCalledWith('p', yesterday);
+  });
+
+  it('valor 0 no llega a la base; sin conexión → OFFLINE', async () => {
+    const deps = depsWith();
     expect(await updateScheduledAmount(deps, 'p', 0)).toMatchObject({
       ok: false,
       error: { details: { field: 'agreedAmount' } },
     });
-    expect(deps.payments.scheduleSingle).not.toHaveBeenCalled();
-    expect(deps.payments.correctScheduledDate).not.toHaveBeenCalled();
+    expect(deps.payments.updateScheduledAmount).not.toHaveBeenCalled();
     expect(await cancelScheduledPayments(depsWith(false), ['p'])).toEqual(err(appError('OFFLINE')));
   });
 

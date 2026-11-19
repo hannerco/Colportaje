@@ -27,11 +27,8 @@ describe('reschedule: validación (BR-PAY-06)', () => {
     expect(check('2026-11-30', '2026-11-30')).toMatchObject({ ok: false, error: { code: 'DATE_NOT_LATER' } });
   });
 
-  it('R2: una fecha anterior a hoy → DATE_IN_PAST (aunque sea posterior a la actual)', () => {
-    expect(check('2026-10-01', '2026-11-04')).toEqual({
-      ok: false,
-      error: { code: 'DATE_IN_PAST', retryable: false },
-    });
+  it('HU-ABO-08 R2 / CA-3: posterior a la actual aunque anterior a hoy se acepta', () => {
+    expect(check('2026-10-01', '2026-10-20')).toEqual({ ok: true, value: '2026-10-20' });
     expect(check('2026-10-01', '2026-11-05').ok).toBe(true);
   });
 

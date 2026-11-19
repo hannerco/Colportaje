@@ -6,7 +6,6 @@ import { addMonthsClamped, type LocalDate } from './time';
 
 export const RESCHEDULE_ERROR_CODES = {
   DATE_NOT_LATER: 'DATE_NOT_LATER',
-  DATE_IN_PAST: 'DATE_IN_PAST',
   RESCHEDULE_NEEDS_CONFIRMATION: 'RESCHEDULE_NEEDS_CONFIRMATION',
 } as const;
 
@@ -18,8 +17,8 @@ export const rescheduleConfirmLimit = (today: LocalDate): LocalDate =>
   addMonthsClamped(today, businessConfig.reschedule.confirmBeyondMonths);
 
 /**
- * R2 / R3: la nueva fecha es posterior a la actual y no anterior a hoy; si pasa del límite y no viene
- * confirmada, `RESCHEDULE_NEEDS_CONFIRMATION` con las fechas a confirmar.
+ * R2 / R3: la nueva fecha es posterior a la actual; puede quedar antes de hoy (HU-ABO-08 R2, ADR-0049). Si pasa
+ * del límite (hoy + 2 meses) y no viene confirmada, `RESCHEDULE_NEEDS_CONFIRMATION` con las fechas a confirmar.
  */
 export const validateReschedule = (input: {
   /** Si se conoce; la base vuelve a validarlo con la fecha vigente. */
@@ -28,7 +27,6 @@ export const validateReschedule = (input: {
   readonly today: LocalDate;
   readonly confirmed?: boolean;
 }): Result<LocalDate, AppError> => {
-  if (input.newDueDate < input.today) return err(appError(RESCHEDULE_ERROR_CODES.DATE_IN_PAST));
   if (input.currentDueDate !== undefined && input.newDueDate <= input.currentDueDate) {
     return err(appError(RESCHEDULE_ERROR_CODES.DATE_NOT_LATER));
   }

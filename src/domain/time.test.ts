@@ -7,6 +7,7 @@ import {
   toBogotaDate,
   formatDate,
   formatTime,
+  isPastDate,
   lastDayOfMonth,
   localDate,
   parseDisplayDate,
@@ -152,5 +153,13 @@ describe('time', () => {
       if (!result.ok) expect(result.error).toMatchObject({ code: 'VALIDATION', details: { field: 'date' } });
       expect(() => localDate(text)).toThrow(RangeError);
     });
+  });
+});
+
+describe('isPastDate (HU-ABO-08, ADR-0049)', () => {
+  it('CA-7: el 15/11 con hoy 16/11 ya pasó; hoy y mañana no', () => {
+    expect(isPastDate(d('2026-11-15'), d('2026-11-16'))).toBe(true);
+    expect(isPastDate(d('2026-11-16'), d('2026-11-16'))).toBe(false);
+    expect(isPastDate(d('2026-11-17'), d('2026-11-16'))).toBe(false);
   });
 });

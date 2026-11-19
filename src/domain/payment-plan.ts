@@ -66,24 +66,21 @@ export const planBase = (account: Pick<CustomerAccount, 'remaining' | 'unschedul
 /**
  * Arma el plan (BR-PAY-15): cantidad = base ÷ valor hacia abajo (mínimo 1); lo que sobra lo suma el abono
  * más próximo, así suman exactamente la base. Si la base es menor que el valor, un solo abono por la base
- * (AF-113). Errores: `PLAN_REQUIRES_BALANCE`, `VALIDATION` (`amount`, `firstDueDate`).
+ * (AF-113). El primer abono puede ser anterior a hoy y las siguientes fechas siguen la misma regla de días de
+ * pago (HU-ABO-08 R4). Errores: `PLAN_REQUIRES_BALANCE`, `VALIDATION` (`amount`).
  */
-export const buildPaymentPlan = (
-  input: {
-    readonly base: COP;
-    readonly frequency: PlanFrequency;
-    readonly amount: COP;
-    readonly firstDueDate: LocalDate;
-  },
-  today: LocalDate,
-): Result<PlanItem[], AppError> => {
+export const buildPaymentPlan = (input: {
+  readonly base: COP;
+  readonly frequency: PlanFrequency;
+  readonly amount: COP;
+  readonly firstDueDate: LocalDate;
+}): Result<PlanItem[], AppError> => {
   if (!isValidCOP(input.base) || input.base === 0) {
     return err(appError(PAYMENT_PLAN_ERROR_CODES.PLAN_REQUIRES_BALANCE));
   }
   if (!isValidCOP(input.amount) || input.amount === 0 || input.amount % amountMultiple !== 0) {
     return err(validationError('amount', { multiple: amountMultiple }));
   }
-  if (input.firstDueDate < today) return err(validationError('firstDueDate'));
 
   const count = Math.max(1, Math.floor(input.base / input.amount));
   const first = input.base < input.amount ? input.base : input.base - input.amount * (count - 1);

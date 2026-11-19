@@ -94,7 +94,7 @@ export interface PaymentRepository {
 
   /**
    * Prorroga un programado (HU-ABO-05): solo ese abono; la fecha original no cambia; deja su fila de
-   * historial. Errores: `PAYMENT_NOT_SCHEDULED`, `DATE_NOT_LATER`, `DATE_IN_PAST`,
+   * historial. Errores: `PAYMENT_NOT_SCHEDULED`, `DATE_NOT_LATER`,
    * `RESCHEDULE_NEEDS_CONFIRMATION` (`details.dates`), `CUSTOMER_ARCHIVED`, `NOT_FOUND`, `NETWORK_ERROR`.
    */
   reschedule(
