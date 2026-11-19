@@ -20,14 +20,16 @@ export interface PaymentRepository {
   ): Promise<Result<void, AppError>>;
 
   /**
-   * Cuota inicial de la ficha nueva (una sola): 0 la borra; > 0 la crea con fecha de hoy o actualiza su valor
-   * (HU-ABO-02). Errores: `VALIDATION`, `PAYMENT_LOCKED`, `CUSTOMER_ARCHIVED`, `NOT_FOUND`, `NETWORK_ERROR`.
+   * Cuota inicial de la ficha nueva (una sola): 0 la borra; > 0 la crea con la fecha `paidOn` (hoy si no viene)
+   * o actualiza su valor, su método y, si viene `paidOn`, su fecha (HU-ABO-02, HU-ABO-09). Errores:
+   * `VALIDATION` (`paidAmount`, `paidOn`), `PAYMENT_LOCKED`, `CUSTOMER_ARCHIVED`, `NOT_FOUND`, `NETWORK_ERROR`.
    */
   setCreationDownPayment(input: {
     paymentId: string;
     customerId: string;
     amount: COP;
     method: PayMethod;
+    paidOn?: LocalDate;
   }): Promise<Result<void, AppError>>;
 
   /**

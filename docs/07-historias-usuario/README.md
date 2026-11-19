@@ -136,7 +136,7 @@ Implementar en este orden. Una HU solo empieza cuando sus dependencias están te
 | HU-DIN-07 | Terminada (2026-11-15) | `will-dev` |
 | HU-CLI-13 | Terminada (2026-11-18) | `will-dev` |
 | HU-ABO-08 | Terminada (2026-11-18) | `will-dev` |
-| HU-ABO-09 | Pendiente (ADR-0049, ronda 30) | — |
+| HU-ABO-09 | Terminada (2026-11-18) | `will-dev` |
 
 **Flujo de trabajo del back (desde 2026-11-13):** las HU se programan en la rama `will-dev`, con un commit por HU y la CI corriendo en cada push. No se abre un PR a `main` por cada HU; `main` se actualiza con un PR desde `will-dev` cuando se acuerde con el dueño. Antes de cada commit: `pnpm lint && pnpm typecheck && pnpm test && pnpm test:rls && pnpm build`.
 

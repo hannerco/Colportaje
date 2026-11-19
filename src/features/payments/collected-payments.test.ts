@@ -179,3 +179,46 @@ describe('updateCollectedPayment y deletePayment', () => {
     expect(await deletePayment(unreadable, 'e1')).toEqual(err(appError('NETWORK_ERROR')));
   });
 });
+
+describe('setCreationDownPayment con fecha (HU-ABO-09)', () => {
+  it('CA-1: la fecha pasada llega al repositorio', async () => {
+    const deps = depsWith(data(20_000));
+    await setCreationDownPayment(deps, {
+      paymentId: 'd1',
+      customerId: CUSTOMER,
+      amount: 50_000,
+      paidOn: localDate('2026-11-03'),
+    });
+    expect(deps.payments.setCreationDownPayment).toHaveBeenCalledWith({
+      paymentId: 'd1',
+      customerId: CUSTOMER,
+      amount: 50_000,
+      method: 'transfer',
+      paidOn: '2026-11-03',
+    });
+  });
+
+  it('CA-3: sin fecha no se manda (la base conserva la que tenía o usa hoy)', async () => {
+    const deps = depsWith(data(20_000));
+    await setCreationDownPayment(deps, { paymentId: 'd1', customerId: CUSTOMER, amount: 60_000 });
+    expect(deps.payments.setCreationDownPayment).toHaveBeenCalledWith({
+      paymentId: 'd1',
+      customerId: CUSTOMER,
+      amount: 60_000,
+      method: 'transfer',
+    });
+  });
+
+  it('CA-4: mañana da VALIDATION en paidOn sin llegar a la base', async () => {
+    const deps = depsWith(data(20_000));
+    expect(
+      await setCreationDownPayment(deps, {
+        paymentId: 'd1',
+        customerId: CUSTOMER,
+        amount: 50_000,
+        paidOn: localDate('2026-11-09'),
+      }),
+    ).toMatchObject({ ok: false, error: { code: 'VALIDATION', details: { field: 'paidOn' } } });
+    expect(deps.payments.setCreationDownPayment).not.toHaveBeenCalled();
+  });
+});

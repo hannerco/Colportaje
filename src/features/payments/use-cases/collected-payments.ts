@@ -1,6 +1,11 @@
 // Cuota inicial, abono extra y corrección de cobros (HU-ABO-02). Cada acción devuelve la cuenta del cliente
 // y la evaluación de abonos que no cuadran con el disparador que corresponde (R6, HU-ABO-07).
-import { creationDownPaymentAmount, DEFAULT_PAY_METHOD, validateCollected } from '@/domain/collected-payment';
+import {
+  creationDownPaymentAmount,
+  DEFAULT_PAY_METHOD,
+  validateCollected,
+  validateDownPaymentDate,
+} from '@/domain/collected-payment';
 import { computeCustomerAccount, type CustomerAccount } from '@/domain/customer';
 import type { COP } from '@/domain/money';
 import type { PayMethod } from '@/domain/payment';
@@ -45,11 +50,14 @@ export type SetCreationDownPaymentInput = {
   readonly customerId: string;
   readonly amount: COP | null;
   readonly method?: PayMethod;
+  /** Fecha en que se recibió (HU-ABO-09). Al crear, por defecto hoy; al actualizar, sin ella conserva la suya. */
+  readonly paidOn?: LocalDate;
 };
 
 /**
- * Cuota inicial de la ficha nueva (una sola): 0 o vacío la borra; > 0 la crea o actualiza. Durante la
- * creación el sobrante se muestra como franja (`form_edit`).
+ * Cuota inicial de la ficha nueva (una sola): 0 o vacío la borra; > 0 la crea o actualiza (con su fecha, HU-ABO-09).
+ * Durante la creación el sobrante se muestra como franja (`form_edit`). Una fecha futura da `VALIDATION`
+ * (`paidOn`) sin llegar a la base.
  */
 export async function setCreationDownPayment(
   deps: CollectedPaymentsDeps,
@@ -58,11 +66,16 @@ export async function setCreationDownPayment(
   return runMutation(deps.connectivity, async () => {
     const amount = creationDownPaymentAmount(input.amount);
     if (!amount.ok) return amount;
+    if (input.paidOn) {
+      const date = validateDownPaymentDate(input.paidOn, todayBogota(deps.clock));
+      if (!date.ok) return date;
+    }
     const saved = await deps.payments.setCreationDownPayment({
       paymentId: input.paymentId,
       customerId: input.customerId,
       amount: amount.value,
       method: input.method ?? DEFAULT_PAY_METHOD,
+      ...(input.paidOn ? { paidOn: input.paidOn } : {}),
     });
     if (!saved.ok) return saved;
     return accountAndExcess(deps, input.customerId, 'form_edit');

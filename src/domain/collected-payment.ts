@@ -24,6 +24,13 @@ export const validateCollected = (
 };
 
 /**
+ * HU-ABO-09 R3: la fecha de la cuota inicial de la ficha nueva no es futura (Bogotá); pasada sí (ADR-0049).
+ * Errores: `VALIDATION` (`paidOn`).
+ */
+export const validateDownPaymentDate = (paidOn: LocalDate, today: LocalDate): Result<LocalDate, AppError> =>
+  paidOn > today ? err(validationError('paidOn')) : ok(paidOn);
+
+/**
  * Cuota inicial de la ficha nueva: vacío o 0 la borra; un entero > 0 la crea o actualiza (ronda 26).
  * Devuelve el valor a guardar (`0` = borrar). Errores: `VALIDATION` (`paidAmount`).
  */

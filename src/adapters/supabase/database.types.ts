@@ -860,6 +860,7 @@ export type Database = {
           p_amount: number;
           p_customer_id: string;
           p_method?: Database['public']['Enums']['pay_method'];
+          p_paid_on?: string;
           p_payment_id: string;
         };
         Returns: undefined;
