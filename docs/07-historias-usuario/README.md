@@ -282,7 +282,7 @@ Piezas que las **pantallas** del lienzo dibujan pero que no están en la **bibli
 | Fila de ejemplar con **Diferencia**, fecha de venta, número y cliente en móvil; Pastilla **Perdido** y **Devuelto al líder**; ranura `sections` de la Plantilla de lista | Ejemplares | PAN-INV-02 (ya en `ui/`: subirlo a Lib-FilaLista, Lib-Pastilla y Lib-Plantilla-Lista) |
 | Fila de título en físico (portada, nombre, precio, cantidad) y lista Por resolver con acciones | Libros en físico; Por resolver | PAN-INV-01 (hecho: filas en la pantalla y pieza `FlaggedCopiesList`) |
 | Botón de título con imagen y contador; cantidad | Agregar al inventario | PAN-INV-04 |
-| Fotos (miniaturas, agregar, quitar) | Recibos del Abibono; facturas; fotos de información | PAN-DIN-04, PAN-CLI-02, PAN-CLI-06 (hecho para información: pieza `InfoPhotoStrip`, miniaturas y agregar) |
+| Fotos (miniaturas, agregar, quitar) | Recibos del Abibono; facturas; fotos de información | PAN-DIN-04 (hecho: pieza `ReceiptPhotos`, con quitar y «Reintentar»), PAN-CLI-02, PAN-CLI-06 (hecho para información: pieza `InfoPhotoStrip`, miniaturas y agregar) |
 | Tabla de abonos con Valor acordado, Fecha real, Valor real y Método (la Fila «payment» solo trae Cuota y Monto) | Dinero · Abonos de clientes | PAN-DIN-01 (hecho: pieza `PaymentsTable`; se pide subirla a la biblioteca) |
 | Tipo «abibono» en la Fila de lista (Nombre, Fecha, Total, Efectivo, Transferencia, Estado, Recibo) | Lista de Abibonos | PAN-DIN-03 (hecho: pieza `DepositsTable`; se pide subirlo a la biblioteca) |
 | Barra de avance «Abonado el N %» (pieza `CustomerAccountSummary`) | Ficha de cliente | PAN-CLI-02 |
@@ -339,7 +339,8 @@ Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesió
 | HU-PAN-DIN-01 | Terminada (2026-11-19) | `will-dev` |
 | HU-PAN-DIN-02 | Terminada (2026-11-19) | `will-dev` |
 | HU-PAN-DIN-03 | Terminada (2026-11-19) | `will-dev` |
-| HU-PAN-DIN-04 a 05 | Pendientes | — |
+| HU-PAN-DIN-04 | Terminada (2026-11-19) | `will-dev` |
+| HU-PAN-DIN-05 | Pendiente | — |
 
 **Flujo de trabajo del front:** igual que el back, en `will-dev`, un *commit* por HU. Antes de cada *commit*: `pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm build-storybook`.
 

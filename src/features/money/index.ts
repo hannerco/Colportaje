@@ -80,3 +80,10 @@ export { paymentsListParamsFromUrl, paymentsListParamsToUrl } from './payments-l
 export { DepositsListScreen, type DepositsListScreenProps } from './screens/DepositsListScreen';
 export { DepositsTable, type DepositsTableProps } from './components/DepositsTable';
 export { depositsListParamsFromUrl, depositsListParamsToUrl } from './deposits-list-url';
+// HU-PAN-DIN-04: Nuevo Abibono y borradores.
+export {
+  DepositEditorScreen,
+  type DepositEditorScreenProps,
+  type DepositEditorValues,
+} from './screens/DepositEditorScreen';
+export { ReceiptPhotos, type ReceiptPhotosProps } from './components/ReceiptPhotos';

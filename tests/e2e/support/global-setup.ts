@@ -20,6 +20,10 @@ const E2E_PROJECTS = ['mobile', 'desktop'];
 /** El día de Bogotá a `offset` días de hoy, como `aaaa-mm-dd`. */
 export const bogotaDate = (offset: number) =>
   new Date(Date.now() + offset * 86_400_000).toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
+/** El cliente con abonos cobrados para el Abibono, y sus montos (HU-PAN-DIN-04). */
+export const E2E_DEPOSIT_CUSTOMER = 'Abibono E2E';
+export const E2E_DEPOSIT_CASH = 50000;
+export const E2E_DEPOSIT_TRANSFER = 20000;
 export const E2E_USER_NAME = 'Prueba E2E';
 /** «Salud y bienestar en familia» ($75.000) del seed. */
 export const E2E_TITLE_ID = '00000000-0000-4000-8000-000000000101';
@@ -93,6 +97,33 @@ export default async function globalSetup() {
     const failed = [created, assigned, planned].find((step) => step.error);
     if (failed?.error) throw new Error(`No se pudo crear el cliente con abonos: ${failed.error.message}`);
   }
+
+  // Un cliente con dos abonos extra ya cobrados (efectivo y transferencia) para el Abibono (HU-PAN-DIN-04); solo lo usa
+  // la prueba «Abibono completo», que corre en escritorio.
+  const depositCustomer = randomUUID();
+  const depositCustomerCreated = await client
+    .from('customer')
+    .insert({ id: depositCustomer, name: E2E_DEPOSIT_CUSTOMER });
+  const depositPayments = [
+    { amount: E2E_DEPOSIT_CASH, method: 'cash' as const },
+    { amount: E2E_DEPOSIT_TRANSFER, method: 'transfer' as const },
+  ];
+  const depositSteps: { error: { message: string } | null }[] = [depositCustomerCreated];
+  for (const { amount, method } of depositPayments) {
+    depositSteps.push(
+      await client.rpc('register_collected_payment', {
+        p_payment_id: randomUUID(),
+        p_customer_id: depositCustomer,
+        p_kind: 'extra',
+        p_paid_amount: amount,
+        p_paid_at: bogotaDate(-1),
+        p_method: method,
+      }),
+    );
+  }
+  const depositFailed = depositSteps.find((step) => step.error);
+  if (depositFailed?.error)
+    throw new Error(`No se pudo crear el cliente con abonos cobrados: ${depositFailed.error.message}`);
 
   // Por resolver (HU-PAN-INV-01): un ejemplar con novedad por proyecto, marcado como lo hace el Ejemplar.
   for (const [i, project] of E2E_PROJECTS.entries()) {
