@@ -517,6 +517,50 @@ export const copy = {
         added: (n: number) => (n === 1 ? '1 ejemplar agregado' : `${n} ejemplares agregados`),
       },
     },
+    /** Devolver al líder (HU-PAN-INV-05, diseño «5 · Devolver al líder», BR-COPY-16). */
+    returnLeader: {
+      title: 'Devolver al líder',
+      cancel: 'Cancelar',
+      back: 'Atrás',
+      next: 'Siguiente',
+      done: 'Listo',
+      search: 'Buscar libro',
+      step: (n: number) => `Paso ${n} de 2`,
+      booksLabel: 'Ejemplares en físico',
+      columns: { book: 'Ejemplar', received: 'Recibido' },
+      bookName: (name: string, number: number) => `${name} #${number}`,
+      received: (date: string) => `Recibido ${date}`,
+      minibooks: 'Minibooks (por cantidad)',
+      minibookQuantity: (name: string) => `Cantidad de ${name} a devolver`,
+      minibookOf: (n: number) => `de ${n}`,
+      note: 'Nota',
+      notePlaceholder: 'Nota para el historial',
+      /** Barra de abajo: «3 ejemplares seleccionados» o «3 ejemplares y 2 minibooks». */
+      selected: (books: number, minibooks: number) => {
+        const copies = books === 1 ? '1 ejemplar' : `${books} ejemplares`;
+        if (minibooks === 0) return `${copies} ${books === 1 ? 'seleccionado' : 'seleccionados'}`;
+        const mini = minibooks === 1 ? '1 minibook' : `${minibooks} minibooks`;
+        return books === 0 ? `${mini} seleccionados` : `${copies} y ${mini}`;
+      },
+      empty: {
+        title: 'No tienes libros en físico para devolver',
+        text: 'Cuando tengas libros en físico, los eliges aquí.',
+      },
+      noResults: (query: string) => `Ningún libro coincide con «${query}»`,
+      error: { title: 'No se pudo cargar', text: 'Inténtalo otra vez.' },
+      summary: {
+        title: (n: number) => (n === 1 ? 'Vas a devolver 1 ejemplar' : `Vas a devolver ${n} ejemplares`),
+        back: 'Seguir eligiendo',
+        confirm: (n: number) => `Devolver ${n}`,
+        note: 'Nota de la devolución',
+        categories: 'Por categoría',
+        total: 'Total',
+      },
+      result: {
+        returned: (n: number) => (n === 1 ? '1 ejemplar devuelto' : `${n} ejemplares devueltos`),
+        undo: 'Deshacer',
+      },
+    },
     /** Detalle de un ejemplar (HU-PAN-INV-03, diseño «3 · Ejemplar»). */
     detail: {
       title: (titleName: string, number: number) => `${titleName} #${number}`,

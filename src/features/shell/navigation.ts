@@ -13,6 +13,7 @@ export const ROUTES = {
   customerInList: (id: string) => `/clientes?cliente=${encodeURIComponent(id)}`,
   inventory: '/inventario',
   addToInventory: '/inventario/agregar',
+  returnToLeader: '/inventario/devolver',
   copies: '/inventario/ejemplares',
   copy: (id: string) => `/inventario/ejemplares/${encodeURIComponent(id)}`,
   money: '/dinero',

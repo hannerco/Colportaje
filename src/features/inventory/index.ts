@@ -91,3 +91,5 @@ export { CopyDetailScreen, historyText, type CopyDetailScreenProps } from './scr
 export { AddCopiesScreen, type AddCopiesScreenProps } from './screens/AddCopiesScreen';
 export { TitleTile, type TitleTileProps } from './components/TitleTile';
 export { QuantityControl, type QuantityControlProps } from './components/QuantityControl';
+// HU-PAN-INV-05: devolver al líder.
+export { ReturnToLeaderScreen, type ReturnToLeaderScreenProps } from './screens/ReturnToLeaderScreen';

@@ -186,7 +186,7 @@
 }
 
 .line[data-dim] {
-  opacity: 0.4;
+  color: var(--color-text-3);
 }
 
 .lineQty {

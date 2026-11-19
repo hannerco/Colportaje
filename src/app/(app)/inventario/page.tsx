@@ -90,6 +90,7 @@ function InStockRoute() {
         copiesCount={copiesList.data?.counts.all}
         onOpenCopies={() => router.push(ROUTES.copies)}
         onAdd={() => router.push(ROUTES.addToInventory)}
+        onReturnToLeader={() => router.push(ROUTES.returnToLeader)}
         openTitle={titleId ? { titleId, data: titleCopies.data } : null}
         onOpenTitle={(id) => setParam(TITLE_PARAM, id)}
         copyHref={ROUTES.copy}

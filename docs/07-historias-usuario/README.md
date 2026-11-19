@@ -332,7 +332,8 @@ Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesió
 | HU-PAN-INV-02 | Terminada (2026-11-19); abrir una fila espera INV-03 | `will-dev` |
 | HU-PAN-INV-03 | Terminada (2026-11-19); sin Franja ni «Devolver al líder» (INV-05) | `will-dev` |
 | HU-PAN-INV-04 | Terminada (2026-11-19) | `will-dev` |
-| HU-PAN-INV-05, HU-PAN-DIN-01 a 05 | Pendientes | — |
+| HU-PAN-INV-05 | Terminada (2026-11-19) | `will-dev` |
+| HU-PAN-DIN-01 a 05 | Pendientes | — |
 
 **Flujo de trabajo del front:** igual que el back, en `will-dev`, un *commit* por HU. Antes de cada *commit*: `pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm build-storybook`.
 
