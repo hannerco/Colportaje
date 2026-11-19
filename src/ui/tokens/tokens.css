@@ -320,6 +320,7 @@
   --size-map-pin-width: 36px; /* pin al centro del mapa */
   --size-map-pin-height: 46px;
   --size-map-pin-shadow: 10px;
+  --size-swipe-action: 92px; /* acción detrás de una fila que se desliza (HU-PAN-INV-01) */
 }
 
 /* ─── Por plataforma · escritorio ───────────────────────────────────────────────────────────────── */

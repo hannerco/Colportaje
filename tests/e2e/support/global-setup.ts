@@ -13,6 +13,9 @@ import { localSupabase } from './local-supabase';
 export const STORAGE_STATE = 'tests/e2e/.auth/state.json';
 /** Clientes guardados con abonos programados, uno por proyecto (HU-PAN-CLI-05). */
 export const E2E_PLAN_CUSTOMERS = ['Prórroga mobile', 'Prórroga desktop'];
+/** Un ejemplar con novedad por proyecto, con esta nota (HU-PAN-INV-01, Por resolver). */
+export const e2eFlaggedNote = (project: string) => `Novedad de prueba ${project}`;
+const E2E_PROJECTS = ['mobile', 'desktop'];
 
 /** El día de Bogotá a `offset` días de hoy, como `aaaa-mm-dd`. */
 export const bogotaDate = (offset: number) =>
@@ -63,10 +66,11 @@ export default async function globalSetup() {
   // clientes con abonos, recibidos hace 10 días, con la misma función que usa Agregar al inventario.
   const inStock = [randomUUID(), randomUUID(), randomUUID()];
   const forPlans = E2E_PLAN_CUSTOMERS.map(() => randomUUID());
+  const flagged = E2E_PROJECTS.map(() => randomUUID());
   const { error: copiesError } = await client.rpc('add_copies', {
     p_batch_id: randomUUID(),
     p_received_at: bogotaDate(-10),
-    p_lines: [{ titleId: E2E_TITLE_ID, copyIds: [...inStock, ...forPlans] }],
+    p_lines: [{ titleId: E2E_TITLE_ID, copyIds: [...inStock, ...forPlans, ...flagged] }],
   });
   if (copiesError) throw new Error(`No se pudieron crear los ejemplares de prueba: ${copiesError.message}`);
 
@@ -88,6 +92,15 @@ export default async function globalSetup() {
     });
     const failed = [created, assigned, planned].find((step) => step.error);
     if (failed?.error) throw new Error(`No se pudo crear el cliente con abonos: ${failed.error.message}`);
+  }
+
+  // Por resolver (HU-PAN-INV-01): un ejemplar con novedad por proyecto, marcado como lo hace el Ejemplar.
+  for (const [i, project] of E2E_PROJECTS.entries()) {
+    const { error: flagError } = await client.rpc('flag_copy', {
+      p_copy_id: flagged[i]!,
+      p_note: e2eFlaggedNote(project),
+    });
+    if (flagError) throw new Error(`No se pudo marcar el ejemplar con novedad: ${flagError.message}`);
   }
 
   const state = {

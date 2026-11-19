@@ -405,6 +405,62 @@ export const copy = {
       confirm: 'Sí, dar el plazo',
     },
   },
+  /** Módulo Inventario (HU-PAN-INV-01, diseño «1 · Libros en físico, Agregar y Por resolver»). */
+  inventory: {
+    title: 'Inventario',
+    sections: { label: 'Secciones de Inventario', inStock: 'Libros en físico', copies: 'Ejemplares' },
+    add: 'Agregar',
+    addToInventory: 'Agregar al inventario',
+    returnToLeader: 'Devolver al líder',
+    moreActions: 'Más acciones',
+    inStock: {
+      title: 'Libros en físico',
+      minibooks: 'Minibooks',
+      /** «2 por resolver» (R4 de HU-INV-03). */
+      flagged: (n: number) => `${n} por resolver`,
+      /** Tras la cantidad de cada título, solo para lectores de pantalla: «3 en físico». */
+      inStockSuffix: ' en físico',
+      empty: {
+        title: 'Todavía no tienes libros en físico',
+        text: 'Cuando agregues libros al inventario, aparecen aquí por título.',
+      },
+      error: { title: 'No se pudo cargar', text: 'Inténtalo otra vez.' },
+    },
+    /** Un título abierto: sus ejemplares en físico. */
+    openTitle: {
+      summary: (count: number, price: string) => `${count} en físico · ${price}`,
+      copies: 'Ejemplares',
+      copy: (number: number) => `#${number}`,
+      received: (date: string) => `Recibido ${date}`,
+    },
+    /** Por resolver (HU-INV-07, BR-COPY-11: «lo asumo yo» es el colportor, nunca el líder). */
+    flagged: {
+      title: 'Por resolver',
+      found: 'Apareció',
+      lost: 'Perdido',
+      lostDetail: '(lo asumo yo)',
+      remove: 'Eliminar',
+      empty: { title: 'No hay nada por resolver' },
+      /** Nombre de cada acción para lectores de pantalla: «Apareció: Psiconutrición #4». */
+      action: (action: string, copyName: string) => `${action}: ${copyName}`,
+      copyName: (title: string, number: number) => `${title} #${number}`,
+      note: {
+        lostTitle: (copyName: string) => `Perdido (lo asumo yo) · ${copyName}`,
+        removeTitle: (copyName: string) => `Eliminar · ${copyName}`,
+        label: 'Nota (opcional)',
+        placeholder: '¿Qué pasó? Puedes dejarlo en blanco',
+        confirmLost: 'Marcar como perdido',
+        confirmRemove: 'Eliminar',
+        cancel: 'Cancelar',
+      },
+      done: {
+        found: (copyName: string) => `${copyName} está de nuevo en físico`,
+        lost: (copyName: string) => `${copyName} quedó como perdido`,
+        removed: (copyName: string) => `${copyName} se eliminó`,
+      },
+      undo: 'Deshacer',
+    },
+  },
   /** Módulo Dinero (BR-DEP-14, ADR-0046). */
   money: {
     /** Resumen de dinero (HU-UI-25). */

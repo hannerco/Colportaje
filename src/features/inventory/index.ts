@@ -78,3 +78,7 @@ export {
   type AddCopiesInput,
   type ReceivedDateKey,
 } from '@/domain/add-batch';
+// HU-PAN-INV-01: Libros en físico y Por resolver.
+export { InStockScreen, type FlaggedResolution, type InStockScreenProps } from './screens/InStockScreen';
+export { FlaggedCopiesList, type FlaggedCopiesListProps } from './components/FlaggedCopiesList';
+export { SwipeRow, type SwipeRowProps } from './components/SwipeRow';
