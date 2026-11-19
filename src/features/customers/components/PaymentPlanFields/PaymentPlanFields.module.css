@@ -1,0 +1,88 @@
+/* Plan para el saldo (HU-PAN-CLI-03). */
+.plan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.heading,
+.label {
+  margin: 0;
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  font-weight: var(--weight-strong);
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+/* En móvil, un campo debajo del otro (como en el lienzo). */
+:global([data-platform='mobile']) .fields {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+}
+
+.item + .item {
+  border-top: 1px solid var(--color-row-line);
+}
+
+.which {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}
+
+.when {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-variant-numeric: var(--font-numeric);
+}
+
+.pastDate,
+.past {
+  color: var(--color-bad);
+}
+
+.past {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-caption);
+}
+
+.amount {
+  font-variant-numeric: var(--font-numeric);
+}
+
+.covers,
+.empty {
+  margin: 0;
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}

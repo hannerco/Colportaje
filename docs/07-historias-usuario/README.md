@@ -270,7 +270,9 @@ Piezas que las **pantallas** del lienzo dibujan pero que no están en la **bibli
 | Pieza | Dónde aparece | HU |
 |---|---|---|
 | Calendario para elegir fecha | Cambiar fecha de abono; Dar más plazo | PAN-CLI-05, PAN-DIN-02 |
-| Plan de abonos (frecuencia, valor, lista previa) | Crear cliente | PAN-CLI-03 |
+| Plan de abonos (frecuencia, valor, lista previa) | Crear cliente | PAN-CLI-03 (hecho: pieza `PaymentPlanFields`) |
+| Botones segmentados (Medio de pago, Frecuencia) | Crear cliente | PAN-CLI-03 (se usó la Selección radio de la biblioteca) |
+| **Factura en la ficha nueva** (fotos, N.º y fecha) — dibujada, **sin HU de pantalla** | Crear cliente | Ninguna: decidir dónde va |
 | Mapa y selector de ubicación | Información y dirección; Elegir ubicación | PAN-CLI-06 |
 | Fila que se desliza (móvil) | Dinero (Cobrar / Más plazo); Por resolver | PAN-DIN-02, PAN-INV-01 |
 | Botón de título con imagen y contador; cantidad | Agregar al inventario | PAN-INV-04 |
@@ -318,7 +320,8 @@ Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesió
 | HU-PAN-BASE-02 | Bloqueada (espera diseño, OQ-44) | — |
 | HU-PAN-CLI-01 | Terminada (2026-11-18); la ficha que abre llega con HU-PAN-CLI-02 | `will-dev` |
 | HU-PAN-CLI-02 | Terminada (2026-11-18); los botones que escriben llegan con CLI-03 a 06 y DIN-02 | `will-dev` |
-| HU-PAN-CLI-03 a 06, HU-PAN-INV-01 a 05, HU-PAN-DIN-01 a 05 | Pendientes | — |
+| HU-PAN-CLI-03 | Terminada (2026-11-19); libros, dirección e información llegan con CLI-04 y CLI-06 | `will-dev` |
+| HU-PAN-CLI-04 a 06, HU-PAN-INV-01 a 05, HU-PAN-DIN-01 a 05 | Pendientes | — |
 
 **Flujo de trabajo del front:** igual que el back, en `will-dev`, un *commit* por HU. Antes de cada *commit*: `pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm build-storybook`.
 

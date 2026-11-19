@@ -2,3 +2,4 @@
 export { AppShellProvider, useAppShell, type AppShell, type AppShellProviderProps } from './app-shell';
 export { APP_NAV_ITEMS, NAV_HREFS, navIdForPath, ROUTES } from './navigation';
 export { ShellRoute, ShellScreenRoute } from './shell-route';
+export { ShellScreen, type ShellScreenProps } from './screens/ShellScreen';

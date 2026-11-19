@@ -240,6 +240,63 @@ export const copy = {
         restored: 'Cliente restaurado',
       },
     },
+    /** Nuevo cliente, ficha viva (HU-PAN-CLI-03, diseño «3 · Crear cliente» y «4 · vacía»). */
+    create: {
+      title: 'Nuevo cliente',
+      name: 'Nombre del cliente',
+      nameRequired: 'Escribe el nombre',
+      save: 'Guardar cliente',
+      discard: 'Descartar',
+      keepEditing: 'Seguir editando',
+      saved: 'Cliente guardado',
+      info: { title: 'Información del cliente', phone: 'Teléfono', phonePlaceholder: '300 000 0000' },
+      books: { title: 'Libros vendidos', total: 'Total de libros' },
+      payments: {
+        title: 'Abonos',
+        downPayment: 'Cuota inicial',
+        value: 'Valor',
+        method: 'Medio de pago',
+        date: 'Fecha',
+        dateInFuture: 'La fecha no puede ser futura',
+        plan: (balance: string | null) =>
+          balance ? `Plan para el saldo de ${balance}` : 'Plan para el saldo',
+        frequency: 'Frecuencia',
+        frequencies: { weekly: 'Semanal', biweekly: 'Quincenal', monthly: 'Mensual' },
+        amount: 'Valor de cada abono',
+        amountInvalid: 'Usa un valor en miles (múltiplo de $1.000)',
+        firstDue: 'Primer abono',
+        preview: 'Así quedan los abonos',
+        previewEmpty: 'Las fechas aparecen cuando pones el valor de cada abono y el primero.',
+        covers: (n: number, balance: string) =>
+          `${n === 1 ? '1 abono cubre' : `${n} abonos cubren`} el saldo de ${balance}`,
+        /** HU-ABO-08 / I-33: se permite, solo se avisa. */
+        past: 'Esta fecha ya pasó',
+        installment: (n: number) => `Abono ${n}`,
+      },
+      summary: {
+        title: 'Resumen',
+        books: (n: number) => `Libros (${n})`,
+        downPayment: 'Cuota inicial',
+        balance: 'Saldo pendiente',
+        payments: 'Abonos',
+        paymentsValue: (n: number, amount: string) => `${n} de ${amount}`,
+      },
+      discardDialog: {
+        title: '¿Descartar este cliente?',
+        /** El texto del lienzo, cuando todavía no hay libros ni abonos. */
+        message: 'Se borra lo que escribiste: información, libros, factura y abonos. No se puede deshacer.',
+        /** CA-2: «Se quitarán 2 libros y 1 abono» (FC-01). */
+        willRemove: (books: number, payments: number) => {
+          const parts = [
+            books > 0 ? (books === 1 ? '1 libro' : `${books} libros`) : null,
+            payments > 0 ? (payments === 1 ? '1 abono' : `${payments} abonos`) : null,
+          ].filter(Boolean);
+          return `Se quitarán ${parts.join(' y ')}. Los libros vuelven a En físico. No se puede deshacer.`;
+        },
+        blocked: 'No se puede descartar: un abono de este cliente ya está en un Abibono.',
+        understood: 'Entendido',
+      },
+    },
   },
   /** Módulo Dinero (BR-DEP-14, ADR-0046). */
   money: {

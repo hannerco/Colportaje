@@ -41,7 +41,12 @@ Selector de emoji (FC-02, sin diseño en la biblioteca: si el lienzo lo dibuja, 
 - **CA-5.** **Dado** sin conexión, **entonces** «Guardar cliente» está deshabilitado con «Necesita conexión».
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-19 (al programarla; lienzo leído en `CrearV5`, `CrearV5Movil` y `CrearV5Vacio`):**
+  - **Lo que entra:** nombre, la cuenta (saldo, abonado, deuda), «Información del cliente» con Teléfono, «Libros vendidos» (lista y total), cuota inicial (valor, fecha y medio) y el plan («Así quedan los abonos»). Escritorio: barra «Clientes / Nuevo cliente» con «Descartar» y «Guardar cliente», y dos columnas; móvil: «Descartar · Nuevo cliente» arriba y «Guardar cliente» abajo.
+  - **«Guardar cliente»** abre la hoja «Resumen» del lienzo (libros, cuota inicial, saldo, abonos) y, al confirmar, lleva a la ficha. La lista de chequeo de la hoja (Información, Dirección, Factura, Visitas) no se pinta: esas secciones llegan con otras HU o no tienen HU.
+  - **Quedan para otras HU:** agregar o quitar libros (HU-PAN-CLI-04), cambiar la fecha o el valor de un abono de la lista (HU-PAN-CLI-05), Dirección, mapa, Información e Imágenes (HU-PAN-CLI-06). Sin diseño o fuera: emoji (FC-02), posible duplicado (FC-03, no dibujado), modal de abonos que no cuadran (FC-05) y Visitas (FC-19).
+  - **Factura:** el lienzo la dibuja en la ficha nueva (fotos, número y fecha), pero ninguna HU de pantalla la tiene asignada. Queda fuera; se anota en el README.
+  - **Medio de pago y Frecuencia** usan la Selección (radio) de la biblioteca en vez de los botones segmentados del lienzo (manda la biblioteca).
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E «Nuevo cliente (ficha viva)» (TESTING.md, flujo 3) pasa en móvil y escritorio.

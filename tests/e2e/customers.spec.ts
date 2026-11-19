@@ -42,6 +42,15 @@ test('flujo 8: la búsqueda tolera errores y tildes, busca por teléfono y ofrec
   await expect(page.getByText('Nadie coincide con «Zacarías Quintero»')).toBeVisible();
   await page.getByRole('button', { name: 'Crear «Zacarías Quintero»' }).click();
   await expect(page).toHaveURL(/\/clientes\/nuevo\?nombre=Zacar%C3%ADas(\+|%20)Quintero$/);
+  // La ficha viva lo crea con ese nombre (HU-PAN-CLI-03); se descarta para no dejarlo en la base de las pruebas.
+  await expect(page.getByLabel('Nombre del cliente')).toHaveValue('Zacarías Quintero');
+  await expect(page.getByRole('button', { name: 'Guardar cliente' })).not.toHaveAttribute(
+    'aria-disabled',
+    'true',
+  );
+  await page.getByRole('button', { name: 'Descartar' }).click();
+  await page.getByRole('alertdialog').getByRole('button', { name: 'Descartar' }).click();
+  await expect(page).toHaveURL(/\/clientes$/);
 });
 
 test('R3: la vista vuelve igual con «atrás»', async ({ page }) => {
