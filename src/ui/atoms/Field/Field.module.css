@@ -1,0 +1,121 @@
+/* Campo de formulario (HU-UI-09). R1: medidas; R2: foco, error y deshabilitado; R4: letra del campo. */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: var(--field-width);
+  max-width: 100%;
+}
+
+.label {
+  color: var(--color-text);
+  font-size: var(--text-secondary);
+  font-weight: var(--weight-medium);
+}
+
+.box {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--size-field);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--radius-field);
+  background: var(--color-input-bg);
+  color: var(--color-text);
+}
+
+.field[data-kind='textarea'] .box {
+  align-items: stretch;
+  height: var(--size-textarea);
+  padding: var(--space-3);
+}
+
+.field[data-kind='select'] .box {
+  padding: 0;
+}
+
+.box:focus-within {
+  border-color: var(--color-accent);
+  outline: 3px solid var(--color-ring);
+}
+
+.box[data-invalid] {
+  border-color: var(--color-bad);
+  outline: 3px solid var(--color-bad-bg);
+}
+
+.box[data-disabled] {
+  background: var(--color-tone);
+  color: var(--color-text-3);
+  opacity: var(--opacity-field-disabled);
+}
+
+.adornment {
+  flex: none;
+  color: var(--color-text-2);
+  font-size: var(--text-body);
+}
+
+.input,
+.select {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: var(--text-body);
+}
+
+.input::placeholder,
+.placeholder {
+  color: var(--color-text-3);
+}
+
+.input:disabled,
+.select:disabled {
+  cursor: not-allowed;
+  -webkit-text-fill-color: currentColor;
+}
+
+textarea.input {
+  resize: none;
+}
+
+.select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: 0 var(--space-3);
+  text-align: start;
+  cursor: pointer;
+}
+
+.selectValue,
+.placeholder {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.help,
+.error {
+  margin: 0;
+  font-size: var(--text-caption);
+}
+
+.help {
+  color: var(--color-text-3);
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-bad);
+}

@@ -754,7 +754,10 @@ export type Database = {
       archive_customer: { Args: { p_customer_id: string }; Returns: undefined };
       assert_collected: { Args: { p_paid_amount: number; p_paid_at: string }; Returns: undefined };
       assert_scheduled: { Args: { p_agreed_amount: number; p_due_date: string }; Returns: undefined };
-      assign_copy_to_customer: { Args: { p_copy_id: string; p_customer_id: string }; Returns: undefined };
+      assign_copy_to_customer: {
+        Args: { p_copy_id: string; p_customer_id: string; p_sold_on?: string };
+        Returns: undefined;
+      };
       cancel_scheduled_payments: { Args: { p_payment_ids: string[] }; Returns: string };
       collect_payment: {
         Args: {
@@ -857,10 +860,12 @@ export type Database = {
           p_amount: number;
           p_customer_id: string;
           p_method?: Database['public']['Enums']['pay_method'];
+          p_paid_on?: string;
           p_payment_id: string;
         };
         Returns: undefined;
       };
+      sold_instant: { Args: { p_day: string }; Returns: string };
       today_bogota: { Args: Record<PropertyKey, never>; Returns: string };
       undo_delete_copy: { Args: { p_copy_id: string }; Returns: undefined };
       undo_resolve_copy_issue: { Args: { p_copy_id: string }; Returns: undefined };
@@ -886,6 +891,7 @@ export type Database = {
       update_deposit_note: { Args: { p_deposit_id: string; p_note: string }; Returns: undefined };
       update_invoice: { Args: { p_invoice_id: string; p_patch: Json }; Returns: undefined };
       update_scheduled_amount: { Args: { p_agreed_amount: number; p_payment_id: string }; Returns: string };
+      update_sold_at: { Args: { p_copy_id: string; p_sold_on: string }; Returns: string };
     };
     Enums: {
       app_role: 'colportor' | 'admin' | 'leader';
@@ -903,7 +909,8 @@ export type Database = {
         | 'received_date_changed'
         | 'minibook_sold'
         | 'returned_to_leader'
-        | 'undo_returned_to_leader';
+        | 'undo_returned_to_leader'
+        | 'sold_at_changed';
       copy_status: 'in_stock' | 'sold' | 'flagged' | 'lost' | 'returned_to_leader';
       deposit_status: 'draft' | 'confirmed';
       issue_resolution: 'found' | 'lost' | 'removed';
@@ -1040,6 +1047,7 @@ export const Constants = {
         'minibook_sold',
         'returned_to_leader',
         'undo_returned_to_leader',
+        'sold_at_changed',
       ],
       copy_status: ['in_stock', 'sold', 'flagged', 'lost', 'returned_to_leader'],
       deposit_status: ['draft', 'confirmed'],

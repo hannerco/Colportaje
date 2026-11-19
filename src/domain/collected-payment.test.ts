@@ -5,6 +5,7 @@ import {
   DEFAULT_PAY_METHOD,
   isOverpayment,
   validateCollected,
+  validateDownPaymentDate,
 } from './collected-payment';
 import { localDate } from './time';
 
@@ -61,5 +62,22 @@ describe('cobrar un programado (HU-ABO-06)', () => {
     expect(isOverpayment(10_000, 15_000)).toBe(true);
     expect(isOverpayment(10_000, 10_000)).toBe(false);
     expect(isOverpayment(40_000, 30_000)).toBe(false);
+  });
+});
+
+describe('validateDownPaymentDate (HU-ABO-09 R3)', () => {
+  it('CA-1: una fecha pasada o la de hoy se acepta', () => {
+    expect(validateDownPaymentDate(localDate('2026-11-03'), today)).toEqual({
+      ok: true,
+      value: '2026-11-03',
+    });
+    expect(validateDownPaymentDate(today, today).ok).toBe(true);
+  });
+
+  it('CA-4: mañana da VALIDATION en paidOn', () => {
+    expect(validateDownPaymentDate(localDate('2026-11-09'), today)).toMatchObject({
+      ok: false,
+      error: { code: 'VALIDATION', details: { field: 'paidOn' } },
+    });
   });
 });

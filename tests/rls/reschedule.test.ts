@@ -133,11 +133,22 @@ describe('reschedule_payment (HU-ABO-05)', () => {
       expect((await state(tx, id)).history).toEqual([]);
     }));
 
-  it('R2: una fecha anterior a hoy → DATE_IN_PAST', () =>
+  it('HU-ABO-08 R2 / CA-3: de hace 15 días a hace 6 (posterior a la actual aunque anterior a hoy) se guarda con 1 fila', () =>
     inTransaction(async (tx) => {
       const { owner, customer } = await setup(tx);
-      const id = await scheduled(tx, owner, customer, await day(tx, -10));
-      expect(await reschedule(tx, owner, id, await day(tx, -1))).toMatchObject({ code: 'DATE_IN_PAST' });
+      const id = await scheduled(tx, owner, customer, await day(tx, -15));
+      const next = await day(tx, -6);
+      expect(await reschedule(tx, owner, id, next)).toMatchObject({ ok: true });
+      const after = await state(tx, id);
+      expect(after.history).toHaveLength(1);
+      expect(after).toMatchObject({ due: next });
+    }));
+
+  it('HU-ABO-08 CA-4: a una fecha anterior a la actual sigue siendo DATE_NOT_LATER', () =>
+    inTransaction(async (tx) => {
+      const { owner, customer } = await setup(tx);
+      const id = await scheduled(tx, owner, customer, await day(tx, -6));
+      expect(await reschedule(tx, owner, id, await day(tx, -11))).toMatchObject({ code: 'DATE_NOT_LATER' });
     }));
 
   it('CA-4: más allá de hoy + 2 meses pide confirmar (con la fecha); confirmado se guarda; el límite exacto no pide', () =>

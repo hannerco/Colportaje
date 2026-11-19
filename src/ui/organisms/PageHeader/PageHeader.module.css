@@ -1,0 +1,95 @@
+/* Encabezado (HU-UI-21). R1: raíz; R2: resumen; R3: detalle. */
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  box-sizing: border-box;
+  min-height: var(--size-header);
+  color: var(--color-text);
+}
+
+/* ─── R1: raíz ─── */
+.title {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  font-size: var(--text-title);
+  font-weight: var(--weight-title);
+  line-height: var(--leading-tight);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.count {
+  color: var(--color-text-3);
+  font-weight: var(--weight-regular);
+  font-variant-numeric: var(--font-numeric);
+}
+
+/* ─── R2: botón de resumen ─── */
+.summary {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--size-header-summary);
+  padding: 0 var(--space-3) 0 var(--space-4);
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-control-bg);
+  box-shadow: var(--shadow-control);
+  color: var(--color-text-2);
+  font: inherit;
+  font-size: var(--text-secondary);
+  cursor: pointer;
+}
+
+.summaryAmount {
+  color: var(--color-text);
+  font-weight: var(--weight-strong);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.summaryIcon {
+  color: var(--color-text-3);
+}
+
+.summary:focus-visible {
+  outline: 3px solid var(--color-ring);
+}
+
+/* ─── R3: detalle ─── */
+.start,
+.end {
+  display: flex;
+  flex: none;
+  align-items: center;
+}
+
+.detailTitle {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  font-size: var(--text-heading);
+  font-weight: var(--weight-heading);
+  line-height: var(--leading-tight);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* En móvil el título va centrado: los dos lados ocupan lo mismo para que quede en el centro real. */
+:global([data-platform='mobile']) .header[data-kind='detail'] .start,
+:global([data-platform='mobile']) .header[data-kind='detail'] .end {
+  justify-content: flex-start;
+  width: var(--size-control);
+}
+
+:global([data-platform='mobile']) .header[data-kind='detail'] .end {
+  justify-content: flex-end;
+}
+
+:global([data-platform='mobile']) .detailTitle {
+  text-align: center;
+}

@@ -39,6 +39,10 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      # Las stories corren como pruebas en Chromium (HU-UI-01, ADR-0050).
+      - name: Navegador de las pruebas de componentes
+        run: pnpm exec playwright install --with-deps chromium
+
       - name: Pruebas
         run: pnpm test
 
@@ -56,3 +60,11 @@ jobs:
 
       - name: Build
         run: pnpm build
+
+      - name: Build del Storybook
+        run: pnpm build-storybook
+
+      # La app de producción contra Supabase local, en móvil y escritorio (HU-PAN-BASE-01, 00-REGLAS-COMUNES-FRONT §10).
+      # Hace su propio build con las variables públicas de `supabase status` (sin claves en el repositorio).
+      - name: Pruebas de punta a punta (Playwright)
+        run: pnpm test:e2e

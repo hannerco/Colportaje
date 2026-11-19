@@ -134,9 +134,9 @@ Implementar en este orden. Una HU solo empieza cuando sus dependencias están te
 | HU-DIN-06 | Terminada (2026-11-15) | `will-dev` |
 | HU-DIN-05 | Terminada (2026-11-15) | `will-dev` |
 | HU-DIN-07 | Terminada (2026-11-15) | `will-dev` |
-| HU-CLI-13 | Pendiente (ADR-0049, ronda 30) | — |
-| HU-ABO-08 | Pendiente (ADR-0049, ronda 30) | — |
-| HU-ABO-09 | Pendiente (ADR-0049, ronda 30) | — |
+| HU-CLI-13 | Terminada (2026-11-18) | `will-dev` |
+| HU-ABO-08 | Terminada (2026-11-18) | `will-dev` |
+| HU-ABO-09 | Terminada (2026-11-18) | `will-dev` |
 
 **Flujo de trabajo del back (desde 2026-11-13):** las HU se programan en la rama `will-dev`, con un commit por HU y la CI corriendo en cada push. No se abre un PR a `main` por cada HU; `main` se actualiza con un PR desde `will-dev` cuando se acuerde con el dueño. Antes de cada commit: `pnpm lint && pnpm typecheck && pnpm test && pnpm test:rls && pnpm build`.
 
@@ -282,8 +282,36 @@ Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesió
 ### Avance del front
 | HU | Estado | Dónde |
 |---|---|---|
-| HU-UI-01 a HU-UI-29 | Pendientes | — |
-| HU-PAN-BASE-01 | Pendiente | — |
+| HU-UI-01 | Terminada (2026-11-17); falta que el dueño abra el enlace y pruebe «Reportar corrección» | `will-dev` |
+| HU-UI-02 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-03 | Terminada (2026-11-18); bloque A listo para revisión | `will-dev` |
+| HU-UI-04 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-05 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-06 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-07 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-08 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-09 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-10 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-11 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-12 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-13 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-14 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-15 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-16 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-17 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-18 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-19 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-20 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-21 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-22 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-23 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-24 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-25 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-26 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-27 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-28 | Terminada (2026-11-18) | `will-dev` |
+| HU-UI-29 | Terminada (2026-11-18) | `will-dev` |
+| HU-PAN-BASE-01 | Terminada (2026-11-18); falta probar en el celular del dueño (necesita HU-PAN-BASE-02) | `will-dev` |
 | HU-PAN-BASE-02 | Bloqueada (espera diseño, OQ-44) | — |
 | HU-PAN-CLI-01 a 06, HU-PAN-INV-01 a 05, HU-PAN-DIN-01 a 05 | Pendientes | — |
 

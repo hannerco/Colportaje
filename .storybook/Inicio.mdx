@@ -1,0 +1,50 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Inicio" />
+
+# Storybook de Colportor
+
+Aquí se ve **cada componente de la app con todas sus variantes**, en claro y oscuro, en celular y computador, con datos de ejemplo (nunca datos reales). Sirve para revisar el diseño sin instalar nada y para reportar lo que hay que corregir.
+
+## Cómo usar la barra superior
+
+Arriba hay tres controles. Cambian **todas** las páginas a la vez, sin recargar:
+
+| Control        | Opciones                         | Para qué                                                                      |
+| -------------- | -------------------------------- | ----------------------------------------------------------------------------- |
+| **Tema**       | Claro · Oscuro · Lado a lado     | Ver el componente en tema claro, oscuro o los dos juntos                      |
+| **Plataforma** | Escritorio · Móvil · Lado a lado | Ver cómo se ve en computador (1280 px), en celular (390 px) o los dos juntos  |
+| **Letra**      | 0,85 · 1 · 1,15 · 1,3            | Achicar o agrandar toda la letra, como lo haría el ajuste de tamaño del texto |
+
+Cada recuadro dice arriba qué está mostrando, por ejemplo «Escritorio · Claro». Con Tema y Plataforma en «Lado a lado» se ven los cuatro recuadros.
+
+Además, cada componente tiene una página **«Matriz»** que muestra siempre las cuatro combinaciones juntas.
+
+## Cómo está organizado
+
+El menú de la izquierda sigue el mismo orden que la página «Biblioteca de componentes» del lienzo:
+
+1. **Fundamentos:** colores, letra, espacios, sombras y plataforma.
+2. **Átomos:** las piezas más pequeñas (botón, pastilla de estado, chip…).
+3. **Moléculas:** piezas hechas con átomos (buscador, fila de lista…).
+4. **Organismos:** bloques grandes (encabezado, navegación, diálogo…).
+5. **Plantillas:** el esqueleto de una pantalla.
+6. **Pantallas:** las pantallas de Clientes, Inventario y Dinero.
+
+En la página de documentación de cada componente están su descripción, cuándo usarlo y cuándo no, sus opciones, dónde se usa y con qué versión del diseño se hizo.
+
+## Qué significa «Iteración 1»
+
+Es la **primera versión** del front, hecha con la Biblioteca de componentes v1.1 del lienzo. El diseño va a cambiar con tus correcciones: cada componente dice con qué iteración y versión del diseño se hizo (por ejemplo, «Iteración 1 · diseño v1.1»).
+
+## Cómo reportar una corrección
+
+1. Abre el componente y cambia **Tema**, **Plataforma** y **Letra** para revisarlo.
+2. Compáralo con su ficha en el lienzo (el nombre de la ficha aparece en su página de documentación).
+3. Pulsa **«Reportar corrección»** en la página de documentación. Se abre en GitHub un _issue_ con el nombre del componente ya escrito.
+4. Elige el tipo:
+   - **No se parece al diseño:** se corrige el componente y nada más cambia.
+   - **Quiero cambiar el diseño:** primero se cambia la ficha en el lienzo y después se programa.
+5. Una corrección por _issue_, con una captura si se puede.
+
+Cuando la corrección esté hecha, el _issue_ se cierra con el cambio y lo puedes verificar en este mismo enlace.

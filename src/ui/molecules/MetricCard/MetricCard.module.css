@@ -1,0 +1,135 @@
+/* Tarjeta de métrica (HU-UI-17). R1: cuadro, etiqueta, monto y barra; R2: leyenda; R3: destacada. */
+.metric {
+  --metric-color: var(--color-data-delivered);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  box-sizing: border-box;
+  width: var(--metric-width, var(--metric-card-width));
+  padding: var(--space-4);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-card);
+  box-shadow: var(--shadow-card);
+  color: var(--color-text);
+}
+
+.metric[data-tone='collected'] {
+  --metric-color: var(--color-data-collected);
+}
+
+.metric[data-tone='pending'] {
+  --metric-color: var(--color-data-pending);
+}
+
+.metric[data-tone='total'] {
+  --metric-color: var(--color-text);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.swatch {
+  flex: none;
+  width: var(--size-swatch);
+  height: var(--size-swatch);
+  border-radius: var(--radius-swatch);
+  background: var(--metric-color);
+}
+
+.label {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.amount {
+  font-size: var(--text-heading);
+  font-weight: var(--weight-heading);
+  font-variant-numeric: var(--font-numeric);
+  white-space: nowrap;
+}
+
+.proportion {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.bar {
+  flex: 1 1 auto;
+  height: var(--size-metric-bar);
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: var(--color-track);
+}
+
+.fill {
+  display: block;
+  width: var(--metric-percent);
+  height: 100%;
+  border-radius: inherit;
+  background: var(--metric-color);
+}
+
+.percent {
+  flex: none;
+  color: var(--color-text-3);
+  font-size: var(--text-secondary);
+  font-variant-numeric: var(--font-numeric);
+  white-space: nowrap;
+}
+
+/* ─── R3: destacada (Dinero total), a todo el ancho ─── */
+.metric[data-shape='featured'] {
+  width: var(--metric-width, 100%);
+}
+
+.metric[data-shape='featured'] .amount {
+  font-size: var(--text-title);
+  font-weight: var(--weight-title);
+}
+
+/* ─── R2: leyenda, sin caja. Escritorio: en fila; móvil: centrada en columna ─── */
+.metric[data-shape='legend'] {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-3);
+  width: var(--metric-width, max-content);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.metric[data-shape='legend'] .label {
+  color: var(--color-text);
+  font-size: var(--text-body);
+  font-weight: var(--weight-strong);
+}
+
+.metric[data-shape='legend'] .amount {
+  font-size: var(--text-body);
+  font-weight: var(--weight-strong);
+}
+
+:global([data-platform='mobile']) .metric[data-shape='legend'] {
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  text-align: center;
+}
+
+:global([data-platform='mobile']) .metric[data-shape='legend'] .label {
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  font-weight: var(--weight-regular);
+}

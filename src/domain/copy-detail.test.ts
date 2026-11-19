@@ -4,7 +4,9 @@ import {
   buildCopyDetail,
   buildHistory,
   copyCapabilities,
+  soldAtInstant,
   validateReceivedDate,
+  validateSoldAt,
   type DetailCopy,
 } from './copy-detail';
 import { localDate } from './time';
@@ -175,6 +177,7 @@ describe('copy-detail: acciones permitidas (R3)', () => {
       editAgreedPrice: false,
       restorePublicPrice: false,
       editReceivedAt: true,
+      editSoldAt: false,
       flag: true,
       delete: true,
       returnFromCustomer: false,
@@ -186,6 +189,7 @@ describe('copy-detail: acciones permitidas (R3)', () => {
       editAgreedPrice: true,
       restorePublicPrice: true,
       editReceivedAt: true,
+      editSoldAt: true,
       flag: false,
       delete: false,
       returnFromCustomer: true,
@@ -199,6 +203,7 @@ describe('copy-detail: acciones permitidas (R3)', () => {
     expect(copyCapabilities({ ...base, status: 'sold', agreedPrice: 1_500 }, 'minibook')).toMatchObject({
       editAgreedPrice: false,
       restorePublicPrice: false,
+      editSoldAt: false,
       returnFromCustomer: false,
     });
   });
@@ -223,6 +228,7 @@ describe('copy-detail: acciones permitidas (R3)', () => {
       editAgreedPrice: false,
       restorePublicPrice: false,
       editReceivedAt: false,
+      editSoldAt: false,
       flag: false,
       delete: false,
       returnFromCustomer: false,
@@ -261,5 +267,47 @@ describe('copy-detail: fecha de recibido (R1, BR-COPY-04)', () => {
     expect(validateReceivedDate(localDate('2026-11-03'), today, new Date('2026-11-03T03:30:00Z')).ok).toBe(
       false,
     );
+  });
+});
+
+describe('copy-detail: fecha de venta (HU-CLI-13, BR-COPY-06, I-32)', () => {
+  const today = localDate('2026-11-16');
+  const received = localDate('2026-10-28');
+
+  it('CA-1: el 05/11 con recibido el 28/10 se acepta; el mismo día del recibido también', () => {
+    expect(validateSoldAt(localDate('2026-11-05'), received, today)).toEqual({
+      ok: true,
+      value: '2026-11-05',
+    });
+    expect(validateSoldAt(received, received, today).ok).toBe(true);
+    expect(validateSoldAt(today, received, today).ok).toBe(true);
+  });
+
+  it('CA-3: antes del recibido da SOLD_BEFORE_RECEIVED', () => {
+    expect(validateSoldAt(localDate('2026-10-25'), received, today)).toEqual({
+      ok: false,
+      error: { code: 'SOLD_BEFORE_RECEIVED', retryable: false },
+    });
+  });
+
+  it('CA-4: mañana da SOLD_IN_FUTURE (también sin conocer el recibido)', () => {
+    expect(validateSoldAt(localDate('2026-11-17'), received, today)).toEqual({
+      ok: false,
+      error: { code: 'SOLD_IN_FUTURE', retryable: false },
+    });
+    expect(validateSoldAt(localDate('2026-11-17'), null, today).ok).toBe(false);
+    expect(validateSoldAt(localDate('2026-10-01'), null, today).ok).toBe(true);
+  });
+
+  it('I-32: hoy guarda el instante actual; otro día, las 12:00 de Bogotá (17:00 UTC)', () => {
+    const now = new Date('2026-11-16T20:15:00Z'); // 3:15 p. m. en Bogotá
+    expect(soldAtInstant(localDate('2026-11-16'), now)).toBe(now);
+    expect(soldAtInstant(localDate('2026-11-05'), now).toISOString()).toBe('2026-11-05T17:00:00.000Z');
+  });
+
+  it('I-32: a las 10 p. m. de Bogotá el día en UTC ya cambió, pero sigue siendo hoy', () => {
+    const now = new Date('2026-11-17T03:00:00Z'); // 16/11, 10:00 p. m. en Bogotá
+    expect(soldAtInstant(localDate('2026-11-16'), now)).toBe(now);
+    expect(soldAtInstant(localDate('2026-11-17'), now).toISOString()).toBe('2026-11-17T17:00:00.000Z');
   });
 });

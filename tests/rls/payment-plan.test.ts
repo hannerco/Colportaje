@@ -187,7 +187,6 @@ describe('apply_payment_plan (HU-ABO-03)', () => {
     ['valor con decimales', [{ paymentId: randomUUID(), dueDate: '2099-01-01', amount: 1.5 }], 'items'],
     ['valor como texto', [{ paymentId: randomUUID(), dueDate: '2099-01-01', amount: '1' }], 'items'],
     ['fecha inexistente', [{ paymentId: randomUUID(), dueDate: '2099-02-31', amount: 1 }], 'dueDate'],
-    ['fecha pasada', [{ paymentId: randomUUID(), dueDate: '2020-01-01', amount: 1 }], 'dueDate'],
   ])('VALIDATION: %s', (_, plan, field) =>
     inTransaction(async (tx) => {
       const { owner, customer } = await setup(tx, 60_000);

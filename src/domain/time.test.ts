@@ -7,8 +7,10 @@ import {
   toBogotaDate,
   formatDate,
   formatTime,
+  isPastDate,
   lastDayOfMonth,
   localDate,
+  parseDisplayDate,
   parseLocalDate,
   startOfWeek,
   todayBogota,
@@ -90,6 +92,27 @@ describe('time', () => {
     });
   });
 
+  describe('parseDisplayDate', () => {
+    it('HU-UI-09: dd/mm/aaaa y d/m/aaaa de un día real', () => {
+      expect(parseDisplayDate('05/11/2026')).toEqual({ ok: true, value: d('2026-11-05') });
+      expect(parseDisplayDate(' 5/1/2026 ')).toEqual({ ok: true, value: d('2026-01-05') });
+      expect(parseDisplayDate('29/02/2028')).toEqual({ ok: true, value: d('2028-02-29') });
+    });
+
+    it('HU-UI-09: un día que no existe o un formato distinto no es fecha', () => {
+      for (const text of [
+        '32/11/2026',
+        '29/02/2026',
+        '00/11/2026',
+        '05/13/2026',
+        '2026-11-05',
+        '05/11/26',
+        '',
+      ])
+        expect(parseDisplayDate(text).ok).toBe(false);
+    });
+  });
+
   describe('formatTime', () => {
     const at = (iso: string) => new Date(iso);
 
@@ -130,5 +153,13 @@ describe('time', () => {
       if (!result.ok) expect(result.error).toMatchObject({ code: 'VALIDATION', details: { field: 'date' } });
       expect(() => localDate(text)).toThrow(RangeError);
     });
+  });
+});
+
+describe('isPastDate (HU-ABO-08, ADR-0049)', () => {
+  it('CA-7: el 15/11 con hoy 16/11 ya pasó; hoy y mañana no', () => {
+    expect(isPastDate(d('2026-11-15'), d('2026-11-16'))).toBe(true);
+    expect(isPastDate(d('2026-11-16'), d('2026-11-16'))).toBe(false);
+    expect(isPastDate(d('2026-11-17'), d('2026-11-16'))).toBe(false);
   });
 });

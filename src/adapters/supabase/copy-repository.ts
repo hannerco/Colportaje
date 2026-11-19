@@ -7,7 +7,7 @@ import { ASSIGN_ERROR_CODES } from '@/domain/assignable-copies';
 import { CUSTOMER_ERROR_CODES } from '@/domain/customer-data';
 import type { CopiesListCopy } from '@/domain/copies-list';
 import type { CopyEvent } from '@/domain/copy';
-import { RECEIVED_DATE_ERROR_CODES } from '@/domain/copy-detail';
+import { RECEIVED_DATE_ERROR_CODES, SOLD_DATE_ERROR_CODES } from '@/domain/copy-detail';
 import { appError, COMMON_ERROR_CODES } from '@/domain/shared/errors';
 import { err, ok } from '@/domain/shared/result';
 import type { LocalDate } from '@/domain/time';
@@ -35,6 +35,7 @@ const eventRowSchema = z.object({
     'undo_deleted',
     'price_changed',
     'received_date_changed',
+    'sold_at_changed',
     'minibook_sold',
     'returned_to_leader',
     'undo_returned_to_leader',
@@ -330,13 +331,23 @@ export function createSupabaseCopyRepository(getClient: GetSupabaseClient): Copy
       });
     },
 
-    async assignToCustomer(copyId, customerId) {
+    async assignToCustomer(copyId, customerId, soldOn) {
       const { error } = await getClient().rpc('assign_copy_to_customer', {
         p_copy_id: copyId,
         p_customer_id: customerId,
+        ...(soldOn ? { p_sold_on: soldOn } : {}),
       });
       if (error) return err(mapRpcError(error, ASSIGN_ERRORS));
       return ok(undefined);
+    },
+
+    async updateSoldAt(copyId, soldOn) {
+      const { data, error } = await getClient().rpc('update_sold_at', {
+        p_copy_id: copyId,
+        p_sold_on: soldOn,
+      });
+      if (error) return err(mapRpcError(error, ASSIGN_ERRORS));
+      return ok({ customerId: z.uuid().parse(data) });
     },
 
     async returnFromCustomer(copyId, reason) {
@@ -488,6 +499,7 @@ const agreedPriceRowsSchema = z
 
 const ASSIGN_ERRORS = [
   ...Object.values(ASSIGN_ERROR_CODES),
+  ...Object.values(SOLD_DATE_ERROR_CODES),
   CUSTOMER_ERROR_CODES.CUSTOMER_ARCHIVED,
   COMMON_ERROR_CODES.NOT_FOUND,
   COMMON_ERROR_CODES.FORBIDDEN,

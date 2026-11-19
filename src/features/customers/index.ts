@@ -27,12 +27,14 @@ export {
   usePossibleDuplicates,
   useRemoveCopyDuringCreation,
   useReturnCopyFromCustomer,
+  useUpdateSoldAt,
   useUpdateCustomer,
 } from './hooks';
 export {
   assignCopyToCustomer,
   removeCopyDuringCreation,
   returnCopyFromCustomer,
+  updateSoldAt,
   type CustomerBooksDeps,
 } from './use-cases/customer-books';
 export {

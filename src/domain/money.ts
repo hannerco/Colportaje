@@ -27,3 +27,18 @@ export const parseCOP = (text: string): Result<COP, AppError> => {
   const value = digits === undefined ? Number.NaN : Number(digits);
   return isValidCOP(value) ? ok(value) : err(validationError('amount', { input: text }));
 };
+
+/** Dígitos de un monto sin «$» (`93000` → `"93.000"`): lo que muestra el campo de dinero mientras se escribe. */
+export const groupCOP = (n: COP): string => formatCOP(n).replace('$', '');
+
+/** Cifras máximas de un monto escrito: 15 dígitos siempre caben en un entero seguro. */
+const MAX_TYPED_DIGITS = 15;
+
+/**
+ * Lo que se escribe en el campo de dinero (HU-UI-09): se ignora todo lo que no sea dígito («93.000», «$ 93000»);
+ * sin dígitos, `null`.
+ */
+export const parseTypedCOP = (text: string): COP | null => {
+  const digits = text.replace(/\D/g, '').slice(0, MAX_TYPED_DIGITS);
+  return digits === '' ? null : Number(digits);
+};

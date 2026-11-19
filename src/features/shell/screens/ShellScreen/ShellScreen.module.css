@@ -1,0 +1,31 @@
+/* Armazón de una ruta sin pantalla (HU-PAN-BASE-01): mismas medidas que la Plantilla de lista (HU-UI-28). */
+
+/* ─── Escritorio: barra lateral + columna principal ─── */
+.shell {
+  display: flex;
+  box-sizing: border-box;
+  min-height: var(--template-height);
+  background: var(--color-page);
+  color: var(--color-text);
+}
+
+.main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+  padding: var(--space-4) var(--space-8) var(--space-6);
+}
+
+/* ─── Móvil: una columna; la barra inferior flota encima ─── */
+.shell[data-shape='mobile'] {
+  display: block;
+  background: var(--color-page-mobile);
+}
+
+.shell[data-shape='mobile'] .main {
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4)
+    calc(var(--size-bottom-bar-item) + var(--bottom-bar-inset) + var(--space-12));
+}

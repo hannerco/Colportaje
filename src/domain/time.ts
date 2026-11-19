@@ -96,10 +96,27 @@ export const toBogotaDate = (instant: Instant): LocalDate => {
 /** El día de hoy en America/Bogota (BR-GEN-05). */
 export const todayBogota = (clock: Clock): LocalDate => toBogotaDate(clock.now());
 
+/**
+ * HU-ABO-08 / ADR-0049: la fecha ya pasó (es anterior a hoy, por día de Bogotá). El front muestra con ella el
+ * aviso «Esta fecha ya pasó»; el back no bloquea.
+ */
+export const isPastDate = (date: LocalDate, today: LocalDate): boolean => date < today;
+
 /** `2026-11-07` → `07/11/2026` (BR-GEN-07). */
 export const formatDate = (d: LocalDate): string => {
   const { year, month, day } = toParts(d);
   return `${pad(day)}/${pad(month)}/${pad(year, 4)}`;
+};
+
+const DISPLAY_DATE_PATTERN = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
+
+/** Lo que se escribe en un campo de fecha (BR-GEN-07, HU-UI-09): `dd/mm/aaaa` (o `d/m/aaaa`) de un día real. */
+export const parseDisplayDate = (text: string): Result<LocalDate, AppError> => {
+  const match = DISPLAY_DATE_PATTERN.exec(text.trim());
+  if (!match) return err(validationError('date', { input: text }));
+  const [, day, month, year] = match as unknown as [string, string, string, string];
+  const result = parseLocalDate(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+  return result.ok ? result : err(validationError('date', { input: text }));
 };
 
 /** Hora en America/Bogota: `9:40 p. m.` (12 h, por defecto) o `21:40` (24 h) (BR-GEN-07). */

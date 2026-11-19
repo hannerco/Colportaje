@@ -4,7 +4,7 @@ import type { COP } from '@/domain/money';
 import { validateScheduled } from '@/domain/scheduled-payment';
 import type { AppError } from '@/domain/shared/errors';
 import { ok, type Result } from '@/domain/shared/result';
-import { todayBogota, type LocalDate } from '@/domain/time';
+import type { LocalDate } from '@/domain/time';
 import { runMutation } from '../../shared/run-mutation';
 import { accountAndExcess, type AccountAndExcess, type CollectedPaymentsDeps } from './collected-payments';
 
@@ -24,7 +24,7 @@ export async function scheduleSinglePayment(
   input: ScheduleSingleInput,
 ): Promise<Result<AccountAndExcess, AppError>> {
   return runMutation(deps.connectivity, async () => {
-    const valid = validateScheduled(input, todayBogota(deps.clock));
+    const valid = validateScheduled(input);
     if (!valid.ok) return valid;
     const saved = await deps.payments.scheduleSingle(input);
     if (!saved.ok) return saved;
@@ -39,7 +39,7 @@ export async function updateScheduledAmount(
   agreedAmount: COP,
 ): Promise<Result<AccountAndExcess, AppError>> {
   return runMutation(deps.connectivity, async () => {
-    const valid = validateScheduled({ agreedAmount }, todayBogota(deps.clock));
+    const valid = validateScheduled({ agreedAmount });
     if (!valid.ok) return valid;
     const saved = await deps.payments.updateScheduledAmount(paymentId, agreedAmount);
     if (!saved.ok) return saved;
@@ -57,7 +57,7 @@ export async function correctScheduledDate(
   dueDate: LocalDate,
 ): Promise<Result<void, AppError>> {
   return runMutation(deps.connectivity, async () => {
-    const valid = validateScheduled({ dueDate }, todayBogota(deps.clock));
+    const valid = validateScheduled({ dueDate });
     if (!valid.ok) return valid;
     const saved = await deps.payments.correctScheduledDate(paymentId, dueDate);
     return saved.ok ? ok(undefined) : saved;

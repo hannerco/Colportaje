@@ -15,6 +15,7 @@ import {
   loadAssignableData,
   removeCopyDuringCreation,
   returnCopyFromCustomer,
+  updateSoldAt,
 } from './use-cases/customer-books';
 
 const CUSTOMER = 'c-natalia';
@@ -46,6 +47,7 @@ const depsWith = (data: CustomerAccountData, online = true) => ({
   copies: fakeCopyRepository({
     assignToCustomer: vi.fn(async () => ok(undefined)),
     returnFromCustomer: vi.fn(async () => ok({ customerId: CUSTOMER })),
+    updateSoldAt: vi.fn(async () => ok({ customerId: CUSTOMER })),
   }),
   customers: fakeCustomerRepository({ getAccountData: vi.fn(async () => ok(data)) }),
   connectivity: fakeConnectivity(online),
@@ -56,7 +58,7 @@ describe('assignCopyToCustomer (HU-CLI-09)', () => {
   it('CA-3: devuelve la cuenta recalculada (deuda 95.000)', async () => {
     const deps = depsWith(accountData(95_000));
     const result = await assignCopyToCustomer(deps, 'copy-22', CUSTOMER);
-    expect(deps.copies.assignToCustomer).toHaveBeenCalledWith('copy-22', CUSTOMER);
+    expect(deps.copies.assignToCustomer).toHaveBeenCalledWith('copy-22', CUSTOMER, undefined);
     expect(result.ok && result.value.account).toMatchObject({ debt: 95_000, isProspect: false });
   });
 
@@ -200,5 +202,49 @@ describe('loadAssignableData', () => {
     expect((await loadAssignableData({ copies, titles })).ok).toBe(false);
     vi.mocked(copies.listAll).mockResolvedValue(err(appError('NETWORK_ERROR')));
     expect((await loadAssignableData({ copies, titles })).ok).toBe(false);
+  });
+});
+
+describe('fecha de venta (HU-CLI-13)', () => {
+  it('R1: asignar con `soldOn` pasa la fecha al repositorio', async () => {
+    const deps = depsWith(accountData(95_000));
+    const result = await assignCopyToCustomer(deps, 'copy-22', CUSTOMER, { soldOn: localDate('2026-11-05') });
+    expect(result.ok).toBe(true);
+    expect(deps.copies.assignToCustomer).toHaveBeenCalledWith('copy-22', CUSTOMER, '2026-11-05');
+  });
+
+  it('CA-4: asignar con fecha futura da SOLD_IN_FUTURE sin llamar a la base', async () => {
+    const deps = depsWith(accountData(95_000));
+    expect(
+      await assignCopyToCustomer(deps, 'copy-22', CUSTOMER, { soldOn: localDate('2026-11-09') }),
+    ).toEqual(err(appError('SOLD_IN_FUTURE')));
+    expect(deps.copies.assignToCustomer).not.toHaveBeenCalled();
+  });
+
+  it('CA-2: updateSoldAt cambia la fecha y devuelve la cuenta recalculada', async () => {
+    const deps = depsWith(accountData(95_000));
+    const result = await updateSoldAt(deps, 'copy-22', localDate('2026-11-03'));
+    expect(deps.copies.updateSoldAt).toHaveBeenCalledWith('copy-22', '2026-11-03');
+    expect(deps.customers.getAccountData).toHaveBeenCalledWith(CUSTOMER);
+    expect(result.ok && result.value.account).toMatchObject({ debt: 95_000 });
+  });
+
+  it('updateSoldAt: futura da SOLD_IN_FUTURE y sin conexión OFFLINE, sin intentar', async () => {
+    const deps = depsWith(accountData(95_000));
+    expect(await updateSoldAt(deps, 'copy-22', localDate('2026-11-09'))).toEqual(
+      err(appError('SOLD_IN_FUTURE')),
+    );
+    const offline = depsWith(accountData(95_000), false);
+    expect(await updateSoldAt(offline, 'copy-22', localDate('2026-11-03'))).toEqual(err(appError('OFFLINE')));
+    expect(deps.copies.updateSoldAt).not.toHaveBeenCalled();
+    expect(offline.copies.updateSoldAt).not.toHaveBeenCalled();
+  });
+
+  it('CA-7: los errores de la base pasan tal cual (COPY_NOT_SOLD)', async () => {
+    const deps = depsWith(accountData(95_000));
+    deps.copies.updateSoldAt = vi.fn(async () => err(appError('COPY_NOT_SOLD')));
+    expect(await updateSoldAt(deps, 'copy-22', localDate('2026-11-03'))).toEqual(
+      err(appError('COPY_NOT_SOLD')),
+    );
   });
 });

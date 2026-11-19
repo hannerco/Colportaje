@@ -1,0 +1,79 @@
+/* Aviso (HU-UI-15). R1: fondo invertido; R4: posición del proveedor. */
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  box-sizing: border-box;
+  width: var(--toast-width);
+  max-width: 100%;
+  min-height: var(--size-toast);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+  border-radius: var(--radius-toast);
+  background: var(--color-toast);
+  box-shadow: var(--shadow-bar);
+  color: var(--color-on-toast);
+  font-size: var(--text-secondary);
+  pointer-events: auto;
+}
+
+/* Móvil: el 100 % del ancho disponible, salvo que se dé otro. */
+:global([data-platform='mobile']) .toast:not([style]) {
+  width: 100%;
+}
+
+.icon {
+  flex: none;
+}
+
+.toast[data-tone='success'] .icon {
+  color: var(--color-toast-ok);
+}
+
+.toast[data-tone='error'] .icon {
+  color: var(--color-toast-bad);
+}
+
+.message {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.action {
+  flex: none;
+  align-self: stretch;
+  min-height: var(--size-control-sm);
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-toast-link);
+  font: inherit;
+  font-weight: var(--weight-strong);
+  cursor: pointer;
+}
+
+.action:focus-visible {
+  outline: 2px solid var(--color-toast-link);
+  outline-offset: -2px;
+}
+
+/*
+ * R4: escritorio, abajo a la izquierda del área de contenido; móvil, encima de la barra inferior. La Navegación
+ * (HU-UI-23) define el inicio del contenido y el alto de su barra en estas variables; sin ella, el borde de la ventana.
+ */
+.viewport {
+  position: fixed;
+  bottom: var(--space-6);
+  left: calc(var(--layout-content-start, 0px) + var(--space-6));
+  z-index: var(--layer-toast);
+  display: flex;
+  max-width: calc(100% - var(--space-12));
+  pointer-events: none;
+}
+
+:global([data-platform='mobile']) .viewport {
+  right: var(--space-4);
+  bottom: calc(var(--layout-bottom-bar, 0px) + var(--space-4) + env(safe-area-inset-bottom, 0px));
+  left: var(--space-4);
+  max-width: none;
+}

@@ -75,10 +75,12 @@ const planFor = async (customer: string, mode: PlanMode, amount: number) => {
   const data = await deps().customers.getAccountData(customer);
   if (!data.ok) throw new Error(data.error.code);
   const base = planBase(computeCustomerAccount(data.value, today), mode);
-  const plan = buildPaymentPlan(
-    { base, amount, frequency: 'biweekly', firstDueDate: suggestFirstDueDate('biweekly', today) },
-    today,
-  );
+  const plan = buildPaymentPlan({
+    base,
+    amount,
+    frequency: 'biweekly',
+    firstDueDate: suggestFirstDueDate('biweekly', today),
+  });
   if (!plan.ok) throw new Error(plan.error.code);
   return applyPaymentPlan(deps(), {
     customerId: customer,

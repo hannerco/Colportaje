@@ -12,7 +12,7 @@ import { addDays, localDate } from './time';
 
 const today = localDate('2026-11-07');
 const plan = (base: number, amount: number, frequency: PlanFrequency = 'biweekly', first = '2026-11-15') =>
-  buildPaymentPlan({ base, amount, frequency, firstDueDate: localDate(first) }, today);
+  buildPaymentPlan({ base, amount, frequency, firstDueDate: localDate(first) });
 const amounts = (r: ReturnType<typeof plan>) => (r.ok ? r.value.map((i) => i.amount) : r.error.code);
 
 describe('payment-plan: valores (BR-PAY-15)', () => {
@@ -49,12 +49,12 @@ describe('payment-plan: valores (BR-PAY-15)', () => {
     expect(plan(-5_000, 30_000)).toMatchObject({ ok: false, error: { code: 'PLAN_REQUIRES_BALANCE' } });
   });
 
-  it('un primer abono anterior a hoy → VALIDATION en firstDueDate; hoy sí', () => {
-    expect(plan(60_000, 30_000, 'biweekly', '2026-11-06')).toMatchObject({
-      ok: false,
-      error: { details: { field: 'firstDueDate' } },
-    });
-    expect(plan(60_000, 30_000, 'biweekly', '2026-11-07').ok).toBe(true);
+  it('HU-ABO-08 CA-5 / R4: quincenal desde el 01/11 (pasado) con 100.000 en abonos de 50.000 → 01/11 y 15/11', () => {
+    const result = plan(100_000, 50_000, 'biweekly', '2026-11-01');
+    expect(result.ok && result.value).toEqual([
+      { dueDate: '2026-11-01', amount: 50_000 },
+      { dueDate: '2026-11-15', amount: 50_000 },
+    ]);
   });
 
   it('propiedades: suma exacta, enteros > 0, múltiplos de 1.000 salvo el más próximo, fechas crecientes', () => {
@@ -63,10 +63,11 @@ describe('payment-plan: valores (BR-PAY-15)', () => {
         fc.integer({ min: 1, max: 5_000_000 }),
         fc.integer({ min: 1, max: 500 }).map((k) => k * 1000),
         fc.constantFrom<PlanFrequency>('weekly', 'biweekly', 'monthly'),
-        fc.integer({ min: 0, max: 400 }),
+        // HU-ABO-08: el primer abono también puede ser anterior a hoy.
+        fc.integer({ min: -400, max: 400 }),
         (base, amount, frequency, offset) => {
           const first = addDays(today, offset);
-          const result = buildPaymentPlan({ base, amount, frequency, firstDueDate: first }, today);
+          const result = buildPaymentPlan({ base, amount, frequency, firstDueDate: first });
           if (!result.ok) throw new Error(result.error.code);
           const items = result.value;
           expect(items.reduce((s, i) => s + i.amount, 0)).toBe(base);

@@ -42,12 +42,13 @@ export function createSupabasePaymentRepository(getClient: GetSupabaseClient): P
       return ok(undefined);
     },
 
-    async setCreationDownPayment({ paymentId, customerId, amount, method }) {
+    async setCreationDownPayment({ paymentId, customerId, amount, method, paidOn }) {
       const { error } = await getClient().rpc('set_creation_down_payment', {
         p_payment_id: paymentId,
         p_customer_id: customerId,
         p_amount: amount,
         p_method: method,
+        ...(paidOn ? { p_paid_on: paidOn } : {}),
       });
       return error ? err(mapCollectedError(error)) : ok(undefined);
     },

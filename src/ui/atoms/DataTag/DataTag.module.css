@@ -1,0 +1,51 @@
+/* Etiqueta (HU-UI-07). R1: medidas; R2: color, peso y números tabulares. */
+.tag {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  height: var(--size-tag);
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-xs);
+  background: var(--color-tone);
+  color: var(--color-text-2);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: var(--font-numeric);
+  line-height: 1;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.tag[data-kind='fraction'] {
+  font-weight: var(--weight-strong);
+}
+
+.tag[data-kind='number'] {
+  color: var(--color-text-3);
+}
+
+.tag[data-kind='date'] {
+  gap: var(--pill-gap);
+  height: var(--size-tag-date);
+  padding: 0 var(--tag-padding-end) 0 var(--space-2);
+  border-radius: var(--radius-tag-date);
+  font-size: var(--text-secondary);
+}
+
+.icon,
+.prefix {
+  color: var(--color-text-3);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

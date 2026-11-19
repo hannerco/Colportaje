@@ -10,6 +10,7 @@ import {
   loadAssignableData,
   removeCopyDuringCreation,
   returnCopyFromCustomer,
+  updateSoldAt,
 } from './use-cases/customer-books';
 import { systemClock } from '@/lib/clock';
 import { assignableCopies } from '@/domain/assignable-copies';
@@ -31,7 +32,7 @@ import {
 import type { InvoicePatch } from '@/domain/invoice';
 import { discardNewCustomer, getDiscardSummary } from './use-cases/customer-discard';
 import { buildCustomerListView, type CustomerListParams } from '@/domain/customer-list';
-import { todayBogota } from '@/domain/time';
+import { todayBogota, type LocalDate } from '@/domain/time';
 import { loadCustomerListData } from './use-cases/customer-list';
 import { loadCustomerDetail } from './use-cases/customer-detail';
 import { archiveCustomer, getArchivePreview, restoreCustomer } from './use-cases/customer-archive';
@@ -127,11 +128,12 @@ export function useAssignCopyToCustomer() {
   const { copies, customers, connectivity } = useRepositories();
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: (input: { copyId: string; customerId: string }) =>
+    mutationFn: (input: { copyId: string; customerId: string; soldOn?: LocalDate }) =>
       assignCopyToCustomer(
         { copies, customers, connectivity, clock: systemClock },
         input.copyId,
         input.customerId,
+        { soldOn: input.soldOn },
       ),
     onSuccess: (result) => {
       if (!result.ok) return;
@@ -139,6 +141,24 @@ export function useAssignCopyToCustomer() {
     },
   });
   return { assignCopyToCustomer: mutation.mutateAsync, isPending: mutation.isPending };
+}
+
+/**
+ * Cambia la fecha de venta de un libro vendido (HU-CLI-13), desde la ficha o el detalle del ejemplar. Devuelve
+ * `Result` con la cuenta recalculada.
+ */
+export function useUpdateSoldAt() {
+  const { copies, customers, connectivity } = useRepositories();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (input: { copyId: string; soldOn: LocalDate }) =>
+      updateSoldAt({ copies, customers, connectivity, clock: systemClock }, input.copyId, input.soldOn),
+    onSuccess: (result) => {
+      if (!result.ok) return;
+      for (const queryKey of BOOK_AFFECTED_ROOTS) void queryClient.invalidateQueries({ queryKey });
+    },
+  });
+  return { updateSoldAt: mutation.mutateAsync, isPending: mutation.isPending };
 }
 
 /** Quita un libro mientras se crea el cliente (error de captura, AF-114). Trae la cuenta y la franja de sobrante. */

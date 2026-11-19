@@ -20,14 +20,16 @@ export interface PaymentRepository {
   ): Promise<Result<void, AppError>>;
 
   /**
-   * Cuota inicial de la ficha nueva (una sola): 0 la borra; > 0 la crea con fecha de hoy o actualiza su valor
-   * (HU-ABO-02). Errores: `VALIDATION`, `PAYMENT_LOCKED`, `CUSTOMER_ARCHIVED`, `NOT_FOUND`, `NETWORK_ERROR`.
+   * Cuota inicial de la ficha nueva (una sola): 0 la borra; > 0 la crea con la fecha `paidOn` (hoy si no viene)
+   * o actualiza su valor, su método y, si viene `paidOn`, su fecha (HU-ABO-02, HU-ABO-09). Errores:
+   * `VALIDATION` (`paidAmount`, `paidOn`), `PAYMENT_LOCKED`, `CUSTOMER_ARCHIVED`, `NOT_FOUND`, `NETWORK_ERROR`.
    */
   setCreationDownPayment(input: {
     paymentId: string;
     customerId: string;
     amount: COP;
     method: PayMethod;
+    paidOn?: LocalDate;
   }): Promise<Result<void, AppError>>;
 
   /**
@@ -94,7 +96,7 @@ export interface PaymentRepository {
 
   /**
    * Prorroga un programado (HU-ABO-05): solo ese abono; la fecha original no cambia; deja su fila de
-   * historial. Errores: `PAYMENT_NOT_SCHEDULED`, `DATE_NOT_LATER`, `DATE_IN_PAST`,
+   * historial. Errores: `PAYMENT_NOT_SCHEDULED`, `DATE_NOT_LATER`,
    * `RESCHEDULE_NEEDS_CONFIRMATION` (`details.dates`), `CUSTOMER_ARCHIVED`, `NOT_FOUND`, `NETWORK_ERROR`.
    */
   reschedule(

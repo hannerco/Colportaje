@@ -1,0 +1,303 @@
+/* Navegación (HU-UI-23). R1: barra lateral; R2: barra inferior; R3: botón flotante; R4: hoja «Más». */
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ─── R1: barra lateral ─── */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  box-sizing: border-box;
+  width: var(--sidebar-width);
+  min-height: 100%;
+  padding: var(--sidebar-padding);
+  background: var(--color-page-mobile);
+  color: var(--color-text-2);
+  font-size: var(--text-sidebar);
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  color: var(--color-text);
+  font-weight: var(--weight-strong);
+}
+
+.accountName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--size-sidebar-item);
+  padding: 0 var(--space-2);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.item:hover {
+  background: var(--color-bar-active);
+}
+
+/* Ítem activo: tarjeta con sombra, en acento y peso 600. */
+.item[data-active] {
+  background: var(--color-card);
+  box-shadow: var(--shadow-control);
+  color: var(--color-accent-text);
+  font-weight: var(--weight-strong);
+}
+
+.item:focus-visible,
+.groupToggle:focus-visible,
+.barItem:focus-visible,
+.sheetItem:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: -1px;
+}
+
+.kbd {
+  margin-left: auto;
+  color: var(--color-text-3);
+  font: inherit;
+  font-size: var(--text-caption);
+}
+
+/* «Nuevo cliente»: cuadro de acento y texto en acento. */
+.create {
+  color: var(--color-accent-text);
+  font-weight: var(--weight-medium);
+}
+
+.create:disabled {
+  color: var(--color-text-3);
+  cursor: not-allowed;
+}
+
+.create:disabled:hover {
+  background: transparent;
+}
+
+/* «Necesita conexión» debajo de «Nuevo cliente» deshabilitado (BR-GEN-08). */
+.needsConnection {
+  display: block;
+  padding: 0 var(--space-2) var(--space-1);
+  color: var(--color-text-2);
+  font-size: var(--text-caption);
+}
+
+.square {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-nav-square);
+  height: var(--size-nav-square);
+  border-radius: var(--radius-xs);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.groupToggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--color-text-3);
+  font: inherit;
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+}
+
+.groupToggle[aria-expanded='false'] .chevron {
+  transform: rotate(-90deg);
+}
+
+.footer {
+  margin-top: auto;
+}
+
+/* ─── R2: barra inferior flotante ─── */
+.bar {
+  position: fixed;
+  right: var(--bottom-bar-inset);
+  bottom: calc(var(--bottom-bar-inset) + env(safe-area-inset-bottom, 0px));
+  left: var(--bottom-bar-inset);
+  z-index: var(--layer-nav);
+  padding: var(--space-1);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-bar);
+  box-shadow: var(--shadow-bar);
+  backdrop-filter: blur(var(--bar-blur));
+}
+
+.barList {
+  display: flex;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.barCell {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.barItem {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-width: 0;
+  min-height: var(--size-bottom-bar-item);
+  padding: 0 var(--space-1);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-text-2);
+  font: inherit;
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Activo: fondo `bar-active`, acento y trazo 2. */
+.barItem[data-active] {
+  background: var(--color-bar-active);
+  color: var(--color-accent-text);
+}
+
+.barItem[data-active] svg {
+  stroke-width: 2;
+}
+
+/* ─── R3: botón flotante, encima de la barra a la derecha ─── */
+.fab {
+  position: fixed;
+  right: calc(var(--bottom-bar-inset) + var(--space-1));
+  bottom: calc(
+    var(--bottom-bar-inset) + var(--size-bottom-bar-item) + var(--space-2) + var(--space-4) +
+      env(safe-area-inset-bottom, 0px)
+  );
+  z-index: var(--layer-nav);
+}
+
+/* ─── R4: hoja «Más» ─── */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--layer-overlay);
+  background: var(--color-scrim);
+}
+
+.sheet {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: var(--layer-overlay);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  box-sizing: border-box;
+  max-height: 85%;
+  padding: var(--sheet-padding);
+  padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+  overflow-y: auto;
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  background: var(--color-sheet);
+  box-shadow: var(--shadow-modal);
+  color: var(--color-text);
+  outline: none;
+}
+
+.handle {
+  align-self: center;
+  width: var(--sheet-handle-width);
+  height: var(--sheet-handle-height);
+  border-radius: var(--radius-pill);
+  background: var(--color-neutral-border);
+}
+
+.sheetTitle {
+  margin: 0;
+  padding: 0 var(--space-3);
+  font-size: var(--text-heading);
+  font-weight: var(--weight-heading);
+}
+
+.sheetGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.sheetGroupTitle {
+  margin: 0;
+  padding: 0 var(--space-3);
+  color: var(--color-text-3);
+  font-size: var(--text-secondary);
+  font-weight: var(--weight-medium);
+}
+
+.sheetItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--size-menu-item);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  font-size: var(--text-body);
+  text-decoration: none;
+}
+
+.sheetItem[data-active] {
+  background: var(--color-row-selected);
+  color: var(--color-accent-text);
+  font-weight: var(--weight-strong);
+}

@@ -146,6 +146,8 @@ export type CopyEventType =
   | 'undo_deleted'
   | 'price_changed'
   | 'received_date_changed'
+  /** HU-CLI-13: fecha de venta cambiada (`oldDate` → `newDate`, días de Bogotá). */
+  | 'sold_at_changed'
   | 'minibook_sold'
   | 'returned_to_leader'
   | 'undo_returned_to_leader';

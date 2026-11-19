@@ -66,3 +66,50 @@ export const LAYER_RULES = Object.entries(RULES).map(([layer, patterns]) => ({
   files: [`src/${layer}/**/*.{ts,tsx}`],
   rules: { 'no-restricted-imports': ['error', { patterns }] },
 }));
+
+// ─── Front: niveles de ui/, íconos y Radix (ADR-0050, HU-UI-01) ────────────────────────────────────────────
+// Usan la regla de typescript-eslint (otro nombre de regla) para no pisar los patrones de capas de arriba: en
+// ESLint flat config, dos bloques que configuran la MISMA regla para un archivo se reemplazan, no se suman. Por
+// eso cada archivo cae en un solo grupo de abajo, con la lista completa de lo que tiene prohibido.
+
+const UI_LEVELS = ['atoms', 'molecules', 'organisms', 'templates'];
+
+const LUCIDE = {
+  regex: '^lucide-react(?:/|$)',
+  message:
+    'Íconos: solo src/ui/icons importa lucide-react; en el resto se usa <Icon name="…"> (ADR-0050, 00-REGLAS-COMUNES-FRONT §6).',
+};
+const RADIX = {
+  regex: '^@radix-ui/',
+  message: 'Radix: solo los componentes de src/ui usan @radix-ui (ADR-0050 §4).',
+};
+
+/** Un nivel de ui/ no importa uno superior (por alias o por ruta relativa). */
+const higherLevels = (level) =>
+  UI_LEVELS.slice(UI_LEVELS.indexOf(level) + 1).map((higher) => ({
+    regex: `^(?:@/ui/|(?:\.\./)+)${higher}(?:/|$)`,
+    message: `Niveles de ui/: "${level}" no puede importar "${higher}" (ADR-0050, 00-REGLAS-COMUNES-FRONT §3).`,
+  }));
+
+const uiGroup = (name, files, patterns, ignores = []) => ({
+  name: `colportor/ui/${name}`,
+  files,
+  ignores,
+  rules: { '@typescript-eslint/no-restricted-imports': ['error', { patterns }] },
+});
+
+export const UI_RULES = [
+  // Todo src fuera de ui/: ni Lucide ni Radix.
+  uiGroup('outside-ui', ['src/**/*.{ts,tsx}'], [LUCIDE, RADIX], ['src/ui/**']),
+  // ui/ fuera de los niveles y de icons (platform, tokens…): sin Lucide.
+  uiGroup(
+    'ui-base',
+    ['src/ui/**/*.{ts,tsx}'],
+    [LUCIDE],
+    ['src/ui/icons/**', ...UI_LEVELS.map((l) => `src/ui/${l}/**`)],
+  ),
+  // Cada nivel: sin Lucide y sin importar un nivel superior.
+  ...UI_LEVELS.map((level) =>
+    uiGroup(level, [`src/ui/${level}/**/*.{ts,tsx}`], [LUCIDE, ...higherLevels(level)]),
+  ),
+];

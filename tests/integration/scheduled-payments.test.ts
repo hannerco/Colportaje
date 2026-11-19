@@ -121,7 +121,7 @@ describe('abonos programados contra Supabase local (HU-ABO-04)', () => {
     expect(r.rowCount).toBe(0);
   });
 
-  it('CA-4: con fecha de ayer → VALIDATION (también si la valida solo la base)', async () => {
+  it('HU-ABO-08 CA-1 / CA-2: con fecha de ayer se programa y se corrige (por la API)', async () => {
     const customer = await newCustomer();
     const yesterday = await day(-1);
     const viaBase = await createSupabasePaymentRepository(() => client).scheduleSingle({
@@ -130,10 +130,7 @@ describe('abonos programados contra Supabase local (HU-ABO-04)', () => {
       agreedAmount: 1,
       dueDate: yesterday,
     });
-    expect(viaBase).toEqual({
-      ok: false,
-      error: { code: 'VALIDATION', retryable: false, details: { field: 'dueDate' } },
-    });
+    expect(viaBase.ok).toBe(true);
     const id = randomUUID();
     await scheduleSinglePayment(deps(), {
       paymentId: id,
@@ -141,12 +138,9 @@ describe('abonos programados contra Supabase local (HU-ABO-04)', () => {
       agreedAmount: 1,
       dueDate: await day(3),
     });
-    expect(
-      await createSupabasePaymentRepository(() => client).correctScheduledDate(id, yesterday),
-    ).toMatchObject({
-      ok: false,
-      error: { code: 'VALIDATION', details: { field: 'dueDate' } },
-    });
+    expect((await createSupabasePaymentRepository(() => client).correctScheduledDate(id, yesterday)).ok).toBe(
+      true,
+    );
   });
 
   it('CA-5: un programado cancelado queda cancelado (Cancelados) y no cuenta en lo programado; borrar lo saca', async () => {

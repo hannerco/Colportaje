@@ -1,0 +1,142 @@
+/* Buscador (HU-UI-12). R1: escritorio; R2: móvil; R3: foco; R4: botón ✕. */
+.search {
+  --icon-size: 18px;
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: var(--search-box-width, var(--search-width));
+  max-width: 100%;
+  height: var(--size-search);
+  padding: 0 var(--search-padding-end);
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-control-bg);
+  color: var(--color-text);
+}
+
+/* R2: móvil, caja blanca con sombra y sin borde (se deja transparente para el borde del foco). */
+.search[data-platform='mobile'] {
+  --icon-size: 22px;
+
+  width: var(--search-box-width, 100%);
+  padding: 0 var(--search-padding-end) 0 var(--search-padding-start-mobile);
+  border-color: transparent;
+  border-radius: var(--radius-xl);
+  background: var(--color-card);
+  box-shadow: var(--shadow-control);
+}
+
+/* R3: foco en la caja. */
+.search:focus-within {
+  border-color: var(--color-accent);
+  outline: 3px solid var(--color-ring);
+}
+
+.lens {
+  color: var(--color-text-3);
+}
+
+.search[data-platform='mobile'] .lens {
+  color: var(--color-text-2);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: var(--text-body);
+  appearance: none;
+}
+
+.input::placeholder {
+  color: var(--color-text-3);
+}
+
+/* La ✕ nativa del navegador se reemplaza por la nuestra (con nombre accesible y foco de vuelta en la caja). */
+.input::-webkit-search-cancel-button,
+.input::-webkit-search-decoration {
+  appearance: none;
+}
+
+.clear,
+.filters {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+
+.clear {
+  width: var(--size-search-clear);
+  height: var(--size-search-clear);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-3);
+}
+
+.filters {
+  gap: var(--space-1);
+  height: var(--size-control-sm);
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-2);
+}
+
+/* Área táctil mínima de 44 en móvil, aunque el botón se vea más chico. */
+.search[data-platform='mobile'] .clear::after,
+.search[data-platform='mobile'] .filters::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, var(--size-touch));
+  height: max(100%, var(--size-touch));
+  transform: translate(-50%, -50%);
+}
+
+.clear:focus-visible,
+.filters:focus-visible {
+  outline: 3px solid var(--color-ring);
+}
+
+.filterCount {
+  color: var(--color-accent-text);
+  font-size: var(--text-secondary);
+  font-weight: var(--weight-strong);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.shortcut {
+  flex: none;
+  padding: 0 var(--space-1);
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-xs);
+  color: var(--color-text-3);
+  font: inherit;
+  font-size: var(--text-caption);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

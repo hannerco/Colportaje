@@ -1,0 +1,45 @@
+/* Medidor (HU-UI-18). R1: tres tramos; R3: porcentaje y etiqueta en el centro. */
+.gauge {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+}
+
+.track {
+  stroke: var(--color-track);
+}
+
+.segment[data-key='delivered'] {
+  stroke: var(--color-data-delivered);
+}
+
+.segment[data-key='collected'] {
+  stroke: var(--color-data-collected);
+}
+
+.segment[data-key='pending'] {
+  stroke: var(--color-data-pending);
+}
+
+.center {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: var(--leading-tight);
+}
+
+.figure {
+  color: var(--color-text);
+  font-size: var(--text-figure);
+  font-weight: var(--weight-figure);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.caption {
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}

@@ -1,0 +1,124 @@
+/* Chip (HU-UI-06). R1: filtro; R2: libro; R3: conteo. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  max-width: var(--chip-max-width);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.count {
+  flex: none;
+  color: var(--color-text-3);
+  font-variant-numeric: var(--font-numeric);
+}
+
+/* ─── Filtro ─── */
+.chip[data-kind='filter'] {
+  height: var(--size-control-sm);
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-control-bg);
+  box-shadow: var(--shadow-control);
+  color: var(--color-text);
+  font-size: var(--text-secondary);
+  font-weight: var(--weight-medium);
+}
+
+.chip[data-kind='filter'] .icon {
+  color: var(--color-text-2);
+}
+
+.main,
+.remove {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.main {
+  gap: var(--space-2);
+  min-width: 0;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-pill);
+}
+
+.remove {
+  justify-content: center;
+  margin-left: calc(var(--space-2) * -1);
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-2);
+}
+
+/* Área táctil mínima de 44 de alto en móvil (el chip se ve de 36). */
+:global([data-platform='mobile']) .main,
+:global([data-platform='mobile']) .remove {
+  position: relative;
+}
+
+:global([data-platform='mobile']) .main::after,
+:global([data-platform='mobile']) .remove::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: max(100%, var(--size-touch));
+  transform: translateY(-50%);
+}
+
+.main:focus-visible,
+.remove:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 1px;
+}
+
+.chip.selected {
+  border-color: var(--color-accent-border);
+  background: var(--color-accent-bg);
+  box-shadow: none;
+  color: var(--color-accent-text);
+}
+
+.chip.selected .icon,
+.chip.selected .count,
+.chip.selected .remove {
+  color: var(--color-accent-text);
+}
+
+/* ─── Libro y conteo ─── */
+.chip[data-kind='book'],
+.chip[data-kind='count'] {
+  gap: var(--space-1);
+  height: var(--size-chip-sm);
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-line);
+  font-size: var(--text-caption);
+}
+
+.chip[data-kind='book'] {
+  border-radius: var(--radius-chip-book);
+  color: var(--color-text-2);
+}
+
+.chip[data-kind='book'] .icon {
+  color: var(--color-text-3);
+}
+
+.chip[data-kind='count'] {
+  border-radius: var(--radius-pill);
+  color: var(--color-text-3);
+  font-weight: var(--weight-medium);
+}

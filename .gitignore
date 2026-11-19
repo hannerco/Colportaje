@@ -17,6 +17,9 @@ next-env.d.ts
 supabase/.temp/
 supabase/.branches/
 
+# Storybook
+storybook-static/
+
 # Vercel
 .vercel/
 
@@ -24,6 +27,8 @@ supabase/.branches/
 test-results/
 playwright-report/
 playwright/.cache/
+# Sesión de las E2E (cookies del usuario ficticio de Supabase local)
+tests/e2e/.auth/
 
 # SO / editor
 .DS_Store

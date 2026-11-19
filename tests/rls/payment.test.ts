@@ -138,16 +138,19 @@ describe('payment: checks (HU-ABO-01 R1–R3)', () => {
 });
 
 describe('payment: fechas (HU-ABO-01 R4–R6)', () => {
-  it('CA-6 / R5: un programado nuevo con fecha de ayer se rechaza; con fecha de hoy, no', async () => {
+  it('HU-ABO-08 R3: un programado nuevo con fecha de ayer se acepta (nace vencido); con fecha de hoy, también', async () => {
     await inTransaction(async (tx) => {
       const { owner, customer } = await setup(tx);
       const yesterday = await day(tx, -1);
-      const error = await insertError(tx, owner, customer, {
+      const past = await insertPayment(tx, owner, customer, {
         ...(await defaultsFor(tx, 'scheduled')),
         due_date: yesterday,
         original_due_date: yesterday,
       });
-      expect(error).toMatchObject({ code: RAISED, message: expect.stringMatching(/^DUE_DATE_IN_PAST/) });
+      const saved = await tx.query(`select status, due_date::text as due from public.payment where id = $1`, [
+        past,
+      ]);
+      expect(saved.rows[0]).toEqual({ status: 'scheduled', due: yesterday });
       const today = await day(tx, 0);
       await insertPayment(tx, owner, customer, {
         ...(await defaultsFor(tx, 'scheduled')),
@@ -168,27 +171,24 @@ describe('payment: fechas (HU-ABO-01 R4–R6)', () => {
     });
   });
 
-  it('R5: cambiar la fecha a una pasada se rechaza; editar otros campos de un abono vencido sí se permite', async () => {
+  it('HU-ABO-08 R3: cambiar la fecha a una pasada se acepta; editar otros campos de un abono vencido sí se permite', async () => {
     await inTransaction(async (tx) => {
       const { owner, customer } = await setup(tx);
       const id = await insertPayment(tx, owner, customer, await defaultsFor(tx, 'scheduled'));
-      expect(
-        await expectError(
-          tx,
-          'update public.payment set due_date = public.today_bogota() - 1 where id = $1',
-          [id],
-        ),
-      ).toBe(RAISED);
+      await tx.query('update public.payment set due_date = public.today_bogota() - 1 where id = $1', [id]);
+      const moved = await tx.query(
+        `select due_date = public.today_bogota() - 1 as yesterday from public.payment where id = $1`,
+        [id],
+      );
+      expect(moved.rows[0].yesterday).toBe(true);
 
-      // Un abono que ya venció (se crea saltando los triggers, como si hubiera pasado el tiempo).
-      await tx.query(`set local session_replication_role = 'replica'`);
+      // Un abono que nació vencido (ya no hace falta saltar los triggers).
       const past = await day(tx, -5);
       const overdue = await insertPayment(tx, owner, customer, {
         ...(await defaultsFor(tx, 'scheduled')),
         due_date: past,
         original_due_date: past,
       });
-      await tx.query(`set local session_replication_role = 'origin'`);
       await tx.query('update public.payment set agreed_amount = 70000 where id = $1', [overdue]);
       await tx.query(
         `update public.payment set status = 'collected', paid_amount = 70000, paid_at = public.today_bogota(), method = 'cash' where id = $1`,

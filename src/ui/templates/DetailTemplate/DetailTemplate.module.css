@@ -1,0 +1,53 @@
+/* Plantilla de detalle en islas (HU-UI-29). R1: orden fijo; R2: máximo 900; R4: isla de identidad. */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: var(--detail-max-width);
+  margin: 0 auto;
+}
+
+.identity {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding-bottom: var(--space-2);
+}
+
+.who {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--text-title);
+  font-weight: var(--weight-title);
+  line-height: var(--leading-tight);
+  overflow-wrap: anywhere;
+}
+
+:global([data-platform='mobile']) .title {
+  font-size: var(--text-heading);
+  font-weight: var(--weight-heading);
+}
+
+.number {
+  color: var(--color-text-3);
+  font-weight: var(--weight-regular);
+}
+
+.subtitle {
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}
+
+.action {
+  display: flex;
+  padding-bottom: var(--space-2);
+}

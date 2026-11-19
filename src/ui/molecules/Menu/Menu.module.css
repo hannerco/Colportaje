@@ -1,0 +1,119 @@
+/* Menú (HU-UI-20). R1: menú flotante; R2: hoja inferior; R3: opciones. */
+
+/* ─── R1: escritorio ─── */
+.menu {
+  z-index: var(--layer-overlay);
+  box-sizing: border-box;
+  width: var(--menu-width);
+  padding: var(--menu-padding);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-panel);
+  box-shadow: var(--shadow-bar);
+  color: var(--color-text);
+}
+
+/* ─── R3: opción ─── */
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--size-menu-item);
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-body);
+  text-align: start;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+}
+
+.icon {
+  flex: none;
+  color: var(--color-text-2);
+}
+
+.label {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.check {
+  display: inline-flex;
+  flex: none;
+  color: var(--color-text);
+}
+
+/* La marcada lleva fondo `row-selected` y ✓. */
+.item[data-state='checked'] {
+  background: var(--color-row-selected);
+}
+
+/* Resaltado con el teclado o el puntero (Radix pone `data-highlighted`; en la hoja, el foco). */
+.item[data-highlighted],
+.item:focus-visible {
+  background: var(--color-row-selected);
+  outline: 2px solid var(--color-ring);
+  outline-offset: -2px;
+}
+
+.item[data-danger],
+.item[data-danger] .icon {
+  color: var(--color-bad);
+}
+
+.item[data-disabled],
+.item:disabled {
+  cursor: default;
+  opacity: var(--opacity-field-disabled);
+}
+
+/* ─── R2: móvil, hoja inferior ─── */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--layer-overlay);
+  background: var(--color-scrim);
+}
+
+.sheet {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: var(--layer-overlay);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  max-height: 85%;
+  padding: var(--sheet-padding);
+  padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+  overflow-y: auto;
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  background: var(--color-sheet);
+  box-shadow: var(--shadow-modal);
+  color: var(--color-text);
+  outline: none;
+}
+
+.handle {
+  align-self: center;
+  width: var(--sheet-handle-width);
+  height: var(--sheet-handle-height);
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-neutral-border);
+}
+
+.title {
+  margin: 0;
+  padding: var(--space-2) var(--space-3) var(--space-3);
+  font-size: var(--text-heading);
+  font-weight: var(--weight-heading);
+}

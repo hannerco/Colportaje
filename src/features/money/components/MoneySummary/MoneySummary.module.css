@@ -1,0 +1,138 @@
+/* Resumen de dinero (HU-UI-25). R1: orden fijo; R2: panel en escritorio, columna en móvil; R3: sin pendiente. */
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--money-summary-width);
+  padding: var(--space-6);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-2xl);
+  background: var(--color-panel);
+  box-shadow: var(--shadow-card);
+  color: var(--color-text);
+}
+
+/* Móvil: el contenido en una columna de 358, sin caja (va dentro de la hoja). */
+.summary[data-platform-shape='column'] {
+  max-width: var(--money-summary-mobile-width);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.summary[data-platform-shape='column'] .top {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.toDeliver {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}
+
+.info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--size-control-sm);
+  min-height: var(--size-control-sm);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-text-3);
+  cursor: pointer;
+}
+
+.info:focus-visible {
+  outline: 3px solid var(--color-ring);
+}
+
+.figure {
+  font-size: var(--text-figure);
+  font-weight: var(--weight-figure);
+  font-variant-numeric: var(--font-numeric);
+  line-height: var(--leading-tight);
+}
+
+.methods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}
+
+.method {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.method strong {
+  color: var(--color-text);
+  font-weight: var(--weight-strong);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.deliver {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+}
+
+.summary[data-platform-shape='column'] .deliver {
+  align-items: stretch;
+  text-align: center;
+}
+
+.note {
+  color: var(--color-text-3);
+  font-size: var(--text-secondary);
+}
+
+/* R2: medidor y tarjetas en fila (escritorio); en columna, centrados, con las leyendas en fila (móvil). */
+.breakdown {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.summary[data-platform-shape='column'] .breakdown {
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.cards {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.summary[data-platform-shape='column'] .cards {
+  justify-content: space-around;
+  width: 100%;
+}

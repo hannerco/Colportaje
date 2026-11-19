@@ -16,7 +16,7 @@ export type RescheduleInput = {
 };
 
 /**
- * Errores: `OFFLINE`, `DATE_IN_PAST`, `DATE_NOT_LATER`, `RESCHEDULE_NEEDS_CONFIRMATION` (`details.dates`;
+ * Errores: `OFFLINE`, `DATE_NOT_LATER`, `RESCHEDULE_NEEDS_CONFIRMATION` (`details.dates`;
  * no guarda nada), `PAYMENT_NOT_SCHEDULED`, `CUSTOMER_ARCHIVED`, `NOT_FOUND`, `NETWORK_ERROR`.
  */
 export async function reschedulePayment(
