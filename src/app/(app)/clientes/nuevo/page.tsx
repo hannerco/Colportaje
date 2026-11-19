@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { copy } from '@/copy/es';
 import { suggestFirstDueDate, withPaymentIds } from '@/domain/payment-plan';
-import { todayBogota } from '@/domain/time';
+import { todayBogota, type LocalDate } from '@/domain/time';
 import {
   NewCustomerScreen,
   planPreview,
@@ -57,6 +57,8 @@ function NewCustomerRoute() {
     firstDueDate: null,
   });
   const [discardOpen, setDiscardOpen] = useState(false);
+  /** Fechas del plan corregidas a mano (HU-PAN-CLI-05); se descartan si el plan se recalcula (I-08). */
+  const [overrides, setOverrides] = useState<Record<number, LocalDate>>({});
   const [addingBook, setAddingBook] = useState(false);
   const [leaveTo, setLeaveTo] = useState<string>(ROUTES.customers);
 
@@ -123,6 +125,7 @@ function NewCustomerRoute() {
     amount: plan.amount,
     firstDueDate,
     today,
+    overrides,
   });
   const downDateInFuture = down.paidOn > today;
 
@@ -198,7 +201,12 @@ function NewCustomerRoute() {
       onDownPaymentChange={(patch) => setDown((current) => ({ ...current, ...patch }))}
       downPaymentDateError={downDateInFuture ? copy.customers.create.payments.dateInFuture : undefined}
       plan={{ ...plan, firstDueDate }}
-      onPlanChange={(patch) => setPlan((current) => ({ ...current, ...patch }))}
+      onPlanChange={(patch) => {
+        setPlan((current) => ({ ...current, ...patch }));
+        setOverrides({});
+      }}
+      onPlanDateChange={(index, date) => setOverrides((current) => ({ ...current, [index]: date }))}
+      today={today}
       preview={preview}
       excess={detail.data?.notices.excess?.amount ?? null}
       banner={shell.offlineBanner}

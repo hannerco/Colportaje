@@ -320,6 +320,48 @@ export const copy = {
       },
     },
   },
+  /** Abonos (HU-PAN-CLI-05). */
+  payments: {
+    /** Calendario para elegir fecha (diseño «6 · Cambiar fecha de abono»); la semana empieza el domingo (BR-GEN-07). */
+    calendar: {
+      weekdays: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
+      months: [
+        'enero',
+        'febrero',
+        'marzo',
+        'abril',
+        'mayo',
+        'junio',
+        'julio',
+        'agosto',
+        'septiembre',
+        'octubre',
+        'noviembre',
+        'diciembre',
+      ],
+      month: (name: string, year: number) => `${name} de ${year}`,
+      /** Nombre de cada día para el lector; contiene el número visible («5 de diciembre de 2026»). */
+      day: (day: number, month: string, year: number) => `${day} de ${month} de ${year}`,
+      previous: 'Mes anterior',
+      next: 'Mes siguiente',
+      /** Junto al día: otro abono del cliente cae ese día. */
+      otherPayment: 'otro abono',
+    },
+    changeDate: {
+      /** El botón de la fecha en la lista de abonos. */
+      open: (date: string) => `Cambiar fecha, ${date}`,
+      title: (index: number, total: number) => `Abono ${index} de ${total}`,
+      newDate: (date: string) => `Nueva fecha: ${date}`,
+      save: 'Guardar fecha',
+      cancel: 'Cancelar',
+      changed: 'fecha cambiada',
+      past: 'Esta fecha ya pasó',
+      /** BR-PAY-06: una prórroga a más de 2 meses desde hoy se confirma. */
+      confirmTitle: '¿Dar tanto plazo?',
+      confirmMessage: (date: string) => `El ${date} es más de 2 meses desde hoy.`,
+      confirm: 'Sí, dar el plazo',
+    },
+  },
   /** Módulo Dinero (BR-DEP-14, ADR-0046). */
   money: {
     /** Resumen de dinero (HU-UI-25). */

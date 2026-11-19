@@ -6,6 +6,8 @@ import { isPastDate, type LocalDate } from '@/domain/time';
 export type PlanPreviewItem = PlanItem & {
   /** HU-ABO-08 / I-33: la fecha ya pasó (se permite; el front avisa «Esta fecha ya pasó»). */
   readonly past: boolean;
+  /** HU-PAN-CLI-05: la fecha se corrigió a mano en el calendario (solo ese abono, I-08). */
+  readonly changed: boolean;
 };
 
 export type PlanPreview = {
@@ -29,6 +31,8 @@ export const planPreview = (input: {
   readonly amount: COP | null;
   readonly firstDueDate: LocalDate | null;
   readonly today: LocalDate;
+  /** Fechas corregidas a mano, por posición (HU-PAN-CLI-05). Se descartan si el plan se recalcula. */
+  readonly overrides?: Readonly<Record<number, LocalDate>>;
 }): PlanPreview => {
   const base = Math.max(0, input.debt - (input.downPayment ?? 0));
   if (input.amount === null || input.firstDueDate === null || base === 0)
@@ -42,7 +46,11 @@ export const planPreview = (input: {
   if (!plan.ok) return { base, items: null, amountInvalid: plan.error.code === 'VALIDATION' };
   return {
     base,
-    items: plan.value.map((item) => ({ ...item, past: isPastDate(item.dueDate, input.today) })),
+    items: plan.value.map((item, i) => {
+      const override = input.overrides?.[i];
+      const dueDate = override ?? item.dueDate;
+      return { ...item, dueDate, past: isPastDate(dueDate, input.today), changed: override !== undefined };
+    }),
     amountInvalid: false,
   };
 };

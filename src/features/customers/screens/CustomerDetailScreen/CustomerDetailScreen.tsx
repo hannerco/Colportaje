@@ -6,6 +6,7 @@ import type { ArchivePreview } from '@/domain/customer-archive';
 import type { PaymentRow } from '@/domain/customer-detail';
 import { formatCOP } from '@/domain/money';
 import { formatDate, type LocalDate } from '@/domain/time';
+import { ChangeDueDateDialog } from '@/features/payments/components/ChangeDueDateDialog';
 import { Button } from '@/ui/atoms/Button';
 import { StatusPill, type PillStatus } from '@/ui/atoms/StatusPill';
 import { Icon } from '@/ui/icons';
@@ -44,6 +45,13 @@ export type CustomerDetailScreenProps = {
   onRestore: () => Promise<void>;
   /** «Agregar libro del inventario» (HU-PAN-CLI-04); un archivado no puede (CA-3, I-15). Sin función no hay botón. */
   onAddBook?: () => void;
+  /** Hoy (calendario de la prórroga). */
+  today?: LocalDate;
+  /**
+   * HU-PAN-CLI-05: dar más plazo a un abono por cobrar (prórroga; `confirmed` si pasa de 2 meses, BR-PAY-06). Sin
+   * función, la fecha no es botón.
+   */
+  onReschedule?: (paymentId: string, date: LocalDate, confirmed: boolean) => Promise<void>;
 };
 
 const t = copy.customers.detail;
@@ -95,6 +103,8 @@ export function CustomerDetailScreen({
   onArchive,
   onRestore,
   onAddBook,
+  today,
+  onReschedule,
 }: CustomerDetailScreenProps) {
   const [archiveOpen, setArchiveOpen] = useState(false);
   const [canceledOpen, setCanceledOpen] = useState(false);
@@ -202,7 +212,10 @@ export function CustomerDetailScreen({
           {detail.payments.length === 0 ? (
             <p className={styles.empty}>{t.payments.empty}</p>
           ) : (
-            <PaymentList payments={detail.payments} />
+            <PaymentList
+              payments={detail.payments}
+              {...(onReschedule && today && isOnline ? { reschedule: { today, onSave: onReschedule } } : {})}
+            />
           )}
           {detail.canceledPayments.length > 0 && (
             <>
@@ -307,38 +320,80 @@ export function CustomerDetailScreen({
   );
 }
 
-function PaymentList({ payments }: { payments: readonly PaymentRow[] }) {
+function PaymentList({
+  payments,
+  reschedule,
+}: {
+  payments: readonly PaymentRow[];
+  reschedule?: {
+    today: LocalDate;
+    onSave: (paymentId: string, date: LocalDate, confirmed: boolean) => Promise<void>;
+  };
+}) {
+  const [editing, setEditing] = useState<string | null>(null);
+  // «Abono N de M» cuenta los abonos programados (las cuotas), no la cuota inicial ni los extras.
+  const installments = payments.filter((p) => p.kind === 'scheduled');
+  const open = payments.find((p) => p.paymentId === editing);
   return (
-    <ul className={styles.list}>
-      {payments.map((payment) => {
-        const date = dateOf(payment);
-        const overdue = payment.status === 'scheduled' && payment.isOverdue;
-        const kind = t.payments.kind[payment.kind];
-        return (
-          <li key={payment.paymentId} className={styles.payment}>
-            <span className={styles.paymentMain}>
-              <span className={overdue ? styles.overdueDate : styles.date}>
-                {date ? formatDate(date) : '—'}
+    <>
+      <ul className={styles.list}>
+        {payments.map((payment) => {
+          const date = dateOf(payment);
+          const overdue = payment.status === 'scheduled' && payment.isOverdue;
+          const kind = t.payments.kind[payment.kind];
+          return (
+            <li key={payment.paymentId} className={styles.payment}>
+              <span className={styles.paymentMain}>
+                {reschedule && payment.can.reschedule && date ? (
+                  <button
+                    type="button"
+                    className={[styles.dateButton, overdue ? styles.overdueDate : styles.date].join(' ')}
+                    aria-label={copy.payments.changeDate.open(formatDate(date))}
+                    onClick={() => setEditing(payment.paymentId)}
+                  >
+                    {formatDate(date)}
+                  </button>
+                ) : (
+                  <span className={overdue ? styles.overdueDate : styles.date}>
+                    {date ? formatDate(date) : '—'}
+                  </span>
+                )}
+                {payment.originalDueDate && (
+                  <s className={styles.muted}>{t.payments.before(formatDate(payment.originalDueDate))}</s>
+                )}
+                {overdue && (
+                  <span className={styles.overdueAgo}>{t.payments.overdueAgo(payment.overdueDays)}</span>
+                )}
+                {kind && <span className={styles.secondary}>{kind}</span>}
+                <StatusPill status={pillOf(payment)} />
               </span>
-              {payment.originalDueDate && (
-                <s className={styles.muted}>{t.payments.before(formatDate(payment.originalDueDate))}</s>
-              )}
-              {overdue && (
-                <span className={styles.overdueAgo}>{t.payments.overdueAgo(payment.overdueDays)}</span>
-              )}
-              {kind && <span className={styles.secondary}>{kind}</span>}
-              <StatusPill status={pillOf(payment)} />
-            </span>
-            <span className={styles.paymentSide}>
-              <span className={styles.amount}>{formatCOP(amountOf(payment))}</span>
-              {isPaid(payment) && payment.method && (
-                <span className={styles.secondary}>{t.payments.method[payment.method]}</span>
-              )}
-            </span>
-          </li>
-        );
-      })}
-    </ul>
+              <span className={styles.paymentSide}>
+                <span className={styles.amount}>{formatCOP(amountOf(payment))}</span>
+                {isPaid(payment) && payment.method && (
+                  <span className={styles.secondary}>{t.payments.method[payment.method]}</span>
+                )}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+      {reschedule && open?.dueDate && (
+        <ChangeDueDateDialog
+          open
+          onOpenChange={(next) => !next && setEditing(null)}
+          mode="reschedule"
+          index={installments.indexOf(open) + 1 || 1}
+          total={Math.max(installments.length, 1)}
+          current={open.dueDate}
+          today={reschedule.today}
+          otherDates={payments.filter((p) => p !== open && p.dueDate).map((p) => p.dueDate!)}
+          onSave={async (date, confirmed) => {
+            await reschedule.onSave(open.paymentId, date, confirmed);
+            setEditing(null);
+          }}
+        />
+      )}
+    </>
   );
 }
 

@@ -16,6 +16,8 @@ const meta = {
     onArchive: fn(async () => {}),
     onRestore: fn(async () => {}),
     onAddBook: fn(),
+    today: localDate('2026-11-17'),
+    onReschedule: fn(async () => {}),
     onRetry: fn(),
   },
   parameters: {
@@ -291,6 +293,36 @@ export const ArchivadoSinAgregarLibro: Story = {
       await userEvent.click(add, { pointerEventsCheck: 0 });
     }
     expect(args.onAddBook).not.toHaveBeenCalled();
+  },
+};
+
+/** HU-PAN-CLI-05: tocar la fecha de un abono por cobrar abre la prórroga; solo ese abono se mueve. */
+export const DarMasPlazo: Story = {
+  name: 'Dar más plazo',
+  globals: { platform: 'desktop' },
+  play: async ({ canvasElement, args }) => {
+    const frame = frames(canvasElement)[0]!;
+    // Solo los por cobrar (con can.reschedule) son botón: el vencido del 31/10 y el del 14/11.
+    const dates = [...frame.querySelectorAll<HTMLButtonElement>('button[aria-label^="Cambiar fecha"]')];
+    expect(dates.map((b) => b.textContent)).toEqual(['31/10/2026', '14/11/2026']);
+    await userEvent.click(dates[1]!);
+    const dialogs = () => [...canvasElement.querySelectorAll<HTMLElement>('[role="alertdialog"]')];
+    await waitFor(() => expect(dialogs().length).toBeGreaterThan(0));
+    const dialog = dialogs().at(-1)!;
+    expect(dialog.textContent).toContain('Abono 3 de 3');
+    await userEvent.click(dialog.querySelector<HTMLButtonElement>('[data-date="2026-11-28"]')!);
+    await userEvent.click(button(dialog, 'Guardar fecha')!);
+    expect(args.onReschedule).toHaveBeenCalledWith('p-3', '2026-11-28', false);
+  },
+};
+
+/** HU-PAN-CLI-05: sin conexión la fecha no es botón (no se intenta una prórroga). */
+export const SinConexionSinPlazo: Story = {
+  name: 'Sin conexión: sin prórroga',
+  args: { isOnline: false },
+  play: async ({ canvasElement }) => {
+    for (const frame of frames(canvasElement))
+      expect(frame.querySelector('button[aria-label^="Cambiar fecha"]')).toBeNull();
   },
 };
 

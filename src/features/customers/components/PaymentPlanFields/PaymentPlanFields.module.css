@@ -86,3 +86,26 @@
   color: var(--color-text-2);
   font-size: var(--text-secondary);
 }
+
+/* La fecha de un abono es un botón que abre el calendario (HU-PAN-CLI-05). */
+.dateButton {
+  min-height: var(--size-control-sm);
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-input-bg);
+  color: inherit;
+  font: inherit;
+  font-variant-numeric: var(--font-numeric);
+  cursor: pointer;
+}
+
+.dateButton:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 1px;
+}
+
+.changed {
+  color: var(--color-accent-text);
+  font-size: var(--text-caption);
+}

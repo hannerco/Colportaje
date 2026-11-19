@@ -45,6 +45,10 @@ export type NewCustomerScreenProps = {
   plan: PaymentPlanValue;
   onPlanChange: (patch: Partial<PaymentPlanValue>) => void;
   preview: PlanPreview;
+  /** HU-PAN-CLI-05: corregir la fecha de un abono del plan en el calendario (solo ese, sin historial). */
+  onPlanDateChange?: (index: number, date: LocalDate) => void;
+  /** Hoy (calendario y avisos de fecha pasada). */
+  today: LocalDate;
   /** BR-PAY-13: lo programado supera el saldo (franja). */
   excess?: COP | null;
   /** Franja de sin conexión. */
@@ -191,7 +195,13 @@ export function NewCustomerScreen(props: NewCustomerScreenProps) {
         </ChoiceGroup>
       </div>
       <div className={styles.divider} />
-      <PaymentPlanFields value={plan} onChange={props.onPlanChange} preview={preview} />
+      <PaymentPlanFields
+        value={plan}
+        onChange={props.onPlanChange}
+        preview={preview}
+        today={props.today}
+        onChangeDate={props.onPlanDateChange}
+      />
     </Island>
   );
 

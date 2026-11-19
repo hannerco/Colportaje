@@ -1,0 +1,120 @@
+'use client';
+
+import { useRef, useState } from 'react';
+import { copy } from '@/copy/es';
+import { rescheduleConfirmLimit } from '@/domain/reschedule';
+import { formatDate, isPastDate, type LocalDate } from '@/domain/time';
+import { Icon } from '@/ui/icons';
+import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
+import { DatePickerCalendar } from '../DatePickerCalendar';
+import styles from './ChangeDueDateDialog.module.css';
+
+export type ChangeDueDateDialogProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  /**
+   * `correct`: durante la creación, corregir sin historial (cualquier fecha). `reschedule`: cliente guardado, prórroga
+   * (posterior a la fecha actual y confirmación a más de 2 meses desde hoy, BR-PAY-06, HU-ABO-05).
+   */
+  mode: 'correct' | 'reschedule';
+  /** «Abono 2 de 4». */
+  index: number;
+  total: number;
+  /** La fecha actual del abono. */
+  current: LocalDate;
+  today: LocalDate;
+  /** Las fechas de los otros abonos del cliente (un punto en el calendario). */
+  otherDates?: readonly LocalDate[];
+  /** Guarda la fecha; `confirmed` = el usuario ya aceptó un plazo de más de 2 meses. */
+  onSave: (date: LocalDate, confirmed: boolean) => void | Promise<void>;
+};
+
+const t = copy.payments.changeDate;
+
+/**
+ * Cambiar la fecha de un abono (HU-PAN-CLI-05, diseño «6 · Cambiar fecha de abono»): el calendario dentro del Diálogo
+ * de la biblioteca (centrado en escritorio, hoja en móvil), «Cancelar» y «Guardar fecha». Una fecha pasada avisa «Esta
+ * fecha ya pasó» y se permite (I-33). Solo se mueve ese abono (I-08). Pieza del módulo.
+ */
+export function ChangeDueDateDialog({
+  open,
+  onOpenChange,
+  mode,
+  index,
+  total,
+  current,
+  today,
+  otherDates = [],
+  onSave,
+}: ChangeDueDateDialogProps) {
+  const [selected, setSelected] = useState<LocalDate>(current);
+  const [confirming, setConfirming] = useState<LocalDate | null>(null);
+  // La confirmación se abre al cerrarse el primer diálogo: con esto, ese cierre no avisa «terminado» a quien lo usa.
+  const goingToConfirm = useRef(false);
+  const title = t.title(index, total);
+  const unchanged = selected === current;
+  const needsConfirmation = mode === 'reschedule' && selected > rescheduleConfirmLimit(today);
+
+  return (
+    <>
+      <ConfirmDialog
+        open={open && confirming === null}
+        onOpenChange={(next) => {
+          if (next) setSelected(current);
+          if (!next && goingToConfirm.current) return;
+          onOpenChange(next);
+        }}
+        title={title}
+        message={
+          <span className={styles.message}>
+            {t.newDate(formatDate(selected))}
+            {isPastDate(selected, today) && (
+              <span className={styles.past}>
+                <Icon name="alert" size={16} tone="current" />
+                {t.past}
+              </span>
+            )}
+          </span>
+        }
+        confirmLabel={t.save}
+        cancelLabel={t.cancel}
+        onConfirm={async () => {
+          if (unchanged) return;
+          if (needsConfirmation) {
+            goingToConfirm.current = true;
+            setConfirming(selected);
+            return;
+          }
+          await onSave(selected, false);
+        }}
+      >
+        <DatePickerCalendar
+          label={title}
+          value={selected}
+          onChange={setSelected}
+          today={today}
+          marked={otherDates}
+          // Prórroga: solo una fecha posterior a la actual (HU-ABO-05 R2).
+          isDisabled={mode === 'reschedule' ? (date) => date <= current : undefined}
+        />
+      </ConfirmDialog>
+      <ConfirmDialog
+        open={confirming !== null}
+        onOpenChange={(next) => {
+          if (next) return;
+          goingToConfirm.current = false;
+          setConfirming(null);
+          onOpenChange(false);
+        }}
+        title={t.confirmTitle}
+        message={confirming ? t.confirmMessage(formatDate(confirming)) : ''}
+        confirmLabel={t.confirm}
+        cancelLabel={t.cancel}
+        onConfirm={async () => {
+          if (!confirming) return;
+          await onSave(confirming, true);
+        }}
+      />
+    </>
+  );
+}

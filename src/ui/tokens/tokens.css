@@ -313,6 +313,7 @@
   --radius-progress: 4px;
   --size-photo-thumb-width: 80px; /* miniatura de foto de la ficha de cliente */
   --size-photo-thumb-height: 64px;
+  --size-calendar-dot: 4px; /* punto de «otro abono» en el calendario (HU-PAN-CLI-05) */
 }
 
 /* ─── Por plataforma · escritorio ───────────────────────────────────────────────────────────────── */

@@ -12,6 +12,9 @@ import {
 } from '@/features/customers';
 import { appErrorMessage } from '@/features/shared/app-error-message';
 import { ROUTES, useAppShell } from '@/features/shell';
+import { todayBogota } from '@/domain/time';
+import { useReschedulePayment } from '@/features/payments';
+import { systemClock } from '@/lib/clock';
 import { useToast } from '@/ui/molecules/Toast';
 import { AddBookContainer } from './add-book-container';
 
@@ -32,6 +35,8 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
   const { archiveCustomer } = useArchiveCustomer();
   const { restoreCustomer } = useRestoreCustomer();
   const toast = useToast();
+  const { reschedulePayment } = useReschedulePayment();
+  const [today] = useState(() => todayBogota(systemClock));
 
   return (
     <>
@@ -57,6 +62,17 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
           );
         }}
         onAddBook={() => setAddingBook(true)}
+        today={today}
+        onReschedule={async (paymentId, newDueDate, confirmed) => {
+          const current = detail.data?.payments.find((p) => p.paymentId === paymentId)?.dueDate ?? undefined;
+          const result = await reschedulePayment({
+            paymentId,
+            newDueDate,
+            currentDueDate: current,
+            confirmed,
+          });
+          if (!result.ok) toast.show({ message: appErrorMessage(result.error).message, tone: 'error' });
+        }}
         onRestore={async () => {
           const result = await restoreCustomer(customerId);
           toast.show(

@@ -205,3 +205,18 @@
   justify-content: space-between;
   gap: var(--space-3);
 }
+
+/* La fecha de un abono por cobrar abre el calendario de la prórroga (HU-PAN-CLI-05). */
+.dateButton {
+  padding: 0;
+  border: 0;
+  border-bottom: 1px dashed var(--color-underline);
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+
+.dateButton:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 2px;
+}

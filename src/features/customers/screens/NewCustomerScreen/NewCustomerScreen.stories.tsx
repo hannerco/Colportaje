@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { expect, fn, userEvent, waitFor } from 'storybook/test';
 import type { CustomerDetail } from '@/domain/customer-detail';
 import { suggestFirstDueDate } from '@/domain/payment-plan';
-import { localDate } from '@/domain/time';
+import { localDate, type LocalDate } from '@/domain/time';
 import { Banner } from '@/ui/molecules/Banner';
 import { ToastProvider, useToast } from '@/ui/molecules/Toast';
 import type { PaymentPlanValue } from '../../components/PaymentPlanFields';
@@ -94,6 +94,7 @@ function DemoInner({
     ...initialPlan,
   });
   const [discardOpen, setDiscardOpen] = useState(false);
+  const [overrides, setOverrides] = useState<Record<number, LocalDate>>({});
   const debt = books.reduce((sum, b) => sum + b.agreedPrice, 0);
   const firstDueDate =
     plan.firstDueDate ?? (plan.amount !== null ? suggestFirstDueDate(plan.frequency, today) : null);
@@ -110,7 +111,12 @@ function DemoInner({
       onDownPaymentChange={(patch) => setDown((d) => ({ ...d, ...patch }))}
       downPaymentDateError={down.paidOn > today ? 'La fecha no puede ser futura' : undefined}
       plan={{ ...plan, firstDueDate }}
-      onPlanChange={(patch) => setPlan((p) => ({ ...p, ...patch }))}
+      onPlanChange={(patch) => {
+        setPlan((p) => ({ ...p, ...patch }));
+        setOverrides({});
+      }}
+      onPlanDateChange={(index, date) => setOverrides((o) => ({ ...o, [index]: date }))}
+      today={today}
       preview={planPreview({
         debt,
         downPayment: down.amount,
@@ -118,6 +124,7 @@ function DemoInner({
         amount: plan.amount,
         firstDueDate,
         today,
+        overrides,
       })}
       excess={excess}
       banner={isOnline ? undefined : <Banner tone="offline" />}
@@ -236,6 +243,35 @@ export const PlanRecalcula: Story = {
       await userEvent.type(amount, '80000');
       await waitFor(() => expect(list()).toHaveLength(3));
     }
+  },
+};
+
+/** HU-PAN-CLI-05 CA-1: al crear, cambiar la fecha de un abono en el calendario mueve solo ese («fecha cambiada»). */
+export const CorregirFechaDeUnAbono: Story = {
+  name: 'Corregir fecha de un abono',
+  globals: { platform: 'desktop' },
+  args: {
+    initialName: 'Natalia Andrea Cárdenas',
+    books: BOOKS,
+    initialDown: { amount: 40000 },
+    initialPlan: { amount: 35000, firstDueDate: localDate('2026-11-30') },
+  },
+  play: async ({ canvasElement }) => {
+    const frame = frames(canvasElement)[0]!;
+    const dates = () =>
+      [...frame.querySelectorAll<HTMLButtonElement>('button[aria-label^="Cambiar fecha"]')].map(
+        (b) => b.textContent,
+      );
+    expect(dates()).toEqual(['30/11/2026', '15/12/2026', '30/12/2026', '15/01/2027']);
+    await userEvent.click(
+      frame.querySelector<HTMLButtonElement>('button[aria-label="Cambiar fecha, 30/11/2026"]')!,
+    );
+    await waitFor(() => expect(frame.querySelector('[role="alertdialog"]')).not.toBeNull());
+    const dialog = frame.querySelector<HTMLElement>('[role="alertdialog"]')!;
+    await userEvent.click(dialog.querySelector<HTMLButtonElement>('[data-date="2026-12-05"]')!);
+    await userEvent.click(button(dialog, 'Guardar fecha')!);
+    await waitFor(() => expect(dates()).toEqual(['05/12/2026', '15/12/2026', '30/12/2026', '15/01/2027']));
+    expect(frame.textContent).toContain('fecha cambiada');
   },
 };
 
