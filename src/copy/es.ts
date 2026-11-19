@@ -271,7 +271,16 @@ export const copy = {
       discard: 'Descartar',
       keepEditing: 'Seguir editando',
       saved: 'Cliente guardado',
-      info: { title: 'Información del cliente', phone: 'Teléfono', phonePlaceholder: '300 000 0000' },
+      info: {
+        title: 'Información del cliente',
+        phone: 'Teléfono',
+        phonePlaceholder: '300 000 0000',
+        address: 'Dirección',
+        addressPlaceholder: 'Calle, número y barrio',
+        info: 'Información',
+        infoPlaceholder: 'Horarios, referencias, cómo prefiere pagar…',
+        images: 'Imágenes',
+      },
       books: { title: 'Libros vendidos', total: 'Total de libros' },
       payments: {
         title: 'Abonos',
@@ -318,6 +327,40 @@ export const copy = {
         blocked: 'No se puede descartar: un abono de este cliente ya está en un Abibono.',
         understood: 'Entendido',
       },
+    },
+    /** Ubicación del cliente (HU-PAN-CLI-06, diseño «7 · Información y dirección» y «8 · Elegir ubicación»). */
+    location: {
+      choose: 'Elegir en mapa',
+      openMaps: 'Abrir en Maps',
+      change: 'Cambiar',
+      remove: 'Quitar',
+      /** La vista previa de la ficha carga el mapa solo al tocarla (ADR-0036). */
+      showMap: 'Ver mapa',
+      map: 'Mapa de la ubicación del cliente',
+      mapOffline: 'Mapa sin conexión',
+      picker: {
+        title: 'Elegir ubicación',
+        map: 'Mapa para mover el pin',
+        pin: 'Pin en el centro del mapa',
+        recenter: 'Centrar en tu ubicación actual',
+        heading: 'Ubicación del pin',
+        searching: 'Buscando tu ubicación…',
+        approximate: 'Ubicación aproximada',
+        repeat: 'Repetir',
+        denied: 'Sin permiso de ubicación. Ubica el pin a mano.',
+        noSignal: 'No hay señal de GPS. Ubica el pin a mano.',
+        retry: 'Reintentar',
+        offline: 'Sin conexión. Guardar necesita conexión.',
+        confirm: 'Confirmar',
+        /** «±12 m · 6,2518, −75,5915». */
+        accuracy: (meters: number, coordinates: string) => `±${meters}\u00a0m · ${coordinates}`,
+      },
+      removed: 'Ubicación quitada',
+    },
+    /** Imágenes de información (HU-CLI-07). */
+    photos: {
+      add: 'Agregar imagen',
+      adding: 'Subiendo imagen…',
     },
   },
   /** Abonos (HU-PAN-CLI-05). */

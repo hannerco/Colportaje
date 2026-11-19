@@ -4,7 +4,11 @@ import { useState } from 'react';
 import { copy } from '@/copy/es';
 import {
   CustomerDetailScreen,
+  mapTiles,
+  useAddCustomerInfoPhoto,
   useArchiveCustomer,
+  useClearCustomerLocation,
+  useSetCustomerLocation,
   useArchivePreview,
   useCustomerDetail,
   useRestoreCustomer,
@@ -15,8 +19,10 @@ import { ROUTES, useAppShell } from '@/features/shell';
 import { todayBogota } from '@/domain/time';
 import { useReschedulePayment } from '@/features/payments';
 import { systemClock } from '@/lib/clock';
+import { newId } from '@/lib/ids';
 import { useToast } from '@/ui/molecules/Toast';
 import { AddBookContainer } from './add-book-container';
+import { LocationPickerContainer } from './location-picker-container';
 
 type Props = {
   customerId: string;
@@ -37,6 +43,13 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
   const toast = useToast();
   const { reschedulePayment } = useReschedulePayment();
   const [today] = useState(() => todayBogota(systemClock));
+  const [tiles] = useState(mapTiles);
+  const [choosingLocation, setChoosingLocation] = useState(false);
+  const { setCustomerLocation } = useSetCustomerLocation();
+  const { clearCustomerLocation } = useClearCustomerLocation();
+  const { addCustomerInfoPhoto } = useAddCustomerInfoPhoto();
+  const showError = (error: unknown) =>
+    toast.show({ message: appErrorMessage(error).message, tone: 'error' });
 
   return (
     <>
@@ -73,6 +86,20 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
           });
           if (!result.ok) toast.show({ message: appErrorMessage(result.error).message, tone: 'error' });
         }}
+        tiles={tiles}
+        onChooseLocation={() => setChoosingLocation(true)}
+        onRemoveLocation={async () => {
+          const result = await clearCustomerLocation(customerId);
+          toast.show(
+            result.ok
+              ? { message: copy.customers.location.removed, tone: 'success' }
+              : { message: appErrorMessage(result.error).message, tone: 'error' },
+          );
+        }}
+        onAddPhoto={async (file) => {
+          const result = await addCustomerInfoPhoto({ photoId: newId(), customerId, file });
+          if (!result.ok) showError(result.error);
+        }}
         onRestore={async () => {
           const result = await restoreCustomer(customerId);
           toast.show(
@@ -87,6 +114,17 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
           customerId={customerId}
           books={detail.data.books}
           onClose={() => setAddingBook(false)}
+        />
+      )}
+      {choosingLocation && detail.data && !detail.data.archived && (
+        <LocationPickerContainer
+          saved={detail.data.location}
+          onConfirm={async (location) => {
+            const result = await setCustomerLocation({ customerId, location });
+            if (!result.ok) showError(result.error);
+            return result.ok;
+          }}
+          onClose={() => setChoosingLocation(false)}
         />
       )}
     </>

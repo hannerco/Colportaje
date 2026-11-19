@@ -3,17 +3,23 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { copy } from '@/copy/es';
+import { mapsLinkFor, type CustomerLocation } from '@/domain/customer-location';
 import { suggestFirstDueDate, withPaymentIds } from '@/domain/payment-plan';
 import { todayBogota, type LocalDate } from '@/domain/time';
 import {
   NewCustomerScreen,
+  mapTiles,
   planPreview,
+  useAddCustomerInfoPhoto,
+  useClearCustomerLocation,
   useCreateCustomer,
   useCustomerDetail,
   useDiscardNewCustomer,
   useDiscardSummary,
   useLiveWrite,
   useRemoveCopyDuringCreation,
+  useRememberLastChosenPoint,
+  useSetCustomerLocation,
   useUpdateCustomer,
   type DownPaymentValue,
   type PaymentPlanValue,
@@ -26,6 +32,7 @@ import { newId } from '@/lib/ids';
 import { useToast } from '@/ui/molecules/Toast';
 import { usePlatform } from '@/ui/platform';
 import { AddBookContainer } from '../add-book-container';
+import { LocationPickerContainer } from '../location-picker-container';
 
 /**
  * Contenedor de Nuevo cliente, ficha viva (HU-PAN-CLI-03, ADR-0038): el cliente se crea al escribir el nombre (o
@@ -46,6 +53,12 @@ function NewCustomerRoute() {
   const [created, setCreated] = useState(false);
   const creating = useRef(false);
   const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
+  const [info, setInfo] = useState('');
+  /** HU-PAN-CLI-06: la ubicación elegida; se escribe cuando el cliente existe, como los demás datos. */
+  const [location, setLocation] = useState<CustomerLocation | null>(null);
+  const [choosingLocation, setChoosingLocation] = useState(false);
+  const [tiles] = useState(mapTiles);
   const [down, setDown] = useState<DownPaymentValue>({
     amount: null,
     method: DEFAULT_PAY_METHOD,
@@ -68,6 +81,10 @@ function NewCustomerRoute() {
   const { applyPaymentPlan } = useApplyPaymentPlan();
   const { discardNewCustomer } = useDiscardNewCustomer();
   const { removeCopyDuringCreation } = useRemoveCopyDuringCreation();
+  const { setCustomerLocation } = useSetCustomerLocation();
+  const { clearCustomerLocation } = useClearCustomerLocation();
+  const { addCustomerInfoPhoto } = useAddCustomerInfoPhoto();
+  const rememberLastChosenPoint = useRememberLastChosenPoint();
   const detail = useCustomerDetail(created ? id : null);
   const summary = useDiscardSummary(discardOpen && created ? id : null);
 
@@ -109,6 +126,33 @@ function NewCustomerRoute() {
     initial: '',
     write: async (value) => {
       const result = await updateCustomer({ id, patch: { phone: value.trim() || null } });
+      if (!result.ok) showError(result.error);
+      return result.ok;
+    },
+  });
+
+  const writeText = async (field: 'address' | 'info', value: string) => {
+    const result = await updateCustomer({ id, patch: { [field]: value.trim() || null } });
+    if (!result.ok) showError(result.error);
+    return result.ok;
+  };
+  const addressWrite = useLiveWrite(address, {
+    enabled: created,
+    initial: '',
+    write: (value) => writeText('address', value),
+  });
+  const infoWrite = useLiveWrite(info, {
+    enabled: created,
+    initial: '',
+    write: (value) => writeText('info', value),
+  });
+  const locationWrite = useLiveWrite(location, {
+    enabled: created,
+    initial: null,
+    write: async (value) => {
+      const result = value
+        ? await setCustomerLocation({ customerId: id, location: value })
+        : await clearCustomerLocation(id);
       if (!result.ok) showError(result.error);
       return result.ok;
     },
@@ -172,7 +216,14 @@ function NewCustomerRoute() {
   };
 
   const save = async () => {
-    const results = await Promise.all([nameWrite.flush(), phoneWrite.flush(), moneyWrite.flush()]);
+    const results = await Promise.all([
+      nameWrite.flush(),
+      phoneWrite.flush(),
+      addressWrite.flush(),
+      infoWrite.flush(),
+      locationWrite.flush(),
+      moneyWrite.flush(),
+    ]);
     if (results.every(Boolean)) {
       toast.show({ message: copy.customers.create.saved, tone: 'success' });
       router.push(ROUTES.customer(id));
@@ -189,6 +240,28 @@ function NewCustomerRoute() {
       nameError={created && !name.trim() ? copy.customers.create.nameRequired : undefined}
       phone={phone}
       onPhoneChange={setPhone}
+      address={address}
+      onAddressChange={setAddress}
+      info={info}
+      onInfoChange={setInfo}
+      location={location && { lat: location.latitude, lng: location.longitude }}
+      mapsLink={mapsLinkFor({
+        latitude: location?.latitude ?? null,
+        longitude: location?.longitude ?? null,
+        mapsUrl: null,
+        address,
+      })}
+      tiles={tiles}
+      onChooseLocation={() => setChoosingLocation(true)}
+      onRemoveLocation={() => setLocation(null)}
+      photos={detail.data?.infoPhotos ?? []}
+      onAddPhoto={async (file) => {
+        const result = await addCustomerInfoPhoto({ photoId: newId(), customerId: id, file });
+        if (!result.ok) showError(result.error);
+      }}
+      photoDisabledReason={
+        !created ? copy.customers.create.nameRequired : !shell.isOnline ? copy.ui.empty.needsConnection : null
+      }
       books={detail.data?.books ?? []}
       copyHref={ROUTES.copy}
       onAddBook={created ? () => setAddingBook(true) : undefined}
@@ -226,8 +299,28 @@ function NewCustomerRoute() {
       onLeave={() => router.push(ROUTES.customers)}
     />
   );
-  const sheet = addingBook && created && (
-    <AddBookContainer customerId={id} books={detail.data?.books ?? []} onClose={() => setAddingBook(false)} />
+  const sheet = (
+    <>
+      {addingBook && created && (
+        <AddBookContainer
+          customerId={id}
+          books={detail.data?.books ?? []}
+          onClose={() => setAddingBook(false)}
+        />
+      )}
+      {choosingLocation && (
+        <LocationPickerContainer
+          saved={location}
+          onConfirm={async (chosen) => {
+            // Sin cliente todavía, el punto se recuerda aquí; al guardarlo en el cliente lo recuerda la acción.
+            if (!created) await rememberLastChosenPoint({ lat: chosen.latitude, lng: chosen.longitude });
+            setLocation(chosen);
+            return true;
+          }}
+          onClose={() => setChoosingLocation(false)}
+        />
+      )}
+    </>
   );
   if (mobile)
     return (

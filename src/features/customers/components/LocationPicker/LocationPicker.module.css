@@ -1,0 +1,126 @@
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-height: 0;
+}
+
+.mapArea {
+  position: relative;
+  height: var(--size-map-picker);
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-track);
+}
+
+.picker[data-shape='mobile'] .mapArea {
+  height: var(--size-map-picker-mobile);
+}
+
+/* Encima de las capas de Leaflet (hasta 700) como sus propios controles (800). */
+.recenter {
+  position: absolute;
+  right: var(--space-4);
+  bottom: var(--space-4);
+  z-index: 800;
+}
+
+.chip {
+  position: absolute;
+  top: var(--space-4);
+  left: 50%;
+  z-index: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--color-card);
+  box-shadow: var(--shadow-control);
+  color: var(--color-text);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-strong);
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.picker[data-shape='mobile'] .footer {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.status {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.heading {
+  margin: 0;
+  font-size: var(--text-body);
+  font-weight: var(--weight-strong);
+}
+
+.statusLine {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}
+
+.coordinates {
+  margin: 0;
+  color: var(--color-text-3);
+  font-size: var(--text-caption);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.inlineAction {
+  flex: 0 0 auto;
+  min-height: var(--size-control-sm);
+  padding: 0 var(--space-1);
+  border: 0;
+  background: transparent;
+  color: var(--color-accent-text);
+  font: inherit;
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+}
+
+.inlineAction:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 1px;
+}
+
+.spinner {
+  flex: 0 0 auto;
+  width: var(--space-4);
+  height: var(--space-4);
+  border: 2px solid var(--color-accent-border);
+  border-top-color: var(--color-accent-text);
+  border-radius: var(--radius-pill);
+  animation: spin 0.9s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

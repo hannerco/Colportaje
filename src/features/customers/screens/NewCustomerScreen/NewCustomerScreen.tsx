@@ -3,6 +3,7 @@
 import { useId, useState, type ReactNode } from 'react';
 import { copy } from '@/copy/es';
 import type { CustomerDetail } from '@/domain/customer-detail';
+import type { MapPoint } from '@/domain/customer-location';
 import { formatCOP, type COP } from '@/domain/money';
 import type { PayMethod } from '@/domain/payment';
 import type { LocalDate } from '@/domain/time';
@@ -15,8 +16,11 @@ import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
 import { Island } from '@/ui/organisms/Island';
 import { usePlatform } from '@/ui/platform';
 import { CustomerAccountSummary } from '../../components/CustomerAccountSummary';
+import { CustomerLocationBlock } from '../../components/CustomerLocationBlock';
+import { InfoPhotoStrip } from '../../components/InfoPhotoStrip';
 import { PaymentPlanFields, type PaymentPlanValue } from '../../components/PaymentPlanFields';
 import { AddBookButton, SoldBookList } from '../../components/SoldBookList';
+import type { MapTiles } from '../../map-tiles';
 import type { PlanPreview } from '../../new-customer-form';
 import styles from './NewCustomerScreen.module.css';
 
@@ -29,6 +33,25 @@ export type NewCustomerScreenProps = {
   nameError?: string;
   phone: string;
   onPhoneChange: (phone: string) => void;
+  /** HU-PAN-CLI-06: dirección e información en texto (se guardan solas, como el teléfono). */
+  address: string;
+  onAddressChange: (address: string) => void;
+  info: string;
+  onInfoChange: (info: string) => void;
+  /** La ubicación elegida en el mapa; `null` = sin ubicación. */
+  location: MapPoint | null;
+  /** «Abrir en Maps» (`mapsLinkFor`). */
+  mapsLink: string | null;
+  /** Teselas del mapa (SG-09). */
+  tiles: MapTiles | null;
+  /** «Elegir en mapa» y «Cambiar» abren el selector de ubicación. */
+  onChooseLocation?: () => void;
+  onRemoveLocation?: () => void;
+  /** «Imágenes» del cliente (HU-CLI-07). */
+  photos: readonly { photoId: string; thumbUrl: string }[];
+  onAddPhoto?: (file: File) => Promise<void> | void;
+  /** Por qué aún no se puede agregar una imagen (sin nombre o sin conexión). */
+  photoDisabledReason?: string | null;
   /** Libros vendidos al cliente (los agrega HU-PAN-CLI-04). */
   books: CustomerDetail['books'];
   copyHref: (copyId: string) => string;
@@ -134,6 +157,35 @@ export function NewCustomerScreen(props: NewCustomerScreenProps) {
         value={props.phone}
         onChange={props.onPhoneChange}
       />
+      <Field
+        label={t.info.address}
+        placeholder={t.info.addressPlaceholder}
+        value={props.address}
+        onChange={props.onAddressChange}
+      />
+      <CustomerLocationBlock
+        location={props.location}
+        mapsLink={props.mapsLink}
+        tiles={props.tiles}
+        isOnline={isOnline}
+        onChoose={props.onChooseLocation}
+        onRemove={props.onRemoveLocation}
+      />
+      <Field
+        kind="textarea"
+        label={t.info.info}
+        placeholder={t.info.infoPlaceholder}
+        value={props.info}
+        onChange={props.onInfoChange}
+      />
+      <div className={styles.images}>
+        <p className={styles.imagesLabel}>{t.info.images}</p>
+        <InfoPhotoStrip
+          photos={props.photos}
+          onAdd={props.onAddPhoto}
+          disabledReason={props.photoDisabledReason}
+        />
+      </div>
     </Island>
   );
 

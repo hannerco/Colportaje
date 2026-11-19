@@ -54,6 +54,11 @@ type DemoProps = {
   onSave?: () => void;
   onDiscard?: () => void;
   onLeave?: () => void;
+  /** HU-PAN-CLI-06: dirección, información y ubicación ya elegidas. */
+  initialAddress?: string;
+  initialInfo?: string;
+  initialLocation?: { lat: number; lng: number } | null;
+  onChooseLocation?: () => void;
 };
 
 /** La pantalla con su estado (como el contenedor) y un Aviso para el error al guardar. */
@@ -77,10 +82,17 @@ function DemoInner({
   onSave = () => {},
   onDiscard = () => {},
   onLeave = () => {},
+  initialAddress = '',
+  initialInfo = '',
+  initialLocation = null,
+  onChooseLocation = () => {},
 }: DemoProps) {
   const toast = useToast();
   const [name, setName] = useState(initialName);
   const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState(initialAddress);
+  const [info, setInfo] = useState(initialInfo);
+  const [location, setLocation] = useState(initialLocation);
   const [down, setDown] = useState<DownPaymentValue>({
     amount: null,
     method: 'transfer',
@@ -104,6 +116,19 @@ function DemoInner({
       onNameChange={setName}
       phone={phone}
       onPhoneChange={setPhone}
+      address={address}
+      onAddressChange={setAddress}
+      info={info}
+      onInfoChange={setInfo}
+      location={location}
+      mapsLink={
+        location ? `https://www.google.com/maps/search/?api=1&query=${location.lat},${location.lng}` : null
+      }
+      tiles={null}
+      onChooseLocation={onChooseLocation}
+      onRemoveLocation={() => setLocation(null)}
+      photos={[]}
+      onAddPhoto={() => {}}
       books={books}
       copyHref={(id) => `#ejemplar-${id}`}
       debt={debt}
@@ -153,7 +178,7 @@ function DemoInner({
 const meta = {
   title: 'Pantallas/Clientes/Crear cliente',
   component: Demo,
-  args: { onSave: fn(), onDiscard: fn(), onLeave: fn() },
+  args: { onSave: fn(), onDiscard: fn(), onLeave: fn(), onChooseLocation: fn() },
   parameters: {
     frameSize: 'screen',
     a11y: {
@@ -176,7 +201,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Nuevo cliente, ficha viva (HU-PAN-CLI-03): el cliente existe desde que tiene nombre y cada dato se guarda solo. Nombre, cuenta (saldo, abonado, deuda), información (teléfono), libros vendidos, cuota inicial (valor, fecha y medio) y el plan para el saldo con «Así quedan los abonos». «Guardar cliente» muestra el resumen y lleva a la ficha; «Descartar» (o salir) pregunta con lo que se perderá. Los libros se agregan con HU-PAN-CLI-04; información y dirección, con HU-PAN-CLI-06.',
+          'Nuevo cliente, ficha viva (HU-PAN-CLI-03): el cliente existe desde que tiene nombre y cada dato se guarda solo. Nombre, cuenta (saldo, abonado, deuda), información (teléfono), libros vendidos, cuota inicial (valor, fecha y medio) y el plan para el saldo con «Así quedan los abonos». «Guardar cliente» muestra el resumen y lleva a la ficha; «Descartar» (o salir) pregunta con lo que se perderá. Los libros se agregan con HU-PAN-CLI-04. Información y dirección (HU-PAN-CLI-06): dirección en texto, ubicación en el mapa («Elegir en mapa»; con ubicación, el mapa que carga al tocarlo, «Abrir en Maps», «Cambiar» y «Quitar»), información e imágenes.',
       },
     },
   },
@@ -392,6 +417,53 @@ export const SinConexion: Story = {
       expect(save.getAttribute('aria-disabled')).toBe('true');
       const note = frame.querySelector(`#${CSS.escape(save.getAttribute('aria-describedby')!)}`);
       expect(note?.textContent).toBe('Necesita conexión');
+    }
+  },
+};
+
+/** HU-PAN-CLI-06 · Información y dirección sin ubicación: «Elegir en mapa» abre el selector. */
+export const InformacionSinUbicacion: Story = {
+  name: 'Información y dirección · sin ubicación',
+  args: {
+    initialName: 'Natalia Andrea Cárdenas',
+    initialAddress: 'Cl. 48 #79-25, Laureles, Medellín',
+    initialInfo: 'Vive con la mamá; mejor visitarla los sábados en la mañana.',
+  },
+  play: async ({ canvasElement, args }) => {
+    for (const frame of frames(canvasElement)) {
+      expect(input(frame, 'Dirección')!.value).toBe('Cl. 48 #79-25, Laureles, Medellín');
+      expect(frame.textContent).toContain('Imágenes');
+      expect(frame.querySelector('a[href*="google.com/maps"]')).toBeNull();
+      await userEvent.click(button(frame, 'Elegir en mapa')!);
+    }
+    expect(args.onChooseLocation).toHaveBeenCalledTimes(frames(canvasElement).length);
+  },
+};
+
+/** CA-3: con ubicación, «Abrir en Maps» lleva las coordenadas (BR-CUS-08); «Quitar» vuelve a «Elegir en mapa». */
+export const InformacionConUbicacion: Story = {
+  name: 'Información y dirección · con ubicación',
+  args: {
+    initialName: 'Natalia Andrea Cárdenas',
+    initialAddress: 'Cl. 48 #79-25, Laureles, Medellín',
+    initialInfo: 'Vive con la mamá; mejor visitarla los sábados en la mañana.',
+    initialLocation: { lat: 6.2518, lng: -75.5915 },
+  },
+  play: async ({ canvasElement }) => {
+    for (const frame of frames(canvasElement)) {
+      const link = frame.querySelector<HTMLAnchorElement>('a[href*="google.com/maps"]')!;
+      expect(link.textContent).toContain('Abrir en Maps');
+      expect(link.href).toBe('https://www.google.com/maps/search/?api=1&query=6.2518,-75.5915');
+      expect(link.target).toBe('_blank');
+      // El mapa carga solo al tocarlo (ADR-0036).
+      await userEvent.click(button(frame, 'Ver mapa')!);
+      await waitFor(() =>
+        expect(
+          frame.querySelector('[role="img"][aria-label="Mapa de la ubicación del cliente"]'),
+        ).not.toBeNull(),
+      );
+      await userEvent.click(button(frame, 'Quitar')!);
+      expect(button(frame, 'Elegir en mapa')).toBeDefined();
     }
   },
 };

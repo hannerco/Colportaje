@@ -273,10 +273,11 @@ Piezas que las **pantallas** del lienzo dibujan pero que no están en la **bibli
 | Plan de abonos (frecuencia, valor, lista previa) | Crear cliente | PAN-CLI-03 (hecho: pieza `PaymentPlanFields`) |
 | Botones segmentados (Medio de pago, Frecuencia) | Crear cliente | PAN-CLI-03 (se usó la Selección radio de la biblioteca) |
 | **Factura en la ficha nueva** (fotos, N.º y fecha) — dibujada, **sin HU de pantalla** | Crear cliente | Ninguna: decidir dónde va |
-| Mapa y selector de ubicación | Información y dirección; Elegir ubicación | PAN-CLI-06 |
+| Mapa y selector de ubicación | Información y dirección; Elegir ubicación | PAN-CLI-06 (hecho: piezas `MapCanvas`, `MapPreview`, `LocationPicker` y `CustomerLocationBlock`; proveedor de teselas pendiente, SG-09) |
+| Íconos de mapa, abrir afuera, cámara, recentrar y GPS tachado | Información y dirección; Elegir ubicación | PAN-CLI-06 (se usaron los de la biblioteca) |
 | Fila que se desliza (móvil) | Dinero (Cobrar / Más plazo); Por resolver | PAN-DIN-02, PAN-INV-01 |
 | Botón de título con imagen y contador; cantidad | Agregar al inventario | PAN-INV-04 |
-| Fotos (miniaturas, agregar, quitar) | Recibos del Abibono; facturas; fotos de información | PAN-DIN-04, PAN-CLI-02 |
+| Fotos (miniaturas, agregar, quitar) | Recibos del Abibono; facturas; fotos de información | PAN-DIN-04, PAN-CLI-02, PAN-CLI-06 (hecho para información: pieza `InfoPhotoStrip`, miniaturas y agregar) |
 | Tipo «abibono» en la Fila de lista | Lista de Abibonos | PAN-DIN-03 (se pide antes de programar) |
 | Barra de avance «Abonado el N %» (pieza `CustomerAccountSummary`) | Ficha de cliente | PAN-CLI-02 |
 | Isla de identidad sin Pastilla (prospecto) y con contenido a todo el ancho (`details`) | Ficha de cliente | PAN-CLI-02 (ya en `ui/`: subirlo a Lib-Plantilla-Detalle) |
@@ -323,7 +324,8 @@ Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesió
 | HU-PAN-CLI-03 | Terminada (2026-11-19); libros, dirección e información llegan con CLI-04 y CLI-06 | `will-dev` |
 | HU-PAN-CLI-04 | Terminada (2026-11-19); devolver con motivo espera FC-06 | `will-dev` |
 | HU-PAN-CLI-05 | Terminada (2026-11-19); registrar, programar, editar y cancelar esperan FC-09 a FC-12 | `will-dev` |
-| HU-PAN-CLI-06, HU-PAN-INV-01 a 05, HU-PAN-DIN-01 a 05 | Pendientes | — |
+| HU-PAN-CLI-06 | Programada (2026-11-19); no se da por terminada hasta que el dueño decida el proveedor del mapa y la pruebe en su iPhone (SG-09) | `will-dev` |
+| HU-PAN-INV-01 a 05, HU-PAN-DIN-01 a 05 | Pendientes | — |
 
 **Flujo de trabajo del front:** igual que el back, en `will-dev`, un *commit* por HU. Antes de cada *commit*: `pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm build-storybook`.
 

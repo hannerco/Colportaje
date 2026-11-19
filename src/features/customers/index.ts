@@ -131,3 +131,21 @@ export type { PaymentPlanValue } from './components/PaymentPlanFields';
 export { planPreview, type PlanPreview } from './new-customer-form';
 export { useLiveWrite } from './use-live-write';
 export { AddBookSheet, type AddBookSheetProps, type ChosenBook } from './screens/AddBookSheet';
+// HU-PAN-CLI-06: dirección y ubicación.
+export { LocationPicker, type LocationPickerProps } from './components/LocationPicker';
+export { CustomerLocationBlock, type CustomerLocationBlockProps } from './components/CustomerLocationBlock';
+export { MapPreview, type MapPreviewProps } from './components/MapPreview';
+export { MapCanvas, type MapView } from './components/MapCanvas';
+export { InfoPhotoStrip, type InfoPhotoStripProps } from './components/InfoPhotoStrip';
+export {
+  PICKER_POINT_ZOOM,
+  formatCoordinates,
+  pickerAccuracy,
+  pickerPoint,
+  pickerStatus,
+  roundCoordinate,
+  type GpsState,
+  type PickerStatus,
+} from './location-picker-state';
+export { useGeolocation } from './use-geolocation';
+export { mapTiles, type MapTiles } from './map-tiles';

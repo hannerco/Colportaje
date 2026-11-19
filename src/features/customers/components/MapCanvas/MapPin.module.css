@@ -1,0 +1,27 @@
+.pin,
+.shadow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 500; /* encima de las capas de Leaflet (400) y debajo de sus controles (800) */
+  pointer-events: none;
+}
+
+.pin {
+  width: var(--size-map-pin-width);
+  height: var(--size-map-pin-height);
+  color: var(--color-accent);
+  transform: translate(-50%, -100%);
+}
+
+.dot {
+  fill: var(--color-on-accent);
+}
+
+.shadow {
+  width: var(--size-map-pin-shadow);
+  height: var(--space-1);
+  border-radius: var(--radius-pill);
+  background: var(--color-scrim);
+  transform: translate(-50%, -50%);
+}

@@ -19,7 +19,10 @@ import { EmptyState } from '@/ui/organisms/EmptyState';
 import { Island } from '@/ui/organisms/Island';
 import { DetailTemplate } from '@/ui/templates/DetailTemplate';
 import { CustomerAccountSummary } from '../../components/CustomerAccountSummary';
+import { CustomerLocationBlock } from '../../components/CustomerLocationBlock';
+import { InfoPhotoStrip } from '../../components/InfoPhotoStrip';
 import { AddBookButton, SoldBookList } from '../../components/SoldBookList';
+import type { MapTiles } from '../../map-tiles';
 import type { CustomerDetailView } from '../../use-cases/customer-detail';
 import styles from './CustomerDetailScreen.module.css';
 
@@ -52,6 +55,13 @@ export type CustomerDetailScreenProps = {
    * función, la fecha no es botón.
    */
   onReschedule?: (paymentId: string, date: LocalDate, confirmed: boolean) => Promise<void>;
+  /** HU-PAN-CLI-06: teselas del mapa (SG-09). */
+  tiles?: MapTiles | null;
+  /** «Elegir en mapa» y «Cambiar» abren el selector. Sin función (archivado) no hay botones de ubicación. */
+  onChooseLocation?: () => void;
+  onRemoveLocation?: () => void;
+  /** «Agregar imagen» (HU-CLI-07). Sin función no hay botón. */
+  onAddPhoto?: (file: File) => Promise<void> | void;
 };
 
 const t = copy.customers.detail;
@@ -105,6 +115,10 @@ export function CustomerDetailScreen({
   onAddBook,
   today,
   onReschedule,
+  tiles = null,
+  onChooseLocation,
+  onRemoveLocation,
+  onAddPhoto,
 }: CustomerDetailScreenProps) {
   const [archiveOpen, setArchiveOpen] = useState(false);
   const [canceledOpen, setCanceledOpen] = useState(false);
@@ -233,40 +247,59 @@ export function CustomerDetailScreen({
           )}
         </Island>
         <Island title={t.data.title} icon="person">
+          {(detail.contact || detail.address) && (
+            <DataList>
+              {detail.contact && (
+                <DataRow label={t.data.phone} value={detail.contact.phone} divider={false} />
+              )}
+              {detail.address && (
+                <DataRow
+                  label={t.data.address}
+                  divider={Boolean(detail.contact)}
+                  value={
+                    <span className={styles.address}>
+                      {detail.address}
+                      {/* Con ubicación, «Abrir en Maps» va debajo del mapa. */}
+                      {detail.mapsLink && !detail.location && (
+                        <a
+                          className={styles.mapsLink}
+                          href={detail.mapsLink}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          <Icon name="location" size={16} tone="current" />
+                          {t.data.openMaps}
+                        </a>
+                      )}
+                    </span>
+                  }
+                />
+              )}
+            </DataList>
+          )}
+          {/* HU-PAN-CLI-06: mapa, «Abrir en Maps», «Cambiar» y «Quitar»; sin ubicación, «Elegir en mapa». */}
+          <CustomerLocationBlock
+            location={
+              detail.location ? { lat: detail.location.latitude, lng: detail.location.longitude } : null
+            }
+            mapsLink={detail.mapsLink}
+            tiles={tiles}
+            isOnline={isOnline}
+            onChoose={detail.archived ? undefined : onChooseLocation}
+            onRemove={detail.archived ? undefined : onRemoveLocation}
+          />
           <DataList>
-            {detail.contact && <DataRow label={t.data.phone} value={detail.contact.phone} divider={false} />}
-            {detail.address && (
-              <DataRow
-                label={t.data.address}
-                value={
-                  <span className={styles.address}>
-                    {detail.address}
-                    {detail.mapsLink && (
-                      <a className={styles.mapsLink} href={detail.mapsLink} target="_blank" rel="noreferrer">
-                        <Icon name="location" size={16} tone="current" />
-                        {t.data.openMaps}
-                      </a>
-                    )}
-                  </span>
-                }
-              />
-            )}
-            {detail.info && <DataRow label={t.data.info} value={detail.info} />}
-            {detail.infoPhotos.length > 0 && (
+            {detail.info && <DataRow label={t.data.info} value={detail.info} divider={false} />}
+            {(detail.infoPhotos.length > 0 || (onAddPhoto && !detail.archived)) && (
               <DataRow
                 label={t.data.images}
+                divider={Boolean(detail.info)}
                 value={
-                  <span className={styles.photos}>
-                    {detail.infoPhotos.map((photo, i) => (
-                      // eslint-disable-next-line @next/next/no-img-element -- miniatura firmada de Storage, ya en WebP.
-                      <img
-                        key={photo.photoId}
-                        className={styles.photo}
-                        src={photo.thumbUrl}
-                        alt={t.data.image(i + 1)}
-                      />
-                    ))}
-                  </span>
+                  <InfoPhotoStrip
+                    photos={detail.infoPhotos}
+                    onAdd={detail.archived ? undefined : onAddPhoto}
+                    disabledReason={isOnline ? null : copy.ui.empty.needsConnection}
+                  />
                 }
               />
             )}
@@ -300,10 +333,9 @@ export function CustomerDetailScreen({
               label={t.data.since}
               value={formatDate(detail.customerSince)}
               divider={Boolean(
-                detail.contact ||
-                detail.address ||
                 detail.info ||
                 detail.infoPhotos.length ||
+                (onAddPhoto && !detail.archived) ||
                 detail.invoices.length,
               )}
             />

@@ -216,3 +216,17 @@
   padding: 0 var(--space-4);
   background: var(--color-page-mobile);
 }
+
+/* «Imágenes» (HU-PAN-CLI-06): etiqueta como la de un campo. */
+.images {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.imagesLabel {
+  margin: 0;
+  color: var(--color-text);
+  font-size: var(--text-secondary);
+  font-weight: var(--weight-medium);
+}

@@ -19,6 +19,9 @@ const meta = {
     today: localDate('2026-11-17'),
     onReschedule: fn(async () => {}),
     onRetry: fn(),
+    onChooseLocation: fn(),
+    onRemoveLocation: fn(),
+    onAddPhoto: fn(),
   },
   parameters: {
     frameSize: 'screen',
@@ -323,6 +326,51 @@ export const SinConexionSinPlazo: Story = {
   play: async ({ canvasElement }) => {
     for (const frame of frames(canvasElement))
       expect(frame.querySelector('button[aria-label^="Cambiar fecha"]')).toBeNull();
+  },
+};
+
+/** HU-PAN-CLI-06: con ubicación, el mapa (carga al tocar), «Abrir en Maps» con las coordenadas, «Cambiar» y «Quitar». */
+export const ConUbicacion: Story = {
+  name: 'Con ubicación',
+  args: {
+    detail: aCustomerDetailView({
+      address: 'Cra. 43 #52-18, Boston, Medellín',
+      location: { latitude: 6.2518, longitude: -75.5915, accuracyMeters: 12, isApproximate: false },
+      mapsLink: 'https://www.google.com/maps/search/?api=1&query=6.2518,-75.5915',
+    }),
+  },
+  play: async ({ canvasElement, args }) => {
+    for (const frame of frames(canvasElement)) {
+      const links = [...frame.querySelectorAll<HTMLAnchorElement>('a[href*="google.com/maps"]')];
+      // Con ubicación, «Abrir en Maps» va solo debajo del mapa (no repetido en la dirección).
+      expect(links).toHaveLength(1);
+      expect(links[0]!.href).toBe('https://www.google.com/maps/search/?api=1&query=6.2518,-75.5915');
+      await userEvent.click(button(frame, 'Cambiar')!);
+      await userEvent.click(button(frame, 'Quitar')!);
+    }
+    expect(args.onChooseLocation).toHaveBeenCalled();
+    expect(args.onRemoveLocation).toHaveBeenCalled();
+  },
+};
+
+/** HU-PAN-CLI-06: sin ubicación, «Elegir en mapa»; la dirección en texto sigue abriendo Maps (BR-CUS-08). */
+export const SinUbicacion: Story = {
+  name: 'Sin ubicación',
+  args: {
+    detail: aCustomerDetailView({
+      address: 'Cl. 48 #79-25, Laureles, Medellín',
+      location: null,
+      mapsLink:
+        'https://www.google.com/maps/search/?api=1&query=Cl.%2048%20%2379-25%2C%20Laureles%2C%20Medell%C3%ADn',
+    }),
+  },
+  play: async ({ canvasElement, args }) => {
+    for (const frame of frames(canvasElement)) {
+      expect(frame.querySelector('a[href*="google.com/maps"]')).not.toBeNull();
+      await userEvent.click(button(frame, 'Elegir en mapa')!);
+      expect(button(frame, 'Agregar imagen')).toBeDefined();
+    }
+    expect(args.onChooseLocation).toHaveBeenCalled();
   },
 };
 

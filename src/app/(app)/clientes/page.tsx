@@ -46,12 +46,15 @@ function CustomersRoute() {
     [pathname],
   );
 
-  // R3: la vista se escribe en la URL sin agregar pasos al historial (escribir en el buscador no llena «atrás»).
+  // R3: la vista se escribe en la URL sin agregar pasos al historial (escribir en el buscador no llena «atrás»). Con
+  // `history.replaceState` (Next lo sincroniza con `useSearchParams`) no se pide la página al servidor: sin conexión,
+  // `router.replace` fallaba y Next caía a una navegación completa que terminaba en la página de error del navegador.
+  const replaceUrl = useCallback((url: string) => window.history.replaceState(null, '', url), []);
   const onParamsChange = useCallback(
-    (next: CustomerListParams) => router.replace(urlFor(next, selectedId), { scroll: false }),
-    [router, urlFor, selectedId],
+    (next: CustomerListParams) => replaceUrl(urlFor(next, selectedId)),
+    [replaceUrl, urlFor, selectedId],
   );
-  const select = (id: string | undefined) => router.replace(urlFor(params, id), { scroll: false });
+  const select = (id: string | undefined) => replaceUrl(urlFor(params, id));
 
   const rows = list.data?.rows ?? [];
   const index = rows.findIndex((row) => row.id === selectedId);
