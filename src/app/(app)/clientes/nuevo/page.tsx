@@ -13,6 +13,7 @@ import {
   useDiscardNewCustomer,
   useDiscardSummary,
   useLiveWrite,
+  useRemoveCopyDuringCreation,
   useUpdateCustomer,
   type DownPaymentValue,
   type PaymentPlanValue,
@@ -24,6 +25,7 @@ import { systemClock } from '@/lib/clock';
 import { newId } from '@/lib/ids';
 import { useToast } from '@/ui/molecules/Toast';
 import { usePlatform } from '@/ui/platform';
+import { AddBookContainer } from '../add-book-container';
 
 /**
  * Contenedor de Nuevo cliente, ficha viva (HU-PAN-CLI-03, ADR-0038): el cliente se crea al escribir el nombre (o
@@ -55,6 +57,7 @@ function NewCustomerRoute() {
     firstDueDate: null,
   });
   const [discardOpen, setDiscardOpen] = useState(false);
+  const [addingBook, setAddingBook] = useState(false);
   const [leaveTo, setLeaveTo] = useState<string>(ROUTES.customers);
 
   const { createCustomer } = useCreateCustomer();
@@ -62,6 +65,7 @@ function NewCustomerRoute() {
   const { setCreationDownPayment } = useSetCreationDownPayment();
   const { applyPaymentPlan } = useApplyPaymentPlan();
   const { discardNewCustomer } = useDiscardNewCustomer();
+  const { removeCopyDuringCreation } = useRemoveCopyDuringCreation();
   const detail = useCustomerDetail(created ? id : null);
   const summary = useDiscardSummary(discardOpen && created ? id : null);
 
@@ -184,6 +188,11 @@ function NewCustomerRoute() {
       onPhoneChange={setPhone}
       books={detail.data?.books ?? []}
       copyHref={ROUTES.copy}
+      onAddBook={created ? () => setAddingBook(true) : undefined}
+      onRemoveBook={async (copyId) => {
+        const result = await removeCopyDuringCreation(copyId);
+        if (!result.ok) showError(result.error);
+      }}
       debt={debt}
       downPayment={down}
       onDownPaymentChange={(patch) => setDown((current) => ({ ...current, ...patch }))}
@@ -209,9 +218,21 @@ function NewCustomerRoute() {
       onLeave={() => router.push(ROUTES.customers)}
     />
   );
-  if (mobile) return screen;
+  const sheet = addingBook && created && (
+    <AddBookContainer customerId={id} books={detail.data?.books ?? []} onClose={() => setAddingBook(false)} />
+  );
+  if (mobile)
+    return (
+      <>
+        {screen}
+        {sheet}
+      </>
+    );
   return (
-    <ShellScreen nav={{ ...shell.nav, onNavigate: leave, onNewCustomer: undefined }}>{screen}</ShellScreen>
+    <ShellScreen nav={{ ...shell.nav, onNavigate: leave, onNewCustomer: undefined }}>
+      {screen}
+      {sheet}
+    </ShellScreen>
   );
 }
 

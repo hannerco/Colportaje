@@ -33,7 +33,12 @@ Agregar ejemplares nuevos al inventario (HU-PAN-INV-04).
 - **CA-3.** **Dado** un cliente archivado, **entonces** «Agregar libro» no está disponible y se explica que primero hay que restaurarlo.
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-19 (al programarla; lienzo leído en `CrearV5Libro` y `CrearV5MovilLibro`):**
+  - **Contenedor:** Ventana de detalle centrada en escritorio y hoja inferior en móvil, como dice la HU. El lienzo de escritorio lo dibuja como un panel debajo del buscador de la sección (la biblioteca no tiene ese panel; manda la biblioteca).
+  - **Contenido del lienzo:** «Ejemplares en físico», buscador «Buscar libro o número», «N seleccionados» (con Quitar) y «Para seleccionar». Tocar uno lo vende de una vez (ficha viva).
+  - **Precio acordado y fecha de venta** van en cada seleccionado (el lienzo no los dibuja; los pide la HU): Campo moneda con «antes $X» si cambia y Campo fecha «Vendido el» (HU-CLI-13 ya está en el back). Se escriben solos un momento después.
+  - **Quitar** solo durante la creación y para los recién agregados en la hoja (sin motivo, HU-CLI-09 R4). **Devolver con motivo** a un cliente guardado (FC-06) no está dibujado: queda fuera.
+  - En la ficha, la isla Libros se ve también en un prospecto sin libros, para poder agregarle uno.
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13.

@@ -12,6 +12,8 @@ import { localSupabase } from './local-supabase';
 
 export const STORAGE_STATE = 'tests/e2e/.auth/state.json';
 export const E2E_USER_NAME = 'Prueba E2E';
+/** «Salud y bienestar en familia» ($75.000) del seed. */
+export const E2E_TITLE_ID = '00000000-0000-4000-8000-000000000101';
 export const E2E_CUSTOMERS = [
   { name: 'María Gómez', phone: '301 557 9032' },
   { name: 'Hernán Pérez', phone: '312 000 1111' },
@@ -50,6 +52,18 @@ export default async function globalSetup() {
     .from('customer')
     .insert(E2E_CUSTOMERS.map((customer) => ({ id: randomUUID(), ...customer })));
   if (seedError) throw new Error(`No se pudieron crear los clientes de prueba: ${seedError.message}`);
+
+  // Ejemplares en físico (HU-PAN-CLI-04): 3 de «Salud y bienestar en familia» ($75.000, título del seed), recibidos
+  // hace 10 días, con la misma función que usa Agregar al inventario.
+  const received = new Date(Date.now() - 10 * 86_400_000).toLocaleDateString('en-CA', {
+    timeZone: 'America/Bogota',
+  });
+  const { error: copiesError } = await client.rpc('add_copies', {
+    p_batch_id: randomUUID(),
+    p_received_at: received,
+    p_lines: [{ titleId: E2E_TITLE_ID, copyIds: [randomUUID(), randomUUID(), randomUUID()] }],
+  });
+  if (copiesError) throw new Error(`No se pudieron crear los ejemplares de prueba: ${copiesError.message}`);
 
   const state = {
     cookies: cookies.map(({ name, value }) => ({

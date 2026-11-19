@@ -15,6 +15,7 @@ const meta = {
     onOpenArchive: fn(),
     onArchive: fn(async () => {}),
     onRestore: fn(async () => {}),
+    onAddBook: fn(),
     onRetry: fn(),
   },
   parameters: {
@@ -158,7 +159,7 @@ export const Prospecto: Story = {
   play: async ({ canvasElement }) => {
     for (const frame of frames(canvasElement)) {
       expect(frame.textContent).toContain('Aún no tiene libro');
-      expect(frame.textContent).not.toContain('Libros');
+      expect(button(frame, 'Agregar libro del inventario')).toBeDefined();
     }
   },
 };
@@ -237,6 +238,59 @@ export const ArchivarConLibros: Story = {
       expect(frame.querySelector('[role="alertdialog"]')?.textContent).toContain('Tiene 3 libros vendidos'),
     );
     expect(args.onArchive).not.toHaveBeenCalled();
+  },
+};
+
+/** HU-PAN-CLI-04 CA-2: de vuelta en la ficha, el libro con $93.000 y $98.000 tachado; la deuda lo incluye. */
+export const ConLibroDePrecioCambiado: Story = {
+  name: 'Con libro de precio cambiado',
+  args: {
+    detail: aCustomerDetailView({
+      books: [
+        {
+          copyId: 'copy-6',
+          titleName: 'Psiconutrición',
+          number: 6,
+          agreedPrice: 93000,
+          publicPriceSnapshot: 98000,
+          priceDelta: -5000,
+          soldAt: new Date('2026-11-17T17:00:00.000Z'),
+        },
+      ],
+      account: aCustomerAccount({
+        debt: 93000,
+        balance: 93000,
+        paidTotal: 0,
+        paidPct: 0,
+        unscheduled: 93000,
+        standing: 'current',
+        hasOverdue: false,
+      }),
+      payments: [],
+      canceledPayments: [],
+    }),
+  },
+  play: async ({ canvasElement }) => {
+    for (const frame of frames(canvasElement)) {
+      expect(frame.textContent).toContain('$93.000');
+      expect(frame.querySelector('s')?.textContent).toBe('antes $98.000');
+    }
+  },
+};
+
+/** HU-PAN-CLI-04 CA-3: a un archivado no se le agregan libros; se explica que primero hay que restaurarlo. */
+export const ArchivadoSinAgregarLibro: Story = {
+  name: 'Archivado: sin agregar libro',
+  args: { detail: aCustomerDetailView({ archived: true }) },
+  play: async ({ canvasElement, args }) => {
+    for (const frame of frames(canvasElement)) {
+      const add = button(frame, 'Agregar libro del inventario')!;
+      expect(add.getAttribute('aria-disabled')).toBe('true');
+      const note = frame.querySelector(`#${CSS.escape(add.getAttribute('aria-describedby')!)}`);
+      expect(note?.textContent).toBe('Restaura el cliente para agregarle libros.');
+      await userEvent.click(add, { pointerEventsCheck: 0 });
+    }
+    expect(args.onAddBook).not.toHaveBeenCalled();
   },
 };
 

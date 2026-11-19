@@ -6,7 +6,6 @@ import type { ArchivePreview } from '@/domain/customer-archive';
 import type { PaymentRow } from '@/domain/customer-detail';
 import { formatCOP } from '@/domain/money';
 import { formatDate, type LocalDate } from '@/domain/time';
-import { Avatar } from '@/ui/atoms/Avatar';
 import { Button } from '@/ui/atoms/Button';
 import { StatusPill, type PillStatus } from '@/ui/atoms/StatusPill';
 import { Icon } from '@/ui/icons';
@@ -19,6 +18,7 @@ import { EmptyState } from '@/ui/organisms/EmptyState';
 import { Island } from '@/ui/organisms/Island';
 import { DetailTemplate } from '@/ui/templates/DetailTemplate';
 import { CustomerAccountSummary } from '../../components/CustomerAccountSummary';
+import { AddBookButton, SoldBookList } from '../../components/SoldBookList';
 import type { CustomerDetailView } from '../../use-cases/customer-detail';
 import styles from './CustomerDetailScreen.module.css';
 
@@ -42,6 +42,8 @@ export type CustomerDetailScreenProps = {
   /** Archiva; el diálogo se cierra al terminar. */
   onArchive: () => Promise<void>;
   onRestore: () => Promise<void>;
+  /** «Agregar libro del inventario» (HU-PAN-CLI-04); un archivado no puede (CA-3, I-15). Sin función no hay botón. */
+  onAddBook?: () => void;
 };
 
 const t = copy.customers.detail;
@@ -92,6 +94,7 @@ export function CustomerDetailScreen({
   onOpenArchive,
   onArchive,
   onRestore,
+  onAddBook,
 }: CustomerDetailScreenProps) {
   const [archiveOpen, setArchiveOpen] = useState(false);
   const [canceledOpen, setCanceledOpen] = useState(false);
@@ -177,24 +180,22 @@ export function CustomerDetailScreen({
             : {}),
         }}
       >
-        {detail.books.length > 0 && (
+        {/* Prospecto sin libros: la isla se ve igual, para poder agregarle uno (HU-PAN-CLI-04). */}
+        {(detail.books.length > 0 || onAddBook) && (
           <Island title={t.books.title} icon="books">
-            <ul className={styles.list}>
-              {detail.books.map((book) => (
-                <li key={book.copyId}>
-                  <a className={styles.book} href={copyHref(book.copyId)}>
-                    <Avatar kind="cover" size="sm" decorative />
-                    <span className={styles.bookText}>
-                      <span className={styles.bookTitle}>
-                        <span className={styles.ellipsis}>{book.titleName}</span>
-                        <span className={styles.muted}>#{book.number}</span>
-                      </span>
-                      <span className={styles.secondary}>{formatCOP(book.agreedPrice)}</span>
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <SoldBookList books={detail.books} copyHref={copyHref} />
+            {onAddBook && (
+              <AddBookButton
+                disabledReason={
+                  detail.archived
+                    ? copy.customers.addBook.archived
+                    : !isOnline
+                      ? copy.ui.empty.needsConnection
+                      : null
+                }
+                onClick={onAddBook}
+              />
+            )}
           </Island>
         )}
         <Island title={t.payments.title} icon="money">

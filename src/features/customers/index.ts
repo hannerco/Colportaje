@@ -130,3 +130,4 @@ export {
 export type { PaymentPlanValue } from './components/PaymentPlanFields';
 export { planPreview, type PlanPreview } from './new-customer-form';
 export { useLiveWrite } from './use-live-write';
+export { AddBookSheet, type AddBookSheetProps, type ChosenBook } from './screens/AddBookSheet';

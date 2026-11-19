@@ -7,7 +7,6 @@ import { formatCOP, type COP } from '@/domain/money';
 import type { PayMethod } from '@/domain/payment';
 import type { LocalDate } from '@/domain/time';
 import type { DiscardSummary } from '@/repositories';
-import { Avatar } from '@/ui/atoms/Avatar';
 import { Button } from '@/ui/atoms/Button';
 import { Choice, ChoiceGroup } from '@/ui/atoms/Choice';
 import { Field } from '@/ui/atoms/Field';
@@ -17,6 +16,7 @@ import { Island } from '@/ui/organisms/Island';
 import { usePlatform } from '@/ui/platform';
 import { CustomerAccountSummary } from '../../components/CustomerAccountSummary';
 import { PaymentPlanFields, type PaymentPlanValue } from '../../components/PaymentPlanFields';
+import { AddBookButton, SoldBookList } from '../../components/SoldBookList';
 import type { PlanPreview } from '../../new-customer-form';
 import styles from './NewCustomerScreen.module.css';
 
@@ -32,6 +32,10 @@ export type NewCustomerScreenProps = {
   /** Libros vendidos al cliente (los agrega HU-PAN-CLI-04). */
   books: CustomerDetail['books'];
   copyHref: (copyId: string) => string;
+  /** «Agregar libro del inventario» (HU-PAN-CLI-04). */
+  onAddBook?: () => void;
+  /** «Quitar» un libro durante la creación, sin motivo (HU-CLI-09 R4). */
+  onRemoveBook?: (copyId: string) => void;
   /** Deuda total (suma de los libros). */
   debt: COP;
   downPayment: DownPaymentValue;
@@ -131,23 +135,17 @@ export function NewCustomerScreen(props: NewCustomerScreenProps) {
 
   const bookList = (
     <Island title={t.books.title} icon="books">
-      {books.length > 0 && (
-        <ul className={styles.books}>
-          {books.map((book) => (
-            <li key={book.copyId}>
-              <a className={styles.book} href={props.copyHref(book.copyId)}>
-                <Avatar kind="cover" size="sm" decorative />
-                <span className={styles.bookText}>
-                  <span className={styles.bookTitle}>
-                    <span className={styles.ellipsis}>{book.titleName}</span>
-                    <span className={styles.muted}>#{book.number}</span>
-                  </span>
-                  <span className={styles.secondary}>{formatCOP(book.agreedPrice)}</span>
-                </span>
-              </a>
-            </li>
-          ))}
-        </ul>
+      <SoldBookList
+        books={books}
+        copyHref={props.copyHref}
+        onRemove={props.onRemoveBook}
+        removeDisabled={!isOnline}
+      />
+      {props.onAddBook && (
+        <AddBookButton
+          onClick={props.onAddBook}
+          disabledReason={!isOnline ? copy.ui.empty.needsConnection : null}
+        />
       )}
       <p className={styles.total}>
         <span>{t.books.total}</span>

@@ -240,6 +240,28 @@ export const copy = {
         restored: 'Cliente restaurado',
       },
     },
+    /** Agregar libro (HU-PAN-CLI-04, diseño «5 · Agregar libro»). */
+    addBook: {
+      open: 'Agregar libro del inventario',
+      title: 'Ejemplares en físico',
+      search: 'Buscar libro o número',
+      selected: (n: number) => (n === 1 ? '1 seleccionado' : `${n} seleccionados`),
+      available: 'Para seleccionar',
+      select: (title: string, number: number) => `Seleccionar ${title} #${number}`,
+      remove: (title: string, number: number) => `Quitar ${title} #${number}`,
+      price: 'Precio acordado',
+      /** El precio público, tachado, cuando el acordado es otro (BR-PRC). */
+      publicPrice: (price: string) => `antes ${price}`,
+      soldOn: 'Vendido el',
+      empty: {
+        title: 'No tienes ejemplares en físico',
+        text: 'Agrega libros al inventario para poder venderlos.',
+        action: 'Agregar al inventario',
+      },
+      noResults: (query: string) => `Ningún ejemplar coincide con «${query}»`,
+      /** CA-3 (I-15): un archivado no recibe libros. */
+      archived: 'Restaura el cliente para agregarle libros.',
+    },
     /** Nuevo cliente, ficha viva (HU-PAN-CLI-03, diseño «3 · Crear cliente» y «4 · vacía»). */
     create: {
       title: 'Nuevo cliente',
