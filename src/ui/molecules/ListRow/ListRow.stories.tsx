@@ -416,6 +416,14 @@ export const TablaCompleta: Story = {
 /** Todas las variantes en claro y oscuro × escritorio y móvil. */
 export const Matriz: Story = {
   parameters: { frames: 'matrix' },
+  // Dentro de un grid, la lista móvil no se ensancha: el monto y el estado quedan dentro del marco.
+  play: async ({ canvasElement }) => {
+    for (const frame of frames(canvasElement).filter(isMobile)) {
+      const scope = frame.querySelector<HTMLElement>('[data-ui-scope]')!.getBoundingClientRect();
+      for (const side of frame.querySelectorAll<HTMLElement>('li > a > :last-child'))
+        await expect(side.getBoundingClientRect().right).toBeLessThanOrEqual(scope.right);
+    }
+  },
   render: () => (
     <div style={{ display: 'grid', gap: 'var(--space-4)' }}>
       <ListTable kind="customer" aria-label="Clientes">
