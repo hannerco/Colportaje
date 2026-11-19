@@ -464,6 +464,59 @@ export const copy = {
       offline: { title: 'Sin conexión', text: 'Puedes consultar lo guardado, pero no registrar.' },
       error: { title: 'No se pudo cargar', text: 'Inténtalo otra vez.' },
     },
+    /** Agregar al inventario (HU-PAN-INV-04, diseño «4 · Agregar al inventario», BR-COPY-02). */
+    addCopies: {
+      title: 'Agregar al inventario',
+      cancel: 'Cancelar',
+      discard: 'Descartar',
+      done: 'Listo',
+      search: 'Buscar libro',
+      categories: { cultural: 'Culturales', religious: 'Religiosos', minibook: 'Minibooks' },
+      categoriesLabel: 'Categoría',
+      empty: {
+        title: 'No hay libros en el catálogo',
+        text: 'Cuando el catálogo tenga libros activos, aparecen aquí.',
+      },
+      noResults: (query: string) => `Ningún libro coincide con «${query}»`,
+      /** Botón de un título: suma un ejemplar. */
+      addOne: (name: string) => `Agregar un ejemplar de ${name}`,
+      removeOne: (name: string) => `Quitar uno de ${name}`,
+      /** El botón de un título que ya está en el lote: dice cuántos lleva. */
+      addAnother: (name: string, quantity: number) =>
+        `Agregar un ejemplar de ${name}, ${quantity} en el lote`,
+      quantityGroup: (name: string) => `Cantidad de ${name}`,
+      /** Móvil: la cantidad es un botón que, al tocarlo, deja escribirla. */
+      quantityButton: (quantity: number, name: string) =>
+        `${quantity} de ${name}; tocar para escribir la cantidad`,
+      quantityInput: (name: string) => `Cantidad total de ${name}`,
+      /** Barra de abajo en escritorio: «3 por agregar · recibidos hoy». */
+      pending: 'por agregar',
+      receivedWhen: (label: string) => `recibidos ${label}`,
+      addN: (n: number) => `Agregar ${n}`,
+      date: {
+        label: (value: string) => `Fecha de recibido: ${value}`,
+        title: 'Fecha de recibido',
+        today: 'Hoy',
+        yesterday: 'Ayer',
+        day_before: 'Anteayer',
+        other: 'Otra fecha…',
+        pick: 'Elegir fecha',
+        save: 'Guardar fecha',
+        cancel: 'Cancelar',
+      },
+      summary: {
+        title: (n: number) => (n === 1 ? 'Vas a agregar 1 ejemplar' : `Vas a agregar ${n} ejemplares`),
+        received: (date: string) => `Recibidos ${date}`,
+        categories: 'Por categoría',
+        total: 'Total',
+        keepAdding: 'Seguir agregando',
+        /** Una caja por categoría con su cantidad. */
+        tile: (n: number, name: string) => `${n} ${name}`,
+      },
+      result: {
+        added: (n: number) => (n === 1 ? '1 ejemplar agregado' : `${n} ejemplares agregados`),
+      },
+    },
     /** Detalle de un ejemplar (HU-PAN-INV-03, diseño «3 · Ejemplar»). */
     detail: {
       title: (titleName: string, number: number) => `${titleName} #${number}`,

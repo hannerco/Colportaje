@@ -87,3 +87,7 @@ export { CopiesListScreen, type CopiesListScreenProps } from './screens/CopiesLi
 export { copiesListParamsFromUrl, copiesListParamsToUrl } from './copies-list-url';
 // HU-PAN-INV-03: detalle de un ejemplar.
 export { CopyDetailScreen, historyText, type CopyDetailScreenProps } from './screens/CopyDetailScreen';
+// HU-PAN-INV-04: agregar al inventario.
+export { AddCopiesScreen, type AddCopiesScreenProps } from './screens/AddCopiesScreen';
+export { TitleTile, type TitleTileProps } from './components/TitleTile';
+export { QuantityControl, type QuantityControlProps } from './components/QuantityControl';

@@ -47,5 +47,12 @@ test('CA-2: eliminar un ejemplar en físico con nota y «Deshacer» lo devuelve'
   await page.getByRole('status').getByRole('button', { name: 'Deshacer' }).click();
 
   await page.goto('/inventario/ejemplares?vista=en-fisico');
-  await expect(list(page).getByRole('link', { name: /Salud y bienestar en familia/ })).toHaveCount(before);
+  // Otro proyecto puede agregar ejemplares a la vez: vuelve al menos lo que había.
+  await expect
+    .poll(() =>
+      list(page)
+        .getByRole('link', { name: /Salud y bienestar en familia/ })
+        .count(),
+    )
+    .toBeGreaterThanOrEqual(before);
 });

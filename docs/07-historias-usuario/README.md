@@ -276,6 +276,7 @@ Piezas que las **pantallas** del lienzo dibujan pero que no están en la **bibli
 | Mapa y selector de ubicación | Información y dirección; Elegir ubicación | PAN-CLI-06 (hecho: piezas `MapCanvas`, `MapPreview`, `LocationPicker` y `CustomerLocationBlock`; proveedor de teselas pendiente, SG-09) |
 | Íconos de mapa, abrir afuera, cámara, recentrar y GPS tachado | Información y dirección; Elegir ubicación | PAN-CLI-06 (se usaron los de la biblioteca) |
 | Fila que se desliza (móvil) | Dinero (Cobrar / Más plazo); Por resolver | PAN-DIN-02, PAN-INV-01 (hecho: pieza `SwipeRow`, con las acciones también por teclado) |
+| Botón de título con contador (escritorio) y control de cantidad que se escribe (móvil) | Agregar al inventario | PAN-INV-04 (hecho: piezas `TitleTile` y `QuantityControl`) |
 | Fila de ejemplar con **Diferencia**, fecha de venta, número y cliente en móvil; Pastilla **Perdido** y **Devuelto al líder**; ranura `sections` de la Plantilla de lista | Ejemplares | PAN-INV-02 (ya en `ui/`: subirlo a Lib-FilaLista, Lib-Pastilla y Lib-Plantilla-Lista) |
 | Fila de título en físico (portada, nombre, precio, cantidad) y lista Por resolver con acciones | Libros en físico; Por resolver | PAN-INV-01 (hecho: filas en la pantalla y pieza `FlaggedCopiesList`) |
 | Botón de título con imagen y contador; cantidad | Agregar al inventario | PAN-INV-04 |
@@ -330,7 +331,8 @@ Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesió
 | HU-PAN-INV-01 | Terminada (2026-11-19); «Devolver al líder» llega con INV-05 y el panel Agregar con INV-04 | `will-dev` |
 | HU-PAN-INV-02 | Terminada (2026-11-19); abrir una fila espera INV-03 | `will-dev` |
 | HU-PAN-INV-03 | Terminada (2026-11-19); sin Franja ni «Devolver al líder» (INV-05) | `will-dev` |
-| HU-PAN-INV-04 a 05, HU-PAN-DIN-01 a 05 | Pendientes | — |
+| HU-PAN-INV-04 | Terminada (2026-11-19) | `will-dev` |
+| HU-PAN-INV-05, HU-PAN-DIN-01 a 05 | Pendientes | — |
 
 **Flujo de trabajo del front:** igual que el back, en `will-dev`, un *commit* por HU. Antes de cada *commit*: `pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm build-storybook`.
 
