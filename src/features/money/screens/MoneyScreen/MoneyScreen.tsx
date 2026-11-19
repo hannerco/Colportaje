@@ -47,6 +47,9 @@ export type MoneyScreenProps = {
   onOpenDeposits: () => void;
   /** «Entregar al líder»: abre Nuevo Abibono precargado (HU-PAN-DIN-04). */
   onDeliver: () => void;
+  /** Deslizar en móvil (CA-5): cobrar o dar más plazo lleva al formulario del abono. */
+  onCollectPayment: (paymentId: string) => void;
+  onExtendPayment: (paymentId: string) => void;
   /** Ruta del detalle del abono (HU-PAN-DIN-02) y de la ficha de un cliente. */
   paymentHref: (paymentId: string) => string;
   customerHref: (customerId: string) => string;
@@ -312,6 +315,9 @@ export function MoneyScreen(props: MoneyScreenProps) {
             rows={rows}
             grouped={params.view === 'all'}
             paymentHref={props.paymentHref}
+            onCollect={props.onCollectPayment}
+            onExtend={props.onExtendPayment}
+            isOnline={isOnline}
             aria-label={t.payments}
           />
         )}

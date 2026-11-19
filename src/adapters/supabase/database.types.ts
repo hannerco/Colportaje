@@ -867,6 +867,7 @@ export type Database = {
       };
       sold_instant: { Args: { p_day: string }; Returns: string };
       today_bogota: { Args: Record<PropertyKey, never>; Returns: string };
+      undo_collect_payment: { Args: { p_payment_id: string }; Returns: string };
       undo_delete_copy: { Args: { p_copy_id: string }; Returns: undefined };
       undo_resolve_copy_issue: { Args: { p_copy_id: string }; Returns: undefined };
       undo_return_to_leader: { Args: { p_copy_id: string; p_note: string }; Returns: undefined };

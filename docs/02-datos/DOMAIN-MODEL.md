@@ -265,7 +265,7 @@ minibooks.net      = income − cost
 - Un ejemplar `sold` no se marca `flagged` directamente: primero se devuelve.
 
 **Payment**
-- `scheduled → collected` (cobrar) · `scheduled → canceled` (alerta BR-PAY-13, archivar cliente o manual)
+- `scheduled → collected` (cobrar) · `collected → scheduled` (deshacer un cobro programado sin Abibono, BR-PAY-17) · `scheduled → canceled` (alerta BR-PAY-13, archivar cliente o manual)
 - `collected → delivered` (solo al confirmar su Abibono) · `delivered → collected` (solo al reabrir el Abibono, con motivo)
 - `scheduled` mantiene `due_date` editable: **corrección** durante la creación del cliente (cambia también `original_due_date`, sin historial) o **prórroga** después (BR-PAY-06). Las fechas pueden ser anteriores a hoy (nace vencido, con aviso; ADR-0049).
 - `canceled` y `delivered` (mientras esté confirmado) no se editan.

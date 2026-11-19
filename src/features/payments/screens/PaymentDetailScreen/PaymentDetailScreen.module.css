@@ -1,0 +1,36 @@
+.siblings {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.siblings > li + li {
+  border-top: 1px solid var(--color-row-line);
+}
+
+.sibling {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--size-control);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.sibling[aria-current='true'] {
+  font-weight: var(--weight-strong);
+}
+
+.sibling:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+.siblingDate {
+  flex: 1;
+  font-variant-numeric: var(--font-numeric);
+}
+
+.siblingAmount {
+  font-variant-numeric: var(--font-numeric);
+}

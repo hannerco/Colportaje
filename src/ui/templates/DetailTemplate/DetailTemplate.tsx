@@ -20,6 +20,8 @@ export type DetailIdentity = {
   number?: number;
   /** Estado. Sin valor no se pinta Pastilla (p. ej. un prospecto, que no tiene estado, BR-CUS-13). */
   status?: PillStatus;
+  /** La Pastilla con candado (lo entregado al líder está bloqueado). */
+  statusLocked?: boolean;
   /** Debajo del título, p. ej. el cliente del ejemplar o la cuota del abono. */
   subtitle?: ReactNode;
   /** Contenido a todo el ancho debajo del nombre (p. ej. la cuenta del cliente: saldo y abonado). */
@@ -63,7 +65,16 @@ export function DetailTemplate({ window, banner, identity, children }: DetailTem
 }
 
 /** R4: avatar `xl` / `lg`, título grande y la acción principal (a todo el ancho en móvil). */
-function IdentityIsland({ avatar, title, number, status, subtitle, details, primaryAction }: DetailIdentity) {
+function IdentityIsland({
+  avatar,
+  title,
+  number,
+  status,
+  statusLocked,
+  subtitle,
+  details,
+  primaryAction,
+}: DetailIdentity) {
   const mobile = usePlatform() === 'mobile';
   // El título es el encabezado del detalle: `<h1>` en la página de escritorio, `<h2>` en la ventana o en móvil.
   const Heading = useDetailWindow()?.heading ?? 'h1';
@@ -82,7 +93,7 @@ function IdentityIsland({ avatar, title, number, status, subtitle, details, prim
             {title}
             {number !== undefined && <span className={styles.number}> #{number}</span>}
           </Heading>
-          {status && <StatusPill status={status} />}
+          {status && <StatusPill status={status} locked={statusLocked} />}
           {subtitle && <div className={styles.subtitle}>{subtitle}</div>}
         </div>
       </div>

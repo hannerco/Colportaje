@@ -24,7 +24,7 @@ import {
   type ScheduleSingleInput,
 } from './use-cases/scheduled-payments';
 import { reschedulePayment, type RescheduleInput } from './use-cases/reschedule';
-import { collectPayment, type CollectPaymentInput } from './use-cases/collect-payment';
+import { collectPayment, undoCollectPayment, type CollectPaymentInput } from './use-cases/collect-payment';
 
 export const paymentQueryKeys = { all: ['payments'] as const };
 
@@ -158,6 +158,14 @@ export function useReschedulePayment() {
     reschedulePayment(deps, input.paymentId, input),
   );
   return { reschedulePayment: mutate, isPending };
+}
+
+/** Deshacer un cobro (HU-ABO-10): el abono vuelve a por cobrar. Devuelve `Result<{ customerId }>`. */
+export function useUndoCollectPayment() {
+  const { mutate, isPending } = useCollectedMutation((deps, paymentId: string) =>
+    undoCollectPayment(deps, paymentId),
+  );
+  return { undoCollectPayment: mutate, isPending };
 }
 
 /**

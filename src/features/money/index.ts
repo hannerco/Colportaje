@@ -10,6 +10,7 @@ export {
   useMoneySummary,
   useNewDepositProposal,
   useReopenDeposit,
+  usePaymentCustomer,
   usePaymentsList,
   useSaveDepositDraft,
   useUnscheduledCustomers,

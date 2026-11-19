@@ -98,6 +98,7 @@ describe('payment: máquina de estados (BR-PAY-02)', () => {
       cancel: ['scheduled', 'canceled'],
       deliver: ['collected', 'delivered'],
       reopen: ['delivered', 'collected'],
+      uncollect: ['collected', 'scheduled'],
     });
   });
 
@@ -113,6 +114,21 @@ describe('payment: máquina de estados (BR-PAY-02)', () => {
           error: { code: 'INVALID_TRANSITION', retryable: false, details: { from: status, action } },
         });
     });
+  });
+
+  it('deshacer un cobro borra lo real y conserva lo acordado; la cuota inicial y el abono extra no se deshacen', () => {
+    const done = applyPaymentAction(collectedPayment(), { type: 'uncollect' });
+    expect(done.ok && done.value).toMatchObject({
+      status: 'scheduled',
+      paidAmount: null,
+      paidAt: null,
+      method: null,
+    });
+    for (const kind of ['down_payment', 'extra'] as const) {
+      const result = applyPaymentAction(collectedPayment({ kind }), { type: 'uncollect' });
+      expect(result.ok).toBe(false);
+      if (!result.ok) expect(result.error.code).toBe('INVALID_TRANSITION');
+    }
   });
 
   it('CA-7: cobrar un abono cancelado da INVALID_TRANSITION', () => {

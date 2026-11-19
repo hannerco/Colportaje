@@ -89,6 +89,7 @@ Implementar en este orden. Una HU solo empieza cuando sus dependencias están te
 | 13 | [HU-CLI-13](02-clientes/HU-CLI-13-fecha-de-venta.md) | Fecha de venta del libro editable (ADR-0049) | CLI-09, INV-05 |
 | 13 | [HU-ABO-08](03-abonos/HU-ABO-08-abonos-con-fecha-pasada.md) | Abonos programados con fecha pasada (ADR-0049) | ABO-03, ABO-04, ABO-05 |
 | 13 | [HU-ABO-09](03-abonos/HU-ABO-09-fecha-de-la-cuota-inicial.md) | Fecha de la cuota inicial en la ficha nueva (ADR-0049) | ABO-02 |
+| 14 | [HU-ABO-10](03-abonos/HU-ABO-10-deshacer-cobro.md) | Deshacer un cobro (para HU-PAN-DIN-02) | ABO-06 |
 
 ## Avance
 | HU | Estado | Dónde |
@@ -137,6 +138,7 @@ Implementar en este orden. Una HU solo empieza cuando sus dependencias están te
 | HU-CLI-13 | Terminada (2026-11-18) | `will-dev` |
 | HU-ABO-08 | Terminada (2026-11-18) | `will-dev` |
 | HU-ABO-09 | Terminada (2026-11-18) | `will-dev` |
+| HU-ABO-10 | Terminada (2026-11-19) | `will-dev` |
 
 **Flujo de trabajo del back (desde 2026-11-13):** las HU se programan en la rama `will-dev`, con un commit por HU y la CI corriendo en cada push. No se abre un PR a `main` por cada HU; `main` se actualiza con un PR desde `will-dev` cuando se acuerde con el dueño. Antes de cada commit: `pnpm lint && pnpm typecheck && pnpm test && pnpm test:rls && pnpm build`.
 
@@ -335,7 +337,8 @@ Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesió
 | HU-PAN-INV-04 | Terminada (2026-11-19) | `will-dev` |
 | HU-PAN-INV-05 | Terminada (2026-11-19) | `will-dev` |
 | HU-PAN-DIN-01 | Terminada (2026-11-19) | `will-dev` |
-| HU-PAN-DIN-02 a 05 | Pendientes | — |
+| HU-PAN-DIN-02 | Terminada (2026-11-19) | `will-dev` |
+| HU-PAN-DIN-03 a 05 | Pendientes | — |
 
 **Flujo de trabajo del front:** igual que el back, en `will-dev`, un *commit* por HU. Antes de cada *commit*: `pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm build-storybook`.
 

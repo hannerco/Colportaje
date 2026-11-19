@@ -78,7 +78,15 @@ const SUMMARY = aMoneySummary({ unscheduledTotal: 200000, unscheduledCustomers: 
 type DemoProps = Partial<
   Pick<
     MoneyScreenProps,
-    'isOnline' | 'loading' | 'error' | 'banner' | 'onDeliver' | 'onOpenDeposits' | 'summary'
+    | 'isOnline'
+    | 'loading'
+    | 'error'
+    | 'banner'
+    | 'onDeliver'
+    | 'onOpenDeposits'
+    | 'summary'
+    | 'onCollectPayment'
+    | 'onExtendPayment'
   >
 > & { initial?: Partial<PaymentsListParams>; empty?: boolean };
 
@@ -107,6 +115,8 @@ function Demo({ initial = {}, empty = false, loading = false, error = false, ...
         depositsCount={3}
         onOpenDeposits={() => {}}
         onDeliver={() => {}}
+        onCollectPayment={() => {}}
+        onExtendPayment={() => {}}
         paymentHref={(id) => `#/abono/${id}`}
         customerHref={(id) => `#/cliente/${id}`}
         backHref="#/dinero"
@@ -124,7 +134,7 @@ function Demo({ initial = {}, empty = false, loading = false, error = false, ...
 const meta = {
   title: 'Pantallas/Dinero/Abonos de clientes',
   component: Demo,
-  args: { onDeliver: fn(), onOpenDeposits: fn() },
+  args: { onDeliver: fn(), onOpenDeposits: fn(), onCollectPayment: fn(), onExtendPayment: fn() },
   parameters: {
     frameSize: 'screen',
     a11y: {
@@ -274,6 +284,20 @@ export const HojaDeResumenMovil: Story = {
     });
     expect(dialog.textContent).toContain('Dinero total');
     expect(dialog.textContent).toContain('Entregar al líder');
+  },
+};
+
+/** CA-5: en móvil, las acciones de deslizar están en cada abono por cobrar y llevan al mismo formulario. */
+export const DeslizarMovil: Story = {
+  name: 'Deslizar (móvil)',
+  args: { initial: { view: 'to_collect' } },
+  globals: { platform: 'mobile' },
+  play: async ({ canvasElement, args }) => {
+    const frame = frames(canvasElement)[0]!;
+    await userEvent.click(button(frame, 'Cobrar a María Camila Henao')!);
+    expect(args.onCollectPayment).toHaveBeenCalledWith('p1');
+    await userEvent.click(button(frame, 'Dar más plazo a María Camila Henao')!);
+    expect(args.onExtendPayment).toHaveBeenCalledWith('p1');
   },
 };
 

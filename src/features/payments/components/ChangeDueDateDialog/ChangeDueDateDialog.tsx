@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import { copy } from '@/copy/es';
 import { rescheduleConfirmLimit } from '@/domain/reschedule';
 import { formatDate, isPastDate, type LocalDate } from '@/domain/time';
+import { Field } from '@/ui/atoms/Field';
 import { Icon } from '@/ui/icons';
 import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
 import { DatePickerCalendar } from '../DatePickerCalendar';
@@ -25,8 +26,15 @@ export type ChangeDueDateDialogProps = {
   today: LocalDate;
   /** Las fechas de los otros abonos del cliente (un punto en el calendario). */
   otherDates?: readonly LocalDate[];
+  /**
+   * «Dar más plazo» (HU-PAN-DIN-02): el título es «Dar más plazo», con el cliente de `subtitle`, y se pide una nota
+   * opcional (va a `onSave`).
+   */
+  withNote?: boolean;
+  /** Debajo del título (p. ej. «Un corazón tranquilo · Acordado $30.000»). */
+  subtitle?: string;
   /** Guarda la fecha; `confirmed` = el usuario ya aceptó un plazo de más de 2 meses. */
-  onSave: (date: LocalDate, confirmed: boolean) => void | Promise<void>;
+  onSave: (date: LocalDate, confirmed: boolean, note?: string) => void | Promise<void>;
 };
 
 const t = copy.payments.changeDate;
@@ -45,13 +53,16 @@ export function ChangeDueDateDialog({
   current,
   today,
   otherDates = [],
+  withNote = false,
+  subtitle,
   onSave,
 }: ChangeDueDateDialogProps) {
   const [selected, setSelected] = useState<LocalDate>(current);
   const [confirming, setConfirming] = useState<LocalDate | null>(null);
+  const [note, setNote] = useState('');
   // La confirmación se abre al cerrarse el primer diálogo: con esto, ese cierre no avisa «terminado» a quien lo usa.
   const goingToConfirm = useRef(false);
-  const title = t.title(index, total);
+  const title = withNote ? t.extendTitle : t.title(index, total);
   const unchanged = selected === current;
   const needsConfirmation = mode === 'reschedule' && selected > rescheduleConfirmLimit(today);
 
@@ -60,13 +71,17 @@ export function ChangeDueDateDialog({
       <ConfirmDialog
         open={open && confirming === null}
         onOpenChange={(next) => {
-          if (next) setSelected(current);
+          if (next) {
+            setSelected(current);
+            setNote('');
+          }
           if (!next && goingToConfirm.current) return;
           onOpenChange(next);
         }}
         title={title}
         message={
           <span className={styles.message}>
+            {subtitle && <span>{subtitle}</span>}
             {t.newDate(formatDate(selected))}
             {isPastDate(selected, today) && (
               <span className={styles.past}>
@@ -85,7 +100,7 @@ export function ChangeDueDateDialog({
             setConfirming(selected);
             return;
           }
-          await onSave(selected, false);
+          await onSave(selected, false, withNote ? note.trim() || undefined : undefined);
         }}
       >
         <DatePickerCalendar
@@ -97,6 +112,15 @@ export function ChangeDueDateDialog({
           // Prórroga: solo una fecha posterior a la actual (HU-ABO-05 R2).
           isDisabled={mode === 'reschedule' ? (date) => date <= current : undefined}
         />
+        {withNote && (
+          <Field
+            kind="textarea"
+            label={t.note}
+            placeholder={t.notePlaceholder}
+            value={note}
+            onChange={setNote}
+          />
+        )}
       </ConfirmDialog>
       <ConfirmDialog
         open={confirming !== null}
@@ -112,7 +136,7 @@ export function ChangeDueDateDialog({
         cancelLabel={t.cancel}
         onConfirm={async () => {
           if (!confirming) return;
-          await onSave(confirming, true);
+          await onSave(confirming, true, withNote ? note.trim() || undefined : undefined);
         }}
       />
     </>

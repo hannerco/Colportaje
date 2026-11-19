@@ -60,6 +60,8 @@ function MoneyRoute() {
       onOpenDeposits={() => router.push(ROUTES.deposits)}
       onDeliver={() => router.push(ROUTES.newDeposit)}
       paymentHref={ROUTES.payment}
+      onCollectPayment={(id) => router.push(`${ROUTES.payment(id)}?accion=cobrar`)}
+      onExtendPayment={(id) => router.push(`${ROUTES.payment(id)}?accion=plazo`)}
       customerHref={ROUTES.customer}
       backHref={ROUTES.money}
     />

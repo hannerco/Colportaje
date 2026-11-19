@@ -5,6 +5,7 @@ import { formatCOP } from '@/domain/money';
 import type { PayMethod } from '@/domain/payment';
 import type { PaymentsListRow } from '@/domain/payments-list';
 import { formatDate } from '@/domain/time';
+import { SwipeRow } from '@/features/inventory';
 import { Avatar } from '@/ui/atoms/Avatar';
 import { StatusPill } from '@/ui/atoms/StatusPill';
 import { Icon } from '@/ui/icons';
@@ -17,10 +18,18 @@ export type PaymentsTableProps = {
   grouped?: boolean;
   /** Ruta del detalle del abono (HU-PAN-DIN-02). */
   paymentHref: (paymentId: string) => string;
+  /**
+   * Móvil: deslizar un abono por cobrar a la izquierda muestra «Cobrar» y a la derecha «Más plazo»; llevan al mismo
+   * formulario del detalle (CA-5). Sin conexión se ven deshabilitados.
+   */
+  onCollect?: (paymentId: string) => void;
+  onExtend?: (paymentId: string) => void;
+  isOnline?: boolean;
   'aria-label': string;
 };
 
 const t = copy.money.list;
+const d = copy.payments.detail;
 const cop = (amount: number | null) => (amount === null ? copy.ui.listRow.empty : formatCOP(amount));
 const day = (date: Parameters<typeof formatDate>[0] | null) =>
   date === null ? copy.ui.listRow.empty : formatDate(date);
@@ -36,10 +45,22 @@ export function PaymentsTable({
   rows,
   grouped = false,
   paymentHref,
+  onCollect,
+  onExtend,
+  isOnline = true,
   'aria-label': ariaLabel,
 }: PaymentsTableProps) {
   const mobile = usePlatform() === 'mobile';
-  if (mobile) return <MobileList rows={rows} grouped={grouped} paymentHref={paymentHref} label={ariaLabel} />;
+  if (mobile)
+    return (
+      <MobileList
+        rows={rows}
+        grouped={grouped}
+        paymentHref={paymentHref}
+        label={ariaLabel}
+        swipe={{ onCollect, onExtend, isOnline }}
+      />
+    );
   return (
     <table className={styles.table} aria-label={ariaLabel}>
       <thead>
@@ -107,13 +128,15 @@ function MobileList({
   grouped,
   paymentHref,
   label,
+  swipe,
 }: {
   rows: readonly PaymentsListRow[];
   grouped: boolean;
   paymentHref: (paymentId: string) => string;
   label: string;
+  swipe: Swipe;
 }) {
-  if (!grouped) return <Rows rows={rows} paymentHref={paymentHref} label={label} />;
+  if (!grouped) return <Rows rows={rows} paymentHref={paymentHref} label={label} swipe={swipe} />;
   return (
     <>
       {GROUPS.map((status) => {
@@ -121,7 +144,7 @@ function MobileList({
         return inGroup.length === 0 ? null : (
           <section key={status} className={styles.group}>
             <h2 className={styles.groupName}>{copy.status[status]}</h2>
-            <Rows rows={inGroup} paymentHref={paymentHref} label={copy.status[status]} />
+            <Rows rows={inGroup} paymentHref={paymentHref} label={copy.status[status]} swipe={swipe} />
           </section>
         );
       })}
@@ -133,34 +156,103 @@ function Rows({
   rows,
   paymentHref,
   label,
+  swipe,
 }: {
   rows: readonly PaymentsListRow[];
   paymentHref: (paymentId: string) => string;
   label: string;
+  swipe: Swipe;
 }) {
   return (
     <ul className={styles.list} aria-label={label}>
       {rows.map((row) => (
         <li key={row.paymentId}>
-          <a className={styles.mobileRow} href={paymentHref(row.paymentId)}>
-            <span className={styles.mobileMain}>
-              <span className={styles.mobileAmount}>{cop(row.paidAmount ?? row.agreedAmount)}</span>
-              <span className={styles.mobileName}>
-                {row.customer.name}
-                {row.customer.archived && <span className={styles.muted}> {t.archivedCustomer}</span>}
+          {row.canCollect && swipe.onCollect && swipe.onExtend ? (
+            <SwipeRow
+              disabled={!swipe.isOnline}
+              start={action(
+                d.swipe.extend(row.customer.name),
+                d.extendShort,
+                'calendar',
+                () => swipe.onExtend?.(row.paymentId),
+                swipe.isOnline,
+              )}
+              end={action(
+                d.swipe.collect(row.customer.name),
+                d.collect,
+                'check',
+                () => swipe.onCollect?.(row.paymentId),
+                swipe.isOnline,
+              )}
+            >
+              <a className={styles.mobileRow} href={paymentHref(row.paymentId)}>
+                <span className={styles.mobileMain}>
+                  <span className={styles.mobileAmount}>{cop(row.paidAmount ?? row.agreedAmount)}</span>
+                  <span className={styles.mobileName}>
+                    {row.customer.name}
+                    {row.customer.archived && <span className={styles.muted}> {t.archivedCustomer}</span>}
+                  </span>
+                </span>
+                <span className={styles.mobileDate}>
+                  <StatusPill status={statusOf(row)} shape="text" />
+                  <span>
+                    {day(row.paidAt ?? row.agreedDate)}
+                    {row.isOverdue && <span className={styles.overdue}>{t.overdue(row.overdueDays)}</span>}
+                  </span>
+                  {row.method && <Method method={row.method} />}
+                </span>
+              </a>
+            </SwipeRow>
+          ) : (
+            <a className={styles.mobileRow} href={paymentHref(row.paymentId)}>
+              <span className={styles.mobileMain}>
+                <span className={styles.mobileAmount}>{cop(row.paidAmount ?? row.agreedAmount)}</span>
+                <span className={styles.mobileName}>
+                  {row.customer.name}
+                  {row.customer.archived && <span className={styles.muted}> {t.archivedCustomer}</span>}
+                </span>
               </span>
-            </span>
-            <span className={styles.mobileDate}>
-              <StatusPill status={statusOf(row)} shape="text" />
-              <span>
-                {day(row.paidAt ?? row.agreedDate)}
-                {row.isOverdue && <span className={styles.overdue}>{t.overdue(row.overdueDays)}</span>}
+              <span className={styles.mobileDate}>
+                <StatusPill status={statusOf(row)} shape="text" />
+                <span>
+                  {day(row.paidAt ?? row.agreedDate)}
+                  {row.isOverdue && <span className={styles.overdue}>{t.overdue(row.overdueDays)}</span>}
+                </span>
+                {row.method && <Method method={row.method} />}
               </span>
-              {row.method && <Method method={row.method} />}
-            </span>
-          </a>
+            </a>
+          )}
         </li>
       ))}
     </ul>
   );
 }
+
+type Swipe = {
+  onCollect?: (paymentId: string) => void;
+  onExtend?: (paymentId: string) => void;
+  isOnline: boolean;
+};
+
+/** Un botón de la fila que se desliza (también se llega con el teclado). */
+const action = (
+  label: string,
+  text: string,
+  icon: 'check' | 'calendar',
+  onClick: () => void,
+  online: boolean,
+) => (
+  <button
+    type="button"
+    className={styles.swipeAction}
+    data-tone={icon === 'check' ? 'accent' : 'neutral'}
+    aria-label={label}
+    aria-disabled={!online || undefined}
+    onClick={() => {
+      if (online) onClick();
+    }}
+  >
+    <Icon name={icon} size={18} tone="current" />
+    <span>{text}</span>
+  </button>
+);

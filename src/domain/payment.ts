@@ -51,7 +51,9 @@ export type PaymentAction =
     }
   | { readonly type: 'cancel'; readonly at: Instant; readonly reason: CancelReason }
   | { readonly type: 'deliver' }
-  | { readonly type: 'reopen' };
+  | { readonly type: 'reopen' }
+  /** Deshacer un cobro (HU-ABO-10): vuelve a por cobrar y borra lo real; solo un abono programado. */
+  | { readonly type: 'uncollect' };
 
 export type PaymentActionType = PaymentAction['type'];
 
@@ -66,6 +68,7 @@ export const PAYMENT_TRANSITIONS: Readonly<
   cancel: { from: 'scheduled', to: 'canceled' }, // BR-PAY-13, BR-CUS-09
   deliver: { from: 'collected', to: 'delivered' }, // confirmar Abibono (BR-DEP-09)
   reopen: { from: 'delivered', to: 'collected' }, // reabrir Abibono (BR-DEP-12)
+  uncollect: { from: 'collected', to: 'scheduled' }, // deshacer un cobro (HU-ABO-10)
 };
 
 export const PAYMENT_ACTIONS = Object.keys(PAYMENT_TRANSITIONS) as readonly PaymentActionType[];
@@ -99,6 +102,13 @@ export function applyPaymentAction(payment: Payment, action: PaymentAction): Res
       return ok({ ...payment, status: 'delivered' });
     case 'reopen':
       return ok({ ...payment, status: 'collected' });
+    case 'uncollect':
+      // La cuota inicial y el abono extra nacen cobrados: no se deshacen.
+      if (payment.kind !== 'scheduled')
+        return err(
+          appError(PAYMENT_ERROR_CODES.INVALID_TRANSITION, { from: payment.status, action: action.type }),
+        );
+      return ok({ ...payment, status: 'scheduled', paidAmount: null, paidAt: null, method: null });
   }
 }
 

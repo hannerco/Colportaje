@@ -66,6 +66,17 @@ export function useUnscheduledCustomers() {
 }
 
 /**
+ * De qué cliente es un abono (HU-PAN-DIN-02): `{ customerId }`, o `null` si ya no existe. Sale de la misma lectura
+ * que Dinero (funciona sin conexión); el detalle del abono sale del detalle de ese cliente.
+ */
+export function usePaymentCustomer(paymentId: string) {
+  return useMoneyData((data) => {
+    const payment = data.payments.find((p) => p.id === paymentId);
+    return payment ? { customerId: payment.customerId } : null;
+  });
+}
+
+/**
  * Lista de abonos de clientes (HU-DIN-03): `{ counts, rows }` por vista, método, chip Vencidos, búsqueda y
  * orden (por defecto `defaultPaymentsSort(view)`). Ni el filtro ni la búsqueda cambian los conteos.
  */

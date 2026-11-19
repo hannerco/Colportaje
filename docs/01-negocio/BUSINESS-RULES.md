@@ -167,6 +167,8 @@ Notación: "colportor" = usuario con rol colportor. Fechas calendario en **Ameri
   - **Requisitos:** el plan exige saldo > 0. Las fechas **pueden ser anteriores a hoy** (el abono nace vencido, con aviso «Esta fecha ya pasó», ADR-0049); lo que se sugiere sigue siendo desde el siguiente día de pago. Cambiar la fecha de un abono es una corrección o una prórroga según BR-PAY-06, y mueve **solo ese abono** (no existe «Correr también los siguientes», ADR-0047).
 - **BR-PAY-16** **Programar un abono suelto (ronda 26):** se puede programar un abono `scheduled` (valor > 0, fecha pasada o futura; si es pasada, con aviso, ADR-0049) **siempre**, aunque el cliente aún no tenga libro (en ese caso aparece el aviso BR-PAY-14).
 
+- **BR-PAY-17** **Deshacer un cobro (HU-ABO-10, 2026-11-19).** Un abono programado cobrado que aún no está en un Abibono vuelve a `scheduled`: se borran su valor, fecha y método reales y se conservan los acordados. No aplica a la cuota inicial ni al abono extra (se corrigen o se borran), ni a un cobro dentro de un Abibono, ni a un cliente archivado. No deshace lo que el cobro provocó en otros abonos (BR-PAY-13).
+
 ## 8. Abibonos (entregas al líder)
 
 - **BR-DEP-01** Un Abibono tiene: título, fecha, efectivo, transferencia, nota, foto(s) de recibo, estado `draft`/`confirmed`, abonos vinculados y asignaciones de minibooks. En la UI, el tooltip de "Abibono" dice **"Entrega al líder"**.

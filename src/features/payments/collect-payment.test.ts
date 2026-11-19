@@ -6,7 +6,7 @@ import { fixedClock, localDate } from '@/domain/time';
 import type { CustomerAccountData } from '@/repositories';
 import { fakeConnectivity } from '../../../tests/support/fake-connectivity';
 import { fakeCustomerRepository, fakePaymentRepository } from '../../../tests/support/fake-repositories';
-import { collectPayment } from './use-cases/collect-payment';
+import { collectPayment, undoCollectPayment } from './use-cases/collect-payment';
 
 const CUSTOMER = 'c-1';
 const clock = fixedClock('2026-11-05T15:00:00Z');
@@ -119,5 +119,29 @@ describe('collectPayment (HU-ABO-06)', () => {
     expect(await collectPayment(deps, 'p0')).toEqual(err(appError('PAYMENT_NOT_SCHEDULED')));
     vi.mocked(deps.customers.getAccountData).mockResolvedValueOnce(err(appError('NETWORK_ERROR')));
     expect(await collectPayment(deps, 'p0')).toMatchObject({ ok: false, error: { code: 'NETWORK_ERROR' } });
+  });
+});
+
+describe('undoCollectPayment (HU-ABO-10)', () => {
+  it('le pide a la base volver el abono a por cobrar y devuelve el cliente', async () => {
+    const deps = depsWith(10_000, 10_000);
+    deps.payments.uncollect = vi.fn(async () => ok({ customerId: CUSTOMER }));
+    expect(await undoCollectPayment(deps, 'p0')).toEqual(ok({ customerId: CUSTOMER }));
+    expect(deps.payments.uncollect).toHaveBeenCalledWith('p0');
+  });
+
+  it('sin conexión no lo intenta (OFFLINE)', async () => {
+    const deps = depsWith(10_000, 10_000, false);
+    deps.payments.uncollect = vi.fn();
+    const result = await undoCollectPayment(deps, 'p0');
+    expect(result.ok).toBe(false);
+    expect(deps.payments.uncollect).not.toHaveBeenCalled();
+  });
+
+  it('un cobro que ya está en un Abibono se rechaza (PAYMENT_LOCKED)', async () => {
+    const deps = depsWith(10_000, 10_000);
+    deps.payments.uncollect = vi.fn(async () => err(appError('PAYMENT_LOCKED')));
+    const result = await undoCollectPayment(deps, 'p0');
+    expect(!result.ok && result.error.code).toBe('PAYMENT_LOCKED');
   });
 });
