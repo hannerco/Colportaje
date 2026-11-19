@@ -284,7 +284,7 @@ Piezas que las **pantallas** del lienzo dibujan pero que no están en la **bibli
 | Botón de título con imagen y contador; cantidad | Agregar al inventario | PAN-INV-04 |
 | Fotos (miniaturas, agregar, quitar) | Recibos del Abibono; facturas; fotos de información | PAN-DIN-04, PAN-CLI-02, PAN-CLI-06 (hecho para información: pieza `InfoPhotoStrip`, miniaturas y agregar) |
 | Tabla de abonos con Valor acordado, Fecha real, Valor real y Método (la Fila «payment» solo trae Cuota y Monto) | Dinero · Abonos de clientes | PAN-DIN-01 (hecho: pieza `PaymentsTable`; se pide subirla a la biblioteca) |
-| Tipo «abibono» en la Fila de lista | Lista de Abibonos | PAN-DIN-03 (se pide antes de programar) |
+| Tipo «abibono» en la Fila de lista (Nombre, Fecha, Total, Efectivo, Transferencia, Estado, Recibo) | Lista de Abibonos | PAN-DIN-03 (hecho: pieza `DepositsTable`; se pide subirlo a la biblioteca) |
 | Barra de avance «Abonado el N %» (pieza `CustomerAccountSummary`) | Ficha de cliente | PAN-CLI-02 |
 | Isla de identidad sin Pastilla (prospecto) y con contenido a todo el ancho (`details`) | Ficha de cliente | PAN-CLI-02 (ya en `ui/`: subirlo a Lib-Plantilla-Detalle) |
 | Segunda salida del Estado vacío (enlace debajo de la acción); botón flotante deshabilitado sin conexión | Búsqueda de clientes sin resultados (HU-CLI-05); Clientes sin conexión | PAN-CLI-01 (ya en `ui/`: subirlo a las fichas Lib-EstadoVacio y Lib-Navegacion) |
@@ -338,7 +338,8 @@ Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesió
 | HU-PAN-INV-05 | Terminada (2026-11-19) | `will-dev` |
 | HU-PAN-DIN-01 | Terminada (2026-11-19) | `will-dev` |
 | HU-PAN-DIN-02 | Terminada (2026-11-19) | `will-dev` |
-| HU-PAN-DIN-03 a 05 | Pendientes | — |
+| HU-PAN-DIN-03 | Terminada (2026-11-19) | `will-dev` |
+| HU-PAN-DIN-04 a 05 | Pendientes | — |
 
 **Flujo de trabajo del front:** igual que el back, en `will-dev`, un *commit* por HU. Antes de cada *commit*: `pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm build-storybook`.
 

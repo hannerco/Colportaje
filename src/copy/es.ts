@@ -830,6 +830,41 @@ export const copy = {
       unscheduledBack: 'Volver a Por cobrar',
       unscheduledEmpty: { title: 'Todos tus clientes tienen abonos programados' },
     },
+    /** Lista de Abibonos (HU-PAN-DIN-03, diseño «3 · Abibonos»). */
+    deposits: {
+      listLabel: 'Abibonos',
+      tabsLabel: 'Vistas de Abibonos',
+      all: 'Todos',
+      search: 'Buscar Abibono',
+      results: (n: number) => (n === 1 ? '1 Abibono' : `${n} Abibonos`),
+      sort: { date: 'Fecha', total: 'Total', name: 'Nombre' },
+      totalDelivered: 'Total abonado al líder',
+      totalDeliveredInfo: 'Qué es Total abonado al líder',
+      totalDeliveredTip: 'La suma de lo que ya entregaste al líder en Abibonos confirmados.',
+      info: 'Qué es un Abibono',
+      infoTip: 'Entrega al líder',
+      columns: {
+        name: 'Nombre',
+        date: 'Fecha',
+        total: 'Total',
+        cash: 'Efectivo',
+        transfer: 'Transferencia',
+        status: 'Estado',
+        receipt: 'Recibo',
+      },
+      receipt: 'Recibo',
+      statuses: { draft: 'Borrador', confirmed: 'Entregado' },
+      empty: {
+        title: 'Aún no tienes Abibonos',
+        text: 'Aparecen aquí cuando entregas dinero con Nuevo Abibono.',
+      },
+      noResults: {
+        title: (query: string) => `Ningún Abibono coincide con «${query}»`,
+        text: 'Busqué por nombre.',
+      },
+      offline: { title: 'Sin conexión', text: 'Puedes consultar lo guardado, pero no registrar.' },
+      error: { title: 'No se pudo cargar', text: 'Inténtalo otra vez.' },
+    },
   },
   /**
    * Mensaje de cada `AppError.code` (HU-PAN-BASE-01, 00-REGLAS-COMUNES §3). Una prueba falla si un código que exporta

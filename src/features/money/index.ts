@@ -76,3 +76,7 @@ export {
 export { MoneyScreen, type MoneyScreenProps } from './screens/MoneyScreen';
 export { PaymentsTable, type PaymentsTableProps } from './components/PaymentsTable';
 export { paymentsListParamsFromUrl, paymentsListParamsToUrl } from './payments-list-url';
+// HU-PAN-DIN-03: lista de Abibonos.
+export { DepositsListScreen, type DepositsListScreenProps } from './screens/DepositsListScreen';
+export { DepositsTable, type DepositsTableProps } from './components/DepositsTable';
+export { depositsListParamsFromUrl, depositsListParamsToUrl } from './deposits-list-url';

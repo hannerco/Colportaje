@@ -15,14 +15,11 @@ import {
 import { Avatar } from '@/ui/atoms/Avatar';
 import { Button } from '@/ui/atoms/Button';
 import { Choice } from '@/ui/atoms/Choice';
-import { Tabs } from '@/ui/molecules/Tabs';
 import type { AppNavProps } from '@/ui/organisms/AppNav';
-import { DetailWindow } from '@/ui/organisms/DetailWindow';
 import type { EmptyStateProps } from '@/ui/organisms/EmptyState';
 import type { ViewBarFilters, ViewBarSort } from '@/ui/organisms/ViewBar';
-import { usePlatform } from '@/ui/platform';
 import { ListTemplate, type ListState } from '@/ui/templates/ListTemplate';
-import { MoneySummary } from '../../components/MoneySummary/MoneySummary';
+import { useMoneyChrome } from '../../components/MoneyChrome';
 import { PaymentsTable } from '../../components/PaymentsTable';
 import styles from './MoneyScreen.module.css';
 
@@ -89,9 +86,6 @@ export function MoneyScreen(props: MoneyScreenProps) {
     loading = false,
     error = false,
   } = props;
-  const mobile = usePlatform() === 'mobile';
-  const [sheetOpen, setSheetOpen] = useState(false);
-  const [infoOpen, setInfoOpen] = useState(false);
   const [unscheduledOpen, setUnscheduledOpen] = useState(false);
   const set = (patch: Partial<PaymentsListParams>) => onParamsChange({ ...params, ...patch });
 
@@ -189,64 +183,23 @@ export function MoneyScreen(props: MoneyScreenProps) {
     set({ view: next, sort: sortIsDefault ? defaultPaymentsSort(next) : params.sort });
   };
 
-  const summaryBlock = summary && (
-    <MoneySummary
-      summary={summary}
-      onDeliver={() => {
-        setSheetOpen(false);
-        props.onDeliver();
-      }}
-      onInfo={mobile ? undefined : () => setInfoOpen((open) => !open)}
-    />
-  );
-
-  const sections = (
-    <div className={styles.sections}>
-      <Tabs
-        variant="segmented"
-        aria-label={t.sectionsLabel}
-        width="auto"
-        value="payments"
-        onValueChange={(value) => {
-          if (value === 'deposits') props.onOpenDeposits();
-        }}
-        items={[
-          { id: 'payments', label: t.payments, count: view?.counts.all },
-          { id: 'deposits', label: t.deposits, count: props.depositsCount },
-        ]}
-      />
-    </div>
-  );
-
-  // En escritorio el resumen va arriba de la lista y se desplaza con ella (también en cargando y vacío).
-  const desktopSummary = !mobile && (
-    <>
-      {summaryBlock}
-      {infoOpen && (
-        <p role="status" className={styles.tip}>
-          {t.toDeliverTip}
-        </p>
-      )}
-    </>
-  );
+  const chrome = useMoneyChrome({
+    summary,
+    onDeliver: props.onDeliver,
+    backHref: props.backHref,
+    active: 'payments',
+    paymentsCount: view?.counts.all,
+    depositsCount: props.depositsCount,
+    onOpenPayments: () => {},
+    onOpenDeposits: props.onOpenDeposits,
+  });
 
   return (
     <>
       <ListTemplate
         nav={nav}
-        header={{
-          title: t.title,
-          ...(mobile && summary
-            ? {
-                summary: {
-                  label: t.summaryLabel,
-                  amount: summary.toDeliver.total,
-                  onOpen: () => setSheetOpen(true),
-                },
-              }
-            : {}),
-        }}
-        sections={sections}
+        header={{ title: t.title, ...chrome.header }}
+        sections={chrome.sections}
         viewBar={{
           views: {
             'aria-label': t.tabsLabel,
@@ -266,7 +219,7 @@ export function MoneyScreen(props: MoneyScreenProps) {
         banner={
           <>
             {banner}
-            {desktopSummary}
+            {chrome.aboveList}
           </>
         }
         state={state}
@@ -322,16 +275,7 @@ export function MoneyScreen(props: MoneyScreenProps) {
           />
         )}
       </ListTemplate>
-      {mobile && sheetOpen && summary && (
-        <DetailWindow
-          mode="sheet"
-          title={t.summaryTitle}
-          breadcrumb={{ label: t.title, href: props.backHref }}
-          onClose={() => setSheetOpen(false)}
-        >
-          <div className={styles.sheet}>{summaryBlock}</div>
-        </DetailWindow>
-      )}
+      {chrome.sheet}
     </>
   );
 }
