@@ -18,6 +18,7 @@
     "test": "vitest run --project unit --coverage && vitest run --project storybook",
     "test:watch": "vitest",
     "test:rls": "vitest run --config vitest.rls.config.mts",
+    "test:e2e": "playwright test",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "user:create": "node --env-file-if-exists=.env.local --import tsx scripts/create-user.ts",
@@ -53,6 +54,7 @@
   "devDependencies": {
     "@eslint/js": "9.39.5",
     "@napi-rs/canvas": "1.1.0",
+    "@playwright/test": "1.65.1",
     "@storybook/addon-a11y": "10.6.7",
     "@storybook/addon-docs": "10.6.7",
     "@storybook/addon-vitest": "10.6.7",

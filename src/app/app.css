@@ -1,0 +1,9 @@
+/* Estilos globales de la app (HU-PAN-BASE-01). Los valores salen de los tokens. */
+body {
+  margin: 0;
+  background: var(--color-page);
+}
+
+:root[data-platform='mobile'] body {
+  background: var(--color-page-mobile);
+}

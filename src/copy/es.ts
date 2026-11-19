@@ -2,6 +2,8 @@
 // `ui` son los textos fijos de los componentes de src/ui; las pantallas agregan los suyos por área.
 
 export const copy = {
+  /** Nombre de la app (título de la pestaña y del ícono instalado). */
+  app: { name: 'Colportor' },
   ui: {
     /** Texto por defecto del botón mientras se guarda (HU-UI-04). */
     saving: 'Guardando…',
@@ -146,6 +148,74 @@ export const copy = {
       delivered: 'Entregado',
       toCollect: 'Por cobrar',
       total: 'Dinero total',
+    },
+  },
+  /**
+   * Mensaje de cada `AppError.code` (HU-PAN-BASE-01, 00-REGLAS-COMUNES §3). Una prueba falla si un código que exporta
+   * el back no tiene texto aquí. Las pantallas lo leen con `useAppErrorMessage`; el texto del campo afectado
+   * (`details.field`) lo pone cada pantalla.
+   */
+  errors: {
+    /** Un código sin texto (no debería pasar: lo vigila la prueba). */
+    unknown: 'Algo salió mal. Vuelve a intentarlo.',
+    retry: 'Reintentar',
+    codes: {
+      // Comunes (00-REGLAS-COMUNES §3)
+      OFFLINE: 'Sin conexión: puedes consultar, pero no registrar.',
+      NETWORK_ERROR: 'No se pudo conectar. Vuelve a intentarlo.',
+      SESSION_EXPIRED: 'Tu sesión venció. Vuelve a entrar.',
+      NOT_FOUND: 'Ya no existe. Puede que se haya borrado.',
+      FORBIDDEN: 'No tienes permiso para hacer esto.',
+      VALIDATION: 'Revisa los datos marcados.',
+      CONFLICT: 'Esto cambió mientras lo editabas. Revisa y vuelve a guardar.',
+      // Adaptadores
+      AUTH_FAILED: 'No se pudo verificar tu sesión. Vuelve a intentarlo.',
+      STORAGE_FAILED: 'No se pudo guardar la foto. Vuelve a intentarlo.',
+      // Sesión (HU-BASE-03)
+      INVALID_CREDENTIALS: 'El correo o la contraseña no coinciden.',
+      USER_INACTIVE: 'Tu usuario está desactivado. Habla con tu líder.',
+      // Inventario
+      BATCH_EMPTY: 'Agrega al menos un libro.',
+      DATE_IN_FUTURE: 'La fecha no puede ser futura.',
+      TITLE_INACTIVE: 'Ese título ya no está en el catálogo.',
+      COPY_NOT_IN_STOCK: 'Ese ejemplar ya no está en físico.',
+      COPY_IS_MINIBOOK: 'Los minibooks no se venden a un cliente.',
+      COPY_NOT_SOLD: 'Ese ejemplar no está vendido.',
+      COPY_NOT_DELETABLE: 'Este ejemplar no se puede eliminar.',
+      NOTE_REQUIRED: 'Escribe una nota.',
+      DATE_AFTER_SALE: 'La fecha de recibido no puede ser posterior a la venta.',
+      SOLD_IN_FUTURE: 'La fecha de venta no puede ser futura.',
+      SOLD_BEFORE_RECEIVED: 'La fecha de venta no puede ser anterior a la de recibido.',
+      COPY_NOT_FLAGGED: 'Este ejemplar ya no tiene novedad.',
+      UNDO_NOT_AVAILABLE: 'Ya no se puede deshacer.',
+      INVALID_TRANSITION: 'Esto ya cambió. Actualiza para ver cómo quedó.',
+      SELECTION_EMPTY: 'Elige al menos un libro.',
+      NOT_ENOUGH_STOCK: 'No hay suficientes en físico.',
+      // Clientes
+      CUSTOMER_ARCHIVED: 'Este cliente está archivado.',
+      CUSTOMER_DISCARD_BLOCKED: 'No se puede descartar: un abono de este cliente ya está en un Abibono.',
+      CUSTOMER_HAS_BOOKS: 'No se puede archivar: el cliente tiene libros vendidos.',
+      CUSTOMER_NOT_ARCHIVED: 'Este cliente no está archivado.',
+      // Abonos
+      PAYMENT_LOCKED: 'Este cobro ya se entregó al líder y no se puede cambiar.',
+      PAYMENT_NOT_SCHEDULED: 'Este abono ya no está por cobrar.',
+      PLAN_REQUIRES_BALANCE: 'No hay saldo para programar abonos.',
+      PLAN_TOTAL_MISMATCH: 'Los abonos no suman el saldo.',
+      DATE_NOT_LATER: 'Elige una fecha posterior a la actual.',
+      RESCHEDULE_NEEDS_CONFIRMATION: 'Es más de 2 meses de plazo. Confírmalo.',
+      NO_EXCESS: 'Los abonos ya cuadran con el saldo.',
+      LEAVE_NOT_ALLOWED: 'Sin saldo pendiente no se pueden dejar abonos por cobrar.',
+      // Dinero (Abibonos)
+      PAYMENT_NOT_AVAILABLE: 'Algún abono ya no está disponible. Revisa la lista.',
+      DEPOSIT_NOT_DRAFT: 'Este Abibono ya está confirmado.',
+      DEPOSIT_NOT_CONFIRMED: 'Este Abibono no está confirmado.',
+      RECEIPT_LOCKED: 'Los recibos de un Abibono confirmado no se borran.',
+      REASON_REQUIRED: 'Escribe el motivo.',
+      NO_RECEIPT: 'Agrega al menos una foto del recibo.',
+      TOTAL_ZERO: 'El total entregado no puede ser $0.',
+      // Fotos
+      IMAGE_UNREADABLE: 'No se pudo leer la imagen. Prueba con otra.',
+      IMAGE_ENCODING_FAILED: 'No se pudo preparar la imagen en este dispositivo.',
     },
   },
 } as const;

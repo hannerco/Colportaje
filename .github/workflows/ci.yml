@@ -63,3 +63,8 @@ jobs:
 
       - name: Build del Storybook
         run: pnpm build-storybook
+
+      # La app de producción contra Supabase local, en móvil y escritorio (HU-PAN-BASE-01, 00-REGLAS-COMUNES-FRONT §10).
+      # Hace su propio build con las variables públicas de `supabase status` (sin claves en el repositorio).
+      - name: Pruebas de punta a punta (Playwright)
+        run: pnpm test:e2e

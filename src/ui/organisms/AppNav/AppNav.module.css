@@ -97,6 +97,23 @@
   font-weight: var(--weight-medium);
 }
 
+.create:disabled {
+  color: var(--color-text-3);
+  cursor: not-allowed;
+}
+
+.create:disabled:hover {
+  background: transparent;
+}
+
+/* «Necesita conexión» debajo de «Nuevo cliente» deshabilitado (BR-GEN-08). */
+.needsConnection {
+  display: block;
+  padding: 0 var(--space-2) var(--space-1);
+  color: var(--color-text-2);
+  font-size: var(--text-caption);
+}
+
 .square {
   display: inline-flex;
   flex: none;

@@ -245,6 +245,43 @@ export const SoloModulosConPantalla: Story = {
   },
 };
 
+/** Sin conexión (BR-GEN-08, HU-PAN-BASE-01 CA-4): «Nuevo cliente» deshabilitado con «Necesita conexión». */
+export const NuevoClienteSinConexion: Story = {
+  name: 'Nuevo cliente sin conexión',
+  globals: { platform: 'desktop' },
+  args: { items: ['customers', 'inventory', 'money'], search: undefined, newCustomerDisabled: true },
+  play: async ({ canvasElement, args }) => {
+    for (const frame of frames(canvasElement)) {
+      const button = [...navOf(frame).querySelectorAll('button')].find(
+        (b) => b.textContent === 'Nuevo cliente',
+      )!;
+      expect(button.disabled).toBe(true);
+      const note = frame.querySelector(`#${CSS.escape(button.getAttribute('aria-describedby')!)}`);
+      expect(note?.textContent).toBe('Necesita conexión');
+      await userEvent.click(button, { pointerEventsCheck: 0 });
+      expect(args.onNewCustomer).not.toHaveBeenCalled();
+    }
+  },
+};
+
+/** La app pasa `onNavigate` (el enrutador): un clic normal no recarga la página; Ctrl + clic abre el enlace. */
+export const NavegarSinRecargar: Story = {
+  name: 'Navegar sin recargar',
+  args: { items: ['customers', 'inventory', 'money'], search: undefined, onNavigate: fn() },
+  play: async ({ canvasElement, args }) => {
+    for (const frame of frames(canvasElement)) {
+      const link = [...navOf(frame).querySelectorAll('a')].find((a) => a.textContent === 'Inventario')!;
+      let prevented = false;
+      const spy = (event: Event) => (prevented = event.defaultPrevented);
+      window.addEventListener('click', spy);
+      await userEvent.click(link);
+      window.removeEventListener('click', spy);
+      expect(prevented).toBe(true);
+      expect(args.onNavigate).toHaveBeenLastCalledWith('#inventario');
+    }
+  },
+};
+
 /** Todas las variantes en claro y oscuro × escritorio y móvil. */
 export const Matriz: Story = {
   parameters: { frames: 'matrix' },

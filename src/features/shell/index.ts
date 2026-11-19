@@ -1,0 +1,4 @@
+// API pública del armazón de la app (HU-PAN-BASE-01).
+export { AppShellProvider, useAppShell, type AppShell, type AppShellProviderProps } from './app-shell';
+export { APP_NAV_ITEMS, NAV_HREFS, navIdForPath, ROUTES } from './navigation';
+export { ShellRoute } from './shell-route';

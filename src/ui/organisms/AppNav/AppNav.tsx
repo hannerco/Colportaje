@@ -1,7 +1,7 @@
 'use client';
 
 import * as Dialog from '@radix-ui/react-dialog';
-import { useCallback, useId, useState, type ReactElement } from 'react';
+import { useCallback, useId, useState, type MouseEvent, type ReactElement } from 'react';
 import { copy } from '@/copy/es';
 import { Avatar } from '../../atoms/Avatar';
 import { Button } from '../../atoms/Button';
@@ -70,6 +70,13 @@ export type AppNavProps = {
   account: { name: string };
   /** Acceso «Nuevo cliente» de la barra lateral. Sin él no se muestra. */
   onNewCustomer?: () => void;
+  /** «Nuevo cliente» deshabilitado, con «Necesita conexión» debajo (sin conexión, BR-GEN-08). */
+  newCustomerDisabled?: boolean;
+  /**
+   * Navegación sin recargar (la app pasa la del enrutador). Con ella, un clic normal en un destino llama
+   * `onNavigate(href)` en vez de seguir el enlace; con Ctrl, Cmd o Mayús el enlace se abre como siempre.
+   */
+  onNavigate?: (href: string) => void;
   /** «Buscar ⌘K» de la barra lateral: la app no lo pasa (FT-01). */
   search?: { onOpen: () => void };
   className?: string;
@@ -85,18 +92,24 @@ export function AppNav(props: AppNavProps) {
 
 const shown = (items: NavId[] | undefined) => new Set(items ?? ALL_NAV_IDS);
 
+/** Un clic «normal» (botón principal, sin teclas que abren en otra pestaña o ventana). */
+const plainClick = (event: MouseEvent<HTMLAnchorElement>) =>
+  event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
+
 function NavLink({
   id,
   active,
   href,
   className,
   onClick,
+  onNavigate,
 }: {
   id: NavId;
   active: boolean;
   href: string;
   className: string | undefined;
   onClick?: () => void;
+  onNavigate?: (href: string) => void;
 }) {
   return (
     <a
@@ -104,7 +117,13 @@ function NavLink({
       href={href}
       aria-current={active ? 'page' : undefined}
       data-active={active || undefined}
-      onClick={onClick}
+      onClick={(event) => {
+        onClick?.();
+        if (onNavigate && plainClick(event)) {
+          event.preventDefault();
+          onNavigate(href);
+        }
+      }}
     >
       <Icon name={NAV_ICON[id]} tone="current" />
       <span className={styles.text}>{copy.ui.nav.items[id]}</span>
@@ -114,13 +133,29 @@ function NavLink({
 
 // ─── Escritorio: barra lateral ───
 
-export function Sidebar({ active, items, hrefs, account, onNewCustomer, search, className }: AppNavProps) {
+export function Sidebar({
+  active,
+  items,
+  hrefs,
+  account,
+  onNewCustomer,
+  newCustomerDisabled = false,
+  onNavigate,
+  search,
+  className,
+}: AppNavProps) {
   const visible = shown(items);
   const uid = useId();
   const [collapsed, setCollapsed] = useState<Partial<Record<GroupId, boolean>>>({});
   const link = (id: NavId) => (
     <li key={id}>
-      <NavLink id={id} active={id === active} href={hrefs[id]} className={styles.item} />
+      <NavLink
+        id={id}
+        active={id === active}
+        href={hrefs[id]}
+        className={styles.item}
+        onNavigate={onNavigate}
+      />
     </li>
   );
   const group = (id: GroupId) => {
@@ -170,12 +205,23 @@ export function Sidebar({ active, items, hrefs, account, onNewCustomer, search, 
         {visible.has('today') && link('today')}
         {onNewCustomer && (
           <li>
-            <button type="button" className={[styles.item, styles.create].join(' ')} onClick={onNewCustomer}>
+            <button
+              type="button"
+              className={[styles.item, styles.create].join(' ')}
+              onClick={onNewCustomer}
+              disabled={newCustomerDisabled}
+              {...(newCustomerDisabled ? { 'aria-describedby': `${uid}-needs-connection` } : {})}
+            >
               <span className={styles.square}>
                 <Icon name="new-customer" size={14} tone="current" />
               </span>
               <span className={styles.text}>{copy.ui.nav.newCustomer}</span>
             </button>
+            {newCustomerDisabled && (
+              <span id={`${uid}-needs-connection`} className={styles.needsConnection}>
+                {copy.ui.empty.needsConnection}
+              </span>
+            )}
           </li>
         )}
       </ul>
@@ -188,7 +234,7 @@ export function Sidebar({ active, items, hrefs, account, onNewCustomer, search, 
 
 // ─── Móvil: barra inferior, botón flotante y hoja «Más» ───
 
-export function BottomBar({ active, items, hrefs, fab, className }: AppNavProps) {
+export function BottomBar({ active, items, hrefs, fab, onNavigate, className }: AppNavProps) {
   const visible = shown(items);
   const [moreOpen, setMoreOpen] = useState(false);
   const inBar = BAR.filter((id) => visible.has(id));
@@ -202,7 +248,13 @@ export function BottomBar({ active, items, hrefs, fab, className }: AppNavProps)
         <ul className={styles.barList}>
           {inBar.map((id) => (
             <li key={id} className={styles.barCell}>
-              <NavLink id={id} active={id === active} href={hrefs[id]} className={styles.barItem} />
+              <NavLink
+                id={id}
+                active={id === active}
+                href={hrefs[id]}
+                className={styles.barItem}
+                onNavigate={onNavigate}
+              />
             </li>
           ))}
           {inMore.length > 0 && (
@@ -211,6 +263,7 @@ export function BottomBar({ active, items, hrefs, fab, className }: AppNavProps)
                 active={active}
                 ids={inMore}
                 hrefs={hrefs}
+                onNavigate={onNavigate}
                 open={moreOpen}
                 onOpenChange={setMoreOpen}
                 trigger={
@@ -246,13 +299,14 @@ export type MoreSheetProps = {
   /** Módulos que van en la hoja (los que no caben en la barra). */
   ids: NavId[];
   hrefs: Record<NavId, string>;
+  onNavigate?: (href: string) => void;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   trigger: ReactElement;
 };
 
 /** R4: la hoja de «Más», con los grupos Trabajo, Dinero y Cuenta (4 como máximo cada uno). */
-export function MoreSheet({ active, ids, hrefs, open, onOpenChange, trigger }: MoreSheetProps) {
+export function MoreSheet({ active, ids, hrefs, onNavigate, open, onOpenChange, trigger }: MoreSheetProps) {
   const uid = useId();
   const [container, setContainer] = useState<HTMLElement | null>(null);
   // La hoja se pinta en el ámbito de tema y plataforma más cercano (un marco del Storybook) o en el `<body>`.
@@ -287,6 +341,7 @@ export function MoreSheet({ active, ids, hrefs, open, onOpenChange, trigger }: M
                       href={hrefs[id]}
                       className={styles.sheetItem}
                       onClick={() => onOpenChange(false)}
+                      onNavigate={onNavigate}
                     />
                   </li>
                 ))}
