@@ -124,6 +124,8 @@ export const Saldado: Story = { args: { status: 'settled' } };
 export const EnFisico: Story = { name: 'En físico', args: { status: 'in_stock' } };
 export const Vendido: Story = { args: { status: 'sold' } };
 export const ConNovedad: Story = { name: 'Con novedad', args: { status: 'flagged' } };
+export const Perdido: Story = { args: { status: 'lost' } };
+export const DevueltoAlLider: Story = { name: 'Devuelto al líder', args: { status: 'returned_to_leader' } };
 
 // ─── Móvil ───
 
@@ -160,7 +162,7 @@ export const FormaTextoEjemplar: Story = {
   args: { status: 'sold', shape: 'text' },
 };
 
-/** CA-5: los 11 estados (y la forma texto) en claro y oscuro × escritorio y móvil, sin violaciones de contraste. */
+/** CA-5: los 13 estados (y la forma texto) en claro y oscuro × escritorio y móvil, sin violaciones de contraste. */
 export const Matriz: Story = {
   parameters: { frames: 'matrix' },
   render: () => (
@@ -182,7 +184,7 @@ export const Matriz: Story = {
     for (const frame of frames(canvasElement)) {
       const pills = [...frame.querySelectorAll<HTMLElement>('[data-shape="pill"]')];
       expect(new Set(pills.map((p) => p.dataset.status))).toEqual(new Set(STATUSES));
-      expect(STATUSES).toHaveLength(11);
+      expect(STATUSES).toHaveLength(13);
     }
   },
 };

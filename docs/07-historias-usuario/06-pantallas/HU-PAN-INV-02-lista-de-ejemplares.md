@@ -28,7 +28,13 @@ FI-08 (filtro Estado abierto) si no está dibujado; FI-09 (detalle de un miniboo
 - **CA-3.** **Dado** el orden por diferencia descendente, **entonces** los ejemplares sin diferencia van al final (BR-GEN-14).
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-19 (al programarla; lienzo leído en `InvEscritorio` e `InvMovil`, vistas ejemplares, ejemplares-vendidos, ejemplares-descuentos y ejemplares-ordenar):**
+  - **Pantalla:** `CopiesListScreen` sobre la Plantilla de lista, con las secciones del módulo («Libros en físico» / «Ejemplares») como Pestañas en segmento entre el Encabezado y la Barra de vista. La vista vive en la URL (`?vista=vendidos&orden=titulo-asc&q=12`).
+  - **Pestañas:** el lienzo dibuja **cuatro**: Todos, En físico, Vendidos y Con descuentos y aumentos (la HU nombraba tres; el back ya tiene las cuatro vistas). Los conteos no cambian con la búsqueda (I-12).
+  - **Orden:** Recibido, Vendido, Título, Precio acordado y Diferencia. El selector de sentido es el de la biblioteca (Ascendente / Descendente) y no «Mayor primero / Menor primero» del lienzo. La fecha de cada fila sigue al orden (Recibido o Vendido; los sin vender, sin fecha y al final).
+  - **Huecos de la biblioteca cubiertos (para subirlos al diseño):** `ListRow` de ejemplar suma la columna **Diferencia** (`+$7.000` / `−$5.000`; en móvil bajo el precio), `dateKind` («Vendido el» / «Vendido 02/11/2026»), el número `#6` junto al título y el cliente en la segunda línea en móvil; `StatusPill` suma **Perdido** y **Devuelto al líder** (los 13 estados de ejemplar del lienzo); `ListTemplate` suma la ranura opcional `sections`.
+  - **Abrir una fila** lleva a `/inventario/ejemplares/[id]` (HU-PAN-INV-03): hasta entonces es el armazón. Sin Ventana de detalle en escritorio.
+  - **Fuera:** el filtro «Estado» (el lienzo dibuja el botón sin abrir, FI-08) y el detalle de un minibook (FI-09).
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13.

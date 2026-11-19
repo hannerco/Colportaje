@@ -15,7 +15,8 @@
 }
 
 .table[data-kind='copy'] {
-  --list-columns: minmax(0, 1.8fr) minmax(0, 0.9fr) minmax(0, 0.8fr) minmax(0, 1.4fr) minmax(0, 0.9fr);
+  --list-columns: minmax(0, 1.8fr) minmax(0, 0.9fr) minmax(0, 0.8fr) minmax(0, 1.4fr) minmax(0, 0.9fr)
+    minmax(0, 0.8fr);
 }
 
 /* ─── Escritorio ─── */
@@ -214,6 +215,12 @@
   flex: none;
 }
 
+/* El cliente del ejemplar (HU-PAN-INV-02) es el que cede si no cabe. */
+.secondary > .customerName:last-child:not(:first-child) {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
 .side {
   display: flex;
   flex-direction: column;
@@ -223,6 +230,14 @@
 
 .side .amount {
   font-weight: var(--weight-medium);
+}
+
+/* Diferencia con el precio público del ejemplar (HU-PAN-INV-02). */
+.side .delta {
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  font-variant-numeric: var(--font-numeric);
+  white-space: nowrap;
 }
 
 /* CA-2: el saldo $0 va en gris. */

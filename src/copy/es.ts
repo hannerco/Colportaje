@@ -31,7 +31,7 @@ export const copy = {
       columns: {
         customer: ['Cliente', 'Teléfono', 'Libro(s)', 'Saldo pendiente', 'Último abono', 'Estado'],
         payment: ['Cliente', 'Cuota', 'Fecha acordada', 'Monto', 'Estado'],
-        copy: ['Ejemplar', 'Recibido el', 'Precio', 'Cliente', 'Estado'],
+        copy: ['Ejemplar', 'Recibido el', 'Precio', 'Cliente', 'Estado', 'Diferencia'],
       },
       /** Sobre el saldo pendiente en la fila móvil de clientes (BR-CUS-13). */
       owes: 'Debe',
@@ -39,8 +39,13 @@ export const copy = {
       prospect: 'Prospecto',
       /** Celda sin dato (cliente sin abonos, prospecto sin estado, ejemplar sin cliente). */
       empty: '—',
+      /** Título de la columna de fecha del ejemplar cuando la lista se ordena por venta (HU-PAN-INV-02). */
+      soldOn: 'Vendido el',
       /** Segunda línea del ejemplar en móvil. */
       received: (date: string) => `Recibido ${date}`,
+      sold: (date: string) => `Vendido ${date}`,
+      /** Diferencia con el precio público (HU-PAN-INV-02): «+$7.000» / «−$5.000». */
+      delta: (sign: '+' | '−', amount: string) => `${sign}${amount}`,
       more: (n: number) => `+${n}`,
     },
     /** Franja (HU-UI-16): texto por defecto de sin conexión (BR-GEN-08, I-35). */
@@ -134,6 +139,9 @@ export const copy = {
     in_stock: 'En físico',
     sold: 'Vendido',
     flagged: 'Con novedad',
+    /** HU-PAN-INV-02: los estados de un ejemplar que ya no está en la maleta (lienzo «2 · Ejemplares»). */
+    lost: 'Perdido',
+    returned_to_leader: 'Devuelto al líder',
   },
   /** Módulo Clientes. */
   customers: {
@@ -424,6 +432,36 @@ export const copy = {
         title: 'Todavía no tienes libros en físico',
         text: 'Cuando agregues libros al inventario, aparecen aquí por título.',
       },
+      error: { title: 'No se pudo cargar', text: 'Inténtalo otra vez.' },
+    },
+    /** Lista de ejemplares (HU-PAN-INV-02, diseño «2 · Ejemplares», BR-COPY-12). */
+    copies: {
+      tabsLabel: 'Vistas de ejemplares',
+      tabs: {
+        all: 'Todos',
+        in_stock: 'En físico',
+        sold: 'Vendidos',
+        price_changed: 'Con descuentos y aumentos',
+      },
+      search: 'Buscar ejemplar',
+      results: (n: number) => (n === 1 ? '1 ejemplar' : `${n} ejemplares`),
+      sort: {
+        received: 'Recibido',
+        sold: 'Vendido',
+        title: 'Título',
+        agreed_price: 'Precio acordado',
+        price_delta: 'Diferencia',
+      },
+      empty: {
+        title: 'Todavía no tienes ejemplares',
+        text: 'Cuando agregues libros al inventario, aparecen aquí con su estado.',
+      },
+      emptyTab: { title: 'No hay ejemplares en esta vista' },
+      noResults: {
+        title: (query: string) => `Ningún ejemplar coincide con «${query}»`,
+        text: 'Busqué por título, cliente y número.',
+      },
+      offline: { title: 'Sin conexión', text: 'Puedes consultar lo guardado, pero no registrar.' },
       error: { title: 'No se pudo cargar', text: 'Inténtalo otra vez.' },
     },
     /** Un título abierto: sus ejemplares en físico. */

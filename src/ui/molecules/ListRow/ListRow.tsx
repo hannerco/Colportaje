@@ -56,12 +56,18 @@ export type ListRowRowProps = RowCommon &
         copyNumber: number;
         /** Cliente del ejemplar vendido. */
         customerName?: string;
+        /** Qué fecha trae `date`: la de recibido (por defecto) o la de venta (lista ordenada por venta). */
+        dateKind?: 'received' | 'sold';
+        /** Diferencia con el precio público, firmada (+ aumento, − descuento). Sin valor se ve «—». */
+        priceDelta?: COP;
       }
   );
 
 export type ListRowHeaderProps = {
   variant: 'header';
   kind: ListRowKind;
+  /** Solo `copy`: la columna de fecha dice «Vendido el» si la lista se ordena por venta. */
+  dateKind?: 'received' | 'sold';
   /** Título del grupo en móvil (p. ej. «Deudores»). En escritorio la cabecera muestra los títulos de columna. */
   groupLabel?: string;
   /** Conteo del grupo en móvil. */
@@ -73,6 +79,13 @@ export type ListRowProps = ListRowRowProps | ListRowHeaderProps;
 
 /** Índice de la columna del monto, alineada a la derecha (R1). */
 const AMOUNT_COLUMN: Record<ListRowKind, number> = { customer: 3, payment: 3, copy: 2 };
+/** Columna de la diferencia de precio del ejemplar, también a la derecha. */
+const DELTA_COLUMN = 5;
+const alignsEnd = (kind: ListRowKind, index: number) =>
+  index === AMOUNT_COLUMN[kind] || (kind === 'copy' && index === DELTA_COLUMN);
+
+/** «+$7.000» o «−$5.000». */
+const formatDelta = (delta: COP) => copy.ui.listRow.delta(delta > 0 ? '+' : '−', formatCOP(Math.abs(delta)));
 
 const cx = (...classes: (string | false | undefined)[]) => classes.filter(Boolean).join(' ');
 
@@ -89,16 +102,12 @@ export function ListRow(props: ListRowProps) {
 
 // ─── Escritorio ───
 
-function DesktopHeader({ kind, className }: ListRowHeaderProps) {
+function DesktopHeader({ kind, dateKind, className }: ListRowHeaderProps) {
   return (
     <div role="row" className={cx(styles.row, styles.header, className)}>
       {copy.ui.listRow.columns[kind].map((label, i) => (
-        <span
-          key={label}
-          role="columnheader"
-          className={cx(styles.cell, i === AMOUNT_COLUMN[kind] && styles.end)}
-        >
-          {label}
+        <span key={label} role="columnheader" className={cx(styles.cell, alignsEnd(kind, i) && styles.end)}>
+          {kind === 'copy' && i === 1 && dateKind === 'sold' ? copy.ui.listRow.soldOn : label}
         </span>
       ))}
     </div>
@@ -118,7 +127,11 @@ function DesktopRow(props: ListRowRowProps) {
         <span
           key={i}
           role="cell"
-          className={cx(styles.cell, i === AMOUNT_COLUMN[props.kind] && cx(styles.end, styles.amount))}
+          className={cx(
+            styles.cell,
+            alignsEnd(props.kind, i) && styles.end,
+            i === AMOUNT_COLUMN[props.kind] && styles.amount,
+          )}
         >
           {cell}
         </span>
@@ -173,6 +186,7 @@ function desktopCells(props: ListRowRowProps): ReactNode[] {
           {props.customerName ?? empty}
         </span>,
         status,
+        props.priceDelta ? formatDelta(props.priceDelta) : empty,
       ];
   }
 }
@@ -231,7 +245,10 @@ function MobileRow(props: ListRowRowProps) {
     <>
       <RowAvatar {...props} />
       <span className={styles.lines}>
-        <span className={cx(styles.ellipsis, styles.mobileTitle)}>{props.title}</span>
+        <span className={cx(styles.ellipsis, styles.mobileTitle)}>
+          {props.title}
+          {props.kind === 'copy' && <span className={styles.muted}> #{props.copyNumber}</span>}
+        </span>
         <span className={styles.secondary}>{secondLine(props)}</span>
       </span>
       <span className={styles.side}>{sideOf(props)}</span>
@@ -272,8 +289,18 @@ function secondLine(props: ListRowRowProps): ReactNode {
       );
     case 'payment':
       return props.date ? formatDate(props.date) : copy.ui.listRow.empty;
-    case 'copy':
-      return props.date ? copy.ui.listRow.received(formatDate(props.date)) : copy.ui.listRow.empty;
+    case 'copy': {
+      if (!props.date) return copy.ui.listRow.empty;
+      const text = props.dateKind === 'sold' ? copy.ui.listRow.sold : copy.ui.listRow.received;
+      return (
+        <>
+          <span className={styles.ellipsis}>{text(formatDate(props.date))}</span>
+          {props.customerName && (
+            <span className={cx(styles.ellipsis, styles.customerName)}>· {props.customerName}</span>
+          )}
+        </>
+      );
+    }
   }
 }
 
@@ -299,6 +326,9 @@ function sideOf(props: ListRowRowProps): ReactNode {
   return (
     <>
       {amount}
+      {props.kind === 'copy' && props.priceDelta ? (
+        <span className={styles.delta}>{formatDelta(props.priceDelta)}</span>
+      ) : null}
       {props.status && <StatusPill status={props.status} shape="text" />}
     </>
   );

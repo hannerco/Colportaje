@@ -82,3 +82,6 @@ export {
 export { InStockScreen, type FlaggedResolution, type InStockScreenProps } from './screens/InStockScreen';
 export { FlaggedCopiesList, type FlaggedCopiesListProps } from './components/FlaggedCopiesList';
 export { SwipeRow, type SwipeRowProps } from './components/SwipeRow';
+// HU-PAN-INV-02: lista de ejemplares.
+export { CopiesListScreen, type CopiesListScreenProps } from './screens/CopiesListScreen';
+export { copiesListParamsFromUrl, copiesListParamsToUrl } from './copies-list-url';
