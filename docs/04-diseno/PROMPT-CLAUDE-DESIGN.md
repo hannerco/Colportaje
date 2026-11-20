@@ -384,3 +384,74 @@ EXPLORACIÓN (sin decidir): el color de "Entregado". Muestra DOS variantes, una 
 REGLAS DE COPY: "Por cobrar", "Cobrado", "Entregado" (nunca "Sin reclamar", "Reclamado" ni "En la calle").
 "Abibono" se conserva, con tooltip "Entrega al líder".
 ```
+
+## Prompt — módulo Calendario (ronda 32)
+
+Pegar en el chat de diseño (con la skill `colportor-diseno`), en el mismo proyecto. Primero **MÓVIL claro** (el calendario se consulta en la calle); después escritorio claro; el oscuro al final. Reglas: BR-CAL-01..06, F-18, F-19, ADR-0012. Decisiones de la ronda 32: los abonos **solo se ven** en el calendario (se programan en la ficha), las capacitaciones **no se repiten** (PD-04) y la vista se decide viendo dos opciones (PD-03). **Pegar todo lo que sigue:**
+
+```
+Diseña el módulo CALENDARIO de Colportor, en el mismo proyecto y con la Biblioteca de componentes
+(tokens, sin tamaños ni colores literales; reutiliza Encabezado, Pestañas, Chip, FilaLista, Campo,
+Selección, Diálogo, Estado vacío, Franja y Ventana de detalle). Primero MÓVIL (390) en CLARO. Sin
+textos explicativos (ⓘ bajo demanda) y un solo botón principal por pantalla. No inventes reglas: lo
+que no esté aquí, déjalo como placeholder y avísame. Fechas dd/mm/aaaa, dinero $1.250.000, semana
+de DOMINGO a sábado, hora en 12 h ("3:00 p. m."; el usuario puede elegir 24 h en Ajustes).
+
+ENTRADA: móvil, Más ▸ Trabajo ▸ Calendario; escritorio, sidebar Trabajo ▸ Calendario. La línea del
+calendario del día en Hoy también abre el Calendario en el día de hoy.
+
+TRES TIPOS DE EVENTO, cada uno con su MICROÍCONO DE TIPO: ícono pequeño, solo trazo, con una FORMA
+propia y un color apagado (el único color de categoría de la app). Tipos: COBRO (abono por cobrar),
+VISITA y CAPACITACIÓN. Los tres colores deben distinguirse también por luminosidad (daltonismo) y no
+chocar con el acento. Son los mismos que usará la línea de Hoy ("● 3 cobros · ◆ 1 visita ·
+▲ 1 capacitación"; las formas las eliges tú). Muéstralos en la Biblioteca como componente nuevo.
+En la tarjeta de un evento se permite el borde izquierdo oscuro (solo aquí en toda la app).
+
+FILTRO por tipo con chips: Todos · Cobros · Visitas · Capacitaciones.
+
+ACCIÓN ÚNICA: botón "+" → elegir "Visita" o "Capacitación". Los abonos NO se crean aquí: se programan
+en la ficha del cliente.
+
+EXPLORACIÓN (sin decidir, muéstrame las dos completas en móvil y escritorio):
+  A) MES: cuadrícula del mes con marcas por día (microíconos o puntos por tipo, sin montos); al tocar
+     un día, debajo, la lista de ese día en orden de hora.
+  B) SEMANA + LÍNEA DE TIEMPO (Referencia 2): tira de 7 días arriba y, debajo, las horas del día
+     elegido con los eventos en su hora.
+  En ambas: lo que no tiene hora (los cobros y las visitas sin hora) va arriba del día en una franja
+  "Todo el día". Flechas para cambiar de mes/semana y un botón "Hoy" para volver.
+
+1) COBRO (solo lectura en el calendario). Son los abonos Por cobrar, en su fecha acordada. Fila:
+   microícono · nombre del cliente bien visible · monto acordado. Si la fecha ya pasó, la marca roja
+   "Vencido" (el monto no va en rojo). Los cobrados, entregados y cancelados NO aparecen. Al tocarlo
+   abre el DETALLE DE ABONO que ya existe (con Cobrar y Más plazo); no hagas uno nuevo.
+
+2) VISITA. Formulario: Cliente (opcional, buscador de clientes) o, si no hay cliente, una etiqueta
+   libre (p. ej. "Panadería de la esquina"); fecha; hora (opcional); nota; recordatorios (opcional).
+   Estados: Pendiente → Hecha / Cancelada (por ícono y texto en gris, no por color).
+   Detalle: datos editables, "Marcar como hecha" y, discreto, "Cancelar visita". Con cliente: enlace a
+   su ficha (si el cliente está archivado, la visita sigue y se ve la marca "Archivado"). Sin cliente:
+   acción "Convertir en cliente" que abre Nuevo cliente con el nombre ya puesto.
+   EXPLORACIÓN pequeña: al marcar como hecha una visita SIN cliente, A) solo queda hecha; B) aparece
+   un aviso con "Convertir en cliente".
+   La visita también se agenda desde la FICHA DEL CLIENTE: sección "Visitas" (lista corta de las
+   suyas) con "Agendar visita", que abre el mismo formulario con el cliente ya puesto.
+
+3) CAPACITACIÓN. Formulario: título, empresa o lugar, fecha y hora (las dos obligatorias), notas,
+   recordatorios (opcional). Cada capacitación se crea una por una: SIN "repetir".
+   Detalle: datos editables.
+
+4) RECORDATORIOS (solo visitas y capacitaciones; ninguno por defecto, se ofrecen al crear). Se pueden
+   poner varios: "Al inicio del día" (7:00 a. m.), "Un día antes", "Una semana antes" y
+   "Personalizado" (minutos antes). En esta versión son DENTRO de la app (no notificaciones del
+   teléfono): una insignia con el número en el ítem Calendario del menú y, arriba del calendario, una
+   fila discreta con los recordatorios activos; cada uno se puede "Descartar".
+
+5) ESCRITORIO: el calendario ocupa el panel; al abrir un evento o el formulario se usa la Ventana de
+   detalle (lateral por defecto). Móvil: el formulario es una hoja.
+
+6) ESTADOS: cargando; día sin eventos y mes/semana sin eventos (estado vacío); sin conexión (se puede
+   consultar, no guardar); error al guardar con reintentar.
+
+COPY: "Cobro", "Visita", "Capacitación", "Agendar visita", "Nueva capacitación", "Hecha",
+"Cancelada", "Convertir en cliente".
+```

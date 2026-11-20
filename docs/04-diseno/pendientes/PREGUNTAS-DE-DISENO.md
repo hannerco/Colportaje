@@ -30,18 +30,21 @@ Mi suposición: cada tipo de evento tiene su propia figura, y por eso se disting
 - B) Semana (domingo a sábado) con los eventos en columnas.
 - C) Solo una lista de los próximos días.
 **Recomiendo A**, con la semana empezando en domingo: es lo más fácil de entender de un vistazo y ya tienes el detalle del día al tocar.
+**Resuelta en parte (ronda 32, 2026-11-18):** el dueño quiere ver **A (mes)** y **B (semana con línea de tiempo)** dibujadas en Claude Design antes de elegir. Se descarta C.
 
 **PD-04 · ¿Las capacitaciones se repiten?**
 Ejemplo: una capacitación todos los lunes a las 8:00 a. m.
 - A) No; cada capacitación se crea una por una.
 - B) Sí, con «repetir cada semana».
 **Recomiendo A** para la primera versión (es nuevo y no está en las reglas; se agrega después si de verdad lo usas).
+**Resuelta (ronda 32, 2026-11-18): A.** Cada capacitación se crea una por una (BR-CAL-03).
 
 **PD-05 · Cuando marcas una visita como «hecha», ¿qué esperas que pase?**
 Ejemplo: visitaste a la panadería de la esquina y le interesó un libro.
 - A) Solo queda marcada como hecha.
 - B) La app te ofrece «Convertir en cliente» en ese momento.
 La regla ya permite convertir con un toque en cualquier momento; esta pregunta es si quieres que además te lo sugiera al marcarla.
+**Ronda 32:** se decide viendo las dos opciones en Claude Design (exploración pequeña del prompt del Calendario).
 
 ---
 

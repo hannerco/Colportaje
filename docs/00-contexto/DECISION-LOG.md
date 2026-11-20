@@ -544,6 +544,18 @@ El dueño revisó las 27 interpretaciones de `07-historias-usuario/INTERPRETACIO
 
 ---
 
+## Ronda 32 — Prompt del módulo Calendario (2026-11-18)
+
+| # | Tema | Resultado |
+|---|---|---|
+| 1 | Qué se agrega desde el calendario | El dueño pidió poder agregar «visitas, capacitaciones, abonos». Ante la pregunta de si un abono se crea desde el calendario: **"No, solo se ven"** [D]. Los abonos se programan en la ficha; el calendario los muestra y abre su detalle (Cobrar, Más plazo). BR-CAL-01. |
+| 2 | Vista del calendario (PD-03) | **"Que Design muestre las dos"** [D] Exploración: A) mes + detalle del día; B) tira de semana + línea de tiempo (Referencia 2). |
+| 3 | Capacitaciones repetidas (PD-04) | **"No, una por una"** [D] BR-CAL-03. |
+
+*Consecuencias:* `04-diseno/PROMPT-CLAUDE-DESIGN.md` («Prompt — módulo Calendario»); BR-CAL-01/03; PD-03/04 en `04-diseno/pendientes/PREGUNTAS-DE-DISENO.md`. PD-05 se decide viendo las dos opciones en el diseño.
+
+---
+
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.
 2. **Repositorio de GitHub: `Colportaje`** (2026-11-04). Se pensó en `colportor`, pero el dueño ya había creado `hannerco/Colportaje` y pidió dejar todo con ese nombre.
