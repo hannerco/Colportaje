@@ -15,6 +15,23 @@ export const copy = {
       submitting: 'Entrando…',
     },
   },
+  /** Ajustes, versión mínima (pedido del dueño, 2026-11-20; sin diseño del lienzo). */
+  settings: {
+    account: 'Cuenta',
+    name: 'Nombre',
+    role: 'Rol',
+    roles: { colportor: 'Colportor', admin: 'Colportor · Administrador' },
+    timeFormat: 'Formato de hora',
+    timeFormatLegend: 'Cómo ves las horas',
+    formats: { '12h': '12 horas', '24h': '24 horas' },
+    example: (time: string) => `Ej.: ${time}`,
+    timeFormatSaved: 'Formato de hora guardado',
+    session: 'Sesión',
+    signOut: 'Cerrar sesión',
+    signOutTitle: '¿Cerrar sesión?',
+    signOutHint: 'Se borran de este celular los datos guardados para consultar sin conexión.',
+    cancel: 'Cancelar',
+  },
   ui: {
     /** Texto por defecto del botón mientras se guarda (HU-UI-04). */
     saving: 'Guardando…',

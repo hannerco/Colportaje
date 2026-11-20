@@ -8,6 +8,8 @@ import { unwrap } from '../shared/app-failure';
 import { useRepositories } from '../shared/repositories-provider';
 import { createSessionStore, type SessionStore } from './session-store';
 import { signIn } from './use-cases/sign-in';
+import { updateTimeFormat } from './use-cases/update-time-format';
+import type { TimeFormat } from '@/domain/time';
 
 export const authQueryKeys = {
   all: ['auth'] as const,
@@ -88,4 +90,18 @@ export function useSignOut() {
     },
   });
   return { signOut: mutation.mutateAsync, isPending: mutation.isPending };
+}
+
+/** Cambia el formato de hora del usuario (Ajustes, BR-GEN-07). Devuelve `Result<void>`; errores `OFFLINE`, `FORBIDDEN`. */
+export function useUpdateTimeFormat() {
+  const { profiles, connectivity } = useRepositories();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (format: TimeFormat) => updateTimeFormat({ profiles, connectivity }, format),
+    onSuccess: (result) => {
+      if (!result.ok) return;
+      void queryClient.invalidateQueries({ queryKey: authQueryKeys.all });
+    },
+  });
+  return { updateTimeFormat: mutation.mutateAsync, isPending: mutation.isPending };
 }

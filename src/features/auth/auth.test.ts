@@ -8,6 +8,7 @@ import type { AuthChange, AuthRepository, ProfileRepository } from '@/repositori
 import { AppFailure, unwrap } from '../shared/app-failure';
 import { createSessionStore } from './session-store';
 import { signIn } from './use-cases/sign-in';
+import { updateTimeFormat } from './use-cases/update-time-format';
 import { fakeConnectivity } from '../../../tests/support/fake-connectivity';
 
 const activeProfile: Profile = {
@@ -47,6 +48,7 @@ function fakeAuth(signInResult: Result<{ userId: string }, AppError> = ok({ user
 
 const profilesReturning = (result: Result<Profile, AppError>): ProfileRepository => ({
   getCurrentProfile: async () => result,
+  updateTimeFormat: async () => ok(undefined),
 });
 
 const online = fakeConnectivity(true);
@@ -168,5 +170,27 @@ describe('unwrap', () => {
     } catch (failure) {
       expect((failure as AppFailure).error).toEqual(appError('NOT_FOUND'));
     }
+  });
+});
+
+describe('updateTimeFormat (Ajustes, BR-GEN-07)', () => {
+  it('guarda el formato elegido', async () => {
+    const profiles = {
+      ...profilesReturning(ok(activeProfile)),
+      updateTimeFormat: vi.fn(async () => ok(undefined)),
+    };
+    const result = await updateTimeFormat({ profiles, connectivity: online }, '24h');
+    expect(result).toEqual(ok(undefined));
+    expect(profiles.updateTimeFormat).toHaveBeenCalledWith('24h');
+  });
+
+  it('sin conexión devuelve OFFLINE sin intentar', async () => {
+    const profiles = {
+      ...profilesReturning(ok(activeProfile)),
+      updateTimeFormat: vi.fn(async () => ok(undefined)),
+    };
+    const result = await updateTimeFormat({ profiles, connectivity: fakeConnectivity(false) }, '24h');
+    expect(result).toEqual(err(appError('OFFLINE')));
+    expect(profiles.updateTimeFormat).not.toHaveBeenCalled();
   });
 });

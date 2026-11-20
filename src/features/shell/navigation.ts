@@ -63,15 +63,8 @@ export const APP_NAV_ITEMS: NavId[] = ALL_NAV_IDS.filter((id) => id !== 'admin')
 /** Los módulos de la navegación según el perfil: Admin solo si el usuario es administrador (BR-USR-04). */
 export const appNavItems = (isAdmin: boolean): NavId[] => (isAdmin ? [...ALL_NAV_IDS] : APP_NAV_ITEMS);
 
-/** Los módulos que todavía no están terminados: su ruta muestra «Próximamente». */
-export const COMING_SOON: readonly NavId[] = [
-  'today',
-  'minibooks',
-  'calendar',
-  'stocktake',
-  'settings',
-  'admin',
-];
+/** Los módulos que todavía no están terminados: su ruta muestra «Próximamente». Ajustes tiene su versión mínima. */
+export const COMING_SOON: readonly NavId[] = ['today', 'minibooks', 'calendar', 'stocktake', 'admin'];
 
 /** El módulo activo según la ruta (`/inventario/...` → Inventario, `/dinero/...` → Dinero…); lo demás, Clientes. */
 export const navIdForPath = (pathname: string): NavId => {

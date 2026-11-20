@@ -34,8 +34,9 @@ describe('navegación de la app (HU-PAN-BASE-01)', () => {
   });
 
   it('los módulos sin terminar abren «Próximamente»; los terminados no', () => {
-    expect(COMING_SOON).toEqual(['today', 'minibooks', 'calendar', 'stocktake', 'settings', 'admin']);
-    for (const id of ['customers', 'inventory', 'money'] as const) expect(COMING_SOON).not.toContain(id);
+    expect(COMING_SOON).toEqual(['today', 'minibooks', 'calendar', 'stocktake', 'admin']);
+    for (const id of ['customers', 'inventory', 'money', 'settings'] as const)
+      expect(COMING_SOON).not.toContain(id);
   });
 
   it('el módulo activo sale de la ruta', () => {
