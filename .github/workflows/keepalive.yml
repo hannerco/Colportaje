@@ -1,0 +1,40 @@
+# Evita la pausa del plan gratuito de Supabase (DEPLOYMENT §7, HU-BASE-07 CA-5): cada 3 días una consulta
+# ligera (`select 1`, solo lectura) a staging y a producción. Si alguno no responde, el workflow queda en rojo.
+name: Keep-alive
+
+on:
+  schedule:
+    - cron: '17 12 */3 * *' # 07:17 en Bogotá
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    name: ${{ matrix.environment }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [staging, production]
+    environment: ${{ matrix.environment }}
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      PROJECT_REF: ${{ matrix.environment == 'production' && secrets.SUPABASE_PROJECT_REF_PROD || secrets.SUPABASE_PROJECT_REF_STAGING }}
+    steps:
+      - name: Consulta ligera
+        run: |
+          if [ -z "$PROJECT_REF" ]; then
+            echo "::error::Falta el ref del proyecto en el entorno ${{ matrix.environment }}."
+            exit 1
+          fi
+          result=$(curl -fsS --retry 3 --retry-delay 10 -X POST "https://api.supabase.com/v1/projects/$PROJECT_REF/database/query" \
+            -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H 'Content-Type: application/json' \
+            -d '{"query":"select 1 as ok","read_only":true}' | jq -r '.[0].ok')
+          if [ "$result" != "1" ]; then
+            echo "::error::${{ matrix.environment }} no respondió a la consulta."
+            exit 1
+          fi
+          echo "${{ matrix.environment }}: responde."

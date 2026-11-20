@@ -1,0 +1,122 @@
+# Migraciones a la nube (HU-BASE-07): al fusionar a main, staging primero y producción después.
+# Producción solo corre si staging pasó (R1). Cada entorno lee únicamente sus propios secrets (GitHub Environments).
+# Nunca se editan migraciones aplicadas (R5); `db push` sin cambios termina en verde (CA-3).
+name: Migraciones
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - supabase/migrations/**
+      - .github/workflows/deploy-db.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Nunca dos despliegues de base a la vez, y nunca se cancela uno a medias.
+concurrency:
+  group: deploy-db
+  cancel-in-progress: false
+
+jobs:
+  staging:
+    name: staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: staging
+    outputs:
+      ref_hash: ${{ steps.ref.outputs.hash }}
+      version: ${{ steps.version.outputs.version }}
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD_STAGING }}
+      SUPABASE_PROJECT_REF_STAGING: ${{ secrets.SUPABASE_PROJECT_REF_STAGING }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: pnpm/action-setup@v6.1.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      # El job de producción compara este hash con el suyo (R6) sin leer los secrets de staging.
+      - name: Huella del proyecto
+        id: ref
+        run: echo "hash=$(printf '%s' "$SUPABASE_PROJECT_REF_STAGING" | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
+
+      - name: Enlazar staging
+        run: pnpm exec supabase link --project-ref "$SUPABASE_PROJECT_REF_STAGING"
+
+      - name: Aplicar migraciones
+        run: pnpm exec supabase db push --remote --yes
+
+      - name: Última migración aplicada
+        id: version
+        run: |
+          version=$(curl -fsS -X POST "https://api.supabase.com/v1/projects/$SUPABASE_PROJECT_REF_STAGING/database/query" \
+            -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H 'Content-Type: application/json' \
+            -d '{"query":"select max(version) as version from supabase_migrations.schema_migrations","read_only":true}' \
+            | jq -r '.[0].version')
+          echo "staging: $version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Comprobar la seguridad (solo lectura)
+        run: pnpm check:cloud staging
+
+  production:
+    name: production
+    needs: staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD_PROD }}
+      SUPABASE_PROJECT_REF_PROD: ${{ secrets.SUPABASE_PROJECT_REF_PROD }}
+      STAGING_REF_HASH: ${{ needs.staging.outputs.ref_hash }}
+      STAGING_VERSION: ${{ needs.staging.outputs.version }}
+    steps:
+      # R6: si por error el ref de producción fuera el de staging, se detiene antes de tocar nada.
+      - name: Producción no es staging
+        run: |
+          prod_hash=$(printf '%s' "$SUPABASE_PROJECT_REF_PROD" | sha256sum | cut -c1-64)
+          if [ -z "$SUPABASE_PROJECT_REF_PROD" ] || [ "$prod_hash" = "$STAGING_REF_HASH" ]; then
+            echo "::error::SUPABASE_PROJECT_REF_PROD falta o es el mismo proyecto que staging. No se aplica nada."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v7.0.1
+      - uses: pnpm/action-setup@v6.1.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      - name: Enlazar producción
+        run: pnpm exec supabase link --project-ref "$SUPABASE_PROJECT_REF_PROD"
+
+      - name: Aplicar migraciones
+        run: pnpm exec supabase db push --remote --yes
+
+      # CA-1 y casos borde: los dos proyectos deben quedar con la misma última migración; si no, se informa cuál es cuál.
+      - name: Staging y producción con la misma migración
+        run: |
+          version=$(curl -fsS -X POST "https://api.supabase.com/v1/projects/$SUPABASE_PROJECT_REF_PROD/database/query" \
+            -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H 'Content-Type: application/json' \
+            -d '{"query":"select max(version) as version from supabase_migrations.schema_migrations","read_only":true}' \
+            | jq -r '.[0].version')
+          echo "staging: $STAGING_VERSION · producción: $version"
+          if [ "$version" != "$STAGING_VERSION" ]; then
+            echo "::error::Staging quedó en $STAGING_VERSION y producción en $version. Se corrige con una migración NUEVA, nunca editando una aplicada."
+            exit 1
+          fi
+
+      - name: Comprobar la seguridad (solo lectura)
+        run: pnpm check:cloud prod

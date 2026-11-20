@@ -1,0 +1,19 @@
+# Actualizaciones de dependencias (HU-BASE-07). Cada PR pasa por la CI como cualquier otro.
+version: 2
+updates:
+  - package-ecosystem: npm # cubre pnpm (pnpm-lock.yaml)
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: America/Bogota
+    open-pull-requests-limit: 5
+    groups:
+      menores:
+        update-types: [minor, patch]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: America/Bogota
