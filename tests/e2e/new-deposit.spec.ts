@@ -12,6 +12,8 @@ const isMobile = (page: Page) => page.viewportSize()!.width < 768;
 const amountOf = async (page: Page, name: string) =>
   Number((await page.getByRole('textbox', { name }).inputValue()).replace(/\D/g, ''));
 
+test.describe.configure({ mode: 'serial' });
+
 test('flujo 5: se precarga con lo cobrado, se guarda y borra un borrador, y con el recibo se marca como entregado', async ({
   page,
 }) => {
@@ -61,4 +63,46 @@ test('flujo 5: se precarga con lo cobrado, se guarda y borra un borrador, y con 
   await expect(page).toHaveURL(/\/dinero\/abibonos$/);
   await expect(page.getByText('Abibono entregado')).toBeVisible();
   await expect(page.getByRole('table', { name: 'Abibonos' }).getByText('Entregado')).toBeVisible();
+});
+
+// HU-PAN-DIN-05 · Reabrir un Abibono (TESTING.md, flujo 13): sigue al flujo 5, que deja un Abibono entregado.
+test('flujo 13: un Abibono entregado se ve como quedó, se edita su nota, se reabre con motivo y se vuelve a entregar', async ({
+  page,
+}) => {
+  test.skip(isMobile(page), 'Un solo proyecto entrega: el Abibono toma todo lo cobrado.');
+
+  await page.goto('/dinero/abibonos');
+  const table = page.getByRole('table', { name: 'Abibonos' });
+  await table.getByRole('row').filter({ hasText: 'Entregado' }).getByRole('link').first().click();
+  await expect(page).toHaveURL(/\/dinero\/abibonos\/[0-9a-f-]{36}$/);
+  const title = page.getByRole('heading', { name: /^Abibono \(\d+\)$/ }).first();
+  await expect(title).toBeVisible();
+  const name = (await title.textContent())!;
+
+  // CA-1: solo se edita la nota; «Reabrir» está en Más acciones.
+  await expect(page.getByRole('button', { name: 'Marcar como entregado' })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: /Abibono E2E/ }).first()).toBeVisible();
+  const note = page.getByRole('textbox', { name: /Nota/ });
+  await note.fill('Nota del E2E');
+  await page.getByRole('button', { name: 'Guardar nota' }).click();
+  await expect(page.getByText('Nota guardada')).toBeVisible();
+
+  // CA-2: sin motivo no se reabre; con motivo vuelve a borrador y conserva su número.
+  await page.getByRole('button', { name: 'Más acciones' }).click();
+  await page.getByRole('menuitem', { name: 'Reabrir' }).click();
+  const dialog = page.getByRole('alertdialog');
+  await dialog.getByRole('button', { name: 'Reabrir' }).click();
+  await expect(dialog.getByText('Escribe el motivo.')).toBeVisible();
+  await dialog.getByRole('textbox', { name: 'Motivo' }).fill('Incluí un abono por error');
+  await dialog.getByRole('button', { name: 'Reabrir' }).click();
+  await expect(page.getByText('Abibono reabierto')).toBeVisible();
+  await expect(page.getByRole('heading', { name })).toBeVisible();
+  await expect(page.getByRole('checkbox', { name: 'Abibono E2E' }).first()).toBeChecked();
+
+  // Con el recibo que ya tenía, se vuelve a entregar.
+  const confirm = page.getByRole('button', { name: 'Marcar como entregado' });
+  await expect(confirm).not.toHaveAttribute('aria-disabled', 'true');
+  await confirm.click();
+  await expect(page).toHaveURL(/\/dinero\/abibonos$/);
+  await expect(page.getByText('Abibono entregado')).toBeVisible();
 });

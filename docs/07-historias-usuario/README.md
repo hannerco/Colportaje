@@ -340,7 +340,7 @@ Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesió
 | HU-PAN-DIN-02 | Terminada (2026-11-19) | `will-dev` |
 | HU-PAN-DIN-03 | Terminada (2026-11-19) | `will-dev` |
 | HU-PAN-DIN-04 | Terminada (2026-11-19) | `will-dev` |
-| HU-PAN-DIN-05 | Pendiente | — |
+| HU-PAN-DIN-05 | Terminada (2026-11-19) | `will-dev` |
 
 **Flujo de trabajo del front:** igual que el back, en `will-dev`, un *commit* por HU. Antes de cada *commit*: `pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm build-storybook`.
 
