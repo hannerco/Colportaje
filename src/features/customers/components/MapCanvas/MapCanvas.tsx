@@ -1,7 +1,8 @@
 'use client';
 
 import 'leaflet/dist/leaflet.css';
-import type { Circle, Map as LeafletMap } from 'leaflet';
+import 'maplibre-gl/dist/maplibre-gl.css';
+import type { Circle, Layer, Map as LeafletMap } from 'leaflet';
 import { useEffect, useRef, useState } from 'react';
 import type { MapPoint } from '@/domain/customer-location';
 import type { MapTiles } from '../../map-tiles';
@@ -16,7 +17,7 @@ export type MapCanvasProps = {
   view: MapView;
   /** Arrastrar y hacer zoom (el selector); la ficha solo muestra. El zoom siempre es sobre el centro (el pin). */
   interactive?: boolean;
-  /** `null` = sin proveedor (SG-09): el mapa se ve liso. */
+  /** El estilo del mapa (OpenFreeMap, SG-09). `null` = sin imágenes: el mapa se ve liso. */
   tiles: MapTiles | null;
   /** Sin conexión no se piden las imágenes del mapa (AF-111). */
   offline?: boolean;
@@ -27,8 +28,9 @@ export type MapCanvasProps = {
 };
 
 /**
- * Mapa de Leaflet (ADR-0036, pieza del módulo): solo se carga en el navegador y al montarse (el mapa de la ficha se
- * monta al tocarlo). El pin no es un marcador del mapa: lo pinta quien lo usa, fijo en el centro.
+ * Mapa de Leaflet con teselas vectoriales dibujadas por MapLibre GL (ADR-0036, pieza del módulo): solo se carga en el
+ * navegador y al montarse (el mapa de la ficha se monta al tocarlo). Si el teléfono no puede dibujar con WebGL, el mapa
+ * se ve liso (el pin, las coordenadas y «Abrir en Maps» siguen). El pin no es un marcador del mapa: lo pinta quien lo usa, fijo en el centro.
  */
 export function MapCanvas({
   view,
@@ -68,6 +70,8 @@ export function MapCanvas({
         doubleClickZoom: interactive ? 'center' : false,
         boxZoom: false,
         keyboard: interactive,
+        maxZoom: 19,
+        minZoom: 1,
       });
       created.on('moveend', () => {
         const point = created!.getCenter();
@@ -98,12 +102,24 @@ export function MapCanvas({
     const L = leaflet.current;
     const current = map.current;
     if (!ready || !L || !current || !tiles || offline) return;
-    const layer = L.tileLayer(tiles.url, { maxZoom: 19 }).addTo(current);
+    let cancelled = false;
+    let layer: Layer | null = null;
     const attribution = tiles.attribution
       ? L.control.attribution({ prefix: false }).addAttribution(tiles.attribution).addTo(current)
       : null;
+    void import('@maplibre/maplibre-gl-leaflet').then(({ maplibreGL }) => {
+      if (cancelled) return;
+      try {
+        // La atribución la pone Leaflet (arriba); la propia de MapLibre se apaga para no repetirla.
+        layer = maplibreGL({ style: tiles.styleUrl, attributionControl: false }).addTo(current);
+      } catch {
+        // Sin WebGL el mapa se queda liso.
+        layer = null;
+      }
+    });
     return () => {
-      layer.remove();
+      cancelled = true;
+      layer?.remove();
       attribution?.remove();
     };
   }, [ready, tiles, offline]);

@@ -1,18 +1,28 @@
-// Proveedor de teselas del mapa (ADR-0036, SG-09: por decidir; nunca el servidor público de OpenStreetMap en una app
-// distribuida). Mientras el dueño decide, solo `pnpm dev` usa un proveedor de pruebas; la app compilada sin
-// `NEXT_PUBLIC_MAP_TILES_URL` muestra el mapa sin imágenes (el pin, las coordenadas y «Abrir en Maps» funcionan).
+// Proveedor del mapa (ADR-0036, SG-09 resuelta: OpenFreeMap). Teselas vectoriales de OpenStreetMap, gratis, sin cuenta ni
+// clave, que se dibujan con MapLibre GL dentro de Leaflet. Nunca el servidor público de OpenStreetMap en una app
+// distribuida. Para alojar el estilo propio (plan B), basta `NEXT_PUBLIC_MAP_STYLE_URL`.
 
-export type MapTiles = { readonly url: string; readonly attribution: string };
-
-/** Solo en desarrollo, para probar en local (SG-09). */
-const DEVELOPMENT_TILES: MapTiles = {
-  url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-  attribution: '© OpenStreetMap',
+export type MapTiles = {
+  /** URL del estilo MapLibre (JSON). */
+  readonly styleUrl: string;
+  /** Atribución visible (HTML corto con enlaces; es una constante o una variable de entorno del dueño). */
+  readonly attribution: string;
 };
 
-/** Las teselas configuradas; `null` = sin proveedor (el mapa se ve liso). Se leen con su nombre literal (Next). */
-export const mapTiles = (): MapTiles | null => {
-  const url = process.env.NEXT_PUBLIC_MAP_TILES_URL?.trim();
-  if (url) return { url, attribution: process.env.NEXT_PUBLIC_MAP_TILES_ATTRIBUTION?.trim() ?? '' };
-  return process.env.NODE_ENV === 'development' ? DEVELOPMENT_TILES : null;
+const OPENFREEMAP: MapTiles = {
+  styleUrl: 'https://tiles.openfreemap.org/styles/liberty',
+  attribution:
+    '<a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a> ' +
+    '© <a href="https://openmaptiles.org" target="_blank" rel="noopener noreferrer">OpenMapTiles</a> ' +
+    'Data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>',
+};
+
+/** El estilo del mapa. Se leen las variables con su nombre literal (Next). */
+export const mapTiles = (): MapTiles => {
+  const styleUrl = process.env.NEXT_PUBLIC_MAP_STYLE_URL?.trim();
+  if (!styleUrl) return OPENFREEMAP;
+  return {
+    styleUrl,
+    attribution: process.env.NEXT_PUBLIC_MAP_ATTRIBUTION?.trim() ?? OPENFREEMAP.attribution,
+  };
 };

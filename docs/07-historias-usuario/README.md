@@ -275,7 +275,7 @@ Piezas que las **pantallas** del lienzo dibujan pero que no están en la **bibli
 | Plan de abonos (frecuencia, valor, lista previa) | Crear cliente | PAN-CLI-03 (hecho: pieza `PaymentPlanFields`) |
 | Botones segmentados (Medio de pago, Frecuencia) | Crear cliente | PAN-CLI-03 (se usó la Selección radio de la biblioteca) |
 | **Factura en la ficha nueva** (fotos, N.º y fecha) — dibujada, **sin HU de pantalla** | Crear cliente | Ninguna: decidir dónde va |
-| Mapa y selector de ubicación | Información y dirección; Elegir ubicación | PAN-CLI-06 (hecho: piezas `MapCanvas`, `MapPreview`, `LocationPicker` y `CustomerLocationBlock`; proveedor de teselas pendiente, SG-09) |
+| Mapa y selector de ubicación | Información y dirección; Elegir ubicación | PAN-CLI-06 (hecho: piezas `MapCanvas`, `MapPreview`, `LocationPicker` y `CustomerLocationBlock`; teselas de OpenFreeMap con MapLibre GL, SG-09 decidido) |
 | Íconos de mapa, abrir afuera, cámara, recentrar y GPS tachado | Información y dirección; Elegir ubicación | PAN-CLI-06 (se usaron los de la biblioteca) |
 | Fila que se desliza (móvil) | Dinero (Cobrar / Más plazo); Por resolver | PAN-DIN-02, PAN-INV-01 (hecho: pieza `SwipeRow`, con las acciones también por teclado) |
 | Botón de título con contador (escritorio) y control de cantidad que se escribe (móvil) | Agregar al inventario | PAN-INV-04 (hecho: piezas `TitleTile` y `QuantityControl`) |
@@ -330,7 +330,7 @@ Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesió
 | HU-PAN-CLI-03 | Terminada (2026-11-19); libros, dirección e información llegan con CLI-04 y CLI-06 | `will-dev` |
 | HU-PAN-CLI-04 | Terminada (2026-11-19); devolver con motivo espera FC-06 | `will-dev` |
 | HU-PAN-CLI-05 | Terminada (2026-11-19); registrar, programar, editar y cancelar esperan FC-09 a FC-12 | `will-dev` |
-| HU-PAN-CLI-06 | Programada (2026-11-19); no se da por terminada hasta que el dueño decida el proveedor del mapa y la pruebe en su iPhone (SG-09) | `will-dev` |
+| HU-PAN-CLI-06 | Programada (2026-11-19); proveedor del mapa decidido (OpenFreeMap, SG-09); no se da por terminada hasta que el dueño la pruebe en su iPhone | `will-dev` |
 | HU-PAN-INV-01 | Terminada (2026-11-19); «Devolver al líder» llega con INV-05 y el panel Agregar con INV-04 | `will-dev` |
 | HU-PAN-INV-02 | Terminada (2026-11-19); abrir una fila espera INV-03 | `will-dev` |
 | HU-PAN-INV-03 | Terminada (2026-11-19); sin Franja ni «Devolver al líder» (INV-05) | `will-dev` |
@@ -349,7 +349,7 @@ Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesió
 |---|---|---|
 | **HU-UI-01** | «UI-01 lista: <enlace del Storybook>» | Abre el enlace (inicia sesión en Vercel con la cuenta Emprendum), prueba Tema, Plataforma y Letra, y abre un *issue* de prueba. El proyecto `colportor-storybook` ya está creado (2026-11-17) |
 | **Cada bloque (A a I)** | «Bloque <X> listo: <enlace>» | Revisa en el Storybook y reporta correcciones (ver «Cómo iteramos») |
-| **HU-PAN-CLI-06** | «Falta el proveedor del mapa» | Decide SG-09 y prueba la ubicación en su iPhone |
+| **HU-PAN-CLI-06** | «Mapa listo (OpenFreeMap)» | Prueba la ubicación en su iPhone (permiso del GPS y mover el pin) |
 | **HU-PAN-BASE-01 y primer despliegue** | «La app ya se puede abrir» | Prueba en su celular (HU-PAN-BASE-02 ya está) |
 
 ### Fuera de alcance del front (iteración 1)

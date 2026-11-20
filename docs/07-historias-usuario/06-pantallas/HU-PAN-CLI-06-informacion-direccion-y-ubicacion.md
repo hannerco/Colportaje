@@ -20,7 +20,7 @@
   - sin conexión.
 
 ## Piezas del módulo
-`LocationPicker` y `MapPreview` (Leaflet; proveedor de teselas por decidir, **SG-09**: hasta que se decida, el mapa usa un proveedor de pruebas solo en desarrollo y la HU no se da por terminada en producción). El lienzo los tiene como componentes (`Mapa.dc.html`, `Ubicacion.dc.html`), no en la biblioteca: se anotan para subirlos.
+`LocationPicker` y `MapPreview` (Leaflet con teselas vectoriales de **OpenFreeMap** dibujadas por MapLibre GL, **SG-09** resuelta: ADR-0036). El lienzo los tiene como componentes (`Mapa.dc.html`, `Ubicacion.dc.html`), no en la biblioteca: se anotan para subirlos.
 
 ## Estados (stories)
 Los dos de Información y dirección y los siete de Elegir ubicación, en escritorio y móvil (con la geolocalización simulada).
@@ -41,8 +41,8 @@ FC-16 (pegar el enlace de Maps a mano) si no está dibujado; probar en iPhone re
   - **Selector:** va en la Ventana de detalle de la biblioteca, **centrada en escritorio y hoja en móvil** (el lienzo dibuja el móvil a pantalla completa, con «Volver» y el título flotando sobre el mapa). «Elegir en mapa» pide el GPS al abrir (el permiso se pide al tocar, ADR-0036); «Cambiar» abre en la ubicación guardada y solo pide el GPS al recentrar. Mover el mapa deja el pin «a mano»: se guarda sin precisión. El círculo de precisión va anclado al punto del GPS. Siete estados del lienzo; sin conexión, «Confirmar» deshabilitado y el aviso debajo de las coordenadas.
   - **Botón «Confirmar»** (lienzo) y no «Guardar ubicación» (texto del CA-4): manda el lienzo.
   - **Íconos:** el lienzo usa mapa, abrir afuera, cámara, recentrar y GPS tachado; la biblioteca no los tiene y se usaron `location`, `open-page`, `add` y `alert`. Se anotan para subirlos.
-  - **Teselas (SG-09):** sin proveedor decidido, solo `pnpm dev` usa uno de pruebas; la app compilada sin `NEXT_PUBLIC_MAP_TILES_URL` muestra el mapa liso (el pin, las coordenadas, guardar y «Abrir en Maps» funcionan). Las stories y la E2E corren sin imágenes del mapa.
+  - **Teselas (SG-09):** en dev y en producción el mapa usa OpenFreeMap (`https://tiles.openfreemap.org/styles/liberty`, sin cuenta ni clave); `NEXT_PUBLIC_MAP_STYLE_URL` y `NEXT_PUBLIC_MAP_ATTRIBUTION` permiten alojar el estilo propio. Sin conexión o sin WebGL el mapa se ve liso (el pin, las coordenadas, guardar y «Abrir en Maps» funcionan). Las stories corren sin imágenes del mapa.
   - **Fuera:** FC-16 (pegar el enlace de Maps, no dibujado), ver o quitar una imagen (no dibujado en esta sección), «Editar» de la isla Datos en la ficha guardada (no está en esta HU) y probar en un iPhone real (SG-09, el dueño).
 
 ## Terminado cuando
-Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y SG-09 está decidido.
+Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y SG-09 está decidido (OpenFreeMap) y el dueño la prueba en su iPhone.
