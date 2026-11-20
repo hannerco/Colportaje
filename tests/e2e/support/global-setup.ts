@@ -1,6 +1,6 @@
-// Prepara la sesión de las E2E (HU-PAN-BASE-01). Iniciar sesión espera su diseño (HU-PAN-BASE-02, OQ-44), así que
-// se crea un usuario ficticio en Supabase local, se entra con su clave como lo haría la app y se guardan las
-// cookies de sesión (las mismas que pone el cliente del navegador, SECURITY.md) para que cada prueba abra con sesión.
+// Prepara la sesión de las E2E (HU-PAN-BASE-01). Las E2E no inician sesión por la pantalla (salvo sign-in.spec): se crea
+// un usuario ficticio en Supabase local, se entra con su clave como lo haría la app y se guardan las cookies de sesión
+// (las mismas que pone el cliente del navegador, SECURITY.md) para que cada prueba abra con sesión.
 import { randomUUID } from 'node:crypto';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';

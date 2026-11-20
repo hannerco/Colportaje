@@ -246,7 +246,7 @@ Una HU empieza cuando sus dependencias están terminadas. Las del mismo bloque s
 | E · Plantillas | [HU-UI-28](05-ui/HU-UI-28-plantilla-de-lista.md) | Plantilla de lista y Barra de vista | C y D |
 | E | [HU-UI-29](05-ui/HU-UI-29-plantilla-de-detalle.md) | Plantilla de detalle en islas | UI-16, UI-22, UI-27 |
 | F · App | [HU-PAN-BASE-01](06-pantallas/HU-PAN-BASE-01-armazon-de-la-app.md) | Armazón: rutas, navegación, avisos y textos | UI-23, UI-15, UI-16, UI-26 |
-| F | [HU-PAN-BASE-02](06-pantallas/HU-PAN-BASE-02-iniciar-sesion.md) | Iniciar sesión | **Bloqueada: espera diseño (OQ-44)** |
+| F | [HU-PAN-BASE-02](06-pantallas/HU-PAN-BASE-02-iniciar-sesion.md) | Iniciar sesión | Terminada con diseño propio (OQ-44) |
 | G · Clientes | [HU-PAN-CLI-01](06-pantallas/HU-PAN-CLI-01-lista-de-clientes.md) | Lista de clientes | UI-28, PAN-BASE-01 |
 | G | [HU-PAN-CLI-02](06-pantallas/HU-PAN-CLI-02-ficha-de-cliente.md) | Ficha de cliente | UI-29, PAN-CLI-01 |
 | G | [HU-PAN-CLI-03](06-pantallas/HU-PAN-CLI-03-crear-y-editar-cliente.md) | Crear cliente (ficha viva), guardar y descartar | PAN-CLI-02 |
@@ -324,7 +324,7 @@ Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesió
 | HU-UI-28 | Terminada (2026-11-18) | `will-dev` |
 | HU-UI-29 | Terminada (2026-11-18) | `will-dev` |
 | HU-PAN-BASE-01 | Terminada (2026-11-18); falta probar en el celular del dueño (necesita HU-PAN-BASE-02) | `will-dev` |
-| HU-PAN-BASE-02 | Bloqueada (espera diseño, OQ-44) | — |
+| HU-PAN-BASE-02 | Terminada (2026-11-19), sin diseño del dueño (armada con la biblioteca por su encargo) | `will-dev` |
 | HU-PAN-CLI-01 | Terminada (2026-11-18); la ficha que abre llega con HU-PAN-CLI-02 | `will-dev` |
 | HU-PAN-CLI-02 | Terminada (2026-11-18); los botones que escriben llegan con CLI-03 a 06 y DIN-02 | `will-dev` |
 | HU-PAN-CLI-03 | Terminada (2026-11-19); libros, dirección e información llegan con CLI-04 y CLI-06 | `will-dev` |
@@ -350,7 +350,7 @@ Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesió
 | **HU-UI-01** | «UI-01 lista: <enlace del Storybook>» | Abre el enlace (inicia sesión en Vercel con la cuenta Emprendum), prueba Tema, Plataforma y Letra, y abre un *issue* de prueba. El proyecto `colportor-storybook` ya está creado (2026-11-17) |
 | **Cada bloque (A a I)** | «Bloque <X> listo: <enlace>» | Revisa en el Storybook y reporta correcciones (ver «Cómo iteramos») |
 | **HU-PAN-CLI-06** | «Falta el proveedor del mapa» | Decide SG-09 y prueba la ubicación en su iPhone |
-| **HU-PAN-BASE-01 y primer despliegue** | «La app ya se puede abrir» | Prueba en su celular (necesita HU-PAN-BASE-02, que espera su diseño) |
+| **HU-PAN-BASE-01 y primer despliegue** | «La app ya se puede abrir» | Prueba en su celular (HU-PAN-BASE-02 ya está) |
 
 ### Fuera de alcance del front (iteración 1)
 Pantallas sin diseño (Hoy, Calendario, Minibooks, Hacer inventario, Admin, Iniciar sesión, Ajustes); escritura sin conexión (fase 2); vista de líder (fase 3); revisión visual automatizada por capturas.

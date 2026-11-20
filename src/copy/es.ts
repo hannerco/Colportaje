@@ -4,6 +4,17 @@
 export const copy = {
   /** Nombre de la app (título de la pestaña y del ícono instalado). */
   app: { name: 'Colportor' },
+  /** Iniciar sesión (HU-PAN-BASE-02, sin diseño del dueño: OQ-44). Los errores de entrada salen de `errors.codes`. */
+  auth: {
+    signIn: {
+      subtitle: 'Entra con tu correo y tu contraseña',
+      email: 'Correo',
+      emailPlaceholder: 'tucorreo@ejemplo.com',
+      password: 'Contraseña',
+      submit: 'Entrar',
+      submitting: 'Entrando…',
+    },
+  },
   ui: {
     /** Texto por defecto del botón mientras se guarda (HU-UI-04). */
     saving: 'Guardando…',
@@ -13,6 +24,8 @@ export const copy = {
     installment: (index: number, total: number) => `Cuota ${index} de ${total}`,
     /** Nombre accesible del avatar cuando no se da otro (HU-UI-08). */
     avatar: { person: 'Cliente', cover: 'Portada', brand: 'Colportor' },
+    /** Campo de contraseña (Iniciar sesión, HU-PAN-BASE-02): ver u ocultar lo escrito. */
+    field: { showPassword: 'Mostrar', hidePassword: 'Ocultar' },
     /** Buscador (HU-UI-12). */
     search: {
       label: 'Buscar',
