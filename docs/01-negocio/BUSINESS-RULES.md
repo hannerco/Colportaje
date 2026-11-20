@@ -202,9 +202,9 @@ Notación: "colportor" = usuario con rol colportor. Fechas calendario en **Ameri
 
 ## 10. Calendario y recordatorios
 
-- **BR-CAL-01** Tres tipos de evento: **abono programado** (derivado de abonos `scheduled`, por `due_date`; no es una entidad nueva), **visita**, **capacitación**. El calendario permite distinguirlos (forma + color + texto) y filtrar por tipo. Los abonos `canceled` no aparecen.
+- **BR-CAL-01** Tres tipos de evento: **abono programado** (derivado de abonos `scheduled`, por `due_date`; no es una entidad nueva), **visita**, **capacitación**. El calendario permite distinguirlos (forma + color + texto) y filtrar por tipo. Los abonos `canceled` no aparecen. Los abonos **solo se ven** en el calendario: se programan en la ficha del cliente; desde el calendario se crean visitas y capacitaciones (ronda 32).
 - **BR-CAL-02** **Visita**: fecha (hora opcional), nota, estado `pending`/`done`/`canceled`, cliente **opcional** (agregación, no composición). Sin cliente lleva una etiqueta libre (p. ej. "Panadería de la esquina"). Sobrevive al archivado del cliente. Se puede convertir en cliente con un toque.
-- **BR-CAL-03** **Capacitación**: título, empresa o lugar, fecha **y hora**, notas.
+- **BR-CAL-03** **Capacitación**: título, empresa o lugar, fecha **y hora**, notas. Cada capacitación se crea **una por una**: no hay repetición en la v1 (ronda 32, PD-04).
 - **BR-CAL-04** Recordatorios para visitas y capacitaciones: *a inicio del día*, *un día antes*, *una semana antes* o *personalizado* (minutos antes). Pueden ser varios por evento. **No hay recordatorio por defecto**: se ofrece al crear el evento. "Inicio del día" = **07:00** America/Bogota.
 - **BR-CAL-05** Los abonos por cobrar usan siempre el aviso de **inicio del día** (aparecen en "Hoy" el día de su `due_date` y como vencidos después).
 - **BR-CAL-06** En la v1 los recordatorios son **dentro de la app** (Hoy, insignia en el calendario). Un recordatorio está activo cuando `ahora ≥ momento de disparo` y el evento está pendiente; se puede descartar. **Push real es fase 2.**
