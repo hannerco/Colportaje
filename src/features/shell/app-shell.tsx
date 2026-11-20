@@ -5,7 +5,7 @@ import { Banner } from '@/ui/molecules/Banner';
 import type { AppNavProps } from '@/ui/organisms/AppNav';
 import { useCurrentProfile } from '../auth';
 import { useConnection } from '../connection';
-import { APP_NAV_ITEMS, NAV_HREFS, navIdForPath, ROUTES } from './navigation';
+import { appNavItems, NAV_HREFS, navIdForPath, ROUTES } from './navigation';
 
 export type AppShell = {
   /** Lo que cada pantalla raíz pasa a su plantilla como `nav` (módulo activo, destinos, cuenta, Nuevo cliente). */
@@ -31,12 +31,13 @@ export function AppShellProvider({ pathname, navigate, children }: AppShellProvi
   const { online } = useConnection();
   const profile = useCurrentProfile();
   const accountName = profile.data?.fullName ?? '';
+  const isAdmin = profile.data?.isAdmin ?? false;
 
   const value = useMemo<AppShell>(
     () => ({
       nav: {
         active: navIdForPath(pathname),
-        items: APP_NAV_ITEMS,
+        items: appNavItems(isAdmin),
         hrefs: NAV_HREFS,
         account: { name: accountName },
         onNewCustomer: () => navigate(ROUTES.newCustomer),
@@ -46,7 +47,7 @@ export function AppShellProvider({ pathname, navigate, children }: AppShellProvi
       isOnline: online,
       offlineBanner: online ? null : <Banner tone="offline" />,
     }),
-    [pathname, navigate, accountName, online],
+    [pathname, navigate, accountName, isAdmin, online],
   );
   return <AppShellContext.Provider value={value}>{children}</AppShellContext.Provider>;
 }

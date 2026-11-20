@@ -38,15 +38,44 @@ export const NAV_HREFS: Record<NavId, string> = {
 };
 
 /**
- * R4 / I-37: solo los módulos con pantalla (Clientes, Inventario y Dinero). Hoy, Minibooks, Calendario, Hacer
- * inventario, Ajustes y Admin se agregan cuando tengan diseño.
+ * Todos los módulos, en el orden de la navegación. Se repite aquí (y una prueba lo compara con el de `AppNav`) porque
+ * este archivo también lo leen componentes de servidor y `AppNav` es del cliente: ahí solo llegan los componentes.
  */
-export const APP_NAV_ITEMS: NavId[] = ['customers', 'inventory', 'money'];
+const ALL_NAV_IDS: readonly NavId[] = [
+  'today',
+  'customers',
+  'inventory',
+  'minibooks',
+  'calendar',
+  'money',
+  'stocktake',
+  'settings',
+  'admin',
+];
 
-/** El módulo activo según la ruta: `/inventario/...` → Inventario, `/dinero/...` → Dinero; lo demás, Clientes. */
+/**
+ * I-37 (revisada el 2026-11-20, decisión del dueño): la navegación muestra **todos** los módulos que tendrá la app,
+ * estén listos o no. Los que aún no están terminados abren «Próximamente» (`COMING_SOON`). Admin solo lo ve quien tiene
+ * el rol (BR-USR-04): `appNavItems`.
+ */
+export const APP_NAV_ITEMS: NavId[] = ALL_NAV_IDS.filter((id) => id !== 'admin');
+
+/** Los módulos de la navegación según el perfil: Admin solo si el usuario es administrador (BR-USR-04). */
+export const appNavItems = (isAdmin: boolean): NavId[] => (isAdmin ? [...ALL_NAV_IDS] : APP_NAV_ITEMS);
+
+/** Los módulos que todavía no están terminados: su ruta muestra «Próximamente». */
+export const COMING_SOON: readonly NavId[] = [
+  'today',
+  'minibooks',
+  'calendar',
+  'stocktake',
+  'settings',
+  'admin',
+];
+
+/** El módulo activo según la ruta (`/inventario/...` → Inventario, `/dinero/...` → Dinero…); lo demás, Clientes. */
 export const navIdForPath = (pathname: string): NavId => {
   const inModule = (root: string) => pathname === root || pathname.startsWith(`${root}/`);
-  if (inModule(ROUTES.inventory)) return 'inventory';
-  if (inModule(ROUTES.money)) return 'money';
+  for (const id of ALL_NAV_IDS) if (id !== 'customers' && inModule(NAV_HREFS[id])) return id;
   return 'customers';
 };

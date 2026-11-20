@@ -66,7 +66,10 @@ test('salir por la navegación con un cliente a medias pregunta lo mismo que Des
     'aria-disabled',
     'true',
   );
-  await page.getByRole('navigation', { name: 'Principal' }).getByRole('link', { name: 'Inventario' }).click();
+  await page
+    .getByRole('navigation', { name: 'Principal' })
+    .getByRole('link', { name: 'Inventario', exact: true })
+    .click();
   const dialog = page.getByRole('alertdialog');
   await expect(dialog).toContainText('¿Descartar este cliente?');
   await dialog.getByRole('button', { name: 'Descartar' }).click();

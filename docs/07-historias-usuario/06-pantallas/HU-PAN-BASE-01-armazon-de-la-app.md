@@ -8,7 +8,7 @@
 ## Alcance
 - **Incluye:**
   1. **Tema y plataforma en `<html>`.** Un script mínimo, antes de pintar, fija `data-platform` con el punto de corte (I-36) y lo actualiza al cambiar el ancho. `data-theme` sigue al sistema (I-38). `PlatformProvider` en la raíz.
-  2. **Grupo de rutas `(app)`** con `AppNav`. Solo están los módulos con pantalla: Clientes, Inventario y Dinero (I-37). Admin se agrega cuando tenga diseño.
+  2. **Grupo de rutas `(app)`** con `AppNav`. Están todos los módulos de la app (I-37 revisada, 2026-11-20): los que aún no están terminados abren «Próximamente». Admin solo para quien tiene el rol.
      - `/` redirige a `/clientes` mientras Hoy no tenga diseño.
      - Rutas del glosario y las de cada HU de pantalla: `/clientes`, `/clientes/nuevo`, `/clientes/[id]`, `/inventario`, `/inventario/agregar`, `/inventario/ejemplares`, `/inventario/ejemplares/[id]`, `/dinero`, `/dinero/abonos/[id]`, `/dinero/abibonos`, `/dinero/abibonos/[id]`.
   3. **Sesión.** Las rutas `(app)` exigen sesión (`useSession`). Sin sesión se va a `/entrar`, que espera su diseño (HU-PAN-BASE-02).
@@ -27,7 +27,7 @@
 - **R1.** CUANDO la ventana pasa de 800 a 700 px de ancho, la app DEBE cambiar de barra lateral a barra inferior sin recargar.
 - **R2.** CUANDO no hay conexión, toda pantalla DEBE mostrar la Franja de sin conexión y toda acción que escribe DEBE verse deshabilitada con «Necesita conexión» (BR-GEN-08).
 - **R3.** Ningún texto en español DEBE estar escrito en `features/*/screens` ni en `app/`: todo sale de `copy/es.ts`.
-- **R4.** Ningún destino sin pantalla DEBE aparecer en la navegación (I-37).
+- **R4.** La navegación DEBE mostrar todos los módulos; los que no están terminados DEBEN abrir «Próximamente», y Admin solo DEBE verlo un administrador (I-37 revisada, BR-USR-04).
 
 ## Criterios de aceptación
 - **CA-1.** **Dado** un celular de 390 px, **cuando** abro `/`, **entonces** llego a `/clientes` con la barra inferior (Clientes, Inventario, Más) y, en «Más», solo Dinero.
@@ -37,7 +37,7 @@
 - **CA-5.** **Dado** un código de error nuevo exportado por una feature sin texto en `copy/es.ts`, **cuando** corro `pnpm test`, **entonces** la prueba falla y nombra el código.
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-20 (a pedido del dueño):** la navegación muestra **todos** los módulos, estén listos o no: Hoy, Clientes, Inventario, Minibooks, Calendario, Dinero, Hacer inventario y Ajustes (Admin solo con el rol admin). Hoy, Minibooks, Calendario, Hacer inventario, Ajustes y Admin tienen su ruta (`/hoy`, `/minibooks`, `/calendario`, `/hacer-inventario`, `/ajustes`, `/admin`) con la pantalla «Próximamente» dentro del armazón (`ComingSoonRoute`, «<Módulo> todavía no está listo. Lo verás aquí cuando esté terminado.»). La lista `COMING_SOON` dice cuáles son; al terminar un módulo se quita de ella y su ruta pasa a su pantalla. En móvil la barra inferior queda con Hoy, Clientes, Inventario y Más.
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E de HU-BASE-06 (lectura sin conexión) corre en Playwright en móvil y escritorio.

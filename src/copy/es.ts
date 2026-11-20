@@ -24,6 +24,11 @@ export const copy = {
     installment: (index: number, total: number) => `Cuota ${index} de ${total}`,
     /** Nombre accesible del avatar cuando no se da otro (HU-UI-08). */
     avatar: { person: 'Cliente', cover: 'Portada', brand: 'Colportor' },
+    /** Módulo que aún no está terminado (la navegación los muestra todos, decisión del dueño 2026-11-20). */
+    comingSoon: {
+      title: 'Próximamente',
+      text: (module: string) => `${module} todavía no está listo. Lo verás aquí cuando esté terminado.`,
+    },
     /** Campo de contraseña (Iniciar sesión, HU-PAN-BASE-02): ver u ocultar lo escrito. */
     field: { showPassword: 'Mostrar', hidePassword: 'Ocultar' },
     /** Buscador (HU-UI-12). */
