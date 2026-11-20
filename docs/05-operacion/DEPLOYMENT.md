@@ -19,10 +19,13 @@ Costo objetivo: **$0**. Región: **us-east-1 (N. Virginia)** en Supabase y **iad
 | Conexión | Estado | Detalle |
 |---|---|---|
 | Repositorio GitHub `Colportaje` | **Creado (SG-03)** | `https://github.com/hannerco/Colportaje`, **privado** (2026-11-10). Ya se puede subir código; nunca claves ni datos reales |
-| CLI Vercel | Instalado (65.x) | Falta `vercel login` en la cuenta nueva |
-| CLI Supabase | Instalado (2.x) | **Login hecho** (2026-11-10, cuenta nueva) |
-| Proyecto Vercel enlazado | Pendiente | `vercel link` |
-| Proyectos Supabase `colportor-prod` / `colportor-staging` | **Creados (2026-11-10)** | Ambos en us-east-1, activos, org Emprendum, registro público desactivado, sin integración de GitHub. Sin enlazar aún (no existe `supabase/`) |
+| CLI Vercel | Instalado (65.x) | **Login hecho** (equipo Emprendum, plan Hobby) |
+| CLI Supabase | Proyecto: 3.1.0 (`pnpm exec supabase`) | **Login hecho** (2026-11-10, cuenta nueva). El repositorio está enlazado a **staging** |
+| Proyecto Vercel `colportor-storybook` | **Creado (2026-11-17)** | Storybook: producción desde `main` en `https://colportor-storybook.vercel.app`; vistas previas por rama (protegidas por Vercel) |
+| Proyecto Vercel `colportor` (la app) | **Creado y enlazado al repositorio (2026-11-20, HU-BASE-07)** | Next.js, Node 22, región `iad1` (`vercel.json`), producción desde `main`. Variables: producción → `colportor-prod`; vistas previas y desarrollo → `colportor-staging` (solo `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY`; la `service_role` **no** va a Vercel: la app no la usa) |
+| Proyectos Supabase `colportor-prod` / `colportor-staging` | **Creados (2026-11-10)** | us-east-1, org Emprendum, registro público desactivado, sin integración de GitHub. Staging activo; **prod estaba pausado el 2026-11-20** (plan gratis): se reactiva desde el panel y el *keep-alive* evita que vuelva a pasar |
+| GitHub Environments `staging` / `production` | **Creados (2026-11-20)** | Cada uno con sus secrets; ver §5.4 |
+| Repositorio de backups `hannerco/colportor-backups` | **Creado (2026-11-20, privado)** | Solo archivos cifrados; la CI escribe con una *deploy key* (secret `BACKUP_DEPLOY_KEY`) |
 
 ## 3. Entornos
 | Entorno | Base de datos | Hosting | Uso |
@@ -59,18 +62,31 @@ Panel: Authentication → desactivar **registro público**; **URL Configuration*
 
 ### 5.3 Vercel
 ```bash
-vercel link
+vercel link --project colportor
 vercel git connect
-vercel env add NEXT_PUBLIC_SUPABASE_URL
-vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY
-vercel env add SUPABASE_SERVICE_ROLE_KEY     # solo servidor, Sensitive
+vercel env add NEXT_PUBLIC_SUPABASE_URL      production|preview|development
+vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY production|preview|development
 ```
+Producción usa `colportor-prod`; *preview* y *development*, `colportor-staging`. La app solo lee esas dos variables públicas (`src/lib/env.ts`); la `SUPABASE_SERVICE_ROLE_KEY` **no** se carga en Vercel (R3 de HU-BASE-07: se usa solo en scripts locales y nunca en el navegador). Instalación: `corepack enable && pnpm install --frozen-lockfile` (pnpm 12, igual que el Storybook).
 `vercel.json`: `{ "regions": ["iad1"] }`. Verificar en Settings → Functions → Function Region. Hobby podría limitar las opciones: si `iad1` es el valor por defecto, no hay nada que cambiar.
 
 ### 5.4 GitHub
 - Proteger `main`: regla `proteger-main` **ya creada y activa** (2026-11-10: exige PR, bloquea force push y borrado, 0 aprobaciones). Falta marcar el *check* `ci` como obligatorio cuando HU-BASE-01 cree el workflow y corra una vez (HU-BASE-07 CA-8).
-- Secrets del repo (Settings → Secrets and variables → Actions): `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD`, `SUPABASE_PROJECT_REF_PROD`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, y los de destino del backup.
-- Activar Dependabot y `pnpm audit` en CI.
+- **Secrets (HU-BASE-07).** Cada entorno de GitHub (Settings → Environments) tiene los suyos; un job de staging no puede leer los de producción:
+
+| Dónde | Nombre | Quién lo carga | Para qué |
+|---|---|---|---|
+| Repositorio | `SUPABASE_ACCESS_TOKEN` | **El dueño** (token propio para la CI, supabase.com → Account → Access Tokens) | Enlazar proyectos y consultas de solo lectura (Management API) |
+| Entorno `staging` | `SUPABASE_PROJECT_REF_STAGING` | Cargado (2026-11-20) | Proyecto de staging |
+| Entorno `staging` | `SUPABASE_DB_PASSWORD_STAGING` | **El dueño** | `db push` a staging |
+| Entorno `production` | `SUPABASE_PROJECT_REF_PROD` | Cargado (2026-11-20) | Proyecto de producción |
+| Entorno `production` | `SUPABASE_DB_PASSWORD_PROD` | **El dueño** | `db push` y backup de producción |
+| Entorno `production` | `BACKUP_DEPLOY_KEY` | Cargado (2026-11-20; *deploy key* con escritura solo en `colportor-backups`) | Subir el backup |
+| Entorno `production` (variable) | `BACKUP_REPO` = `hannerco/colportor-backups` | Cargado | Destino del backup |
+
+  Cargar un valor sin pegarlo en ningún chat: `gh secret set <NOMBRE> [--env staging|production]` (lo pide oculto). Si no se recuerda la contraseña de una base: Supabase → proyecto → Database → Settings → *Reset database password*, y se actualiza el secret.
+- **Workflows:** `ci.yml` (calidad, auditoría `pnpm audit --prod --audit-level high` —por ahora **solo avisa**: el 2026-11-20 ya había en `main` una crítica en `maplibre-gl` (se corrige con 6.4.1, cambio mayor) y una alta en `zod` vía `@serwist/turbopack` (≥ 4.6.6); al corregirlas se quita `continue-on-error`— y `actionlint`), `deploy-db.yml` (al fusionar a `main` con migraciones: staging → producción), `keepalive.yml` (cada 3 días), `backup.yml` (cada 2 días y manual). Dependabot semanal (`.github/dependabot.yml`) para npm y GitHub Actions.
+- **Comprobación de la nube:** `pnpm check:cloud staging|prod` (solo lectura, por la Management API; necesita `SUPABASE_ACCESS_TOKEN` y `SUPABASE_PROJECT_REF_<ENTORNO>`). Falla si una tabla con `owner_id` no tiene RLS, si el rol `postgres` deja permisos por defecto a `anon`/`authenticated` sobre tablas nuevas de `public`, o si falta el event trigger `ensure_rls`. Los permisos por defecto de `supabase_admin` son internos de la plataforma y no se revisan. Corre también al final de cada job de `deploy-db.yml`.
 
 ### 5.5 Primer administrador
 1. Crear el primer usuario del dueño (invitación desde la propia app solo existe cuando ya hay un admin: el **primero** se crea con un script de arranque o desde el panel de Supabase → Authentication → Users → *Add user* con el correo del dueño).
@@ -97,9 +113,18 @@ El dueño quiere que el proyecto "no se caiga por nada del mundo". El plan **Fre
 
 ## 8. Backups
 Workflow `.github/workflows/backup.yml` (cada 2 días al inicio, luego semanal, y manual):
-1. `supabase db dump` (esquema + datos) → archivo comprimido y **cifrado** (clave en secrets).
-2. Copia del bucket `user-photos` → almacenamiento privado (repositorio privado de backups, o bucket de otro proveedor).
-3. Retención: 8 semanas (o 30 copias).
+1. `supabase db dump` de producción: `roles.sql`, `schema.sql` y `data.sql` (con `COPY`).
+2. Copia de los buckets `user-photos` y `title-images`.
+3. Todo va en un `.tar.gz` **cifrado** con `openssl cms` y el certificado público `.github/backup/recipient.crt`. **La llave privada no está en el repositorio ni en GitHub**: la guarda el dueño (se generó en su equipo, `~/Documents/Colportor-backups/llave-privada-backups.pem`; debe guardarla en un gestor de contraseñas o una memoria aparte y borrar la copia suelta). Sin ella no se puede abrir ninguna copia.
+4. Cada copia es una rama huérfana `backup/<fecha>-<bytes>` de `hannerco/colportor-backups` (así borrar una copia libera su espacio). Retención: las de las últimas **8 semanas, máximo 30**. Aviso (amarillo) desde 2,5 GB y error (rojo) desde 3 GB.
+
+**Abrir una copia:**
+```bash
+git clone --single-branch --branch backup/<fecha>-<bytes> git@github.com:hannerco/colportor-backups.git copia
+openssl cms -decrypt -binary -inform DER -in copia/colportor-<fecha>.tar.gz.cms \
+  -inkey <ruta>/llave-privada-backups.pem -out backup.tar.gz
+tar -xzf backup.tar.gz   # roles.sql, schema.sql, data.sql, storage/
+```
 **Destino (OQ-42, decidido 2026-11-16):** repositorio privado de GitHub solo para backups cifrados. **Umbral de migración: al llegar a 3 GB en total, pasar a Cloudflare R2.** El workflow avisa desde 2,5 GB para dar tiempo a crear la cuenta de R2 (la crea el dueño). Mientras tanto, la retención se mantiene para que el repositorio no crezca sin control.
 **Restauración (probar al menos una vez antes de abrir a los colportores):** crear proyecto vacío → `supabase db push` (esquema) → restaurar datos con `psql`/`pg_restore` → restaurar fotos → verificar conteos. Documentar el resultado de la prueba aquí.
 

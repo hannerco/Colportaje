@@ -23,6 +23,7 @@
     "build-storybook": "storybook build",
     "user:create": "node --env-file-if-exists=.env.local --import tsx scripts/create-user.ts",
     "catalog:load": "node --env-file-if-exists=.env.local --import tsx scripts/load-catalog.ts",
+    "check:cloud": "node --env-file-if-exists=.env.local --import tsx scripts/check-cloud.ts",
     "db:start": "supabase start",
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset",

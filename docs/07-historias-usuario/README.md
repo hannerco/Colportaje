@@ -100,6 +100,7 @@ Implementar en este orden. Una HU solo empieza cuando sus dependencias están te
 | HU-BASE-04 | Terminada (2026-11-13); falta cargar el catálogo real (punto de entrega) | `will-dev` |
 | HU-BASE-05 | Terminada (2026-11-13); falta probar la compresión en un iPhone real (OQ-43) | `will-dev` |
 | HU-BASE-06 | Terminada (2026-11-13); la E2E con Playwright queda para cuando exista la primera pantalla o el primer despliegue (no hay UI que recorrer) | `will-dev` |
+| HU-BASE-07 | **En curso (2026-11-20):** `vercel.json`, workflows (`deploy-db`, `keepalive`, `backup`), Dependabot, auditoría y `actionlint` en la CI, `pnpm check:cloud`; proyecto Vercel `colportor`, entornos de GitHub, repositorio de backups y staging al día (35 migraciones). Faltan los pasos del dueño (DEPLOYMENT §5.4) y verificar CA-1 a CA-9 en ejecuciones reales | `feat/hu-base-07-despliegue` |
 | HU-CLI-01 | Terminada (2026-11-13) | `will-dev` |
 | HU-INV-01 | Terminada (2026-11-13) | `will-dev` |
 | HU-ABO-01 | Terminada (2026-11-13) | `will-dev` |
