@@ -154,6 +154,12 @@ export function createSupabasePaymentRepository(getClient: GetSupabaseClient): P
       });
     },
 
+    async uncollect(paymentId) {
+      const { data, error } = await getClient().rpc('undo_collect_payment', { p_payment_id: paymentId });
+      if (error) return err(mapCollectedError(error));
+      return ok({ customerId: z.uuid().parse(data) });
+    },
+
     async delete(paymentId) {
       const { data, error } = await getClient().rpc('delete_payment', { p_payment_id: paymentId });
       if (error) return err(mapCollectedError(error));

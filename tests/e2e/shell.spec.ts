@@ -4,34 +4,65 @@ import { expect, test, type Page } from '@playwright/test';
 const nav = (page: Page) => page.getByRole('navigation', { name: 'Principal' });
 const isMobile = (page: Page) => (page.viewportSize()?.width ?? 0) < 768;
 
-test('CA-1 / CA-2: / lleva a Clientes con la navegación de cada plataforma, solo con módulos con pantalla', async ({
+test('CA-1 / CA-2: / lleva a Clientes con la navegación de cada plataforma, con todos los módulos', async ({
   page,
 }) => {
   await page.goto('/');
   await expect(page).toHaveURL(/\/clientes$/);
   await expect(page.getByRole('heading', { level: 1, name: 'Clientes' })).toBeVisible();
   if (isMobile(page)) {
-    // CA-1: barra inferior (Clientes, Inventario, Más) y, en «Más», solo Dinero.
-    await expect(nav(page).locator('li > a, li > button')).toHaveText(['Clientes', 'Inventario', 'Más']);
+    // CA-1: barra inferior (Hoy, Clientes, Inventario, Más) y, en «Más», el resto.
+    await expect(nav(page).locator('li > a, li > button')).toHaveText([
+      'Hoy',
+      'Clientes',
+      'Inventario',
+      'Más',
+    ]);
     await nav(page).getByRole('button', { name: 'Más' }).click();
-    await expect(page.getByRole('dialog').getByRole('link')).toHaveText(['Dinero']);
+    await expect(page.getByRole('dialog').getByRole('link')).toHaveText([
+      'Minibooks',
+      'Calendario',
+      'Dinero',
+      'Hacer inventario',
+      'Ajustes',
+    ]);
   } else {
-    // CA-2: barra lateral con Nuevo cliente, Trabajo (Clientes, Inventario) y Dinero (Dinero).
+    // CA-2: barra lateral con todos los módulos (Admin solo para administradores: el usuario de prueba no lo es).
     await expect(nav(page).getByRole('button')).toHaveText(['Nuevo cliente', 'Trabajo', 'Dinero']);
-    await expect(nav(page).getByRole('link')).toHaveText(['Clientes', 'Inventario', 'Dinero']);
+    await expect(nav(page).getByRole('link')).toHaveText([
+      'Hoy',
+      'Clientes',
+      'Inventario',
+      'Minibooks',
+      'Calendario',
+      'Dinero',
+      'Hacer inventario',
+      'Ajustes',
+    ]);
   }
-  // R4: ningún destino sin pantalla.
-  for (const hidden of ['Hoy', 'Minibooks', 'Calendario', 'Hacer inventario', 'Ajustes', 'Admin'])
-    await expect(page.getByRole('link', { name: hidden })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'Admin' })).toHaveCount(0);
+});
+
+test('un módulo sin terminar abre «Próximamente» dentro del armazón', async ({ page }) => {
+  await page.goto('/calendario');
+  await expect(page.getByRole('heading', { level: 1, name: 'Calendario' })).toBeVisible();
+  await expect(page.getByText('Próximamente')).toBeVisible();
+  await expect(page.getByText('Calendario todavía no está listo')).toBeVisible();
+  // La navegación sigue ahí: se vuelve a un módulo terminado.
+  await nav(page).getByRole('link', { name: 'Clientes' }).click();
+  await expect(page).toHaveURL(/\/clientes$/);
 });
 
 test('la navegación cambia de pantalla sin recargar y marca el módulo activo', async ({ page }) => {
   await page.goto('/clientes');
   await page.evaluate(() => Object.assign(window, { __sameDocument: true }));
-  await nav(page).getByRole('link', { name: 'Inventario' }).click();
+  await nav(page).getByRole('link', { name: 'Inventario', exact: true }).click();
   await expect(page).toHaveURL(/\/inventario$/);
   await expect(page.getByRole('heading', { level: 1, name: 'Inventario' })).toBeVisible();
-  await expect(nav(page).getByRole('link', { name: 'Inventario' })).toHaveAttribute('aria-current', 'page');
+  await expect(nav(page).getByRole('link', { name: 'Inventario', exact: true })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
   expect(await page.evaluate(() => '__sameDocument' in window)).toBe(true);
 });
 

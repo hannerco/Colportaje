@@ -1,0 +1,88 @@
+/* Agregar libro (HU-PAN-CLI-04). */
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.heading {
+  margin: 0;
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  font-weight: var(--weight-strong);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.list > li + li {
+  border-top: 1px solid var(--color-row-line);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--size-touch);
+  padding: var(--space-2) 0;
+}
+
+.chosen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-bottom: var(--space-3);
+}
+
+.text {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.name {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-width: 0;
+  font-weight: var(--weight-medium);
+}
+
+.ellipsis {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.muted,
+.price {
+  flex: none;
+  color: var(--color-text-2);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.price {
+  font-size: var(--text-secondary);
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+:global([data-platform='mobile']) .fields {
+  grid-template-columns: minmax(0, 1fr);
+}

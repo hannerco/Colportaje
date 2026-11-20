@@ -52,7 +52,7 @@ Formato: `RQ-<área>-NN` · fase `[F1]/[F2]/[F3]` · historia · **criterios de 
 - **RQ-CUS-01 [F1]** Creo clientes con o sin libros (prospectos).
   - *Dado* un cliente sin ejemplares, *entonces* es prospecto: no aparece en listas por defecto ni en "Total clientes".
 - **RQ-CUS-02 [F1]** La ficha muestra deuda, abonos (con Cancelados plegable), saldo pendiente/a favor, sin programar, fechas de venta derivadas, facturas, fotos, visitas.
-- **RQ-CUS-03 [F1]** Pestañas Todos, Deudores, Saldados y Archivados; selector de orden (Más recientes por fecha de creación, Última modificación, Nombre, Mayor deuda = mayor saldo pendiente, Próximo abono incluidos vencidos) con sentido invertible y vacíos al final; interruptor "Incluir prospectos" (solo en Todos); cada fila muestra el saldo pendiente y, en escritorio, el último abono.
+- **RQ-CUS-03 [F1]** Pestañas Todos, Deudores, Saldados y Archivados; selector de orden (Más recientes por fecha de creación, Última modificación, Nombre, Saldo pendiente (antes «Mayor deuda»), Próximo abono incluidos vencidos) con sentido invertible y vacíos al final; interruptor "Incluir prospectos" (solo en Todos); cada fila muestra el saldo pendiente y, en escritorio, el último abono.
 - **RQ-CUS-04 [F1]** Búsqueda local difusa sobre nombre, teléfono, información, dirección y libros (BR-CUS-07).
   - *Dado* "María Gómez" guardada, *cuando* busco "maria gomes", *entonces* aparece.
 - **RQ-CUS-05 [F1]** Dirección en texto (manual) + ubicación con coordenadas + enlace de Maps opcional; **"Abrir en Maps"** lleva las coordenadas a la app de mapas del celular.

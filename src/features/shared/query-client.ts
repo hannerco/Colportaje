@@ -15,8 +15,10 @@ export function createAppQueryClient(): QueryClient {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        // Para persistir, una lectura debe vivir en memoria al menos lo mismo que en disco.
-        gcTime: OFFLINE_CACHE_MAX_AGE_MS,
+        // Para persistir, una lectura debe vivir en memoria al menos lo mismo que en disco (30 días). No se puede
+        // poner 30 días: pasa del máximo de setTimeout (~24,8 días), el temporizador se dispara de inmediato y las
+        // lecturas recién restauradas sin conexión se borran antes de que una pantalla las lea. `Infinity` = nunca.
+        gcTime: Infinity,
         staleTime: 30_000,
         retry: shouldRetry,
       },

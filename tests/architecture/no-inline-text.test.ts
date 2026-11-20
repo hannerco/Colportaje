@@ -13,7 +13,10 @@ const withoutComments = (source: string) =>
 /** Texto visible escrito a mano: un nodo de texto JSX con letras o un literal con letras del español. */
 const inlineTexts = (source: string): string[] => {
   const code = withoutComments(source);
-  const jsxText = [...code.matchAll(/>([^<>{}\n]*\p{L}{2,}[^<>{}\n]*)</gu)].map((m) => m[1]!.trim());
+  // Texto entre una etiqueta que cierra y otra que abre; no `=> Promise<…>` ni comparaciones (`a >= 0 && b <`).
+  const jsxText = [...code.matchAll(/(?<![=-])>([^<>{}\n]*\p{L}{2,}[^<>{}\n]*)</gu)]
+    .map((m) => m[1]!.trim())
+    .filter((text) => !/[=&|();]/.test(text));
   const spanish = [...code.matchAll(/(['"`])((?:(?!\1).)*[áéíóúñÁÉÍÓÚÑ¿¡](?:(?!\1).)*)\1/gu)].map(
     (m) => m[2]!,
   );
@@ -27,6 +30,7 @@ describe('sin texto escrito en app/ ni en pantallas (HU-PAN-BASE-01 R3)', () => 
       'Información',
     ]);
     expect(inlineTexts('// Comentario con tilde: información\nconst c = <p>{copy.x}</p>;')).toEqual([]);
+    expect(inlineTexts('type P = { a: () => Promise<void> };\nconst ok = i >= 0 && i < n;')).toEqual([]);
   });
 
   it('R3: los archivos de app/ y de las pantallas no tienen texto escrito', () => {

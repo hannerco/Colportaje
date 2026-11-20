@@ -1,0 +1,19 @@
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 720px;
+  min-width: 0;
+}
+
+.muted {
+  margin: 0;
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}
+
+.actions {
+  display: flex;
+  margin-top: var(--space-3);
+}

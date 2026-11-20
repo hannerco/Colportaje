@@ -1,0 +1,155 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.screen[data-shape='mobile'] {
+  gap: var(--space-3);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.head > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.titles,
+.copies {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.titles li + li,
+.copies li + li {
+  border-top: 1px solid var(--color-row-line);
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--size-list-row);
+  padding: var(--space-2) 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.titleRow[aria-current='true'] {
+  background: var(--color-row-selected);
+}
+
+.titleRow:focus-visible,
+.copyRow:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: -3px;
+}
+
+.titleText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.titleName {
+  overflow: hidden;
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.price {
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.count {
+  font-size: var(--text-body);
+  font-weight: var(--weight-strong);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.subheading {
+  margin: var(--space-3) 0 var(--space-1);
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  font-weight: var(--weight-medium);
+}
+
+.titleDetail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.titleSummary {
+  margin: 0;
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.copyRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--size-data-row);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.copyNumber {
+  font-weight: var(--weight-strong);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.received {
+  flex: 1;
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  font-variant-numeric: var(--font-numeric);
+}
+
+/* En móvil, Por resolver es una página que tapa la lista (lienzo «Inv-m-resolver»). */
+.flaggedPage {
+  position: fixed;
+  inset: 0;
+  z-index: var(--layer-overlay);
+  overflow-y: auto;
+  background: var(--color-page-mobile);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

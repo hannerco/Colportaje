@@ -1,0 +1,8 @@
+/* Lista de clientes (HU-PAN-CLI-01). */
+
+/* Opciones del filtro de estado e «Incluir prospectos» (menú en escritorio, hoja en móvil). */
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}

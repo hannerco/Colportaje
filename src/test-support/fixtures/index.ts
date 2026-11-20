@@ -4,12 +4,15 @@
 // Solo datos ficticios (nunca de clientes reales). Cada HU de pantalla agrega las de sus detalles.
 import type { Profile } from '@/domain/auth';
 import type { CopiesListRow, CopiesListView } from '@/domain/copies-list';
+import type { CustomerAccount } from '@/domain/customer';
+import type { PaymentRow } from '@/domain/customer-detail';
 import type { CustomerListRow, CustomerListView } from '@/domain/customer-list';
 import type { DepositsListRow, DepositsListView } from '@/domain/deposits-list';
 import type { InStockSummary, InStockTitle } from '@/domain/inventory';
 import type { MoneySummary } from '@/domain/money-summary';
 import type { PaymentsListRow, PaymentsListView } from '@/domain/payments-list';
 import { localDate } from '@/domain/time';
+import type { CustomerDetailView } from '@/features/customers/use-cases/customer-detail';
 
 // ─── Cuenta ───
 
@@ -238,3 +241,151 @@ export const aDepositsListView = (overrides: Partial<DepositsListView> = {}): De
   ];
   return { count: rows.length, totalDeliveredToLeader: 420000, ...overrides, rows };
 };
+
+// ─── Ficha de cliente (HU-CLI-12) ───
+
+const noActions = {
+  collect: false,
+  edit: false,
+  delete: false,
+  reschedule: false,
+  correctDate: false,
+  cancel: false,
+} as const;
+
+export const aPaymentRow = (overrides: Partial<PaymentRow> = {}): PaymentRow => ({
+  paymentId: 'payment-1',
+  kind: 'scheduled',
+  status: 'scheduled',
+  agreedAmount: 60000,
+  dueDate: localDate('2026-11-14'),
+  originalDueDate: null,
+  paidAmount: null,
+  paidAt: null,
+  method: null,
+  cancelReason: null,
+  isOverdue: false,
+  overdueDays: 0,
+  rescheduleCount: 0,
+  deposit: null,
+  can: {
+    ...noActions,
+    collect: true,
+    edit: true,
+    delete: true,
+    reschedule: true,
+    correctDate: true,
+    cancel: true,
+  },
+  ...overrides,
+});
+
+export const aCustomerAccount = (overrides: Partial<CustomerAccount> = {}): CustomerAccount => ({
+  debt: 460000,
+  paidTotal: 140000,
+  creditApplied: 0,
+  balance: 320000,
+  credit: 0,
+  remaining: 320000,
+  scheduledTotal: 120000,
+  unscheduled: 200000,
+  excess: 0,
+  isProspect: false,
+  standing: 'overdue',
+  paidPct: 30,
+  firstSaleAt: new Date('2026-10-03T17:00:00.000Z'),
+  lastSaleAt: new Date('2026-10-03T17:00:00.000Z'),
+  customerSince: localDate('2026-10-03'),
+  lastPaymentAt: localDate('2026-10-17'),
+  nextDueDate: localDate('2026-10-31'),
+  hasOverdue: true,
+  notices: { noBook: false, excess: false },
+  ...overrides,
+});
+
+/** María Camila Henao del diseño: 3 libros, cuota inicial entregada, un cobrado, uno vencido y uno por cobrar. */
+export const aCustomerDetailView = (overrides: Partial<CustomerDetailView> = {}): CustomerDetailView => ({
+  id: 'customer-1',
+  name: 'María Camila Henao',
+  avatarEmoji: '📚',
+  archived: false,
+  createdAt: new Date('2026-10-03T15:00:00.000Z'),
+  contact: { phone: '301 557 9032', telLink: 'tel:3015579032', whatsappLink: 'https://wa.me/573015579032' },
+  account: aCustomerAccount(),
+  customerSince: localDate('2026-10-03'),
+  firstSaleAt: new Date('2026-10-03T17:00:00.000Z'),
+  lastSaleAt: new Date('2026-10-03T17:00:00.000Z'),
+  books: [
+    {
+      copyId: 'copy-14',
+      titleName: 'Las bellas historias de la Biblia',
+      number: 14,
+      agreedPrice: 280000,
+      publicPriceSnapshot: 280000,
+      priceDelta: null,
+      soldAt: new Date('2026-10-03T17:00:00.000Z'),
+    },
+    {
+      copyId: 'copy-22',
+      titleName: 'Un corazón tranquilo',
+      number: 22,
+      agreedPrice: 95000,
+      publicPriceSnapshot: 95000,
+      priceDelta: null,
+      soldAt: new Date('2026-10-03T17:00:00.000Z'),
+    },
+    {
+      copyId: 'copy-9',
+      titleName: 'Bebidas saludables',
+      number: 9,
+      agreedPrice: 85000,
+      publicPriceSnapshot: 85000,
+      priceDelta: null,
+      soldAt: new Date('2026-10-03T17:00:00.000Z'),
+    },
+  ],
+  payments: [
+    aPaymentRow({
+      paymentId: 'p-down',
+      kind: 'down_payment',
+      status: 'delivered',
+      agreedAmount: null,
+      dueDate: localDate('2026-10-03'),
+      paidAmount: 80000,
+      paidAt: localDate('2026-10-03'),
+      method: 'transfer',
+      deposit: { id: 'deposit-1', status: 'confirmed' },
+      can: noActions,
+    }),
+    aPaymentRow({
+      paymentId: 'p-1',
+      status: 'collected',
+      dueDate: localDate('2026-10-17'),
+      paidAmount: 60000,
+      paidAt: localDate('2026-10-17'),
+      method: 'cash',
+      can: { ...noActions, edit: true, delete: true },
+    }),
+    aPaymentRow({ paymentId: 'p-2', dueDate: localDate('2026-10-31'), isOverdue: true, overdueDays: 5 }),
+    aPaymentRow({ paymentId: 'p-3', dueDate: localDate('2026-11-14') }),
+  ],
+  canceledPayments: [
+    aPaymentRow({
+      paymentId: 'p-x',
+      status: 'canceled',
+      dueDate: localDate('2026-11-28'),
+      cancelReason: 'manual',
+      can: noActions,
+    }),
+  ],
+  notices: { noBook: false, excess: null },
+  address: 'Cra. 43 #52-18, Boston, Medellín',
+  info: 'Trabaja en la tarde; mejor pasar después de las 5 p. m. Prefiere pagar por transferencia.',
+  mapsUrl: null,
+  location: null,
+  mapsLink:
+    'https://www.google.com/maps/search/?api=1&query=Cra.%2043%20%2352-18%2C%20Boston%2C%20Medell%C3%ADn',
+  infoPhotos: [],
+  invoices: [{ invoiceId: 'invoice-1', number: '0142', date: localDate('2026-10-03'), photos: [] }],
+  ...overrides,
+});

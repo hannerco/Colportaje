@@ -59,3 +59,15 @@ export async function collectPayment(
     });
   });
 }
+
+/**
+ * Deshace el cobro de un abono programado (HU-ABO-10): vuelve a por cobrar y se borran su valor, fecha y método
+ * reales; lo acordado no cambia. Errores: `OFFLINE`, `INVALID_TRANSITION`, `PAYMENT_LOCKED` (ya está en un
+ * Abibono), `CUSTOMER_ARCHIVED`, `NOT_FOUND`, `NETWORK_ERROR`.
+ */
+export async function undoCollectPayment(
+  deps: CollectedPaymentsDeps,
+  paymentId: string,
+): Promise<Result<{ customerId: string }, AppError>> {
+  return runMutation(deps.connectivity, () => deps.payments.uncollect(paymentId));
+}

@@ -1,16 +1,21 @@
 'use client';
 
 import { useId, useState, type CSSProperties, type ReactElement, type ReactNode } from 'react';
+import { copy } from '@/copy/es';
 import { groupCOP, parseTypedCOP, type COP } from '@/domain/money';
 import { formatDate, parseDisplayDate, type LocalDate } from '@/domain/time';
 import { Icon } from '../../icons';
 import styles from './Field.module.css';
 
-export type FieldKind = 'text' | 'money' | 'date' | 'phone' | 'select' | 'textarea';
+export type FieldKind = 'text' | 'money' | 'date' | 'phone' | 'email' | 'password' | 'select' | 'textarea';
 
 /** El valor según el tipo (`valor`): el campo es controlado. */
 type FieldValue =
-  | { kind?: 'text' | 'phone' | 'textarea'; value: string; onChange?: (value: string) => void }
+  | {
+      kind?: 'text' | 'phone' | 'email' | 'password' | 'textarea';
+      value: string;
+      onChange?: (value: string) => void;
+    }
   | { kind: 'money'; value: COP | null; onChange?: (value: COP | null) => void }
   | { kind: 'date'; value: LocalDate | null; onChange?: (value: LocalDate | null) => void }
   | { kind: 'select'; value: string; onChange?: never };
@@ -139,6 +144,31 @@ function Control(props: FieldProps & { control: ControlAttributes }) {
           />
         </>
       );
+    case 'email':
+      return (
+        <input
+          {...control}
+          className={styles.input}
+          type="email"
+          inputMode="email"
+          autoComplete="username"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
+          placeholder={placeholder}
+          value={props.value}
+          onChange={(e) => props.onChange?.(e.target.value)}
+        />
+      );
+    case 'password':
+      return (
+        <PasswordInput
+          control={control}
+          placeholder={placeholder}
+          value={props.value}
+          onChange={props.onChange}
+        />
+      );
     case 'select': {
       const wrapped = props.renderSelect !== undefined;
       const button = (
@@ -185,6 +215,46 @@ function Control(props: FieldProps & { control: ControlAttributes }) {
         />
       );
   }
+}
+
+/** Contraseña: oculta, con «Mostrar» / «Ocultar» (texto, sin ícono nuevo) para revisarla en el celular. */
+function PasswordInput({
+  control,
+  placeholder,
+  value,
+  onChange,
+}: {
+  control: ControlAttributes;
+  placeholder?: string;
+  value: string;
+  onChange?: (value: string) => void;
+}) {
+  const [shown, setShown] = useState(false);
+  return (
+    <>
+      <input
+        {...control}
+        className={styles.input}
+        type={shown ? 'text' : 'password'}
+        autoComplete="current-password"
+        autoCapitalize="none"
+        autoCorrect="off"
+        spellCheck={false}
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange?.(e.target.value)}
+      />
+      <button
+        type="button"
+        className={styles.reveal}
+        disabled={control.disabled}
+        aria-pressed={shown}
+        onClick={() => setShown(!shown)}
+      >
+        {shown ? copy.ui.field.hidePassword : copy.ui.field.showPassword}
+      </button>
+    </>
+  );
 }
 
 /**

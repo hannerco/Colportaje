@@ -33,7 +33,13 @@ Precargado sin recibo · Con diferencia (nota obligatoria) · Listo para confirm
 - **CA-5.** **Dado** la confirmación exitosa, **entonces** el Abibono queda «Entregado» con candado y Dinero muestra Por entregar $0.
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-19 (al programarla; lienzo leído en `DineroEscritorio`, vistas del panel «Nuevo Abibono» y «Borrador»):**
+  - **Pantallas:** `/dinero/abibonos/nuevo` (la propuesta) y `/dinero/abibonos/[id]` (un borrador), con `DepositEditorScreen` en la forma «Página» de la Ventana de detalle (escritorio) y a pantalla completa en móvil; «Entregar al líder» de Dinero y de la lista de Abibonos ya llegan aquí. Un Abibono entregado sigue en el armazón hasta HU-PAN-DIN-05.
+  - **Contenido:** título opcional (vacío = «Abibono (n)»), fecha, los abonos cobrados libres con casilla (en un borrador, también los que ya lleva), Montos (Efectivo y Transferencia editables, con «Calculado $X · Restaurar» si difieren, y Total), Cuadre (Esperado ⓘ, Entregado, Diferencia ⓘ con «faltante» o «sobrante»), Nota («· obligatoria» si hay diferencia, con «¿Por qué hay diferencia?») y Recibo.
+  - **Confirmar:** «Marcar como entregado» se habilita con recibo y, si hay diferencia, nota; deshabilitado explica qué falta («Falta el recibo: añade una foto.», «Escribe una nota que explique la diferencia.», «El total es $0.»). «Guardar borrador» y confirmar vuelven a la lista de Abibonos con su Aviso.
+  - **Recibo (`ReceiptPhotos`, pieza del módulo):** miniaturas con «Quitar», «Añadir foto» / «Añadir otra» (cámara o galería) y, si la subida falla, una Franja con «Reintentar». En la propuesta, los recibos viajan como `stagedReceipts` al guardar o confirmar (R7); en un borrador se crean al subirlos.
+  - **Borrar:** «Más acciones ▸ Borrar» solo en un borrador que nunca se confirmó, con `ConfirmDialog` de peligro; sus fotos se borran y sus abonos quedan libres (CA-4).
+  - **Fuera / pendiente:** la sección Minibooks (oculta, FD-10); elegir la forma lateral o centrada de la ventana (como el resto de rutas propias, es página); abrir el Abibono ya entregado (HU-PAN-DIN-05).
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E «Abibono completo» (TESTING.md, flujo 5) pasa.

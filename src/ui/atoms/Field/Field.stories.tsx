@@ -20,7 +20,10 @@ const meta = {
   render: (args) => <Stateful {...args} />,
   args: { label: 'Nombre', kind: 'text', value: '', onChange: fn(), onOpen: fn() },
   argTypes: {
-    kind: { control: 'inline-radio', options: ['text', 'money', 'date', 'phone', 'select', 'textarea'] },
+    kind: {
+      control: 'inline-radio',
+      options: ['text', 'money', 'date', 'phone', 'email', 'password', 'select', 'textarea'],
+    },
     value: { control: false },
     width: { control: 'object' },
   },
@@ -132,6 +135,42 @@ export const FechaError: Story = {
       expect(input.getAttribute('aria-describedby')).toBe(alert.id);
       expect(getComputedStyle(boxOf(frame)).borderColor).toBe(tokenColor(frame, '--color-bad'));
       input.blur();
+    }
+  },
+};
+
+/** Correo (Iniciar sesión): teclado de correo, sin mayúscula automática ni corrector. */
+export const Correo: Story = {
+  name: 'Correo',
+  args: { kind: 'email', label: 'Correo', value: '', placeholder: 'tucorreo@ejemplo.com' },
+  play: async ({ canvasElement, args }) => {
+    for (const frame of frames(canvasElement)) {
+      const input = controlOf(frame) as HTMLInputElement;
+      expect(input.type).toBe('email');
+      expect(input.getAttribute('inputmode')).toBe('email');
+      expect(input.getAttribute('autocapitalize')).toBe('none');
+      await userEvent.type(input, 'ana@ejemplo.com');
+      expect(args.onChange).toHaveBeenLastCalledWith('ana@ejemplo.com');
+    }
+  },
+};
+
+/** Contraseña (Iniciar sesión): oculta; «Mostrar» / «Ocultar» deja revisarla. */
+export const Contrasena: Story = {
+  name: 'Contraseña',
+  args: { kind: 'password', label: 'Contraseña', value: 'secreta123' },
+  play: async ({ canvasElement }) => {
+    for (const frame of frames(canvasElement)) {
+      const input = controlOf(frame) as HTMLInputElement;
+      const toggle = [...frame.querySelectorAll('button')].find((b) => b.textContent === 'Mostrar')!;
+      expect(input.type).toBe('password');
+      expect(input.getAttribute('autocomplete')).toBe('current-password');
+      await userEvent.click(toggle);
+      expect(input.type).toBe('text');
+      expect(toggle.textContent).toBe('Ocultar');
+      expect(toggle.getAttribute('aria-pressed')).toBe('true');
+      await userEvent.click(toggle);
+      expect(input.type).toBe('password');
     }
   },
 };

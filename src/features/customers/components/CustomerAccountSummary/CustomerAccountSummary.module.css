@@ -1,0 +1,76 @@
+/* Cuenta del cliente en la ficha (HU-PAN-CLI-02). */
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.label,
+.pair,
+.extra {
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}
+
+.figure {
+  color: var(--color-text);
+  font-size: var(--text-title);
+  font-weight: var(--weight-figure);
+  font-variant-numeric: var(--font-numeric);
+}
+
+/* Barra «Abonado el N %»: el ancho llega en --paid. */
+.track {
+  height: var(--size-progress);
+  overflow: hidden;
+  border-radius: var(--radius-progress);
+  background: var(--color-track);
+}
+
+.fill {
+  display: block;
+  width: var(--paid);
+  height: 100%;
+  border-radius: var(--radius-progress);
+  background: var(--color-accent);
+}
+
+.pair {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.amount {
+  color: var(--color-text);
+  font-weight: var(--weight-strong);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.extra {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin: 0;
+}
+
+.extraRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.extraRow dd {
+  margin: 0;
+}
+
+.overdue {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-row-line);
+  color: var(--color-bad);
+  font-size: var(--text-secondary);
+}

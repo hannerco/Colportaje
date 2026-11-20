@@ -33,7 +33,13 @@ Por cobrar vencido · Por cobrar al día · Cobrado · Entregado (bloqueado, con
 - **CA-5.** **Dado** móvil, **cuando** deslizo un abono a la izquierda en la lista, **entonces** aparece «Cobrar» y lleva al mismo formulario.
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-19 (al programarla; lienzo leído en `AbonoPanel`, `AbonoMovil` y `DineroEscritorio`):**
+  - **Pantalla en `/dinero/abonos/[id]`** (`PaymentDetailScreen`, forma «Página» en escritorio y pantalla completa en móvil): franja con la situación («Vencido hace 3 días», «Faltan 10 días», «Vence hoy», «17/11/2026 · 3 días tarde», «· a tiempo»), isla de identidad (cliente, cuota «2/4», Pastilla —con candado si está entregado— y «Cobrar»), isla de datos (fecha acordada con la original tachada, valor, fecha real, método, Abibono con enlace), «Abonos de {cliente}» e Historial; «Dar más plazo» en Más acciones. El abono sale del detalle de su cliente (`useCustomerDetail`); el cliente sale de la lectura de Dinero (`usePaymentCustomer`).
+  - **Cobrar** (`CollectPaymentDialog`, pieza del módulo): valor real (sugerido = acordado), fecha (hoy, no futura) y método (Transferencia). Un valor menor avisa en el formulario «faltan $25.000» (CA-2). Tras cobrar: Aviso «Abono cobrado · Deshacer» (CA-3); si fue parcial, «Cobrado $X · Faltan $Y · Programar», que lleva a la ficha del cliente (como dibuja el lienzo).
+  - **Deshacer** usa una HU de back nueva, **HU-ABO-10** (decisión del dueño, 2026-11-19; BR-PAY-17): el cobro vuelve a por cobrar.
+  - **Dar más plazo:** `ChangeDueDateDialog` en modo prórroga con nota opcional (`withNote`) y confirmación a más de 2 meses.
+  - **Deslizar (CA-5):** en la lista de Dinero (móvil), un abono por cobrar muestra «Cobrar» (a la izquierda) y «Más plazo» (a la derecha) con `SwipeRow`; llevan a `/dinero/abonos/[id]?accion=cobrar|plazo`, que abre el mismo formulario.
+  - **Fuera / pendiente:** el modal de abonos que no cuadran al cobrar de más (FD-07; el lienzo no lo dibuja): solo se avisa «Cobras $X más de lo acordado»; el abono abierto desde la ficha (diseño «7», reemplaza el contenido de la ventana de la ficha); el Historial solo trae «Cobrado» (las prórrogas con fecha y nota, la programación y la entrega no se leen en el contrato del back: pide una HU de lectura del historial del abono); la edición del valor cobrado desde el detalle (el lienzo lo dibuja como botón; se corrige desde la ficha).
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E «Cobrar un abono, parcial, y prórroga» (TESTING.md, flujo 4) pasa.

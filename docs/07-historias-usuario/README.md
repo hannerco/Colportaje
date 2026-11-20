@@ -89,6 +89,7 @@ Implementar en este orden. Una HU solo empieza cuando sus dependencias están te
 | 13 | [HU-CLI-13](02-clientes/HU-CLI-13-fecha-de-venta.md) | Fecha de venta del libro editable (ADR-0049) | CLI-09, INV-05 |
 | 13 | [HU-ABO-08](03-abonos/HU-ABO-08-abonos-con-fecha-pasada.md) | Abonos programados con fecha pasada (ADR-0049) | ABO-03, ABO-04, ABO-05 |
 | 13 | [HU-ABO-09](03-abonos/HU-ABO-09-fecha-de-la-cuota-inicial.md) | Fecha de la cuota inicial en la ficha nueva (ADR-0049) | ABO-02 |
+| 14 | [HU-ABO-10](03-abonos/HU-ABO-10-deshacer-cobro.md) | Deshacer un cobro (para HU-PAN-DIN-02) | ABO-06 |
 
 ## Avance
 | HU | Estado | Dónde |
@@ -137,6 +138,7 @@ Implementar en este orden. Una HU solo empieza cuando sus dependencias están te
 | HU-CLI-13 | Terminada (2026-11-18) | `will-dev` |
 | HU-ABO-08 | Terminada (2026-11-18) | `will-dev` |
 | HU-ABO-09 | Terminada (2026-11-18) | `will-dev` |
+| HU-ABO-10 | Terminada (2026-11-19) | `will-dev` |
 
 **Flujo de trabajo del back (desde 2026-11-13):** las HU se programan en la rama `will-dev`, con un commit por HU y la CI corriendo en cada push. No se abre un PR a `main` por cada HU; `main` se actualiza con un PR desde `will-dev` cuando se acuerde con el dueño. Antes de cada commit: `pnpm lint && pnpm typecheck && pnpm test && pnpm test:rls && pnpm build`.
 
@@ -244,7 +246,7 @@ Una HU empieza cuando sus dependencias están terminadas. Las del mismo bloque s
 | E · Plantillas | [HU-UI-28](05-ui/HU-UI-28-plantilla-de-lista.md) | Plantilla de lista y Barra de vista | C y D |
 | E | [HU-UI-29](05-ui/HU-UI-29-plantilla-de-detalle.md) | Plantilla de detalle en islas | UI-16, UI-22, UI-27 |
 | F · App | [HU-PAN-BASE-01](06-pantallas/HU-PAN-BASE-01-armazon-de-la-app.md) | Armazón: rutas, navegación, avisos y textos | UI-23, UI-15, UI-16, UI-26 |
-| F | [HU-PAN-BASE-02](06-pantallas/HU-PAN-BASE-02-iniciar-sesion.md) | Iniciar sesión | **Bloqueada: espera diseño (OQ-44)** |
+| F | [HU-PAN-BASE-02](06-pantallas/HU-PAN-BASE-02-iniciar-sesion.md) | Iniciar sesión | Terminada con diseño propio (OQ-44) |
 | G · Clientes | [HU-PAN-CLI-01](06-pantallas/HU-PAN-CLI-01-lista-de-clientes.md) | Lista de clientes | UI-28, PAN-BASE-01 |
 | G | [HU-PAN-CLI-02](06-pantallas/HU-PAN-CLI-02-ficha-de-cliente.md) | Ficha de cliente | UI-29, PAN-CLI-01 |
 | G | [HU-PAN-CLI-03](06-pantallas/HU-PAN-CLI-03-crear-y-editar-cliente.md) | Crear cliente (ficha viva), guardar y descartar | PAN-CLI-02 |
@@ -269,13 +271,23 @@ Piezas que las **pantallas** del lienzo dibujan pero que no están en la **bibli
 
 | Pieza | Dónde aparece | HU |
 |---|---|---|
-| Calendario para elegir fecha | Cambiar fecha de abono; Dar más plazo | PAN-CLI-05, PAN-DIN-02 |
-| Plan de abonos (frecuencia, valor, lista previa) | Crear cliente | PAN-CLI-03 |
-| Mapa y selector de ubicación | Información y dirección; Elegir ubicación | PAN-CLI-06 |
-| Fila que se desliza (móvil) | Dinero (Cobrar / Más plazo); Por resolver | PAN-DIN-02, PAN-INV-01 |
+| Calendario para elegir fecha | Cambiar fecha de abono; Dar más plazo | PAN-CLI-05 (hecho: piezas `DatePickerCalendar` y `ChangeDueDateDialog`), PAN-DIN-02 |
+| Plan de abonos (frecuencia, valor, lista previa) | Crear cliente | PAN-CLI-03 (hecho: pieza `PaymentPlanFields`) |
+| Botones segmentados (Medio de pago, Frecuencia) | Crear cliente | PAN-CLI-03 (se usó la Selección radio de la biblioteca) |
+| **Factura en la ficha nueva** (fotos, N.º y fecha) — dibujada, **sin HU de pantalla** | Crear cliente | Ninguna: decidir dónde va |
+| Mapa y selector de ubicación | Información y dirección; Elegir ubicación | PAN-CLI-06 (hecho: piezas `MapCanvas`, `MapPreview`, `LocationPicker` y `CustomerLocationBlock`; teselas de OpenFreeMap con MapLibre GL, SG-09 decidido) |
+| Íconos de mapa, abrir afuera, cámara, recentrar y GPS tachado | Información y dirección; Elegir ubicación | PAN-CLI-06 (se usaron los de la biblioteca) |
+| Fila que se desliza (móvil) | Dinero (Cobrar / Más plazo); Por resolver | PAN-DIN-02, PAN-INV-01 (hecho: pieza `SwipeRow`, con las acciones también por teclado) |
+| Botón de título con contador (escritorio) y control de cantidad que se escribe (móvil) | Agregar al inventario | PAN-INV-04 (hecho: piezas `TitleTile` y `QuantityControl`) |
+| Fila de ejemplar con **Diferencia**, fecha de venta, número y cliente en móvil; Pastilla **Perdido** y **Devuelto al líder**; ranura `sections` de la Plantilla de lista | Ejemplares | PAN-INV-02 (ya en `ui/`: subirlo a Lib-FilaLista, Lib-Pastilla y Lib-Plantilla-Lista) |
+| Fila de título en físico (portada, nombre, precio, cantidad) y lista Por resolver con acciones | Libros en físico; Por resolver | PAN-INV-01 (hecho: filas en la pantalla y pieza `FlaggedCopiesList`) |
 | Botón de título con imagen y contador; cantidad | Agregar al inventario | PAN-INV-04 |
-| Fotos (miniaturas, agregar, quitar) | Recibos del Abibono; facturas; fotos de información | PAN-DIN-04, PAN-CLI-02 |
-| Tipo «abibono» en la Fila de lista | Lista de Abibonos | PAN-DIN-03 (se pide antes de programar) |
+| Fotos (miniaturas, agregar, quitar) | Recibos del Abibono; facturas; fotos de información | PAN-DIN-04 (hecho: pieza `ReceiptPhotos`, con quitar y «Reintentar»), PAN-CLI-02, PAN-CLI-06 (hecho para información: pieza `InfoPhotoStrip`, miniaturas y agregar) |
+| Tabla de abonos con Valor acordado, Fecha real, Valor real y Método (la Fila «payment» solo trae Cuota y Monto) | Dinero · Abonos de clientes | PAN-DIN-01 (hecho: pieza `PaymentsTable`; se pide subirla a la biblioteca) |
+| Tipo «abibono» en la Fila de lista (Nombre, Fecha, Total, Efectivo, Transferencia, Estado, Recibo) | Lista de Abibonos | PAN-DIN-03 (hecho: pieza `DepositsTable`; se pide subirlo a la biblioteca) |
+| Barra de avance «Abonado el N %» (pieza `CustomerAccountSummary`) | Ficha de cliente | PAN-CLI-02 |
+| Isla de identidad sin Pastilla (prospecto) y con contenido a todo el ancho (`details`) | Ficha de cliente | PAN-CLI-02 (ya en `ui/`: subirlo a Lib-Plantilla-Detalle) |
+| Segunda salida del Estado vacío (enlace debajo de la acción); botón flotante deshabilitado sin conexión | Búsqueda de clientes sin resultados (HU-CLI-05); Clientes sin conexión | PAN-CLI-01 (ya en `ui/`: subirlo a las fichas Lib-EstadoVacio y Lib-Navegacion) |
 
 Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesión** (OQ-44), selector de emoji (FC-02), los formularios de abonos de FC-09 a FC-12, y lo demás de `04-diseno/pendientes/FALTA-*.md`.
 
@@ -312,8 +324,23 @@ Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesió
 | HU-UI-28 | Terminada (2026-11-18) | `will-dev` |
 | HU-UI-29 | Terminada (2026-11-18) | `will-dev` |
 | HU-PAN-BASE-01 | Terminada (2026-11-18); falta probar en el celular del dueño (necesita HU-PAN-BASE-02) | `will-dev` |
-| HU-PAN-BASE-02 | Bloqueada (espera diseño, OQ-44) | — |
-| HU-PAN-CLI-01 a 06, HU-PAN-INV-01 a 05, HU-PAN-DIN-01 a 05 | Pendientes | — |
+| HU-PAN-BASE-02 | Terminada (2026-11-19), sin diseño del dueño (armada con la biblioteca por su encargo) | `will-dev` |
+| HU-PAN-CLI-01 | Terminada (2026-11-18); la ficha que abre llega con HU-PAN-CLI-02 | `will-dev` |
+| HU-PAN-CLI-02 | Terminada (2026-11-18); los botones que escriben llegan con CLI-03 a 06 y DIN-02 | `will-dev` |
+| HU-PAN-CLI-03 | Terminada (2026-11-19); libros, dirección e información llegan con CLI-04 y CLI-06 | `will-dev` |
+| HU-PAN-CLI-04 | Terminada (2026-11-19); devolver con motivo espera FC-06 | `will-dev` |
+| HU-PAN-CLI-05 | Terminada (2026-11-19); registrar, programar, editar y cancelar esperan FC-09 a FC-12 | `will-dev` |
+| HU-PAN-CLI-06 | Programada (2026-11-19); proveedor del mapa decidido (OpenFreeMap, SG-09); no se da por terminada hasta que el dueño la pruebe en su iPhone | `will-dev` |
+| HU-PAN-INV-01 | Terminada (2026-11-19); «Devolver al líder» llega con INV-05 y el panel Agregar con INV-04 | `will-dev` |
+| HU-PAN-INV-02 | Terminada (2026-11-19); abrir una fila espera INV-03 | `will-dev` |
+| HU-PAN-INV-03 | Terminada (2026-11-19); sin Franja ni «Devolver al líder» (INV-05) | `will-dev` |
+| HU-PAN-INV-04 | Terminada (2026-11-19) | `will-dev` |
+| HU-PAN-INV-05 | Terminada (2026-11-19) | `will-dev` |
+| HU-PAN-DIN-01 | Terminada (2026-11-19) | `will-dev` |
+| HU-PAN-DIN-02 | Terminada (2026-11-19) | `will-dev` |
+| HU-PAN-DIN-03 | Terminada (2026-11-19) | `will-dev` |
+| HU-PAN-DIN-04 | Terminada (2026-11-19) | `will-dev` |
+| HU-PAN-DIN-05 | Terminada (2026-11-19) | `will-dev` |
 
 **Flujo de trabajo del front:** igual que el back, en `will-dev`, un *commit* por HU. Antes de cada *commit*: `pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm build-storybook`.
 
@@ -322,8 +349,8 @@ Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesió
 |---|---|---|
 | **HU-UI-01** | «UI-01 lista: <enlace del Storybook>» | Abre el enlace (inicia sesión en Vercel con la cuenta Emprendum), prueba Tema, Plataforma y Letra, y abre un *issue* de prueba. El proyecto `colportor-storybook` ya está creado (2026-11-17) |
 | **Cada bloque (A a I)** | «Bloque <X> listo: <enlace>» | Revisa en el Storybook y reporta correcciones (ver «Cómo iteramos») |
-| **HU-PAN-CLI-06** | «Falta el proveedor del mapa» | Decide SG-09 y prueba la ubicación en su iPhone |
-| **HU-PAN-BASE-01 y primer despliegue** | «La app ya se puede abrir» | Prueba en su celular (necesita HU-PAN-BASE-02, que espera su diseño) |
+| **HU-PAN-CLI-06** | «Mapa listo (OpenFreeMap)» | Prueba la ubicación en su iPhone (permiso del GPS y mover el pin) |
+| **HU-PAN-BASE-01 y primer despliegue** | «La app ya se puede abrir» | Prueba en su celular (HU-PAN-BASE-02 ya está) |
 
 ### Fuera de alcance del front (iteración 1)
 Pantallas sin diseño (Hoy, Calendario, Minibooks, Hacer inventario, Admin, Iniciar sesión, Ajustes); escritura sin conexión (fase 2); vista de líder (fase 3); revisión visual automatizada por capturas.

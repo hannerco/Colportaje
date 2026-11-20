@@ -20,7 +20,13 @@ export function Providers({ children }: { children: ReactNode }) {
   useEffect(() => startConnectionSync(queryClient, repositories.connectivity), [queryClient, repositories]);
 
   return (
-    <SerwistProvider swUrl="/serwist/sw.js" disable={process.env.NODE_ENV === 'development'}>
+    // `reloadOnOnline` (por defecto, sí) recargaba la página al volver la red y se perdía lo que se estaba escribiendo
+    // (la ficha viva, el selector de ubicación). Al volver la red, `startConnectionSync` ya revalida las lecturas.
+    <SerwistProvider
+      swUrl="/serwist/sw.js"
+      disable={process.env.NODE_ENV === 'development'}
+      reloadOnOnline={false}
+    >
       <PersistQueryClientProvider
         client={queryClient}
         persistOptions={{ persister, maxAge: OFFLINE_CACHE_MAX_AGE_MS, buster: CACHE_BUSTER }}

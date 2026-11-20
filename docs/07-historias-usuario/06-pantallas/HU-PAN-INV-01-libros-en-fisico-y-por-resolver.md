@@ -28,7 +28,13 @@ Con libros · Un título abierto · Por resolver abierto · Apareció con Deshac
 - **CA-3.** **Dado** sin conexión, **entonces** Agregar y Resolver están deshabilitados y la lista se puede consultar.
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-19 (al programarla; lienzo leído en `InvEscritorio` e `InvMovil`, vistas fisico, fisico-titulo, fisico-final, fisico-mas, resolver, resolver-deslizar, resolver-hecho, resolver-nota y resolver-perdido):**
+  - **Pantalla:** `InStockScreen` con el Encabezado («Inventario», «Agregar» en escritorio; en móvil, el botón flotante «Agregar al inventario» del armazón), las secciones del módulo como Pestañas en segmento («Libros en físico» con el total y «Ejemplares», que lleva a HU-PAN-INV-02) y la isla «Libros en físico» con cada título (portada, nombre, precio de referencia y cantidad) y los minibooks al final. No usa la Plantilla de lista: la Barra de vista exige un buscador y el lienzo no lo dibuja aquí.
+  - **Un título abierto:** la Ventana de detalle (centrada en escritorio, hoja en móvil) con «N en físico · $precio» y sus ejemplares («#4 · Recibido 18/10/2026»); tocar uno abre `/inventario/ejemplares/[id]` (HU-PAN-INV-03). El lienzo lo dibuja como menú flotante en escritorio.
+  - **Por resolver:** «N por resolver» abre la Ventana de detalle (centrada en escritorio; página en móvil) con la pieza `FlaggedCopiesList`: «Apareció», «Perdido (lo asumo yo)» y «Eliminar» (el back ya tiene las tres resoluciones). Apareció va directo; Perdido y Eliminar piden la nota opcional del lienzo («Nota (opcional)», «¿Qué pasó? Puedes dejarlo en blanco»). El Aviso usa los textos del lienzo («Psiconutrición #4 está de nuevo en físico», «… quedó como perdido») y no el del CA-2 («Ejemplar #4 apareció»); «Deshacer» lo devuelve. El título abierto y Por resolver van en la URL (`?titulo=`, `?por-resolver`).
+  - **Deslizar (móvil):** pieza `SwipeRow`: hacia la derecha, Apareció; hacia la izquierda, Perdido y Eliminar; tocar la fila abre el Ejemplar. Las acciones son botones reales detrás de la fila: con el teclado o un lector de pantalla se llega a ellas sin deslizar y la fila se abre al recibir el foco.
+  - **«Devolver al líder»** (escritorio: botón; móvil: «Más acciones») aparece cuando llegue HU-PAN-INV-05; hoy la pantalla lo admite pero el contenedor no lo pasa. El panel «Agregar al inventario» que el lienzo pone junto a la lista en escritorio es HU-PAN-INV-04; aquí «Agregar» lleva a `/inventario/agregar`.
+  - **Textos sin dibujo:** el vacío («Todavía no tienes libros en físico» / «Cuando agregues libros al inventario, aparecen aquí por título.»), «No hay nada por resolver», el título de la nota de Eliminar («Eliminar · …») y su Aviso («… se eliminó»).
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13.

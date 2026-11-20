@@ -10,6 +10,7 @@ export {
   useDeletePayment,
   useRegisterCollectedPayment,
   useReschedulePayment,
+  useUndoCollectPayment,
   useResolveScheduleExcess,
   useSetCreationDownPayment,
   useUpdateCollectedPayment,
@@ -41,6 +42,7 @@ export { SCHEDULED_PAYMENT_ERROR_CODES } from '@/domain/scheduled-payment';
 export { reschedulePayment, type RescheduleInput } from './use-cases/reschedule';
 export {
   collectPayment,
+  undoCollectPayment,
   type CollectPaymentInput,
   type CollectPaymentResult,
 } from './use-cases/collect-payment';
@@ -69,3 +71,19 @@ export {
   type ExcessTrigger,
   type TrimOrder,
 } from '@/domain/schedule-excess';
+// Piezas del módulo (HU-PAN-CLI-05).
+export { ChangeDueDateDialog, type ChangeDueDateDialogProps } from './components/ChangeDueDateDialog';
+export { DatePickerCalendar, type DatePickerCalendarProps } from './components/DatePickerCalendar';
+// HU-PAN-DIN-02: detalle de un abono, cobrar y dar más plazo.
+export {
+  PaymentDetailScreen,
+  installmentOf,
+  paymentBanner,
+  type PaymentDetailForm,
+  type PaymentDetailScreenProps,
+} from './screens/PaymentDetailScreen';
+export {
+  CollectPaymentDialog,
+  type CollectPaymentDialogProps,
+  type CollectPaymentValues,
+} from './components/CollectPaymentDialog';

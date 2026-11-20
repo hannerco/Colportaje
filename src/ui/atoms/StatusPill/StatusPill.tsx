@@ -2,7 +2,7 @@ import { copy } from '@/copy/es';
 import { Icon, type IconName } from '../../icons';
 import styles from './StatusPill.module.css';
 
-/** Los 11 estados de la ficha (R4: tipo cerrado; uno nuevo se agrega antes en el diseño). */
+/** Los 11 estados de la ficha más Perdido y Devuelto al líder del lienzo de Ejemplares (R4: tipo cerrado). */
 export type PillStatus = keyof typeof copy.status;
 
 export type PillTone = 'neutral' | 'bad' | 'ok' | 'accent' | 'draft';
@@ -20,6 +20,8 @@ export const PILL_STATUS: Record<PillStatus, { tone: PillTone; icon: IconName }>
   in_stock: { tone: 'neutral', icon: 'in-stock' },
   sold: { tone: 'ok', icon: 'collected' },
   flagged: { tone: 'bad', icon: 'alert' },
+  lost: { tone: 'bad', icon: 'canceled' },
+  returned_to_leader: { tone: 'neutral', icon: 'undo' },
 };
 
 export type StatusPillProps = {

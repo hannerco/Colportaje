@@ -22,7 +22,12 @@ Entregado · Reabrir (diálogo con motivo) · Con diferencia y nota · Móvil.
 - **CA-3.** **Dado** diferencia −$10.000, **cuando** borro la nota, **entonces** no se puede guardar.
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-19 (al programarla; lienzo leído en `DineroEscritorio`, vistas «confirmado» y «reabrir»):**
+  - **Pantalla:** `DepositDetailScreen` en `/dinero/abibonos/[id]` cuando el Abibono está entregado (la misma ruta muestra el editor si es borrador). `DetailTemplate` con identidad («Abibono (n)», Pastilla «Entregado» con candado) y tres islas: **Datos** (fecha, efectivo, transferencia, total, esperado y diferencia, más la nota y el recibo), **Abonos** (los vinculados, cada uno lleva a su detalle) e **Historial** (entregado y reabierto, con el motivo).
+  - **Solo lectura salvo la nota y los recibos nuevos** (BR-DEP-12): título, fecha, montos y abonos no se editan; los recibos se pueden añadir, no quitar (BR-PHO-03). La nota tiene su «Guardar nota» (aparece al cambiar el texto) y no puede quedar vacía si hay diferencia (I-27, CA-3); sin diferencia se puede borrar del todo.
+  - **Reabrir:** en Más acciones (como pide esta HU), con el diálogo del lienzo «Reabrir Abibono (n)»: Motivo obligatorio (sin motivo avisa «Escribe el motivo.» y no se confirma). Al reabrir, la lectura se actualiza y la misma ruta abre su edición (HU-PAN-DIN-04); conserva su número (I-31) y sus abonos vuelven a Cobrado.
+  - **E2E:** flujo 13 a continuación del 5 (nota, reabrir con y sin motivo, y volver a entregar con el recibo que ya tenía).
+  - **Fuera / pendiente:** el lienzo dibuja «Reabrir» como botón visible en el panel; aquí va en Más acciones, como dice la HU y «discreto» según BR-DEP-12.
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E «Reabrir un Abibono» (TESTING.md, flujo 13) pasa.

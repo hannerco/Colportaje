@@ -212,6 +212,19 @@ export const AbonoVencido: Story = {
   },
 };
 
+/** HU-PAN-INV-02: un ejemplar vendido con descuento muestra la diferencia con el público y, si se ordena por venta, su fecha. */
+export const EjemplarConDiferencia: Story = {
+  name: 'Ejemplar · con diferencia',
+  args: { ...copyRow, amount: 93000, priceDelta: -5000, dateKind: 'sold', date: localDate('2026-11-02') },
+  play: async ({ canvasElement }) => {
+    for (const frame of frames(canvasElement)) {
+      const row = rowOf(frame);
+      expect(row.textContent).toContain('−$5.000');
+      if (isMobile(frame)) expect(row.textContent).toContain('Vendido 02/11/2026· María Camila Henao');
+    }
+  },
+};
+
 export const EjemplarCabecera: Story = {
   name: 'Ejemplar · cabecera',
   args: { variant: 'header', kind: 'copy', groupLabel: 'En físico', groupCount: 12 },

@@ -1,0 +1,27 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  text-align: start;
+}
+
+.fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.fields > * {
+  flex: 1;
+  min-width: 0;
+}
+
+.notice {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-row-selected);
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}

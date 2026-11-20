@@ -14,6 +14,8 @@ export type ListState = 'ready' | 'loading' | 'empty' | 'no-results' | 'offline-
 export type ListTemplateProps = {
   nav: AppNavProps;
   header: Omit<PageHeaderRootProps, 'kind'>;
+  /** Partes hermanas del módulo (Pestañas en segmento), entre el encabezado y la barra de vista (HU-PAN-INV-02). */
+  sections?: ReactNode;
   viewBar: ViewBarProps;
   /** Franja de sin conexión, arriba de la lista (R4). */
   banner?: ReactNode;
@@ -44,6 +46,7 @@ const KIND: Record<Exclude<ListState, 'ready'>, EmptyStateProps['kind']> = {
 export function ListTemplate({
   nav,
   header,
+  sections,
   viewBar,
   banner,
   state = 'ready',
@@ -114,6 +117,7 @@ export function ListTemplate({
           }}
         >
           <PageHeader kind="root" {...header} />
+          {sections}
           <ViewBar {...viewBar} views={views} />
         </div>
         <div ref={list} className={styles.list}>

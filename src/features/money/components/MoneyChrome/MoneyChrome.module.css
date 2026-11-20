@@ -1,0 +1,16 @@
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.tip {
+  margin: 0;
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}
+
+.sheet {
+  padding: var(--space-4);
+}

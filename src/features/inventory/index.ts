@@ -78,3 +78,18 @@ export {
   type AddCopiesInput,
   type ReceivedDateKey,
 } from '@/domain/add-batch';
+// HU-PAN-INV-01: Libros en físico y Por resolver.
+export { InStockScreen, type FlaggedResolution, type InStockScreenProps } from './screens/InStockScreen';
+export { FlaggedCopiesList, type FlaggedCopiesListProps } from './components/FlaggedCopiesList';
+export { SwipeRow, type SwipeRowProps } from './components/SwipeRow';
+// HU-PAN-INV-02: lista de ejemplares.
+export { CopiesListScreen, type CopiesListScreenProps } from './screens/CopiesListScreen';
+export { copiesListParamsFromUrl, copiesListParamsToUrl } from './copies-list-url';
+// HU-PAN-INV-03: detalle de un ejemplar.
+export { CopyDetailScreen, historyText, type CopyDetailScreenProps } from './screens/CopyDetailScreen';
+// HU-PAN-INV-04: agregar al inventario.
+export { AddCopiesScreen, type AddCopiesScreenProps } from './screens/AddCopiesScreen';
+export { TitleTile, type TitleTileProps } from './components/TitleTile';
+export { QuantityControl, type QuantityControlProps } from './components/QuantityControl';
+// HU-PAN-INV-05: devolver al líder.
+export { ReturnToLeaderScreen, type ReturnToLeaderScreenProps } from './screens/ReturnToLeaderScreen';

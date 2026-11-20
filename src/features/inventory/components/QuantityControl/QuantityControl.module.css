@@ -1,0 +1,60 @@
+.plus,
+.step,
+.quantity {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: var(--color-accent-text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.plus {
+  width: var(--size-control);
+  height: var(--size-control);
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--radius-pill);
+}
+
+.group {
+  display: inline-flex;
+  align-items: center;
+  height: var(--size-control);
+  border: 1px solid var(--color-accent-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-bg);
+}
+
+.step {
+  width: var(--size-control-sm);
+  height: 100%;
+  font-size: var(--text-body);
+}
+
+.quantity,
+.input {
+  min-width: var(--size-control);
+  height: 100%;
+  font-size: var(--text-body);
+  font-weight: var(--weight-strong);
+  font-variant-numeric: var(--font-numeric);
+  text-align: center;
+}
+
+.input {
+  box-sizing: border-box;
+  width: var(--size-control);
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+}
+
+.plus:focus-visible,
+.step:focus-visible,
+.quantity:focus-visible,
+.input:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: -3px;
+}

@@ -27,7 +27,12 @@ Catálogo · Con lote en curso · Escribir cantidad · Fecha pasada · Resumen �
 - **CA-4.** **Dado** un título desactivado, **entonces** no aparece en el catálogo (I-16).
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-19 (al programarla; lienzo leído en `InvEscritorio` e `InvMovil`, vistas agregar, agregar-fecha, agregar-sesion, agregar-cantidad y agregar-resumen):**
+  - **Pantalla en `/inventario/agregar`** (la HU decía «Agregar»; el lienzo de escritorio lo dibuja como panel junto a Libros en físico, aquí es la pantalla propia que ya tenía la ruta). `AddCopiesScreen`: escritorio con la isla «Agregar al inventario» (buscador, fecha, un botón por título agrupado por categoría y la barra «3 por agregar · recibidos hoy», «Descartar» y «Agregar N»); móvil a pantalla completa con «Cancelar / Agregar al inventario / Listo», pestañas de categoría y una fila por título.
+  - **Piezas del módulo:** `TitleTile` (portada, nombre y su cantidad en acento con un «−», escritorio) y `QuantityControl` («+», o «− cantidad +» con la cantidad escribible, móvil).
+  - **Fecha de recibido:** menú Hoy / Ayer / Anteayer / «Otra fecha…» (calendario de HU-PAN-CLI-05; nunca futura).
+  - **Resumen:** «Vas a agregar N ejemplares», la fecha, una caja por categoría (tocarla resalta sus títulos), la lista «Título (cantidad)» y el total; «Seguir agregando» / «Agregar N». El envío se prepara al abrirlo y, si falla, el diálogo sigue abierto con el Aviso «Reintentar» y manda los mismos identificadores (no duplica, R6).
+  - **Fuera / pendiente:** «Deshacer» el último toque del tablero «agregar-sesion» no se programa (los − hacen lo mismo y el lote es local); el resumen no muestra el ícono de forma por categoría del lienzo (círculo / triángulo / cuadrado); en el lienzo el panel convive con la lista en escritorio (aquí van separados).
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E «Agregar a inventario por lote» (TESTING.md, flujo 2) pasa.

@@ -867,6 +867,7 @@ export type Database = {
       };
       sold_instant: { Args: { p_day: string }; Returns: string };
       today_bogota: { Args: Record<PropertyKey, never>; Returns: string };
+      undo_collect_payment: { Args: { p_payment_id: string }; Returns: string };
       undo_delete_copy: { Args: { p_copy_id: string }; Returns: undefined };
       undo_resolve_copy_issue: { Args: { p_copy_id: string }; Returns: undefined };
       undo_return_to_leader: { Args: { p_copy_id: string; p_note: string }; Returns: undefined };
@@ -890,6 +891,10 @@ export type Database = {
       update_copy_received_date: { Args: { p_copy_id: string; p_date: string }; Returns: undefined };
       update_deposit_note: { Args: { p_deposit_id: string; p_note: string }; Returns: undefined };
       update_invoice: { Args: { p_invoice_id: string; p_patch: Json }; Returns: undefined };
+      update_my_time_format: {
+        Args: { p_time_format: Database['public']['Enums']['time_format'] };
+        Returns: undefined;
+      };
       update_scheduled_amount: { Args: { p_agreed_amount: number; p_payment_id: string }; Returns: string };
       update_sold_at: { Args: { p_copy_id: string; p_sold_on: string }; Returns: string };
     };

@@ -43,5 +43,10 @@ export function createSupabaseProfileRepository(getClient: GetSupabaseClient): P
         }),
       );
     },
+
+    async updateTimeFormat(format) {
+      const { error } = await getClient().rpc('update_my_time_format', { p_time_format: format });
+      return error ? err(mapPostgrestError(error)) : ok(undefined);
+    },
   };
 }

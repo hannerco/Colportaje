@@ -33,7 +33,12 @@ FC-09 (Registrar abono), FC-10 (Programar en cliente guardado), FC-11 (Editar, b
 - **CA-4.** **Dado** el calendario, **entonces** la semana empieza en domingo y se navega con las flechas del teclado.
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-19 (al programarla; lienzo leído en `CrearV5Abono` y `CrearV5MovilAbono`):**
+  - **Contenedor:** el calendario va dentro del Diálogo de la biblioteca (centrado en escritorio, hoja en móvil). El lienzo lo dibuja como menú flotante sobre el abono en escritorio; la biblioteca no tiene ese panel (y Radix solo se usa dentro de `ui/`).
+  - **Del lienzo:** título «Abono 2 de 4», mes con flechas, semana desde domingo, hoy marcado, el día elegido en acento, un punto en los días con otro abono, «Cancelar» y «Guardar fecha». **Sin el interruptor «Correr también los siguientes»** (I-08: solo se mueve ese abono).
+  - **Al crear**, la fecha corregida se guarda con el plan (`applyPaymentPlan` en `replace_all` con esa fecha), no con `useCorrectScheduledDate`: los abonos del plan nacen y se reemplazan juntos mientras se crea, así que el resultado es el mismo (sin historial). Cambiar frecuencia, valor o primer abono descarta las fechas corregidas (I-08).
+  - **Con el cliente guardado**, la fecha de un abono por cobrar abre la prórroga: solo días posteriores a la fecha actual (HU-ABO-05 R2) y, a más de 2 meses desde hoy, «¿Dar tanto plazo?» antes de guardar.
+  - **«Cambiar valor» de cada abono** (dibujado en el lienzo de la ficha nueva) queda fuera: no está en esta HU (va con FC-11).
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E «Cobrar un abono, parcial, y prórroga» (TESTING.md, flujo 4) pasa en su parte de prórroga.

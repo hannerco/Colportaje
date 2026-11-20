@@ -65,7 +65,13 @@ export type AppNavProps = {
   /** Rutas del glosario (`/clientes`, `/inventario`, `/dinero`…). */
   hrefs: Record<NavId, string>;
   /** Botón flotante en móvil (`fab`). Sin él no se pinta (R3). */
-  fab?: { icon: IconName; label: string; onClick: () => void };
+  fab?: {
+    icon: IconName;
+    label: string;
+    onClick: () => void;
+    /** Deshabilitado (p. ej. «Nuevo cliente» sin conexión): el lector oye «Necesita conexión» (BR-GEN-08). */
+    disabled?: boolean;
+  };
   /** Cuenta en la cabecera de la barra lateral. */
   account: { name: string };
   /** Acceso «Nuevo cliente» de la barra lateral. Sin él no se muestra. */
@@ -237,6 +243,7 @@ export function Sidebar({
 export function BottomBar({ active, items, hrefs, fab, onNavigate, className }: AppNavProps) {
   const visible = shown(items);
   const [moreOpen, setMoreOpen] = useState(false);
+  const fabNoteId = useId();
   const inBar = BAR.filter((id) => visible.has(id));
   const inMore = ALL_NAV_IDS.filter((id) => visible.has(id) && !BAR.includes(id));
   // CA-2: lo que no está en la barra marca «Más».
@@ -285,9 +292,20 @@ export function BottomBar({ active, items, hrefs, fab, onNavigate, className }: 
       {/* R3: encima de la barra, a la derecha; sin `fab` no se pinta. */}
       {fab && (
         <span className={styles.fab}>
-          <Button variant="fab" icon={fab.icon} onClick={fab.onClick}>
+          <Button
+            variant="fab"
+            icon={fab.icon}
+            onClick={fab.onClick}
+            state={fab.disabled ? 'disabled' : 'normal'}
+            {...(fab.disabled ? { 'aria-describedby': fabNoteId } : {})}
+          >
             {fab.label}
           </Button>
+          {fab.disabled && (
+            <span id={fabNoteId} className={styles.visuallyHidden}>
+              {copy.ui.empty.needsConnection}
+            </span>
+          )}
         </span>
       )}
     </>

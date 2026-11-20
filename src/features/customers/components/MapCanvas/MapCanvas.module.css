@@ -1,0 +1,24 @@
+.map {
+  position: absolute;
+  inset: 0;
+  background: var(--color-track);
+  font: inherit;
+}
+
+/* Leaflet pinta el círculo como un `<path>`: las propiedades CSS ganan a sus atributos. */
+.accuracy {
+  fill: var(--color-accent-bg-2);
+  fill-opacity: 1;
+  stroke: var(--color-accent-border);
+  stroke-width: 1;
+}
+
+.map :global(.leaflet-control-attribution) {
+  background: var(--color-card);
+  color: var(--color-text-2);
+  font-size: var(--text-caption);
+}
+
+.map :global(.leaflet-control-attribution a) {
+  color: var(--color-accent-text);
+}

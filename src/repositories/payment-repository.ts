@@ -116,4 +116,11 @@ export interface PaymentRepository {
     paymentId: string,
     input: { paidAmount: COP | null; paidAt: LocalDate; method: PayMethod },
   ): Promise<Result<{ customerId: string; agreedAmount: COP; paidAmount: COP }, AppError>>;
+
+  /**
+   * Deshace el cobro de un abono programado (HU-ABO-10): vuelve a por cobrar y se borran su valor, fecha y método
+   * reales. Errores: `INVALID_TRANSITION` (no está cobrado o no es programado), `PAYMENT_LOCKED` (está en un
+   * Abibono), `CUSTOMER_ARCHIVED`, `NOT_FOUND`, `NETWORK_ERROR`.
+   */
+  uncollect(paymentId: string): Promise<Result<{ customerId: string }, AppError>>;
 }

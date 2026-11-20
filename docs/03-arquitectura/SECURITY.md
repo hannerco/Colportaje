@@ -15,7 +15,7 @@ Los datos incluyen nombres, teléfonos, direcciones, fotos de clientes y dinero.
 | Fotos privadas expuestas | Bucket `user-photos` privado, políticas por prefijo `owner_id/`, **URLs firmadas** de corta duración |
 | Registro abusivo / agotar almacenamiento | **Solo invitación**; sin registro público; alerta de uso |
 | XSS por campos libres (información, notas) | Render como texto, nunca `dangerouslySetInnerHTML`; React escapa por defecto |
-| URL de mapa y ubicación | `maps_url` solo se usa en `href` tras validar dominio (`google.com/maps`, `maps.app.goo.gl`); las **coordenadas** se validan (numéricas, en rango) y el enlace de "Abrir en Maps" se construye **solo con números**; ya **no hay iframe de Google**; CSP `img-src`/`connect-src` limitadas al proveedor de mapas elegido (SG-09) |
+| URL de mapa y ubicación | `maps_url` solo se usa en `href` tras validar dominio (`google.com/maps`, `maps.app.goo.gl`); las **coordenadas** se validan (numéricas, en rango) y el enlace de "Abrir en Maps" se construye **solo con números**; ya **no hay iframe de Google**; CSP `img-src`/`connect-src` limitadas al proveedor de mapas (OpenFreeMap, SG-09; pendiente con la CSP: `worker-src blob:` para MapLibre) |
 | Pérdida de datos | Backups cada 2 días al inicio y luego semanales, keep-alive, paso futuro a Supabase Pro (`05-operacion/DEPLOYMENT.md` §7–8); borrado lógico; bloqueo de abonos entregados |
 | Sesión robada | Cookies `httpOnly`/`secure` (Supabase SSR), expiración razonable, cierre de sesión |
 | Dependencias vulnerables | `pnpm audit` y Dependabot en CI |

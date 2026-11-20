@@ -1,0 +1,94 @@
+/* Calendario para elegir fecha (HU-PAN-CLI-05). */
+.calendar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.title {
+  font-weight: var(--weight-strong);
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.weekday {
+  color: var(--color-text-2);
+  font-size: var(--text-caption);
+  text-align: center;
+}
+
+.cell {
+  display: flex;
+  justify-content: center;
+}
+
+.day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-touch);
+  height: var(--size-touch);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-secondary);
+  font-variant-numeric: var(--font-numeric);
+  cursor: pointer;
+}
+
+.day:hover {
+  background: var(--color-tone);
+}
+
+.day[data-outside] {
+  color: var(--color-text-2);
+}
+
+.day[data-today] {
+  outline: 1px solid var(--color-accent-border);
+  outline-offset: -1px;
+}
+
+.day[aria-pressed='true'] {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-weight: var(--weight-strong);
+}
+
+.day[aria-disabled='true'] {
+  color: var(--color-text-3);
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.day:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 0;
+}
+
+.dot {
+  width: var(--size-calendar-dot);
+  height: var(--size-calendar-dot);
+  border-radius: var(--radius-pill);
+  background: currentcolor;
+}
