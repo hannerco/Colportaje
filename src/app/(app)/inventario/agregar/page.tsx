@@ -100,9 +100,9 @@ export default function AddToInventoryPage() {
       onCancel={() => router.push(ROUTES.inventory)}
     />
   );
-  if (mobile) return screen;
+  // En el celular la pantalla trae su propia barra (Cancelar · título · Listo), así que va sin encabezado (#24).
   return (
-    <ShellScreen nav={shell.nav} title={copy.inventory.addCopies.title}>
+    <ShellScreen nav={shell.nav} title={mobile ? undefined : copy.inventory.addCopies.title} task>
       {screen}
     </ShellScreen>
   );

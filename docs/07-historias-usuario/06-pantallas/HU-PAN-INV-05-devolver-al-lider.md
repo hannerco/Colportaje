@@ -28,6 +28,7 @@ Eligiendo · Minibooks abierto · Nota · Resumen · Devolviendo · Sin conexió
   - **Resumen:** «Vas a devolver N ejemplares», la nota, una caja por categoría (tocarla resalta sus títulos), la lista «Título (cantidad)» y el total; «Seguir eligiendo» / «Devolver N». El envío (con su `opId`) se prepara al abrirlo y, si falla, el diálogo sigue abierto con el Aviso «Reintentar» y manda el mismo `opId` (no devuelve de más, R6).
   - **Deshacer:** el Aviso «N ejemplares devueltos · Deshacer» llama `undoReturnToLeader` por cada ejemplar devuelto (el back lo deshace por ejemplar y pide nota) con **la misma nota** de la devolución.
   - **Fuera / pendiente:** la variante «modal» con la columna Categoría no se programa (la HU manda la angosta); en el lienzo es un modal sobre Libros en físico, aquí es la pantalla propia; el resumen no lleva el ícono de forma por categoría.
+- **2026-11-22 (#24):** igual que Agregar: en el celular va en el armazón en modo tarea, con margen lateral de 16.
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E «Devolver al líder en lote y deshacer» (TESTING.md, flujo 15) pasa.

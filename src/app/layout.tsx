@@ -9,7 +9,8 @@ import { Providers } from './providers';
 export const metadata: Metadata = { title: copy.app.name, applicationName: copy.app.name };
 
 // CA-3: el navegador pinta su lienzo en el tema del sistema desde el primer cuadro (sin destello claro).
-export const viewport: Viewport = { colorScheme: 'light dark' };
+// #25: `cover` deja que la app use toda la pantalla del iPhone; las áreas seguras las respetan los tokens `--safe-*`.
+export const viewport: Viewport = { colorScheme: 'light dark', viewportFit: 'cover' };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (

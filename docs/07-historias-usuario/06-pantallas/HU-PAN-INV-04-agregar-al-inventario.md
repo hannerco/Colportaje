@@ -33,6 +33,7 @@ Catálogo · Con lote en curso · Escribir cantidad · Fecha pasada · Resumen �
   - **Fecha de recibido:** menú Hoy / Ayer / Anteayer / «Otra fecha…» (calendario de HU-PAN-CLI-05; nunca futura).
   - **Resumen:** «Vas a agregar N ejemplares», la fecha, una caja por categoría (tocarla resalta sus títulos), la lista «Título (cantidad)» y el total; «Seguir agregando» / «Agregar N». El envío se prepara al abrirlo y, si falla, el diálogo sigue abierto con el Aviso «Reintentar» y manda los mismos identificadores (no duplica, R6).
   - **Fuera / pendiente:** «Deshacer» el último toque del tablero «agregar-sesion» no se programa (los − hacen lo mismo y el lote es local); el resumen no muestra el ícono de forma por categoría del lienzo (círculo / triángulo / cuadrado); en el lienzo el panel convive con la lista en escritorio (aquí van separados).
+- **2026-11-22 (#24):** en el celular la pantalla va dentro del armazón en modo tarea, con margen lateral de 16; antes tocaba los bordes y «Listo» se cortaba.
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E «Agregar a inventario por lote» (TESTING.md, flujo 2) pasa.
