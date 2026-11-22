@@ -41,3 +41,8 @@
   padding: var(--space-2) var(--space-4)
     calc(var(--size-bottom-bar-item) + var(--bottom-bar-inset) + var(--space-12));
 }
+
+/* Pantalla de una tarea en el celular (#24): sin barra inferior, así que abajo basta el margen y el área segura. */
+.shell[data-shape='mobile'][data-task] .main {
+  padding: 0 var(--space-4) calc(var(--space-4) + var(--safe-bottom));
+}

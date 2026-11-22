@@ -73,6 +73,19 @@ const frames = (root: HTMLElement) => [...root.querySelectorAll<HTMLElement>('fi
 const isMobile = (frame: HTMLElement) =>
   frame.querySelector<HTMLElement>('[data-ui-scope]')!.dataset.platform === 'mobile';
 const tabs = (frame: HTMLElement) => [...frame.querySelectorAll<HTMLElement>('[role="tab"]')];
+
+/**
+ * R3 y #30: las opciones del segmento miden lo mismo cuando caben iguales; si no (un celular angosto), cada una mide al
+ * menos su texto. En ningún caso el texto se sale de su fondo.
+ */
+const expectEqualOrFitting = (frame: HTMLElement) => {
+  const all = tabs(frame);
+  for (const tab of all) expect(tab.scrollWidth).toBeLessThanOrEqual(tab.clientWidth);
+  const widest = Math.max(...all.map((tab) => tab.scrollWidth));
+  const inner = all.reduce((sum, tab) => sum + tab.getBoundingClientRect().width, 0);
+  if (widest <= inner / all.length)
+    for (const tab of all) expect(tab.getBoundingClientRect().width).toBeCloseTo(inner / all.length, 0);
+};
 /** Ancho disponible para las pestañas: el contenido del contenedor de la raíz, sin su relleno. */
 const room = (list: HTMLElement) => {
   const container = list.parentElement!.parentElement!;
@@ -139,10 +152,7 @@ export const OvalosOtraActiva: Story = {
 export const Segmento: Story = {
   args: { items: PARTS, variant: 'segmented', 'aria-label': 'Partes de Dinero' },
   play: async ({ canvasElement }) => {
-    for (const frame of frames(canvasElement)) {
-      const [payments, deposits] = tabs(frame);
-      expect(payments!.getBoundingClientRect().width).toBeCloseTo(deposits!.getBoundingClientRect().width, 0);
-    }
+    for (const frame of frames(canvasElement)) expectEqualOrFitting(frame);
   },
 };
 
@@ -196,8 +206,7 @@ export const SegmentoAnchoCompleto: Story = {
   play: async ({ canvasElement }) => {
     for (const frame of frames(canvasElement)) {
       const list = frame.querySelector<HTMLElement>('[role="tablist"]')!;
-      const inner = list.clientWidth - 2 * 4 - 2;
-      for (const tab of tabs(frame)) expect(tab.getBoundingClientRect().width).toBeCloseTo(inner / 2, 0);
+      expectEqualOrFitting(frame);
       // Ocupa todo el ancho disponible (100 %), no el de su contenido.
       expect(list.getBoundingClientRect().width).toBe(room(list));
     }
@@ -225,4 +234,34 @@ export const Matriz: Story = {
       />
     </div>
   ),
+};
+
+/**
+ * #30 (corrección del dueño, 2026-11-22): con una opción larga («Abonos de clientes 3») el segmento se ensancha para que
+ * quepa; las dos opciones siguen midiendo lo mismo y ningún texto se sale de su fondo.
+ */
+export const SegmentoConTextoLargo: Story = {
+  name: 'Segmento con texto largo',
+  args: {
+    items: [
+      { id: 'payments', label: 'Abonos de clientes', count: 3 },
+      { id: 'deposits', label: 'Abibonos', count: 0 },
+    ],
+    variant: 'segmented',
+    width: 'auto',
+    'aria-label': 'Partes de Dinero',
+  },
+  play: async ({ canvasElement }) => {
+    for (const frame of frames(canvasElement)) {
+      expectEqualOrFitting(frame);
+      // En escritorio hay espacio: las dos miden lo mismo, la del texto más largo.
+      if (frame.querySelector<HTMLElement>('[data-ui-scope]')?.dataset.platform === 'desktop') {
+        const [payments, deposits] = tabs(frame);
+        expect(payments!.getBoundingClientRect().width).toBeCloseTo(
+          deposits!.getBoundingClientRect().width,
+          0,
+        );
+      }
+    }
+  },
 };
