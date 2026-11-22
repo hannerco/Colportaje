@@ -1,0 +1,131 @@
+# Copia de seguridad de producción (DEPLOYMENT §8, HU-BASE-07 R4, CA-6).
+# Esquema, roles, datos y fotos → un archivo comprimido y CIFRADO con la llave pública del dueño
+# (.github/backup/recipient.crt). La llave privada que lo abre NO está en el repositorio ni en GitHub: la guarda el dueño.
+# Destino (OQ-42): repositorio privado de backups; cada copia es una rama huérfana `backup/<fecha>-<bytes>`.
+# Retención: 8 semanas y como máximo 30 copias. Aviso desde 2,5 GB; al llegar a 3 GB se migra a Cloudflare R2.
+name: Backup
+
+on:
+  schedule:
+    - cron: '0 8 */2 * *' # 03:00 en Bogotá, cada 2 días
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    name: backup
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: production
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD_PROD }}
+      SUPABASE_PROJECT_REF_PROD: ${{ secrets.SUPABASE_PROJECT_REF_PROD }}
+      BACKUP_REPO: ${{ vars.BACKUP_REPO }}
+      KEEP_COPIES: 30
+      KEEP_DAYS: 56
+      WARN_BYTES: 2684354560 # 2,5 GB
+      LIMIT_BYTES: 3221225472 # 3 GB
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: pnpm/action-setup@v6.1.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      - name: Enlazar producción
+        run: pnpm exec supabase link --project-ref "$SUPABASE_PROJECT_REF_PROD"
+
+      - name: Volcar la base (roles, esquema y datos)
+        run: |
+          mkdir -p "$RUNNER_TEMP/backup"
+          pnpm exec supabase db dump --remote --role-only -f "$RUNNER_TEMP/backup/roles.sql"
+          pnpm exec supabase db dump --remote -f "$RUNNER_TEMP/backup/schema.sql"
+          pnpm exec supabase db dump --remote --data-only --use-copy -f "$RUNNER_TEMP/backup/data.sql"
+
+      - name: Copiar las fotos y las portadas
+        run: |
+          for bucket in user-photos title-images; do
+            mkdir -p "$RUNNER_TEMP/backup/storage/$bucket"
+            pnpm exec supabase storage cp -r "ss:///$bucket" "$RUNNER_TEMP/backup/storage/$bucket" --remote --experimental --yes
+          done
+
+      - name: Comprimir y cifrar
+        id: pack
+        run: |
+          stamp=$(date -u +%Y%m%dT%H%MZ)
+          cd "$RUNNER_TEMP"
+          tar -czf backup.tar.gz -C backup .
+          openssl cms -encrypt -binary -aes-256-cbc -outform DER \
+            -in backup.tar.gz -out "colportor-$stamp.tar.gz.cms" "$GITHUB_WORKSPACE/.github/backup/recipient.crt"
+          rm -rf backup backup.tar.gz
+          bytes=$(stat -c %s "colportor-$stamp.tar.gz.cms")
+          sha256sum "colportor-$stamp.tar.gz.cms" > "colportor-$stamp.tar.gz.cms.sha256"
+          echo "stamp=$stamp" >> "$GITHUB_OUTPUT"
+          echo "bytes=$bytes" >> "$GITHUB_OUTPUT"
+          echo "Copia cifrada: $bytes bytes."
+
+      # Único paso que conoce el destino: al migrar a R2 solo cambia este paso.
+      - name: Subir al repositorio de backups y aplicar la retención
+        env:
+          BACKUP_DEPLOY_KEY: ${{ secrets.BACKUP_DEPLOY_KEY }}
+          STAMP: ${{ steps.pack.outputs.stamp }}
+          BYTES: ${{ steps.pack.outputs.bytes }}
+        run: |
+          if [ -z "$BACKUP_REPO" ] || [ -z "$BACKUP_DEPLOY_KEY" ]; then
+            echo "::error::Faltan la variable BACKUP_REPO o el secret BACKUP_DEPLOY_KEY del entorno production."
+            exit 1
+          fi
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$BACKUP_DEPLOY_KEY" > ~/.ssh/backup_key
+          chmod 600 ~/.ssh/backup_key
+          # Llave pública publicada por GitHub (docs: GitHub's SSH key fingerprints).
+          echo 'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' > ~/.ssh/known_hosts
+          export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/backup_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
+          remote="git@github.com:$BACKUP_REPO.git"
+
+          branch="backup/$STAMP-$BYTES"
+          mkdir "$RUNNER_TEMP/repo" && cd "$RUNNER_TEMP/repo"
+          git init -q
+          git checkout -q --orphan "$branch"
+          mv "$RUNNER_TEMP"/colportor-"$STAMP".tar.gz.cms* .
+          git add .
+          git -c user.name='Colportor backup' -c user.email='backup@users.noreply.github.com' commit -q -m "Backup $STAMP"
+          git push -q "$remote" "HEAD:refs/heads/$branch"
+          echo "Subida: $branch"
+
+          # Retención: se conservan las copias de las últimas 8 semanas, máximo 30 (la más nueva siempre).
+          cutoff=$(date -u -d "-$KEEP_DAYS days" +%Y%m%dT%H%MZ)
+          mapfile -t branches < <(git ls-remote --heads "$remote" 'backup/*' | awk '{print $2}' | sed 's#refs/heads/##' | sort -r)
+          total=0
+          kept=0
+          for b in "${branches[@]}"; do
+            name=${b#backup/}
+            date_part=${name%-*}
+            size=${name##*-}
+            if [ "$kept" -lt "$KEEP_COPIES" ] && { [ "$kept" -eq 0 ] || [[ "$date_part" > "$cutoff" ]]; }; then
+              kept=$((kept + 1))
+              total=$((total + size))
+            else
+              git push -q "$remote" --delete "$b"
+              echo "Borrada por retención: $b"
+            fi
+          done
+          echo "Copias conservadas: $kept · total: $total bytes."
+
+          if [ "$total" -ge "$LIMIT_BYTES" ]; then
+            echo "::error::Los backups ocupan $total bytes (≥ 3 GB). Hay que migrar el destino a Cloudflare R2 (OQ-42)."
+            exit 1
+          elif [ "$total" -ge "$WARN_BYTES" ]; then
+            echo "::warning::Los backups ocupan $total bytes (≥ 2,5 GB). Prepara la cuenta de Cloudflare R2 (OQ-42)."
+          fi
