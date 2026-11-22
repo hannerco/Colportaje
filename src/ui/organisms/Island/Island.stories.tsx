@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { expect, fn, userEvent } from 'storybook/test';
 import { formatCOP } from '@/domain/money';
 import { formatDate, localDate } from '@/domain/time';
+import { Field } from '../../atoms/Field';
 import { DataList, DataRow } from '../../molecules/DataRow';
 import { HistoryTimeline } from '../../molecules/HistoryTimeline';
 import { Island } from './Island';
@@ -153,6 +154,34 @@ export const SinTitulo: Story = {
       expect(island.hasAttribute('aria-labelledby')).toBe(false);
       const top = island.getBoundingClientRect().top + 1 + parseFloat(getComputedStyle(island).paddingTop);
       expect(Math.round(island.querySelector('p')!.getBoundingClientRect().top)).toBe(Math.round(top));
+    }
+  },
+};
+
+/**
+ * #26 (corrección del dueño, 2026-11-22): los campos de una isla no quedan pegados; entre un bloque y el siguiente hay
+ * siempre 14 de espacio (lienzo CrearV5).
+ */
+export const Campos: Story = {
+  args: {
+    title: 'Información del cliente',
+    icon: 'person',
+    children: (
+      <>
+        <Field kind="phone" label="Teléfono" value="320 696 7052" onChange={() => {}} />
+        <Field label="Dirección" placeholder="Calle, número y barrio" value="" onChange={() => {}} />
+        <Field kind="textarea" label="Información" value="Monte de Sion, interesante" onChange={() => {}} />
+      </>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    for (const frame of frames(canvasElement)) {
+      const blocks = [...islandOf(frame).querySelector(':scope > div:last-child')!.children];
+      expect(blocks.length).toBe(3);
+      for (let i = 1; i < blocks.length; i++) {
+        const gap = blocks[i]!.getBoundingClientRect().top - blocks[i - 1]!.getBoundingClientRect().bottom;
+        expect(Math.round(gap)).toBe(14);
+      }
     }
   },
 };

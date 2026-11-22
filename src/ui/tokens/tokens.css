@@ -364,6 +364,7 @@
   --size-header: 56px; /* encabezado de pantalla (HU-UI-21) */
   --size-header-summary: 36px;
   --radius-island: 18px; /* isla (HU-UI-22) */
+  --island-gap: 14px; /* espacio entre los bloques de una isla: campos, listas, mapa (#26, lienzo CrearV5) */
   --radius-window: 20px; /* ventana de detalle (HU-UI-27) */
   --island-padding: 18px 24px 10px;
 }
@@ -408,6 +409,7 @@
   --size-header: 52px;
   --size-header-summary: 40px;
   --radius-island: 16px;
+  --island-gap: 14px;
   --radius-window: 16px;
   --island-padding: 14px 16px 8px;
 }
@@ -453,6 +455,7 @@
     --size-header: 52px;
     --size-header-summary: 40px;
     --radius-island: 16px;
+    --island-gap: 14px;
     --radius-window: 16px;
     --island-padding: 14px 16px 8px;
   }
