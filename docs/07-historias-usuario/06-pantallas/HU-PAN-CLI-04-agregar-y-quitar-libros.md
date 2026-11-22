@@ -39,6 +39,7 @@ Agregar ejemplares nuevos al inventario (HU-PAN-INV-04).
   - **Precio acordado y fecha de venta** van en cada seleccionado (el lienzo no los dibuja; los pide la HU): Campo moneda con «antes $X» si cambia y Campo fecha «Vendido el» (HU-CLI-13 ya está en el back). Se escriben solos un momento después.
   - **Quitar** solo durante la creación y para los recién agregados en la hoja (sin motivo, HU-CLI-09 R4). **Devolver con motivo** a un cliente guardado (FC-06) no está dibujado: queda fuera.
   - En la ficha, la isla Libros se ve también en un prospecto sin libros, para poder agregarle uno.
+- **2026-11-22 (#31):** al elegir un ejemplar, «Vendido el» muestra la fecha de hoy de inmediato (lo mismo que guarda el servidor al vender), igual que el precio; antes quedaba vacío unos 5 segundos hasta que respondía. Lógica en `chosenBookValues` con su prueba.
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13.
