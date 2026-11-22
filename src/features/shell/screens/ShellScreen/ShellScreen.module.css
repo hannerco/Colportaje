@@ -5,17 +5,24 @@
   display: flex;
   box-sizing: border-box;
   min-height: var(--template-height);
-  background: var(--color-page);
+  background: var(--color-page-mobile);
   color: var(--color-text);
 }
 
+/* #28: en escritorio el contenido va en una tarjeta junto a la barra lateral, como en el lienzo. */
 .main {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
   gap: var(--space-4);
+  box-sizing: border-box;
   min-width: 0;
-  padding: var(--space-4) var(--space-8) var(--space-6);
+  padding: var(--panel-padding-top) var(--panel-padding-x) var(--panel-padding-bottom);
+  margin: var(--panel-inset) var(--panel-inset) var(--panel-inset) 0;
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-panel);
+  background: var(--color-card);
+  box-shadow: var(--shadow-panel);
 }
 
 /* ─── Móvil: una columna; la barra inferior flota encima ─── */
@@ -25,6 +32,11 @@
 }
 
 .shell[data-shape='mobile'] .main {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
   gap: var(--space-3);
   padding: var(--space-2) var(--space-4)
     calc(var(--size-bottom-bar-item) + var(--bottom-bar-inset) + var(--space-12));

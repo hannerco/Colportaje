@@ -332,3 +332,20 @@ export const ConDevolverAlLider: Story = {
 };
 
 export const Matriz: Story = { parameters: { frames: 'matrix' } };
+
+/**
+ * #27 (corrección del dueño, 2026-11-22): en escritorio las pestañas quedan a la misma distancia del encabezado (56 del
+ * encabezado + 12) que en Ejemplares, aunque aquí esté «Agregar» y allá no: al cambiar de sección nada salta.
+ */
+export const SinSaltoAlCambiarDeSeccion: Story = {
+  name: 'Sin salto al cambiar de sección',
+  globals: { platform: 'desktop' },
+  play: async ({ canvasElement }) => {
+    for (const frame of [...canvasElement.querySelectorAll<HTMLElement>('figure.sb-frame')]) {
+      const header = frame.querySelector('header[data-kind="root"]')!.getBoundingClientRect();
+      const tabs = frame.querySelector('[role="tablist"]')!.getBoundingClientRect();
+      expect(Math.round(header.height)).toBe(56);
+      expect(Math.round(tabs.top - header.top)).toBe(68);
+    }
+  },
+};
