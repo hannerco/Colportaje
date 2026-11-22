@@ -17,13 +17,25 @@
 }
 
 /* ─── R1: barra lateral ─── */
+/*
+ * R6: siempre del alto de la pantalla y de su ancho fijo, sin importar la página. `flex: none` evita que se encoja
+ * cuando el contenido es ancho; `sticky` + `height` la dejan quieta mientras la página se desplaza (si sus ítems no
+ * caben, se desplaza ella sola).
+ */
 .sidebar {
   display: flex;
+  flex: none;
   flex-direction: column;
   gap: var(--space-4);
   box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
   width: var(--sidebar-width);
-  min-height: 100%;
+  height: var(--template-height);
+  /* Dentro de un contenedor de alto fijo (un marco del Storybook), no lo sobrepasa. */
+  max-height: 100%;
+  overflow-y: auto;
   padding: var(--sidebar-padding);
   background: var(--color-page-mobile);
   color: var(--color-text-2);
