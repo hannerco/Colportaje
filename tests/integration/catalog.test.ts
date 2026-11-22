@@ -53,6 +53,23 @@ describe('script de carga del catálogo (HU-BASE-04)', () => {
     expect(rows).toEqual([{ public_price: 99_000 }]);
   });
 
+  it('HU-PAN-ADM-01: recargar la lista de precios no borra el autor ni la portada que se pusieron en Admin', async () => {
+    const id = randomUUID();
+    loadedIds.push(id);
+    const [first] = catalogFile([id]);
+    await loadCatalog(admin, parseCatalog([first]));
+    await pool.query(
+      "update public.title set author = 'Autora', image_path = 'x/portada.webp' where id = $1",
+      [id],
+    );
+    await loadCatalog(admin, parseCatalog([{ ...first, publicPrice: 88_000 }]));
+    const { rows } = await pool.query(
+      'select author, image_path, public_price from public.title where id = $1',
+      [id],
+    );
+    expect(rows).toEqual([{ author: 'Autora', image_path: 'x/portada.webp', public_price: 88_000 }]);
+  });
+
   it('CA-2: un cultural sin precio público hace fallar el script nombrando el registro, sin cargar nada', async () => {
     const ids = [randomUUID(), randomUUID()];
     const file = [
@@ -82,12 +99,13 @@ describe('script de carga del catálogo (HU-BASE-04)', () => {
 });
 
 describe('TitleRepository contra Supabase local (HU-BASE-04)', () => {
-  async function signedInRepository() {
+  async function signedInRepository(isAdmin = false) {
     const email = uniqueEmail('hu-base-04');
     const created = await createUser(admin, {
       email,
       fullName: 'Lectora del catálogo',
       password: 'clave-local-123',
+      isAdmin,
     });
     userIds.push(created.userId);
     const client = anonClient();
@@ -139,6 +157,60 @@ describe('TitleRepository contra Supabase local (HU-BASE-04)', () => {
     expect(result.ok && result.value[0]?.imageUrl).toMatch(
       /\/storage\/v1\/object\/public\/title-images\/portadas\/libro\.webp$/,
     );
+  });
+
+  const FIELDS = {
+    name: 'Título creado en Admin',
+    author: 'Autor',
+    description: null,
+    publicPrice: 104_000,
+    colportorPrice: 52_000,
+    category: 'cultural' as const,
+    isActive: true,
+  };
+
+  it('HU-PAN-ADM-01 / BR-TIT-01: el admin crea (sin duplicar al reintentar), edita y desactiva; listAll trae todo', async () => {
+    const titles = await signedInRepository(true);
+    const id = randomUUID();
+    loadedIds.push(id);
+    expect(await titles.create(id, FIELDS)).toEqual({ ok: true, value: undefined });
+    expect(await titles.create(id, FIELDS)).toEqual({ ok: true, value: undefined });
+    expect(await countByIds([id])).toBe(1);
+    expect(await titles.update(id, { ...FIELDS, isActive: false, imagePath: `${id}/c.webp` })).toEqual({
+      ok: true,
+      value: undefined,
+    });
+    const all = await titles.listAll();
+    expect(all.ok && all.value.find((t) => t.id === id)).toMatchObject({
+      isActive: false,
+      author: 'Autor',
+      imageUrl: expect.stringMatching(new RegExp(`/title-images/${id}/c\\.webp$`)),
+    });
+    expect(await titles.update(randomUUID(), { name: 'No existe' })).toEqual({
+      ok: false,
+      error: { code: 'NOT_FOUND', retryable: false },
+    });
+  });
+
+  it('HU-PAN-ADM-01 / BR-TIT-01: un colportor no admin no crea ni edita títulos ni sube portadas', async () => {
+    const titles = await signedInRepository(false);
+    const id = randomUUID();
+    const created = await titles.create(id, FIELDS);
+    expect(!created.ok && created.error.code).toBe('FORBIDDEN');
+    const updated = await titles.update(ACTIVE, { name: 'Cambiado' });
+    expect(!updated.ok && updated.error.code).toBe('NOT_FOUND');
+    const uploaded = await titles.uploadCover(`${id}/c.webp`, new Blob(['x'], { type: 'image/webp' }));
+    expect(!uploaded.ok && uploaded.error.code).toBe('FORBIDDEN');
+  });
+
+  it('HU-PAN-ADM-01: el admin sube una portada al bucket público title-images', async () => {
+    const titles = await signedInRepository(true);
+    const path = `${randomUUID()}/c.webp`;
+    expect(await titles.uploadCover(path, new Blob(['x'], { type: 'image/webp' }))).toEqual({
+      ok: true,
+      value: undefined,
+    });
+    await admin.storage.from('title-images').remove([path]);
   });
 
   it('getMany sin ids no consulta y devuelve []', async () => {

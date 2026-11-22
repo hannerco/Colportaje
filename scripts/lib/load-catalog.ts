@@ -61,24 +61,38 @@ export function parseCatalog(data: unknown): TitleRecord[] {
 /**
  * Upsert por id en una sola petición (todo o nada). Recargar el mismo archivo deja lo mismo (R4).
  * Los títulos que no vienen en el archivo no se tocan; para retirar uno se marca `isActive: false` (BR-TIT-03).
+ * Autor, descripción y portada vacíos en el archivo **no borran** lo que ya tenga el título: así recargar la lista de
+ * precios no deshace lo que el admin completó en Admin · Catálogo (HU-PAN-ADM-01).
  */
 export async function loadCatalog(
   admin: SupabaseClient<Database>,
   records: readonly TitleRecord[],
 ): Promise<number> {
   if (records.length === 0) return 0;
+  const { data: current, error: readError } = await admin
+    .from('title')
+    .select('id, author, description, image_path')
+    .in(
+      'id',
+      records.map((r) => r.id),
+    );
+  if (readError) throw new Error(`No se pudo leer el catálogo actual: ${readError.message}`);
+  const existing = new Map(current.map((row) => [row.id, row]));
   const { error } = await admin.from('title').upsert(
-    records.map((r) => ({
-      id: r.id,
-      name: r.name,
-      author: r.author,
-      description: r.description,
-      image_path: r.imagePath,
-      public_price: r.publicPrice,
-      colportor_price: r.colportorPrice,
-      category: r.category,
-      is_active: r.isActive,
-    })),
+    records.map((r) => {
+      const before = existing.get(r.id);
+      return {
+        id: r.id,
+        name: r.name,
+        author: r.author ?? before?.author ?? null,
+        description: r.description ?? before?.description ?? null,
+        image_path: r.imagePath ?? before?.image_path ?? null,
+        public_price: r.publicPrice,
+        colportor_price: r.colportorPrice,
+        category: r.category,
+        is_active: r.isActive,
+      };
+    }),
     { onConflict: 'id' },
   );
   if (error) throw new Error(`No se pudo cargar el catálogo: ${error.message}`);

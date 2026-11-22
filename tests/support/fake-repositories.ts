@@ -55,6 +55,10 @@ export const fakeCustomerRepository = (overrides: Partial<CustomerRepository> = 
 export const fakeTitleRepository = (overrides: Partial<TitleRepository> = {}): TitleRepository => ({
   listActive: vi.fn(),
   getMany: vi.fn(),
+  listAll: vi.fn(),
+  create: vi.fn(),
+  update: vi.fn(),
+  uploadCover: vi.fn(),
   ...overrides,
 });
 

@@ -264,6 +264,7 @@ Una HU empieza cuando sus dependencias están terminadas. Las del mismo bloque s
 | I | [HU-PAN-DIN-03](06-pantallas/HU-PAN-DIN-03-lista-de-abibonos.md) | Lista de Abibonos | PAN-DIN-01 |
 | I | [HU-PAN-DIN-04](06-pantallas/HU-PAN-DIN-04-nuevo-abibono-y-borradores.md) | Nuevo Abibono, borradores y confirmar | PAN-DIN-03, UI-27 |
 | I | [HU-PAN-DIN-05](06-pantallas/HU-PAN-DIN-05-abibono-entregado-y-reabrir.md) | Abibono entregado y reabrir | PAN-DIN-04 |
+| J · Admin | [HU-PAN-ADM-01](06-pantallas/HU-PAN-ADM-01-catalogo.md) | Admin · Catálogo: crear y editar títulos, precios y portada (sin diseño, por pedido del dueño) | BASE-04, PAN-BASE-01 |
 
 Los bloques G, H e I pueden ir en paralelo cuando terminan A–F. HU-PAN-CLI-03, CLI-04 y CLI-05 usan HU del back aún pendientes (CLI-13, ABO-08, ABO-09): la parte que depende de ellas se activa cuando el back esté listo.
 
@@ -342,6 +343,7 @@ Sin dibujo en ninguna parte (no se programan hasta su diseño): **Iniciar sesió
 | HU-PAN-DIN-03 | Terminada (2026-11-19) | `will-dev` |
 | HU-PAN-DIN-04 | Terminada (2026-11-19) | `will-dev` |
 | HU-PAN-DIN-05 | Terminada (2026-11-19) | `will-dev` |
+| HU-PAN-ADM-01 | Terminada (2026-11-22), sin diseño del dueño (armada con la biblioteca por su encargo) | `feat/admin-catalogo` |
 
 **Flujo de trabajo del front:** igual que el back, en `will-dev`, un *commit* por HU. Antes de cada *commit*: `pnpm lint && pnpm typecheck && pnpm test && pnpm build && pnpm build-storybook`.
 

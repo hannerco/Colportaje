@@ -34,7 +34,7 @@ export type {
 export type { LastPickerPointStore } from './last-picker-point';
 export type { DepositRecord, MoneyRepository } from './money-repository';
 export type { ProfileRepository } from './profile-repository';
-export type { TitleRepository } from './title-repository';
+export type { TitleRepository, TitleWrite } from './title-repository';
 
 /**
  * Contratos de datos que la app recibe inyectados (ARCHITECTURE §2).
