@@ -76,7 +76,7 @@ Producción usa `colportor-prod`; *preview* y *development*, `colportor-staging`
 
 | Dónde | Nombre | Quién lo carga | Para qué |
 |---|---|---|---|
-| Repositorio | `SUPABASE_ACCESS_TOKEN` | **El dueño** (token propio para la CI, supabase.com → Account → Access Tokens) | Enlazar proyectos y consultas de solo lectura (Management API) |
+| Repositorio | `SUPABASE_ACCESS_TOKEN` | **Cargado por el dueño (2026-11-21).** Token propio para la CI (supabase.com → Account → Access Tokens), de alcance «Project» sobre `colportor-prod` y `colportor-staging`, **vence a los 90 días (≈ 2027-02-19): renovarlo antes** (crear otro igual y `gh secret set SUPABASE_ACCESS_TOKEN`), o fallan keep-alive, backups y migraciones. Permisos: Project Settings, Connection Pooling, API Keys, API Key Secrets, Storage, Storage Config, Data API Config y Projects (account-wide) en lectura; Database en lectura y escritura; el resto en None | Enlazar proyectos, consultas por la Management API y copiar las fotos en el backup |
 | Entorno `staging` | `SUPABASE_PROJECT_REF_STAGING` | Cargado (2026-11-20) | Proyecto de staging |
 | Entorno `staging` | `SUPABASE_DB_PASSWORD_STAGING` | **El dueño** | `db push` a staging |
 | Entorno `production` | `SUPABASE_PROJECT_REF_PROD` | Cargado (2026-11-20) | Proyecto de producción |
