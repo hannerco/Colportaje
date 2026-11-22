@@ -16,12 +16,18 @@ export const ROUTES = {
   returnToLeader: '/inventario/devolver',
   copies: '/inventario/ejemplares',
   copy: (id: string) => `/inventario/ejemplares/${encodeURIComponent(id)}`,
+  /** La lista con el ejemplar abierto en la Ventana de detalle (escritorio, #29). */
+  copyInList: (id: string) => `/inventario/ejemplares?ejemplar=${encodeURIComponent(id)}`,
   money: '/dinero',
   payment: (id: string) => `/dinero/abonos/${encodeURIComponent(id)}`,
+  /** Dinero con el abono abierto en la Ventana de detalle (escritorio, #29). */
+  paymentInList: (id: string) => `/dinero?abono=${encodeURIComponent(id)}`,
   deposits: '/dinero/abibonos',
   /** Nuevo Abibono precargado (HU-PAN-DIN-04): hasta entonces es el armazón de la ruta de un Abibono. */
   newDeposit: '/dinero/abibonos/nuevo',
   deposit: (id: string) => `/dinero/abibonos/${encodeURIComponent(id)}`,
+  /** La lista de Abibonos con uno abierto en la Ventana de detalle (escritorio, #29). */
+  depositInList: (id: string) => `/dinero/abibonos?abibono=${encodeURIComponent(id)}`,
 } as const;
 
 /** Destino de cada módulo de la navegación. Los que no tienen pantalla no se muestran (`APP_NAV_ITEMS`). */

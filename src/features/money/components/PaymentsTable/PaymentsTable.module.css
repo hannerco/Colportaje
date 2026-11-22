@@ -164,3 +164,8 @@
   outline: 3px solid var(--color-ring);
   outline-offset: -3px;
 }
+
+/* #29: el abono abierto en la Ventana de detalle se resalta como la fila seleccionada de la Fila de lista. */
+.row[data-selected] {
+  background: var(--color-row-selected);
+}
