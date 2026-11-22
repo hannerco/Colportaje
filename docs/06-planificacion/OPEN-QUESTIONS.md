@@ -26,6 +26,7 @@ Si aparece una duda nueva, se agrega aquí con ID `OQ-*` y un supuesto por defec
 | SG-09 | **Proveedor de teselas: decidido (2026-11-20), OpenFreeMap** con MapLibre GL (ADR-0036); falta **probar la geolocalización en un iPhone real** y revisar sus términos antes de producción (el permiso puede repetirse en cada apertura) | Agente + dueño | Al implementar la ficha de cliente |
 | SG-10 | **Elegir y probar el selector de emojis** (candidato `frimousse`; verificar mantenimiento activo), asegurar que sus datos queden guardados para funcionar **sin conexión** y revisar cómo se ve cada emoji en Android e iPhone | Agente | Al implementar el avatar |
 | SG-11 | ~~**Fechas en el caché sin conexión**~~ (hallado en HU-CLI-04): el caché se guardaba como JSON y los `Date` volvían como texto al reabrir sin conexión | — | **Cerrado (2026-11-15):** el persister guarda las fechas marcadas y las restaura como `Date`; `CACHE_BUSTER` pasó a `v2` (descarta cachés viejas). Prueba: `tests/offline/offline-dates.test.ts` (DECISION-LOG #36) |
+| SG-12 | **Renovar el token de Supabase de la CI** (`SUPABASE_ACCESS_TOKEN`, 90 días, creado el 2026-11-21): crear uno igual (permisos en `05-operacion/DEPLOYMENT.md` §5.4) y cargarlo con `gh secret set SUPABASE_ACCESS_TOKEN --repo hannerco/Colportaje`. Si vence, fallan keep-alive, backups y migraciones | Dueño | **Antes del 2027-02-19** |
 | SG-08 | Nombre de dominio propio y correo SMTP para enviar invitaciones por correo (hoy: enlace por WhatsApp) | Dueño | Opcional, futuro |
 
 ## 2. Cosas por revisar con uso real
