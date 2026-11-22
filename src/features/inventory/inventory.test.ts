@@ -84,6 +84,10 @@ const stockDeps = (overrides: Partial<CopyRepository> = {}, titles: Title[] = [a
   const titleRepo: TitleRepository = {
     listActive: vi.fn(),
     getMany: vi.fn(async (ids: readonly string[]) => ok(titles.filter((t) => ids.includes(t.id)))),
+    listAll: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    uploadCover: vi.fn(),
   };
   return {
     copies: { ...copiesWith(async () => ok({ created: [] })), ...overrides },

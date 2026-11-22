@@ -1,0 +1,157 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 900px;
+  min-width: 0;
+}
+
+.screen[data-shape='mobile'] {
+  gap: var(--space-3);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.screen[data-shape='desktop'] .search {
+  flex: 1;
+  min-width: 0;
+}
+
+.subheading {
+  margin: var(--space-3) 0 var(--space-1);
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  font-weight: var(--weight-medium);
+}
+
+.titles {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.titles li + li {
+  border-top: 1px solid var(--color-row-line);
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--size-list-row);
+  padding: var(--space-2) 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.titleRow[aria-current='true'] {
+  background: var(--color-row-selected);
+}
+
+.titleRow:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: -3px;
+}
+
+.titleText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.titleName {
+  overflow: hidden;
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.secondary {
+  overflow: hidden;
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  font-variant-numeric: var(--font-numeric);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inactive {
+  flex: none;
+  color: var(--color-text-3);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
+}
+
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.cover {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.coverActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.fileInput {
+  display: none;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-bottom: var(--space-2);
+}
+
+.muted {
+  margin: 0;
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}
+
+.failure {
+  margin: 0;
+  color: var(--color-bad);
+  font-size: var(--text-secondary);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.editorPage .actions {
+  flex-direction: column;
+}
+
+/* En móvil, el editor es una página que tapa la lista (como Por resolver en Inventario). */
+.editorPage {
+  position: fixed;
+  inset: 0;
+  z-index: var(--layer-overlay);
+  overflow-y: auto;
+  background: var(--color-page-mobile);
+}

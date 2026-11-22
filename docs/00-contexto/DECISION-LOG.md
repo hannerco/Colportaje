@@ -544,6 +544,16 @@ El dueño revisó las 27 interpretaciones de `07-historias-usuario/INTERPRETACIO
 
 ---
 
+## Ronda 33 — Catálogo real y Admin · Catálogo (2026-11-22)
+
+| # | Tema | Resultado |
+|---|---|---|
+| 1 | Catálogo real | El dueño entrega «LISTA PRECIOS VACACION 2027.xlsx» («la mayoría de precios»). [D] Se carga tal cual: 34 títulos (precio público, precio colportor), en `scripts/data/catalog.json`. Las Biblias van como **religioso** y el resto como **cultural** (supuesto del asistente; se corrige en Admin) |
+| 2 | Admin del catálogo | **"crea en admin un CRUD para poder modificar las cosas, añadirle autor, ponerle una imágen de portada"** [D] HU-PAN-ADM-01, sin diseño del lienzo y armada con la biblioteca (como Iniciar sesión). «Borrar» = **desactivar** (BR-TIT-03). Admin deja de mostrar «Próximamente» |
+| 3 | Recargar el catálogo | [D derivada] El script no borra autor, descripción ni portada que se pusieron en Admin: el archivo manda en nombres y precios; Admin, en lo demás |
+
+---
+
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
 1. **Restablecer contraseña también por enlace del admin** (AF-82, ADR-0027): el mismo límite de correo de Supabase que impide invitar por correo impide los restablecimientos automáticos.
 2. **Repositorio de GitHub: `Colportaje`** (2026-11-04). Se pensó en `colportor`, pero el dueño ya había creado `hannerco/Colportaje` y pidió dejar todo con ese nombre.

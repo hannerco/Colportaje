@@ -34,8 +34,9 @@ describe('navegación de la app (HU-PAN-BASE-01)', () => {
   });
 
   it('los módulos sin terminar abren «Próximamente»; los terminados no', () => {
-    expect(COMING_SOON).toEqual(['today', 'minibooks', 'calendar', 'stocktake', 'admin']);
-    for (const id of ['customers', 'inventory', 'money', 'settings'] as const)
+    expect(COMING_SOON).toEqual(['today', 'minibooks', 'calendar', 'stocktake']);
+    // Admin ya tiene el Catálogo (HU-PAN-ADM-01).
+    for (const id of ['customers', 'inventory', 'money', 'settings', 'admin'] as const)
       expect(COMING_SOON).not.toContain(id);
   });
 

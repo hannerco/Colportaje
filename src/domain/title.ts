@@ -50,18 +50,65 @@ export type TitleRecord = {
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+/** Los datos de un título que edita el admin (BR-TIT-02). La portada va aparte (`titleCoverPath`). */
+export type TitleFields = {
+  readonly name: string;
+  readonly author: string | null;
+  readonly description: string | null;
+  readonly publicPrice: number | null;
+  readonly colportorPrice: number;
+  readonly category: TitleCategory;
+  readonly isActive: boolean;
+};
+
+/** Lo que llega del formulario de Admin: el precio colportor puede venir vacío (y entonces no es válido). */
+export type TitleFieldsDraft = Omit<TitleFields, 'colportorPrice'> & {
+  readonly colportorPrice: number | null;
+};
+
+/** Texto opcional: sin espacios a los lados; vacío = sin valor. */
+const optionalText = (value: string | null): string | null => {
+  const trimmed = value?.trim() ?? '';
+  return trimmed === '' ? null : trimmed;
+};
+
+/**
+ * Valida y limpia los datos de un título (BR-TIT-02, BR-TIT-04): nombre obligatorio, autor y descripción opcionales
+ * (vacíos = sin valor), precio colportor ≥ 0 entero y precio público > 0, obligatorio salvo en minibooks.
+ * Errores: `VALIDATION` con `details.field` (`name`, `colportorPrice` o `publicPrice`).
+ */
+export const validateTitleFields = (fields: TitleFieldsDraft): Result<TitleFields, AppError> => {
+  const name = fields.name.trim();
+  if (!name) return err(validationError('name'));
+  if (fields.colportorPrice === null || !isValidCOP(fields.colportorPrice)) {
+    return err(validationError('colportorPrice'));
+  }
+  if (fields.publicPrice === null) {
+    if (fields.category !== 'minibook') {
+      return err(validationError('publicPrice', { reason: 'required_unless_minibook' }));
+    }
+  } else if (!isValidCOP(fields.publicPrice) || fields.publicPrice === 0) {
+    return err(validationError('publicPrice'));
+  }
+  return ok({
+    ...fields,
+    name,
+    author: optionalText(fields.author),
+    description: optionalText(fields.description),
+    colportorPrice: fields.colportorPrice,
+  });
+};
+
 /** Valida las reglas de negocio de un título (BR-TIT-02, BR-TIT-04). */
 export const validateTitleRecord = (record: TitleRecord): Result<TitleRecord, AppError> => {
   if (!UUID.test(record.id)) return err(validationError('id'));
-  const name = record.name.trim();
-  if (!name) return err(validationError('name'));
-  if (!isValidCOP(record.colportorPrice)) return err(validationError('colportorPrice'));
-  if (record.publicPrice === null) {
-    if (record.category !== 'minibook') {
-      return err(validationError('publicPrice', { reason: 'required_unless_minibook' }));
-    }
-  } else if (!isValidCOP(record.publicPrice) || record.publicPrice === 0) {
-    return err(validationError('publicPrice'));
-  }
-  return ok({ ...record, name });
+  const fields = validateTitleFields(record);
+  if (!fields.ok) return fields;
+  return ok({ ...record, name: fields.value.name });
 };
+
+/**
+ * Ruta de una portada en el bucket público `title-images` (DT-10). Cada portada nueva tiene su propio nombre: así
+ * nadie ve la anterior guardada en el caché del navegador.
+ */
+export const titleCoverPath = (titleId: string, coverId: string): string => `${titleId}/${coverId}.webp`;

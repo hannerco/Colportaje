@@ -3,6 +3,8 @@ import {
   CATEGORY_ORDER,
   compareTitles,
   referencePrice,
+  titleCoverPath,
+  validateTitleFields,
   validateTitleRecord,
   type Title,
   type TitleRecord,
@@ -114,5 +116,53 @@ describe('title: orden', () => {
     expect(compareTitles(a, b)).toBeLessThan(0);
     expect(compareTitles(b, a)).toBeGreaterThan(0);
     expect(compareTitles(a, a)).toBe(0);
+  });
+});
+
+describe('title: datos del formulario de Admin (BR-TIT-02, BR-TIT-04)', () => {
+  const draft = {
+    name: '  Psiconutrición  ',
+    author: '  ',
+    description: ' Salud y emociones ',
+    publicPrice: 156_000,
+    colportorPrice: 78_000,
+    category: 'cultural' as const,
+    isActive: true,
+  };
+
+  it('BR-TIT-02: limpia los textos; autor o descripción vacíos quedan sin valor', () => {
+    expect(validateTitleFields(draft)).toEqual({
+      ok: true,
+      value: { ...draft, name: 'Psiconutrición', author: null, description: 'Salud y emociones' },
+    });
+  });
+
+  it('BR-TIT-02: el nombre es obligatorio', () => {
+    const result = validateTitleFields({ ...draft, name: '   ' });
+    expect(!result.ok && result.error.details?.field).toBe('name');
+  });
+
+  it('BR-TIT-04: el precio colportor es obligatorio, entero y no negativo', () => {
+    for (const colportorPrice of [null, -1, 1.5]) {
+      const result = validateTitleFields({ ...draft, colportorPrice });
+      expect(!result.ok && result.error.details?.field).toBe('colportorPrice');
+    }
+    expect(
+      validateTitleFields({ ...draft, category: 'minibook', publicPrice: null, colportorPrice: 0 }).ok,
+    ).toBe(true);
+  });
+
+  it('BR-TIT-04: sin precio público solo un minibook; si lo trae, mayor que 0', () => {
+    const cultural = validateTitleFields({ ...draft, publicPrice: null });
+    expect(!cultural.ok && cultural.error.details).toMatchObject({
+      field: 'publicPrice',
+      reason: 'required_unless_minibook',
+    });
+    const zero = validateTitleFields({ ...draft, publicPrice: 0 });
+    expect(!zero.ok && zero.error.details?.field).toBe('publicPrice');
+  });
+
+  it('DT-10: cada portada tiene su propia ruta dentro de la carpeta del título', () => {
+    expect(titleCoverPath('t-1', 'c-2')).toBe('t-1/c-2.webp');
   });
 });

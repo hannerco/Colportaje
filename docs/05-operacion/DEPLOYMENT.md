@@ -89,10 +89,17 @@ Producción usa `colportor-prod`; *preview* y *development*, `colportor-staging`
 - **Comprobación de la nube:** `pnpm check:cloud staging|prod` (solo lectura, por la Management API; necesita `SUPABASE_ACCESS_TOKEN` y `SUPABASE_PROJECT_REF_<ENTORNO>`). Falla si una tabla con `owner_id` no tiene RLS, si el rol `postgres` deja permisos por defecto a `anon`/`authenticated` sobre tablas nuevas de `public`, o si falta el event trigger `ensure_rls`. Los permisos por defecto de `supabase_admin` son internos de la plataforma y no se revisan. Corre también al final de cada job de `deploy-db.yml`.
 
 ### 5.5 Primer administrador
-1. Crear el primer usuario del dueño (invitación desde la propia app solo existe cuando ya hay un admin: el **primero** se crea con un script de arranque o desde el panel de Supabase → Authentication → Users → *Add user* con el correo del dueño).
-2. Insertar su `profile` y los roles `colportor` y `admin` (script `scripts/bootstrap-admin.ts` o `supabase/seed.sql`).
-3. Cargar el catálogo con `scripts/seed-titles.ts` (idempotente; recibe un CSV/JSON de Títulos y precios).
-4. A partir de ahí, **todas las invitaciones se hacen desde el panel de admin** (enlace para WhatsApp), sin tocar la base de datos.
+**Hecho en producción el 2026-11-22** (usuario admin del dueño). Los scripts leen `.env.local`, que apunta a **staging**; para correrlos contra **producción** se les pasan las variables de prod en la misma línea, sin escribirlas en ningún archivo ni chat. La clave secreta se pide **con `--reveal`** (sin él, Supabase la entrega recortada y el script responde «Invalid API key»):
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://mmqswsutskhoeyzlorbc.supabase.co \
+SUPABASE_SERVICE_ROLE_KEY="$(pnpm exec supabase projects api-keys --project-ref mmqswsutskhoeyzlorbc --reveal -o json 2>/dev/null | node -e 'const k=JSON.parse(require("fs").readFileSync(0,"utf8")).find(x=>x.type==="secret");process.stdout.write(k.api_key)')" \
+pnpm <script> …
+```
+
+1. Primer admin: `pnpm user:create --email <correo> --name "<nombre>" --admin` con las variables de prod.
+2. Catálogo inicial: `pnpm catalog:load scripts/data/catalog.json` (idempotente; la lista de precios 2026-2027, 34 títulos, ya está en staging). Después, los ajustes se hacen en **Admin · Catálogo** (HU-PAN-ADM-01). Recargar el archivo no borra el autor, la descripción ni la portada puestos ahí.
+3. Las invitaciones desde el panel de admin esperan su diseño.
 
 ## 6. Migraciones
 - Todo cambio de esquema = nueva migración en `supabase/migrations/` (`supabase migration new <nombre>`), revisada por PR. **Nunca** editar una migración ya aplicada.
