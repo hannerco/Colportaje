@@ -56,7 +56,7 @@ Búsqueda global (FT-01); cambio de cuenta (FT-02); el contenido de Hoy, Miniboo
 - **CA-5.** **Dado** `fab` indefinido, **entonces** no hay botón flotante.
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-22 (corrección del dueño, error de código):** la barra lateral crecía hasta el alto de la página y se encogía cuando el contenido era ancho. **R6:** la barra lateral tiene siempre el alto de la pantalla (fija al desplazar la página; si sus ítems no caben, se desplaza ella sola) y su ancho fijo de 248, sin importar el contenido. Prueba: story `Pantallas/Armazón › Contenido largo y ancho`.
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13.

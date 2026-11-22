@@ -166,3 +166,33 @@ export const Proximamente: Story = {
 export const Matriz: Story = {
   parameters: { frames: 'matrix' },
 };
+
+/**
+ * R6 de HU-UI-23 (corrección del dueño, 2026-11-22): con una página muy larga y muy ancha, la barra lateral conserva su
+ * ancho (248) y no crece más que la pantalla; la página se desplaza y la barra queda quieta.
+ */
+export const ContenidoLargoYAncho: Story = {
+  globals: { platform: 'desktop' },
+  args: {
+    title: 'Agregar al inventario',
+    children: (
+      <div>
+        <p style={{ whiteSpace: 'nowrap' }}>
+          {'Un título muy largo que no cabe en una sola línea · '.repeat(12)}
+        </p>
+        {Array.from({ length: 80 }, (_, i) => (
+          <p key={i}>Fila {i + 1}</p>
+        ))}
+      </div>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    for (const frame of frames(canvasElement)) {
+      const sidebar = navOf(frame).getBoundingClientRect();
+      expect(Math.round(sidebar.width)).toBe(248);
+      expect(sidebar.height).toBeLessThanOrEqual(window.innerHeight);
+      const main = frame.querySelector('main')!.getBoundingClientRect();
+      expect(main.height).toBeGreaterThan(sidebar.height);
+    }
+  },
+};
