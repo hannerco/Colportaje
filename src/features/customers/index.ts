@@ -149,3 +149,4 @@ export {
 } from './location-picker-state';
 export { useGeolocation } from './use-geolocation';
 export { mapTiles, type MapTiles } from './map-tiles';
+export { chosenBookValues, type ChosenBookValues } from './chosen-book';
