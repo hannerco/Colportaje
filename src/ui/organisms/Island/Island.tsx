@@ -43,7 +43,8 @@ export function Island({ title, icon, action, children, className }: IslandProps
           )}
         </div>
       )}
-      {children}
+      {/* #26: lo que va dentro (campos, listas, mapa) se separa siempre con el mismo espacio. */}
+      <div className={styles.body}>{children}</div>
     </section>
   );
 }
