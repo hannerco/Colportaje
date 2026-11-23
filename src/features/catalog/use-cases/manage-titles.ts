@@ -3,7 +3,7 @@ import type { AppError } from '@/domain/shared/errors';
 import { ok, type Result } from '@/domain/shared/result';
 import { titleCoverPath, validateTitleFields, type TitleFieldsDraft } from '@/domain/title';
 import type { Connectivity, ImageCodec, TitleRepository } from '@/repositories';
-import { compressImage } from '../../photos/compress-image';
+import { compressCover } from '../../photos/compress-image';
 import { runMutation } from '../../shared/run-mutation';
 
 export type ManageTitlesDeps = {
@@ -47,7 +47,7 @@ export async function setTitleCover(
   input: { titleId: string; coverId: string; file: Blob },
 ): Promise<Result<void, AppError>> {
   return runMutation(deps.connectivity, async () => {
-    const compressed = await compressImage(deps.imageCodec, input.file);
+    const compressed = await compressCover(deps.imageCodec, input.file);
     if (!compressed.ok) return compressed;
     const path = titleCoverPath(input.titleId, input.coverId);
     const uploaded = await deps.titles.uploadCover(path, compressed.value.full);

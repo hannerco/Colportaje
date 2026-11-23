@@ -43,7 +43,7 @@ El contenido de cada tipo de detalle (pantallas HU-PAN).
 - **CA-3.** **Dado** móvil, **entonces** «Cobrar» ocupa todo el ancho de la isla de identidad.
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-22 (#34):** la identidad acepta `avatarSlot` para pintar un avatar que se puede cambiar (el emoji del cliente).
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13.

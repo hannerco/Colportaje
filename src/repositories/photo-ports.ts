@@ -10,8 +10,16 @@ export type DecodedImage = { readonly width: number; readonly height: number; re
 export interface ImageCodec {
   /** `null` si el archivo no es una imagen legible. */
   decode(file: Blob): Promise<DecodedImage | null>;
-  /** WebP con las dimensiones y la calidad (0–1) pedidas. */
-  encodeWebp(image: DecodedImage, size: { width: number; height: number }, quality: number): Promise<Blob>;
+  /**
+   * WebP con las dimensiones y la calidad (0–1) pedidas. Con `frame`, el lienzo mide eso y la imagen va centrada en
+   * él; lo que sobra queda transparente (portadas cuadradas, #40).
+   */
+  encodeWebp(
+    image: DecodedImage,
+    size: { width: number; height: number },
+    quality: number,
+    frame?: { width: number; height: number },
+  ): Promise<Blob>;
 }
 
 /** Archivos del bucket privado de fotos (ADR-0013). */

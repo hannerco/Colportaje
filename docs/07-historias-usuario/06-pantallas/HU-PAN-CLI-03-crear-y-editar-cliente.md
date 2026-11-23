@@ -47,6 +47,7 @@ Selector de emoji (FC-02, sin diseño en la biblioteca: si el lienzo lo dibuja, 
   - **Quedan para otras HU:** agregar o quitar libros (HU-PAN-CLI-04), cambiar la fecha o el valor de un abono de la lista (HU-PAN-CLI-05), Dirección, mapa, Información e Imágenes (HU-PAN-CLI-06). Sin diseño o fuera: emoji (FC-02), posible duplicado (FC-03, no dibujado), modal de abonos que no cuadran (FC-05) y Visitas (FC-19).
   - **Factura:** el lienzo la dibuja en la ficha nueva (fotos, número y fecha), pero ninguna HU de pantalla la tiene asignada. Queda fuera; se anota en el README.
   - **Medio de pago y Frecuencia** usan la Selección (radio) de la biblioteca en vez de los botones segmentados del lienzo (manda la biblioteca).
+- **2026-11-22 (#32, #33, #34):** como el lienzo CrearV5: avatar con selector de emoji junto al nombre (propuesta 4), islas con línea y estado de sección, isla **Factura** (foto, N.º y fecha; «Agregar otra factura», HU-CLI-08), Medio de pago y Frecuencia como **Botones segmentados**, Valor de cada abono y Primer abono de a dos, fechas del plan como campo con calendario y «N abonos cubren el saldo» en verde. Story «Como el diseño (CrearV5)».
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E «Nuevo cliente (ficha viva)» (TESTING.md, flujo 3) pasa en móvil y escritorio.

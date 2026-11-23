@@ -1,0 +1,58 @@
+/* Factura (#32, lienzo CrearV5). */
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--island-gap);
+}
+
+.invoice {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.invoice + .invoice {
+  padding-top: var(--island-gap);
+  border-top: 1px solid var(--color-row-line);
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--size-photo-add);
+  border: 1px dashed var(--color-input-border);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-2);
+  font: inherit;
+  font-size: var(--text-body);
+  cursor: pointer;
+}
+
+.add:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.add:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 1px;
+}
+
+.hint {
+  margin: 0;
+  color: var(--color-text-3);
+  font-size: var(--text-caption);
+}
+
+.input {
+  display: none;
+}

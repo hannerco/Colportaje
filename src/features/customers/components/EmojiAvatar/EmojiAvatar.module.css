@@ -1,0 +1,101 @@
+/* Avatar con selector de emoji (#34, propuesta 4 del lienzo). */
+.trigger {
+  position: relative;
+  flex: none;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  cursor: pointer;
+}
+
+.trigger:disabled {
+  cursor: default;
+}
+
+.trigger:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+.badge {
+  position: absolute;
+  right: calc(var(--space-1) * -1);
+  bottom: calc(var(--space-1) * -1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-emoji-badge);
+  height: var(--size-emoji-badge);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-card);
+  color: var(--color-text-2);
+}
+
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.tools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.tools > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.groupLabel {
+  margin: 0;
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  font-weight: var(--weight-strong);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: var(--space-1);
+}
+
+.emoji {
+  height: var(--size-touch);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-size: var(--text-title);
+  cursor: pointer;
+}
+
+.emoji:hover {
+  background: var(--color-row-selected);
+}
+
+.emoji[aria-pressed='true'] {
+  background: var(--color-accent-bg);
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+}
+
+.emoji:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 1px;
+}
+
+.empty {
+  margin: 0;
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}

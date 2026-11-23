@@ -8,6 +8,10 @@ const meta = {
   title: 'Pantallas/Ajustes',
   component: SettingsScreen,
   args: {
+    theme: 'system',
+    onThemeChange: fn(),
+    adminMode: true,
+    onAdminModeChange: fn(),
     nav: {
       active: 'settings',
       items: APP_NAV_ITEMS,
@@ -133,3 +137,20 @@ export const Cargando: Story = { args: { profile: undefined } };
 
 /** Las combinaciones en claro y oscuro × escritorio y móvil. */
 export const Matriz: Story = { parameters: { frames: 'matrix' } };
+
+/** #42 (propuesta 5): el tema se elige aquí (Como el teléfono, Claro u Oscuro) y el admin ve el modo administrador. */
+export const TemaYModoAdministrador: Story = {
+  name: 'Tema y modo administrador',
+  args: { profile: { fullName: 'Hanner Conde', isAdmin: true, timeFormat: '12h' } },
+  play: async ({ canvasElement, args }) => {
+    for (const frame of [...canvasElement.querySelectorAll<HTMLElement>('figure.sb-frame')]) {
+      const dark = frame.querySelector<HTMLElement>('[role="radio"][value="dark"]')!;
+      await userEvent.click(dark);
+      expect(args.onThemeChange).toHaveBeenCalledWith('dark');
+      const adminSwitch = frame.querySelector<HTMLElement>('[role="switch"]')!;
+      expect(adminSwitch.getAttribute('aria-checked')).toBe('true');
+      await userEvent.click(adminSwitch);
+      expect(args.onAdminModeChange).toHaveBeenCalledWith(false);
+    }
+  },
+};

@@ -3,7 +3,7 @@ import { appError } from '@/domain/shared/errors';
 import { err, ok } from '@/domain/shared/result';
 import type { AuthRepository, ImageCodec, PhotoRepository, StorageRepository } from '@/repositories';
 import { napiImageCodec, photoLikeJpeg } from '../../../tests/support/napi-image-codec';
-import { compressImage } from './compress-image';
+import { compressCover, compressImage } from './compress-image';
 import { createPhoto, uploadPhotoFiles } from './upload-photo';
 import { fakeConnectivity } from '../../../tests/support/fake-connectivity';
 
@@ -77,6 +77,39 @@ describe('compressImage: búsqueda de calidad', () => {
       },
     };
     expect(await compressImage(codec, new Blob())).toEqual(err(appError('IMAGE_ENCODING_FAILED')));
+  });
+});
+
+describe('compressCover: portadas cuadradas (#40)', () => {
+  it('600 × 600 con la foto centrada (sin recortar) y miniatura de 160 × 160', async () => {
+    const calls: { size: { width: number; height: number }; frame?: { width: number; height: number } }[] =
+      [];
+    const codec: ImageCodec = {
+      decode: async () => ({ width: 404, height: 558, source: null }),
+      encodeWebp: async (_image, size, _quality, frame) => {
+        calls.push({ size, frame });
+        return new Blob([new Uint8Array(10)], { type: 'image/webp' });
+      },
+    };
+    const result = await compressCover(codec, new Blob());
+    expect(result.ok).toBe(true);
+    // Psiconutrición (404 × 558) no se agranda: el cuadro mide su lado mayor y la foto va completa adentro.
+    expect(calls[0]).toEqual({ size: { width: 404, height: 558 }, frame: { width: 558, height: 558 } });
+    expect(calls[1]!.frame).toEqual({ width: 160, height: 160 });
+    expect(calls[1]!.size.height).toBe(160);
+  });
+
+  it('una foto grande queda en 600 × 600', async () => {
+    const frames: unknown[] = [];
+    const codec: ImageCodec = {
+      decode: async () => ({ width: 1346, height: 1990, source: null }),
+      encodeWebp: async (_image, _size, _quality, frame) => {
+        frames.push(frame);
+        return new Blob([new Uint8Array(10)], { type: 'image/webp' });
+      },
+    };
+    await compressCover(codec, new Blob());
+    expect(frames[0]).toEqual({ width: 600, height: 600 });
   });
 });
 

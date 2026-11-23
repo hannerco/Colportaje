@@ -61,6 +61,7 @@ Los valores que pueden cambiar viven en `src/domain/config/business-config.ts` (
 | `copyDelete.noteRequired` | `false` | BR-COPY-17 |
 | `undo.toastSeconds` | 6 | BR-COPY-11/17 (lo usa el front) |
 | `photos` | WebP, lado mayor ≤ 1.280 px, ~150 KB, miniatura ~15 KB (lado mayor 320 px); URL firmadas de 1 hora | BR-PHO-01, HU-BASE-05 R3 |
+| `covers` | Portada de un título cuadrada de 600 × 600 (~60 KB) y miniatura de 160 × 160 (~8 KB); la foto se centra sin recortar y el resto queda transparente | DT-10, ronda 32 (#40) |
 | `search.fuzzyThreshold` | 0,3 (Fuse.js; fijado en HU-CLI-05 con su prueba) | BR-CUS-07 |
 | `duplicates.nameThreshold` | 0,85 (similitud de nombres normalizados; fijado en HU-CLI-02 con su prueba) | BR-CUS-11 |
 

@@ -57,6 +57,7 @@ Búsqueda global (FT-01); cambio de cuenta (FT-02); el contenido de Hoy, Miniboo
 
 ## Cambios por iteración
 - **2026-11-22 (corrección del dueño, error de código):** la barra lateral crecía hasta el alto de la página y se encogía cuando el contenido era ancho. **R6:** la barra lateral tiene siempre el alto de la pantalla (fija al desplazar la página; si sus ítems no caben, se desplaza ella sola) y su ancho fijo de 248, sin importar el contenido. Prueba: story `Pantallas/Armazón › Contenido largo y ancho`.
+- **2026-11-22 (#38):** el fondo del módulo activo (tarjeta en la barra lateral, `bar-active` en la inferior) se desliza al nuevo; al cambiar de página sale de donde estaba. Stories «Dinero activo» y «Clientes activo · móvil» revisan el indicador. Falta subirlo a Lib-Navegacion.
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13.

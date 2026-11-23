@@ -38,6 +38,7 @@ El orden de las islas de un detalle (Plantilla de detalle, HU-UI-29).
 
 ## Cambios por iteración
 - **2026-11-22 (#26):** el contenido de la Isla va en un cuerpo que separa sus bloques (campos, listas, mapa) con el token `--island-gap` (14, como en CrearV5 del lienzo). Antes los campos quedaban pegados en Nuevo cliente, la ficha y el editor de Abibonos. Story «Organismos/Isla › Campos». Falta subirlo a la ficha Lib-Isla.
+- **2026-11-22 (#32, #35):** props `divided` (línea bajo el encabezado) y `complete` (círculo vacío o chulo verde de sección completa), como en CrearV5. Falta subirlo a Lib-Isla.
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13.

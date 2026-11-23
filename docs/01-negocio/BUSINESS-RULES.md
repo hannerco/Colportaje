@@ -27,19 +27,19 @@ Notación: "colportor" = usuario con rol colportor. Fechas calendario en **Ameri
 
 ## 2. Usuarios y roles
 
-- **BR-USR-01** El registro es **solo por invitación**. No existe registro público.
-- **BR-USR-02** Inicio de sesión con correo y contraseña.
+- **BR-USR-01** El registro es **solo por invitación**. No existe registro público. *(Ronda 34: la «invitación» es que el admin **autorice el correo de Google** de la persona; solo los correos autorizados pueden entrar.)*
+- **BR-USR-02** ~~Inicio de sesión con correo y contraseña.~~ **Ronda 34:** se entra **solo con Google** («Continuar con Google»); no hay contraseñas en la app. Mientras el dueño configura Google, la entrada con contraseña sigue activa como transición.
 - **BR-USR-03** Roles guardados en base de datos: `colportor` (todos), `admin` (adicional). `leader` queda reservado para la fase 3. Al aceptar una invitación se crean automáticamente el perfil y el rol `colportor`.
 - **BR-USR-04** El modo administrador es un **conmutador de UI** en Ajustes, visible solo si el usuario tiene el rol `admin`. La autorización real se valida en servidor/RLS, nunca por la UI.
-- **BR-USR-05** **Invitar desde el panel de admin:** el botón "Invitar" pide un correo y llama a un **endpoint de servidor** (solo admin, usa la `service_role` en servidor) que crea la invitación y devuelve un **enlace para copiar y enviar por WhatsApp**. El envío automático por correo queda para cuando exista dominio y SMTP propio. El enlace caduca; el admin puede **regenerarlo**. El panel incluye además una breve explicación de cómo funciona.
+- **BR-USR-05** **Invitar desde el panel de admin:** el botón "Invitar" pide un correo y llama a un **endpoint de servidor** (solo admin, usa la `service_role` en servidor) que crea la invitación y devuelve un **enlace para copiar y enviar por WhatsApp**. El envío automático por correo queda para cuando exista dominio y SMTP propio. El enlace caduca; el admin puede **regenerarlo**. El panel incluye además una breve explicación de cómo funciona. *(Ronda 34: reemplazado por **«Autorizar correo»** en Admin · Usuarios: nombre, correo de Google y si es administrador; la persona queda **Pendiente** hasta que entra por primera vez. Un Pendiente se puede **quitar**; no hace falta enlace de invitación ni la `service_role` en el servidor.)*
 - **BR-USR-06** El primer usuario y primer admin es el dueño del producto.
 - **BR-USR-07** El admin puede **desactivar** a un usuario (no puede entrar, sus datos se conservan) y reactivarlo. La lista de usuarios muestra nombre, correo, rol y estado.
-- **BR-USR-08** Cada usuario guarda en su perfil: nombre y formato de hora (12 h/24 h). *(Los Títulos favoritos se eliminaron en la ronda 26, ADR-0043.)*
+- **BR-USR-08** Cada usuario guarda en su perfil: nombre y formato de hora (12 h/24 h). *(Los Títulos favoritos se eliminaron en la ronda 26, ADR-0043.)* El **tema** (Como el teléfono, Claro u Oscuro) y el **modo administrador** se guardan **por dispositivo**, no en el perfil (ronda 34).
 
 ## 3. Títulos (catálogo)
 
 - **BR-TIT-01** Los Títulos los crea/edita/desactiva solo el admin. Todo colportor autenticado puede leer los Títulos activos.
-- **BR-TIT-02** Un Título tiene: nombre, imagen, autor, descripción corta, precio público, precio colportor, categoría ∈ {`cultural`, `religious`, `minibook`}.
+- **BR-TIT-02** Un Título tiene: nombre, imagen, autor, descripción corta, precio público, precio colportor, categoría ∈ {`cultural`, `religious`, `minibook`}. La **imagen** (portada) es **cuadrada**: 600 × 600 (~60 KB) con miniatura de 160 × 160; si la foto no es cuadrada se centra sin recortar el libro y el resto queda transparente (DT-10, ronda 34).
 - **BR-TIT-03** Un Título **no se borra**: se desactiva. Un título desactivado no aparece al agregar a inventario pero conserva sus ejemplares y datos históricos.
 - **BR-TIT-04** `precio colportor ≥ 0`. Para `minibook`, el precio colportor puede ser 0 (gratis) o ~1.500 y el **precio público es opcional (nulo)**; para `cultural` y `religious` el precio público es obligatorio y > 0.
 - **BR-TIT-05** Ganancia orientativa: cultural ≈ 50 %, religioso ≈ 15 % (informativo; no se calcula ni valida).

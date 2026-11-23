@@ -150,3 +150,7 @@ export {
 export { useGeolocation } from './use-geolocation';
 export { mapTiles, type MapTiles } from './map-tiles';
 export { chosenBookValues, type ChosenBookValues } from './chosen-book';
+export {
+  SchedulePaymentsDialog,
+  type SchedulePaymentsDialogProps,
+} from './components/SchedulePaymentsDialog';

@@ -230,3 +230,15 @@
   font-size: var(--text-secondary);
   font-weight: var(--weight-medium);
 }
+
+/* #34: avatar con emoji junto al nombre (lienzo CrearV5). */
+.identity {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+}
+
+.identityName {
+  flex: 1;
+  min-width: 0;
+}

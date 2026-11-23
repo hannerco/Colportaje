@@ -24,6 +24,12 @@ export const copy = {
   },
   /** Ajustes, versión mínima (pedido del dueño, 2026-11-20; sin diseño del lienzo). */
   settings: {
+    appearance: 'Apariencia',
+    theme: 'Tema',
+    themes: { system: 'Como el teléfono', light: 'Claro', dark: 'Oscuro' },
+    themeHint: 'Solo en este dispositivo.',
+    adminMode: 'Modo administrador',
+    adminModeHint: 'Muestra Admin en la navegación.',
     account: 'Cuenta',
     name: 'Nombre',
     role: 'Rol',
@@ -204,6 +210,7 @@ export const copy = {
       done: 'Listo',
     },
     /** Ventana de detalle (HU-UI-27). */
+    island: { complete: 'Sección completa', incomplete: 'Falta completar' },
     detailWindow: {
       close: 'Cerrar',
       modeGroup: 'Forma de la ventana',
@@ -273,6 +280,14 @@ export const copy = {
   },
   /** Módulo Clientes. */
   customers: {
+    emoji: {
+      title: 'Emoji del cliente',
+      choose: 'Elegir emoji del cliente',
+      change: 'Cambiar emoji del cliente',
+      search: 'Buscar emoji',
+      remove: 'Quitar',
+      noResults: 'No hay emojis con ese nombre.',
+    },
     /** Lista de clientes (HU-PAN-CLI-01, BR-CUS-05). */
     list: {
       title: 'Clientes',
@@ -328,6 +343,7 @@ export const copy = {
         unscheduled: 'Sin programar',
         overdueSince: (date: string) => `Abono vencido desde el ${date}`,
       },
+      archivedNoEdit: 'Restaura el cliente para cambiarlo',
       books: { title: 'Libros' },
       payments: {
         title: 'Abonos',
@@ -338,6 +354,26 @@ export const copy = {
         kind: { down_payment: 'Cuota inicial', extra: 'Abono extra', scheduled: '' },
         method: { cash: 'Efectivo', transfer: 'Transferencia' },
         canceled: (n: number) => `Cancelados ${n}`,
+        /** #35 (diseño de la ficha y propuesta 7 del lienzo). */
+        schedule: 'Programar abono',
+        collect: 'Cobrar',
+        scheduleForm: {
+          title: 'Programar abono',
+          unscheduled: 'Sin programar',
+          kind: 'Qué programar',
+          plan: 'Plan',
+          single: 'Un abono',
+          date: 'Fecha',
+          value: 'Valor',
+          submit: 'Programar',
+          cancel: 'Cancelar',
+          nothing: 'Todo el saldo ya está programado. Un abono suelto se suma a lo programado.',
+          done: 'Abonos programados',
+          doneSingle: 'Abono programado',
+          invalidAmount: 'Escribe un valor',
+          missingDate: 'Elige la fecha',
+        },
+        collected: 'Abono cobrado',
       },
       data: {
         title: 'Datos',
@@ -381,13 +417,15 @@ export const copy = {
       open: 'Agregar libro del inventario',
       title: 'Ejemplares en físico',
       search: 'Buscar libro o número',
-      selected: (n: number) => (n === 1 ? '1 seleccionado' : `${n} seleccionados`),
+      selected: (n: number) => (n === 1 ? 'Elegido para este cliente' : `Elegidos para este cliente · ${n}`),
+      total: 'Total',
       available: 'Para seleccionar',
       select: (title: string, number: number) => `Seleccionar ${title} #${number}`,
       remove: (title: string, number: number) => `Quitar ${title} #${number}`,
       price: 'Precio acordado',
       /** El precio público, tachado, cuando el acordado es otro (BR-PRC). */
       publicPrice: (price: string) => `antes ${price}`,
+      reference: (price: string) => `Precio público ${price}`,
       soldOn: 'Vendido el',
       empty: {
         title: 'No tienes ejemplares en físico',
@@ -418,6 +456,16 @@ export const copy = {
         images: 'Imágenes',
       },
       books: { title: 'Libros vendidos', total: 'Total de libros' },
+      /** Isla «Factura» (lienzo CrearV5, #32). */
+      invoice: {
+        title: 'Factura',
+        photo: 'Foto de la factura',
+        number: 'N.º de factura',
+        date: 'Fecha',
+        hint: 'La fecha es el día de la foto; puedes cambiarla.',
+        another: 'Agregar otra factura',
+        label: (n: number) => `Factura ${n}`,
+      },
       payments: {
         title: 'Abonos',
         downPayment: 'Cuota inicial',

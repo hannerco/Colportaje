@@ -12,12 +12,23 @@ import {
   useArchivePreview,
   useCustomerDetail,
   useRestoreCustomer,
+  useUpdateCustomer,
+  SchedulePaymentsDialog,
   type CustomerDetailScreenProps,
 } from '@/features/customers';
 import { appErrorMessage } from '@/features/shared/app-error-message';
 import { ROUTES, useAppShell } from '@/features/shell';
 import { todayBogota } from '@/domain/time';
-import { useReschedulePayment } from '@/features/payments';
+import {
+  CollectPaymentDialog,
+  useApplyPaymentPlan,
+  useCollectPayment,
+  useReschedulePayment,
+  useScheduleSinglePayment,
+  useUndoCollectPayment,
+} from '@/features/payments';
+import { formatCOP } from '@/domain/money';
+import { withPaymentIds } from '@/domain/payment-plan';
 import { systemClock } from '@/lib/clock';
 import { newId } from '@/lib/ids';
 import { useToast } from '@/ui/molecules/Toast';
@@ -48,6 +59,17 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
   const { setCustomerLocation } = useSetCustomerLocation();
   const { clearCustomerLocation } = useClearCustomerLocation();
   const { addCustomerInfoPhoto } = useAddCustomerInfoPhoto();
+  const { updateCustomer } = useUpdateCustomer();
+  const { collectPayment } = useCollectPayment();
+  const { undoCollectPayment } = useUndoCollectPayment();
+  const { applyPaymentPlan } = useApplyPaymentPlan();
+  const { scheduleSinglePayment } = useScheduleSinglePayment();
+  /** #35: el abono que se está cobrando desde la ficha, y si «Programar abono» está abierto. */
+  const [collecting, setCollecting] = useState<string | null>(null);
+  const [scheduling, setScheduling] = useState(false);
+  const collectingRow = detail.data?.payments.find((p) => p.paymentId === collecting);
+  const r = copy.payments.detail.result;
+  const s = copy.customers.detail.payments.scheduleForm;
   const showError = (error: unknown) =>
     toast.show({ message: appErrorMessage(error).message, tone: 'error' });
 
@@ -100,6 +122,12 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
           const result = await addCustomerInfoPhoto({ photoId: newId(), customerId, file });
           if (!result.ok) showError(result.error);
         }}
+        onAvatarChange={async (avatarEmoji) => {
+          const result = await updateCustomer({ id: customerId, patch: { avatarEmoji } });
+          if (!result.ok) showError(result.error);
+        }}
+        onCollect={setCollecting}
+        onSchedule={() => setScheduling(true)}
         onRestore={async () => {
           const result = await restoreCustomer(customerId);
           toast.show(
@@ -109,6 +137,78 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
           );
         }}
       />
+      {collectingRow && detail.data && (
+        <CollectPaymentDialog
+          open
+          onOpenChange={(open) => !open && setCollecting(null)}
+          customerName={detail.data.name}
+          agreedAmount={collectingRow.agreedAmount ?? 0}
+          agreedDate={collectingRow.dueDate}
+          today={today}
+          onConfirm={async (values) => {
+            const paymentId = collectingRow.paymentId;
+            const result = await collectPayment({ paymentId, ...values });
+            if (!result.ok) {
+              showError(result.error);
+              throw new Error(result.error.code);
+            }
+            setCollecting(null);
+            const { shortfall } = result.value;
+            if (shortfall !== null) {
+              toast.show({
+                message: r.partial(formatCOP(values.paidAmount), formatCOP(shortfall)),
+                tone: 'success',
+              });
+              return;
+            }
+            toast.show({
+              message: r.collected,
+              tone: 'success',
+              action: {
+                label: r.undo,
+                onAction: async () => {
+                  const undone = await undoCollectPayment(paymentId);
+                  if (!undone.ok) return showError(undone.error);
+                  toast.show({ message: r.undone, tone: 'success' });
+                },
+              },
+            });
+          }}
+        />
+      )}
+      {detail.data && (
+        <SchedulePaymentsDialog
+          open={scheduling}
+          onOpenChange={setScheduling}
+          unscheduled={detail.data.account.unscheduled}
+          today={today}
+          onApplyPlan={async (items) => {
+            const result = await applyPaymentPlan({
+              customerId,
+              mode: 'unscheduled_only',
+              items: withPaymentIds(items, newId),
+            });
+            if (!result.ok) {
+              showError(result.error);
+              throw new Error(result.error.code);
+            }
+            toast.show({ message: s.done, tone: 'success' });
+          }}
+          onScheduleSingle={async ({ dueDate, amount }) => {
+            const result = await scheduleSinglePayment({
+              paymentId: newId(),
+              customerId,
+              dueDate,
+              agreedAmount: amount,
+            });
+            if (!result.ok) {
+              showError(result.error);
+              throw new Error(result.error.code);
+            }
+            toast.show({ message: s.doneSingle, tone: 'success' });
+          }}
+        />
+      )}
       {addingBook && detail.data && !detail.data.archived && (
         <AddBookContainer
           customerId={customerId}

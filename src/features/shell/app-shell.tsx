@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
+import { useAdminMode } from './admin-mode';
 import { Banner } from '@/ui/molecules/Banner';
 import type { AppNavProps } from '@/ui/organisms/AppNav';
 import { useCurrentProfile } from '../auth';
@@ -31,7 +32,9 @@ export function AppShellProvider({ pathname, navigate, children }: AppShellProvi
   const { online } = useConnection();
   const profile = useCurrentProfile();
   const accountName = profile.data?.fullName ?? '';
-  const isAdmin = profile.data?.isAdmin ?? false;
+  const adminMode = useAdminMode();
+  // BR-USR-04 (#42): con el modo administrador apagado en Ajustes, Admin no se muestra.
+  const isAdmin = (profile.data?.isAdmin ?? false) && adminMode;
 
   const value = useMemo<AppShell>(
     () => ({

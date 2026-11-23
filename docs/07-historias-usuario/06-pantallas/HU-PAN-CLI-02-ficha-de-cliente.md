@@ -48,6 +48,7 @@ Cliente con deuda y abonos (Pagando) · Vencido · Saldado con saldo a favor · 
   - **Abrir un abono** (reemplazando la ventana) llega con HU-PAN-DIN-02.
   - **CA-5 sigue a BR-PAY-14:** «Aún no tiene libro» sale si el cliente tiene abonos y ningún libro (el back ya lo calcula así), no en todo prospecto.
   - **«Lo programado supera el saldo en $X»** lleva el monto, como en FLOWS.
+- **2026-11-22 (#35, #34):** isla Abonos como el diseño aceptado: fecha (en rojo con «hace N días» si venció) · Pastilla · valor y medio de pago con ícono a la derecha; **Cobrar** en cada abono por cobrar (CollectPaymentDialog, con Deshacer) y **Programar abono** en la cabecera (`SchedulePaymentsDialog`: Plan sobre lo sin programar o Un abono, propuesta 7). El avatar abre el selector de emoji.
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E «Archivar y restaurar» (TESTING.md, flujo 14) pasa.

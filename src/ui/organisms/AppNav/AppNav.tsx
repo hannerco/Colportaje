@@ -1,12 +1,12 @@
 'use client';
 
 import * as Dialog from '@radix-ui/react-dialog';
-import { useCallback, useId, useState, type MouseEvent, type ReactElement } from 'react';
+import { useCallback, useId, useRef, useState, type MouseEvent, type ReactElement } from 'react';
 import { copy } from '@/copy/es';
 import { Avatar } from '../../atoms/Avatar';
 import { Button } from '../../atoms/Button';
 import { Icon, type IconName } from '../../icons';
-import { usePlatform } from '../../platform';
+import { usePlatform, useSlidingIndicator } from '../../platform';
 import styles from './AppNav.module.css';
 
 export type NavId =
@@ -153,6 +153,9 @@ export function Sidebar({
   const visible = shown(items);
   const uid = useId();
   const [collapsed, setCollapsed] = useState<Partial<Record<GroupId, boolean>>>({});
+  // #38: el fondo del módulo activo se desliza al nuevo (también entre páginas: sale de donde estaba).
+  const navRef = useRef<HTMLElement>(null);
+  useSlidingIndicator(navRef, '[data-active]', `${active}-${JSON.stringify(collapsed)}`, 'sidebar');
   const link = (id: NavId) => (
     <li key={id}>
       <NavLink
@@ -192,7 +195,12 @@ export function Sidebar({
   const footer = GROUPS.account.filter((id) => visible.has(id));
 
   return (
-    <nav aria-label={copy.ui.nav.label} className={[styles.sidebar, className].filter(Boolean).join(' ')}>
+    <nav
+      ref={navRef}
+      aria-label={copy.ui.nav.label}
+      className={[styles.sidebar, className].filter(Boolean).join(' ')}
+    >
+      <span aria-hidden="true" className={styles.indicator} />
       {/* R6: sin «Cambiar de cuenta» (FT-02). */}
       <div className={styles.account}>
         <Avatar kind="brand" decorative />
@@ -248,10 +256,17 @@ export function BottomBar({ active, items, hrefs, fab, onNavigate, className }: 
   const inMore = ALL_NAV_IDS.filter((id) => visible.has(id) && !BAR.includes(id));
   // CA-2: lo que no está en la barra marca «Más».
   const moreActive = !inBar.includes(active);
+  const barRef = useRef<HTMLElement>(null);
+  useSlidingIndicator(barRef, '[data-active]', active, 'bottom-bar');
 
   return (
     <>
-      <nav aria-label={copy.ui.nav.label} className={[styles.bar, className].filter(Boolean).join(' ')}>
+      <nav
+        ref={barRef}
+        aria-label={copy.ui.nav.label}
+        className={[styles.bar, className].filter(Boolean).join(' ')}
+      >
+        <span aria-hidden="true" className={styles.barIndicator} />
         <ul className={styles.barList}>
           {inBar.map((id) => (
             <li key={id} className={styles.barCell}>

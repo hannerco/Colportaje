@@ -325,3 +325,48 @@
   white-space: nowrap;
   border: 0;
 }
+
+/* ─── #38: el fondo del módulo activo es un indicador que se desliza ─── */
+.item,
+.barItem {
+  position: relative;
+  z-index: 1;
+}
+
+.indicator,
+.barIndicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--indicator-w, 0);
+  height: var(--indicator-h, 0);
+  transform: translate(var(--indicator-x, 0), var(--indicator-y, 0));
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.indicator {
+  border-radius: var(--radius-sm);
+  background: var(--color-card);
+  box-shadow: var(--shadow-control);
+}
+
+.barIndicator {
+  border-radius: var(--radius-pill);
+  background: var(--color-bar-active);
+}
+
+.sidebar[data-indicator] .indicator,
+.bar[data-indicator] .barIndicator {
+  visibility: visible;
+  transition:
+    transform var(--motion-duration) var(--motion-ease),
+    width var(--motion-duration) var(--motion-ease),
+    height var(--motion-duration) var(--motion-ease);
+}
+
+.sidebar[data-indicator] .item[data-active],
+.bar[data-indicator] .barItem[data-active] {
+  background: transparent;
+  box-shadow: none;
+}

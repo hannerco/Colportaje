@@ -9,6 +9,7 @@ import { ToastProvider, useToast } from '@/ui/molecules/Toast';
 import type { PaymentPlanValue } from '../../components/PaymentPlanFields';
 import { planPreview } from '../../new-customer-form';
 import { NewCustomerScreen, type DownPaymentValue } from './NewCustomerScreen';
+import type { CustomerInvoice } from '../../use-cases/customer-invoices';
 
 const today = localDate('2026-11-17');
 const sold = new Date('2026-11-17T17:00:00.000Z');
@@ -59,6 +60,7 @@ type DemoProps = {
   initialInfo?: string;
   initialLocation?: { lat: number; lng: number } | null;
   onChooseLocation?: () => void;
+  initialInvoices?: CustomerInvoice[];
 };
 
 /** La pantalla con su estado (como el contenedor) y un Aviso para el error al guardar. */
@@ -86,6 +88,7 @@ function DemoInner({
   initialInfo = '',
   initialLocation = null,
   onChooseLocation = () => {},
+  initialInvoices,
 }: DemoProps) {
   const toast = useToast();
   const [name, setName] = useState(initialName);
@@ -106,6 +109,8 @@ function DemoInner({
     ...initialPlan,
   });
   const [discardOpen, setDiscardOpen] = useState(false);
+  const [emoji, setEmoji] = useState<string | null>(null);
+  const [invoices, setInvoices] = useState<CustomerInvoice[]>(initialInvoices ?? []);
   const [overrides, setOverrides] = useState<Record<number, LocalDate>>({});
   const debt = books.reduce((sum, b) => sum + b.agreedPrice, 0);
   const firstDueDate =
@@ -114,6 +119,18 @@ function DemoInner({
     <NewCustomerScreen
       name={name}
       onNameChange={setName}
+      avatarEmoji={emoji}
+      onAvatarChange={setEmoji}
+      invoices={invoices}
+      onCreateInvoice={() =>
+        setInvoices((current) => [
+          ...current,
+          { invoiceId: `f${current.length + 1}`, number: null, date: today, photos: [] },
+        ])
+      }
+      onInvoiceChange={(invoiceId, patch) =>
+        setInvoices((current) => current.map((i) => (i.invoiceId === invoiceId ? { ...i, ...patch } : i)))
+      }
       phone={phone}
       onPhoneChange={setPhone}
       address={address}
@@ -475,5 +492,29 @@ export const Matriz: Story = {
     books: BOOKS,
     initialDown: { amount: 40000 },
     initialPlan: { amount: 35000 },
+  },
+};
+
+/**
+ * #32, #33 y #34 (corrección del dueño, 2026-11-22): Nuevo cliente como el lienzo CrearV5: avatar con emoji, islas con
+ * su estado (círculo vacío o chulo), isla «Factura» y Medio de pago y Frecuencia como botones segmentados.
+ */
+export const ComoElDiseno: Story = {
+  name: 'Como el diseño (CrearV5)',
+  args: {
+    initialName: 'Luz Marina Restrepo',
+    initialInvoices: [{ invoiceId: 'f1', number: '0458', date: localDate('2026-11-22'), photos: [] }],
+  },
+  play: async ({ canvasElement }) => {
+    for (const frame of [...canvasElement.querySelectorAll<HTMLElement>('figure.sb-frame')]) {
+      expect(frame.querySelector('[aria-label="Elegir emoji del cliente"]')).not.toBeNull();
+      const island = (title: string) =>
+        [...frame.querySelectorAll('section')].find((el) => el.querySelector('h2')?.textContent === title)!;
+      expect(island('Factura')).toBeTruthy();
+      expect(frame.querySelector('[role="radiogroup"][aria-labelledby]')).not.toBeNull();
+      // Factura con foto: su isla está completa; Libros vendidos (vacía) no.
+      expect(island('Factura').querySelector('[aria-label="Sección completa"]')).not.toBeNull();
+      expect(island('Libros vendidos').querySelector('[aria-label="Falta completar"]')).not.toBeNull();
+    }
   },
 };
