@@ -22,6 +22,7 @@ import { CustomerAccountSummary } from '../../components/CustomerAccountSummary'
 import { CustomerLocationBlock } from '../../components/CustomerLocationBlock';
 import { EmojiAvatar } from '../../components/EmojiAvatar';
 import { InfoPhotoStrip } from '../../components/InfoPhotoStrip';
+import { InvoiceBlock, type InvoiceBlockProps } from '../../components/InvoiceBlock';
 import { AddBookButton, SoldBookList } from '../../components/SoldBookList';
 import type { MapTiles } from '../../map-tiles';
 import type { CustomerDetailView } from '../../use-cases/customer-detail';
@@ -71,6 +72,11 @@ export type CustomerDetailScreenProps = {
   onRemoveLocation?: () => void;
   /** «Agregar imagen» (HU-CLI-07). Sin función no hay botón. */
   onAddPhoto?: (file: File) => Promise<void> | void;
+  /**
+   * #61: agregar o completar la factura de un cliente ya guardado (la misma isla «Factura» de Nuevo cliente). Sin
+   * funciones (archivado), las facturas solo se ven.
+   */
+  invoiceActions?: Pick<InvoiceBlockProps, 'onCreate' | 'onAddPhoto' | 'onChange'>;
 };
 
 const t = copy.customers.detail;
@@ -128,6 +134,7 @@ export function CustomerDetailScreen({
   onChooseLocation,
   onRemoveLocation,
   onAddPhoto,
+  invoiceActions,
   onCollect,
   onSchedule,
   onAvatarChange,
@@ -340,32 +347,47 @@ export function CustomerDetailScreen({
                 }
               />
             )}
-            {detail.invoices.map((invoice) => (
+            {invoiceActions && !detail.archived ? (
               <DataRow
-                key={invoice.invoiceId}
                 label={t.data.invoice}
                 value={
-                  <span className={styles.invoice}>
-                    <span>
-                      {[invoice.number, invoice.date && formatDate(invoice.date)].filter(Boolean).join(' · ')}
-                    </span>
-                    {invoice.photos.length > 0 && (
-                      <span className={styles.photos}>
-                        {invoice.photos.map((photo, i) => (
-                          // eslint-disable-next-line @next/next/no-img-element -- miniatura firmada de Storage.
-                          <img
-                            key={photo.photoId}
-                            className={styles.photo}
-                            src={photo.thumbUrl}
-                            alt={t.data.invoicePhoto(invoice.date ? formatDate(invoice.date) : '', i + 1)}
-                          />
-                        ))}
-                      </span>
-                    )}
-                  </span>
+                  <InvoiceBlock
+                    invoices={detail.invoices}
+                    {...invoiceActions}
+                    disabledReason={isOnline ? null : copy.ui.empty.needsConnection}
+                  />
                 }
               />
-            ))}
+            ) : (
+              detail.invoices.map((invoice) => (
+                <DataRow
+                  key={invoice.invoiceId}
+                  label={t.data.invoice}
+                  value={
+                    <span className={styles.invoice}>
+                      <span>
+                        {[invoice.number, invoice.date && formatDate(invoice.date)]
+                          .filter(Boolean)
+                          .join(' · ')}
+                      </span>
+                      {invoice.photos.length > 0 && (
+                        <span className={styles.photos}>
+                          {invoice.photos.map((photo, i) => (
+                            // eslint-disable-next-line @next/next/no-img-element -- miniatura firmada de Storage.
+                            <img
+                              key={photo.photoId}
+                              className={styles.photo}
+                              src={photo.thumbUrl}
+                              alt={t.data.invoicePhoto(invoice.date ? formatDate(invoice.date) : '', i + 1)}
+                            />
+                          ))}
+                        </span>
+                      )}
+                    </span>
+                  }
+                />
+              ))
+            )}
             <DataRow
               label={t.data.since}
               value={formatDate(detail.customerSince)}
@@ -373,6 +395,7 @@ export function CustomerDetailScreen({
                 detail.info ||
                 detail.infoPhotos.length ||
                 (onAddPhoto && !detail.archived) ||
+                (invoiceActions && !detail.archived) ||
                 detail.invoices.length,
               )}
             />

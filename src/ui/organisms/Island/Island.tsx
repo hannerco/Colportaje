@@ -22,6 +22,13 @@ export type IslandProps = {
   complete?: boolean;
   /** Línea bajo el encabezado, como en las islas de la ficha y de Nuevo cliente (CrearV5, #32 y #35). */
   divided?: boolean;
+  /**
+   * #72: franja de estado pegada al borde de arriba (el detalle de un abono: «Por cobrar · Vencido hace 3 días»). El
+   * tono pinta fondo, borde y letra.
+   */
+  /** #72: cuántos hay, en gris junto al título («Abonos de Yolanda 5»). */
+  count?: number;
+  strip?: { tone: 'bad' | 'neutral' | 'ok' | 'accent'; children: ReactNode };
   /** Contenido (`contenido`): filas de dato, historial o cualquier otro. */
   children: ReactNode;
   className?: string;
@@ -31,18 +38,34 @@ export type IslandProps = {
  * Isla (HU-UI-22, ficha Lib-Isla): tarjeta que agrupa los datos de un detalle. Un detalle se arma apilando islas
  * (identidad, datos, historial). Es un `<section>` cuyo nombre es su título.
  */
-export function Island({ title, icon, action, complete, divided = false, children, className }: IslandProps) {
+export function Island({
+  title,
+  icon,
+  action,
+  complete,
+  divided = false,
+  strip,
+  count,
+  children,
+  className,
+}: IslandProps) {
   const titleId = useId();
   return (
     <section
       className={[styles.island, className].filter(Boolean).join(' ')}
       aria-labelledby={title ? titleId : undefined}
     >
+      {strip && (
+        <div className={styles.strip} data-tone={strip.tone} role="status">
+          {strip.children}
+        </div>
+      )}
       {title && (
         <div className={styles.head} data-divided={divided || undefined}>
           <h2 id={titleId} className={styles.title}>
             {icon && <Icon name={icon} tone="current" className={styles.icon} />}
             {title}
+            {count !== undefined && <span className={styles.count}>{count}</span>}
           </h2>
           {action && (
             <Button variant="link" size="compact" href={action.href} onClick={action.onClick}>

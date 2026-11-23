@@ -39,6 +39,7 @@ export const fakeCustomerRepository = (overrides: Partial<CustomerRepository> = 
   getAccountData: vi.fn(),
   getDetailData: vi.fn(),
   create: vi.fn(),
+  saveNew: vi.fn(),
   update: vi.fn(),
   listDuplicateCandidates: vi.fn(),
   listRefs: vi.fn(),
@@ -76,6 +77,7 @@ export const fakePaymentRepository = (overrides: Partial<PaymentRepository> = {}
   reschedule: vi.fn(),
   collect: vi.fn(),
   uncollect: vi.fn(),
+  getHistory: vi.fn(),
   ...overrides,
 });
 

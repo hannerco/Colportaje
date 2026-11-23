@@ -10,6 +10,7 @@ import type { LocalDate } from '@/domain/time';
 import type { DiscardSummary } from '@/repositories';
 import { Button } from '@/ui/atoms/Button';
 import { Field } from '@/ui/atoms/Field';
+import { DateField } from '@/ui/molecules/DateField';
 import { Banner } from '@/ui/molecules/Banner';
 import { SegmentedControl } from '@/ui/molecules/SegmentedControl';
 import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
@@ -260,8 +261,9 @@ export function NewCustomerScreen(props: NewCustomerScreenProps) {
           />
         </div>
         <div className={styles.fields}>
-          <Field
-            kind="date"
+          <DateField
+            noFuture
+            today={props.today}
             label={t.payments.date}
             placeholder="dd/mm/aaaa"
             value={downPayment.paidOn}
@@ -417,7 +419,7 @@ function DiscardDialog({
       tone="danger"
       title={d.title}
       message={hasItems ? d.willRemove(discardSummary.books, discardSummary.payments) : d.message}
-      confirmLabel={t.discard}
+      confirmLabel={d.leave}
       cancelLabel={t.keepEditing}
       onConfirm={onDiscard}
     />

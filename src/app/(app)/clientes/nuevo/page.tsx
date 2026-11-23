@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { copy } from '@/copy/es';
 import { mapsLinkFor, type CustomerLocation } from '@/domain/customer-location';
+import type { NewCustomerDraft } from '@/domain/new-customer';
 import { suggestFirstDueDate, withPaymentIds } from '@/domain/payment-plan';
 import { todayBogota, type LocalDate } from '@/domain/time';
 import {
@@ -13,39 +14,45 @@ import {
   useAddCustomerInfoPhoto,
   useAddInvoicePhoto,
   useCreateInvoiceWithPhoto,
-  useCustomerInvoices,
-  useUpdateInvoice,
-  useClearCustomerLocation,
-  useCreateCustomer,
-  useCustomerDetail,
-  useDiscardNewCustomer,
-  useDiscardSummary,
-  useLiveWrite,
-  useRemoveCopyDuringCreation,
   useRememberLastChosenPoint,
-  useSetCustomerLocation,
-  useUpdateCustomer,
+  useSaveNewCustomer,
+  useUpdateInvoice,
   type DownPaymentValue,
   type PaymentPlanValue,
 } from '@/features/customers';
-import { DEFAULT_PAY_METHOD, useApplyPaymentPlan, useSetCreationDownPayment } from '@/features/payments';
+import { DEFAULT_PAY_METHOD } from '@/features/payments';
 import { appErrorMessage } from '@/features/shared/app-error-message';
 import { ROUTES, ShellScreen, useAppShell } from '@/features/shell';
 import { systemClock } from '@/lib/clock';
 import { newId } from '@/lib/ids';
 import { useToast } from '@/ui/molecules/Toast';
 import { usePlatform } from '@/ui/platform';
-import { AddBookContainer } from '../add-book-container';
 import { LocationPickerContainer } from '../location-picker-container';
+import { DraftBooksContainer, type DraftBook } from './draft-books';
+
+/** Una foto tomada antes de guardar: vive en el teléfono hasta «Guardar cliente». */
+type LocalPhoto = { readonly photoId: string; readonly file: File; readonly thumbUrl: string };
+type LocalInvoice = {
+  readonly invoiceId: string;
+  readonly number: string | null;
+  readonly date: LocalDate | null;
+  readonly photos: readonly LocalPhoto[];
+};
+
+const localPhoto = (file: File): LocalPhoto => ({
+  photoId: newId(),
+  file,
+  thumbUrl: URL.createObjectURL(file),
+});
+/** La fecha de venta como instante (mediodía en Bogotá), para mostrarla igual que la de un libro ya vendido. */
+const middayBogota = (date: LocalDate) => new Date(`${date}T12:00:00-05:00`);
 
 /**
- * Contenedor de Nuevo cliente, ficha viva (HU-PAN-CLI-03, ADR-0038): el cliente se crea al escribir el nombre (o
- * llega con `?nombre=` desde «Crear «texto»») y cada dato se escribe solo un momento después. Salir por la navegación
- * pregunta lo mismo que «Descartar» (BR-CUS-14).
+ * Nuevo cliente (HU-PAN-CLI-03; ronda 35, #57, ADR-0051): **el cliente solo existe al guardarlo**. Todo lo que se
+ * escribe, los libros elegidos (que siguen En físico, sin historial), la cuota, el plan y las fotos viven en el teléfono.
+ * «Guardar cliente» guarda cliente, libros, cuota y plan en una sola transacción y después sube las fotos; si una foto
+ * falla, el cliente ya quedó guardado y el Aviso ofrece reintentarla. Salir con algo escrito pregunta antes.
  */
-/** N.º y fecha de la factura se guardan este tiempo después de la última tecla. */
-const INVOICE_DELAY_MS = 600;
-
 function NewCustomerRoute() {
   const shell = useAppShell();
   const router = useRouter();
@@ -57,15 +64,17 @@ function NewCustomerRoute() {
   const [downPaymentId] = useState(newId);
 
   const [name, setName] = useState(() => searchParams.get('nombre')?.trim() ?? '');
-  const [created, setCreated] = useState(false);
-  const creating = useRef(false);
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [info, setInfo] = useState('');
-  /** HU-PAN-CLI-06: la ubicación elegida; se escribe cuando el cliente existe, como los demás datos. */
+  const [emoji, setEmoji] = useState<string | null>(null);
   const [location, setLocation] = useState<CustomerLocation | null>(null);
   const [choosingLocation, setChoosingLocation] = useState(false);
   const [tiles] = useState(mapTiles);
+  const [books, setBooks] = useState<readonly DraftBook[]>([]);
+  const [addingBook, setAddingBook] = useState(false);
+  const [photos, setPhotos] = useState<readonly LocalPhoto[]>([]);
+  const [invoices, setInvoices] = useState<readonly LocalInvoice[]>([]);
   const [down, setDown] = useState<DownPaymentValue>({
     amount: null,
     method: DEFAULT_PAY_METHOD,
@@ -76,108 +85,51 @@ function NewCustomerRoute() {
     amount: null,
     firstDueDate: null,
   });
-  const [discardOpen, setDiscardOpen] = useState(false);
   /** Fechas del plan corregidas a mano (HU-PAN-CLI-05); se descartan si el plan se recalcula (I-08). */
   const [overrides, setOverrides] = useState<Record<number, LocalDate>>({});
-  const [addingBook, setAddingBook] = useState(false);
+  const [leaveOpen, setLeaveOpen] = useState(false);
   const [leaveTo, setLeaveTo] = useState<string>(ROUTES.customers);
+  const saved = useRef(false);
 
-  const { createCustomer } = useCreateCustomer();
-  const { updateCustomer } = useUpdateCustomer();
-  const { setCreationDownPayment } = useSetCreationDownPayment();
-  const { applyPaymentPlan } = useApplyPaymentPlan();
-  const { discardNewCustomer } = useDiscardNewCustomer();
-  const { removeCopyDuringCreation } = useRemoveCopyDuringCreation();
-  const { setCustomerLocation } = useSetCustomerLocation();
-  const { clearCustomerLocation } = useClearCustomerLocation();
+  const { saveNewCustomer } = useSaveNewCustomer();
   const { addCustomerInfoPhoto } = useAddCustomerInfoPhoto();
   const { createInvoiceWithPhoto } = useCreateInvoiceWithPhoto();
   const { addInvoicePhoto } = useAddInvoicePhoto();
   const { updateInvoice } = useUpdateInvoice();
-  /** #34: el emoji elegido se ve de una vez, antes de que el servidor responda. */
-  const [emoji, setEmoji] = useState<string | null | undefined>(undefined);
-  /** #32: N.º y fecha de cada factura mientras se escriben (se guardan un momento después). */
-  const [invoiceDrafts, setInvoiceDrafts] = useState<
-    Record<string, { number?: string | null; date?: LocalDate | null }>
-  >({});
-  const invoiceTimers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
-  const invoicePending = useRef<Record<string, { number?: string | null; date?: LocalDate | null }>>({});
   const rememberLastChosenPoint = useRememberLastChosenPoint();
-  const detail = useCustomerDetail(created ? id : null);
-  const invoices = useCustomerInvoices(created ? id : null);
-  const summary = useDiscardSummary(discardOpen && created ? id : null);
 
-  const showError = (error: unknown, retry?: () => void) =>
-    toast.show({
-      message: appErrorMessage(error).message,
-      tone: 'error',
-      ...(retry ? { action: { label: copy.errors.retry, onAction: retry } } : {}),
-    });
+  const showError = (error: unknown) =>
+    toast.show({ message: appErrorMessage(error).message, tone: 'error' });
 
-  // Ficha viva: el cliente existe desde que tiene nombre (HU-CLI-02). Mismo `id` si se reintenta (CA-1).
-  const nameWrite = useLiveWrite(name, {
-    enabled: created && name.trim() !== '',
-    initial: name,
-    write: async (value) => {
-      const result = await updateCustomer({ id, patch: { name: value } });
-      if (!result.ok) showError(result.error);
-      return result.ok;
-    },
-  });
-  const create = async (value: string) => {
-    if (created || creating.current || !value.trim()) return;
-    creating.current = true;
-    const result = await createCustomer({ id, name: value });
-    creating.current = false;
-    if (!result.ok) return showError(result.error, () => void create(value));
-    nameWrite.markWritten(value);
-    setCreated(true);
-  };
-  // Llega con nombre desde «Crear «texto»» (HU-CLI-05): se crea de una vez.
-  const prefilled = useRef(name);
+  const hasName = name.trim() !== '';
+  const dirty =
+    hasName ||
+    [phone, address, info].some((v) => v.trim() !== '') ||
+    emoji !== null ||
+    location !== null ||
+    books.length > 0 ||
+    photos.length > 0 ||
+    invoices.length > 0 ||
+    down.amount !== null ||
+    plan.amount !== null;
+
+  // Cerrar la pestaña con algo escrito: el navegador pregunta (no queda borrador, #57).
   useEffect(() => {
-    if (prefilled.current) void create(prefilled.current);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- solo al llegar.
-  }, []);
+    if (!dirty) return;
+    const warn = (event: BeforeUnloadEvent) => {
+      if (!saved.current) event.preventDefault();
+    };
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [dirty]);
 
-  const phoneWrite = useLiveWrite(phone, {
-    enabled: created,
-    initial: '',
-    write: async (value) => {
-      const result = await updateCustomer({ id, patch: { phone: value.trim() || null } });
-      if (!result.ok) showError(result.error);
-      return result.ok;
-    },
-  });
-
-  const writeText = async (field: 'address' | 'info', value: string) => {
-    const result = await updateCustomer({ id, patch: { [field]: value.trim() || null } });
-    if (!result.ok) showError(result.error);
-    return result.ok;
+  const leave = (href: string) => {
+    if (!dirty) return router.push(href);
+    setLeaveTo(href);
+    setLeaveOpen(true);
   };
-  const addressWrite = useLiveWrite(address, {
-    enabled: created,
-    initial: '',
-    write: (value) => writeText('address', value),
-  });
-  const infoWrite = useLiveWrite(info, {
-    enabled: created,
-    initial: '',
-    write: (value) => writeText('info', value),
-  });
-  const locationWrite = useLiveWrite(location, {
-    enabled: created,
-    initial: null,
-    write: async (value) => {
-      const result = value
-        ? await setCustomerLocation({ customerId: id, location: value })
-        : await clearCustomerLocation(id);
-      if (!result.ok) showError(result.error);
-      return result.ok;
-    },
-  });
 
-  const debt = detail.data?.account.debt ?? 0;
+  const debt = books.reduce((sum, b) => sum + (b.agreedPrice ?? b.price ?? 0), 0);
   // El primer abono sugerido sigue a la frecuencia hasta que se cambia a mano (HU-ABO-03 R3).
   const firstDueDate =
     plan.firstDueDate ?? (plan.amount !== null ? suggestFirstDueDate(plan.frequency, today) : null);
@@ -192,121 +144,135 @@ function NewCustomerRoute() {
   });
   const downDateInFuture = down.paidOn > today;
 
-  // La cuota inicial y luego el plan, en ese orden: el plan reparte lo que queda después de la cuota (HU-ABO-03 R1).
-  const money = { down, items: preview.items?.map(({ dueDate, amount }) => ({ dueDate, amount })) ?? null };
-  const moneyWrite = useLiveWrite(money, {
-    enabled: created && !downDateInFuture,
-    initial: { down: { amount: null, method: DEFAULT_PAY_METHOD, paidOn: today }, items: null },
-    write: async (value) => {
-      const downResult = await setCreationDownPayment({
-        paymentId: downPaymentId,
-        customerId: id,
-        amount: value.down.amount,
-        method: value.down.method,
-        paidOn: value.down.paidOn,
+  /** Sube las fotos del cliente ya guardado; devuelve lo que falló, para reintentar. */
+  const uploadPhotos = async (customerId: string) => {
+    const failed: (() => Promise<boolean>)[] = [];
+    const attempt = async (run: () => Promise<{ ok: boolean }>) => {
+      const result = await run();
+      if (!result.ok) failed.push(async () => (await run()).ok);
+    };
+    for (const photo of photos)
+      await attempt(() => addCustomerInfoPhoto({ photoId: photo.photoId, customerId, file: photo.file }));
+    for (const invoice of invoices) {
+      const [first, ...rest] = invoice.photos;
+      if (!first) continue;
+      const created = await createInvoiceWithPhoto({
+        invoiceId: invoice.invoiceId,
+        photoId: first.photoId,
+        customerId,
+        file: first.file,
       });
-      if (!downResult.ok) {
-        showError(downResult.error);
-        return false;
+      if (!created.ok) {
+        failed.push(async () => {
+          const again = await createInvoiceWithPhoto({
+            invoiceId: invoice.invoiceId,
+            photoId: first.photoId,
+            customerId,
+            file: first.file,
+          });
+          return again.ok;
+        });
+        continue;
       }
-      if (!value.items) return true;
-      const planResult = await applyPaymentPlan({
-        customerId: id,
-        mode: 'replace_all',
-        items: withPaymentIds(value.items, newId),
-      });
-      if (!planResult.ok) showError(planResult.error);
-      return planResult.ok;
-    },
-  });
+      for (const photo of rest)
+        await attempt(() =>
+          addInvoicePhoto({ invoiceId: invoice.invoiceId, photoId: photo.photoId, file: photo.file }),
+        );
+      if (invoice.number || invoice.date)
+        await attempt(() =>
+          updateInvoice({
+            invoiceId: invoice.invoiceId,
+            patch: { number: invoice.number, date: invoice.date },
+          }),
+        );
+    }
+    return failed;
+  };
 
-  // Cerrar la pestaña con un cliente a medias: el navegador pregunta (descartar exige conexión y confirmación).
-  useEffect(() => {
-    if (!created) return;
-    const warn = (event: BeforeUnloadEvent) => event.preventDefault();
-    window.addEventListener('beforeunload', warn);
-    return () => window.removeEventListener('beforeunload', warn);
-  }, [created]);
-
-  const leave = (href: string) => {
-    if (!created) return router.push(href);
-    setLeaveTo(href);
-    setDiscardOpen(true);
+  const offerRetry = (failed: (() => Promise<boolean>)[]) => {
+    if (failed.length === 0) return;
+    toast.show({
+      message: copy.customers.create.photosFailed(failed.length),
+      tone: 'error',
+      action: {
+        label: copy.errors.retry,
+        onAction: async () => {
+          const results = await Promise.all(failed.map((retry) => retry()));
+          offerRetry(failed.filter((_, i) => !results[i]));
+        },
+      },
+    });
   };
 
   const save = async () => {
-    const results = await Promise.all([
-      nameWrite.flush(),
-      phoneWrite.flush(),
-      addressWrite.flush(),
-      infoWrite.flush(),
-      locationWrite.flush(),
-      moneyWrite.flush(),
-    ]);
-    if (results.every(Boolean)) {
-      toast.show({ message: copy.customers.create.saved, tone: 'success' });
-      router.push(ROUTES.customer(id));
+    const draft: NewCustomerDraft = {
+      id,
+      name,
+      phone,
+      address,
+      info,
+      avatarEmoji: emoji,
+      location,
+      books: books.map((b) => ({
+        copyId: b.copyId,
+        agreedPrice: b.agreedPrice ?? b.price ?? 0,
+        soldOn: b.soldOn,
+      })),
+      downPayment:
+        down.amount && down.amount > 0
+          ? { paymentId: downPaymentId, amount: down.amount, method: down.method, paidOn: down.paidOn }
+          : null,
+      plan: preview.items
+        ? withPaymentIds(
+            preview.items.map(({ dueDate, amount }) => ({ dueDate, amount })),
+            newId,
+          )
+        : null,
+    };
+    const result = await saveNewCustomer(draft);
+    if (!result.ok) {
+      showError(result.error);
+      // Que el resumen siga abierto: todo sigue en el teléfono para corregir o reintentar.
+      throw new Error(result.error.code);
     }
+    saved.current = true;
+    if (location) await rememberLastChosenPoint({ lat: location.latitude, lng: location.longitude });
+    toast.show({ message: copy.customers.create.saved, tone: 'success' });
+    router.push(ROUTES.customer(id));
+    offerRetry(await uploadPhotos(id));
   };
-
-  /** Imágenes, emoji y factura necesitan al cliente creado (con nombre) y conexión. */
-  const needsCustomer = !created
-    ? copy.customers.create.nameRequired
-    : !shell.isOnline
-      ? copy.ui.empty.needsConnection
-      : null;
-  useEffect(() => {
-    const timers = invoiceTimers.current;
-    return () => timers.forEach(clearTimeout);
-  }, []);
 
   const screen = (
     <NewCustomerScreen
       name={name}
-      onNameChange={(value) => {
-        setName(value);
-        void create(value);
-      }}
-      nameError={created && !name.trim() ? copy.customers.create.nameRequired : undefined}
-      avatarEmoji={emoji !== undefined ? emoji : (detail.data?.avatarEmoji ?? null)}
-      onAvatarChange={async (next) => {
-        setEmoji(next);
-        const result = await updateCustomer({ id, patch: { avatarEmoji: next } });
-        if (!result.ok) {
-          setEmoji(undefined);
-          showError(result.error);
-        }
-      }}
-      avatarDisabledReason={needsCustomer}
-      invoices={(invoices.data ?? []).map((invoice) => ({ ...invoice, ...invoiceDrafts[invoice.invoiceId] }))}
-      onCreateInvoice={async (file) => {
-        const result = await createInvoiceWithPhoto({
-          invoiceId: newId(),
-          photoId: newId(),
-          customerId: id,
-          file,
-        });
-        if (!result.ok) showError(result.error);
-      }}
-      onAddInvoicePhoto={async (invoiceId, file) => {
-        const result = await addInvoicePhoto({ invoiceId, photoId: newId(), file });
-        if (!result.ok) showError(result.error);
-      }}
-      onInvoiceChange={(invoiceId, patch) => {
-        setInvoiceDrafts((current) => ({ ...current, [invoiceId]: { ...current[invoiceId], ...patch } }));
-        invoicePending.current[invoiceId] = { ...invoicePending.current[invoiceId], ...patch };
-        clearTimeout(invoiceTimers.current.get(invoiceId));
-        invoiceTimers.current.set(
-          invoiceId,
-          setTimeout(async () => {
-            const draft = invoicePending.current[invoiceId] ?? {};
-            delete invoicePending.current[invoiceId];
-            const result = await updateInvoice({ invoiceId, patch: draft });
-            if (!result.ok) showError(result.error);
-          }, INVOICE_DELAY_MS),
-        );
-      }}
-      invoiceDisabledReason={needsCustomer}
+      onNameChange={setName}
+      nameError={undefined}
+      avatarEmoji={emoji}
+      onAvatarChange={setEmoji}
+      avatarDisabledReason={null}
+      invoices={invoices.map((invoice) => ({
+        invoiceId: invoice.invoiceId,
+        number: invoice.number,
+        date: invoice.date,
+        photos: invoice.photos.map(({ photoId, thumbUrl }) => ({ photoId, thumbUrl })),
+      }))}
+      onCreateInvoice={(file) =>
+        setInvoices((current) => [
+          ...current,
+          { invoiceId: newId(), number: null, date: today, photos: [localPhoto(file)] },
+        ])
+      }
+      onAddInvoicePhoto={(invoiceId, file) =>
+        setInvoices((current) =>
+          current.map((i) =>
+            i.invoiceId === invoiceId ? { ...i, photos: [...i.photos, localPhoto(file)] } : i,
+          ),
+        )
+      }
+      onInvoiceChange={(invoiceId, patch) =>
+        setInvoices((current) => current.map((i) => (i.invoiceId === invoiceId ? { ...i, ...patch } : i)))
+      }
+      invoiceDisabledReason={null}
       phone={phone}
       onPhoneChange={setPhone}
       address={address}
@@ -323,19 +289,25 @@ function NewCustomerRoute() {
       tiles={tiles}
       onChooseLocation={() => setChoosingLocation(true)}
       onRemoveLocation={() => setLocation(null)}
-      photos={detail.data?.infoPhotos ?? []}
-      onAddPhoto={async (file) => {
-        const result = await addCustomerInfoPhoto({ photoId: newId(), customerId: id, file });
-        if (!result.ok) showError(result.error);
-      }}
-      photoDisabledReason={needsCustomer}
-      books={detail.data?.books ?? []}
+      photos={photos.map(({ photoId, thumbUrl }) => ({ photoId, thumbUrl }))}
+      onAddPhoto={(file) => setPhotos((current) => [...current, localPhoto(file)])}
+      photoDisabledReason={null}
+      books={books.map((b) => {
+        const agreed = b.agreedPrice ?? b.price ?? 0;
+        return {
+          copyId: b.copyId,
+          titleName: b.titleName,
+          titleImageUrl: b.imageUrl,
+          number: b.number,
+          agreedPrice: agreed,
+          publicPriceSnapshot: b.price,
+          priceDelta: b.price !== null && agreed !== b.price ? agreed - b.price : null,
+          soldAt: middayBogota(b.soldOn),
+        };
+      })}
       copyHref={ROUTES.copy}
-      onAddBook={created ? () => setAddingBook(true) : undefined}
-      onRemoveBook={async (copyId) => {
-        const result = await removeCopyDuringCreation(copyId);
-        if (!result.ok) showError(result.error);
-      }}
+      onAddBook={() => setAddingBook(true)}
+      onRemoveBook={(copyId) => setBooks((current) => current.filter((b) => b.copyId !== copyId))}
       debt={debt}
       downPayment={down}
       onDownPaymentChange={(patch) => setDown((current) => ({ ...current, ...patch }))}
@@ -348,30 +320,29 @@ function NewCustomerRoute() {
       onPlanDateChange={(index, date) => setOverrides((current) => ({ ...current, [index]: date }))}
       today={today}
       preview={preview}
-      excess={detail.data?.notices.excess?.amount ?? null}
+      excess={null}
       banner={shell.offlineBanner}
       isOnline={shell.isOnline}
-      created={created}
+      created={hasName}
       onSave={save}
-      discardOpen={discardOpen}
-      onDiscardOpenChange={setDiscardOpen}
-      discardSummary={summary.data}
+      discardOpen={leaveOpen}
+      onDiscardOpenChange={setLeaveOpen}
       onDiscard={async () => {
-        const result = await discardNewCustomer(id);
-        if (!result.ok) return showError(result.error);
-        setCreated(false);
+        // No hay nada guardado que borrar: se sale y lo escrito se pierde (#57).
+        saved.current = true;
         router.push(leaveTo);
       }}
       backHref={ROUTES.customers}
-      onLeave={() => router.push(ROUTES.customers)}
+      onLeave={() => leave(ROUTES.customers)}
     />
   );
   const sheet = (
     <>
-      {addingBook && created && (
-        <AddBookContainer
-          customerId={id}
-          books={detail.data?.books ?? []}
+      {addingBook && (
+        <DraftBooksContainer
+          books={books}
+          onChange={setBooks}
+          today={today}
           onClose={() => setAddingBook(false)}
         />
       )}
@@ -379,8 +350,6 @@ function NewCustomerRoute() {
         <LocationPickerContainer
           saved={location}
           onConfirm={async (chosen) => {
-            // Sin cliente todavía, el punto se recuerda aquí; al guardarlo en el cliente lo recuerda la acción.
-            if (!created) await rememberLastChosenPoint({ lat: chosen.latitude, lng: chosen.longitude });
             setLocation(chosen);
             return true;
           }}

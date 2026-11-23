@@ -4,6 +4,7 @@ import type { COP } from '@/domain/money';
 import type { PaymentStatus, PayMethod } from '@/domain/payment';
 import type { PlanMode } from '@/domain/payment-plan';
 import type { ExcessChoice, ExcessTrigger } from '@/domain/schedule-excess';
+import type { PaymentEventRecord, PaymentRescheduleRecord } from '@/domain/payment-history';
 import type { LocalDate } from '@/domain/time';
 
 /** Abonos (HU-ABO-*). Cada HU de Abonos agrega aquí sus acciones. */
@@ -123,4 +124,17 @@ export interface PaymentRepository {
    * Abibono), `CUSTOMER_ARCHIVED`, `NOT_FOUND`, `NETWORK_ERROR`.
    */
   uncollect(paymentId: string): Promise<Result<{ customerId: string }, AppError>>;
+
+  /**
+   * Lo que le pasó a un abono (#72): sus prórrogas y sus recortes, cancelaciones y reaperturas, en el orden en que
+   * pasaron. Errores: `NETWORK_ERROR`.
+   */
+  getHistory(
+    paymentId: string,
+  ): Promise<
+    Result<
+      { reschedules: readonly PaymentRescheduleRecord[]; events: readonly PaymentEventRecord[] },
+      AppError
+    >
+  >;
 }

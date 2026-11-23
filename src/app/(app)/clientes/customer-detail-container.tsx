@@ -1,11 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { copy } from '@/copy/es';
 import {
   CustomerDetailScreen,
   mapTiles,
   useAddCustomerInfoPhoto,
+  useAddInvoicePhoto,
+  useCreateInvoiceWithPhoto,
+  useUpdateInvoice,
+  type InvoicePatch,
   useArchiveCustomer,
   useClearCustomerLocation,
   useSetCustomerLocation,
@@ -60,6 +64,12 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
   const { setCustomerLocation } = useSetCustomerLocation();
   const { clearCustomerLocation } = useClearCustomerLocation();
   const { addCustomerInfoPhoto } = useAddCustomerInfoPhoto();
+  const { createInvoiceWithPhoto } = useCreateInvoiceWithPhoto();
+  const { addInvoicePhoto } = useAddInvoicePhoto();
+  const { updateInvoice } = useUpdateInvoice();
+  // #61: el N.º y la fecha de una factura se ven al escribirlos y se guardan solos un momento después.
+  const [invoiceEdits, setInvoiceEdits] = useState<Record<string, InvoicePatch>>({});
+  const invoiceTimers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
   const { updateCustomer } = useUpdateCustomer();
   const { updateSoldAt } = useUpdateSoldAt();
   const { collectPayment } = useCollectPayment();
@@ -78,7 +88,15 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
   return (
     <>
       <CustomerDetailScreen
-        detail={detail.data}
+        detail={
+          detail.data && {
+            ...detail.data,
+            invoices: detail.data.invoices.map((invoice) => ({
+              ...invoice,
+              ...(invoiceEdits[invoice.invoiceId] as Partial<typeof invoice>),
+            })),
+          }
+        }
         loading={detail.isPending}
         error={detail.isError}
         onRetry={() => void detail.refetch()}
@@ -123,6 +141,38 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
         onAddPhoto={async (file) => {
           const result = await addCustomerInfoPhoto({ photoId: newId(), customerId, file });
           if (!result.ok) showError(result.error);
+        }}
+        invoiceActions={{
+          onCreate: async (file) => {
+            const result = await createInvoiceWithPhoto({
+              invoiceId: newId(),
+              photoId: newId(),
+              customerId,
+              file,
+            });
+            if (!result.ok) showError(result.error);
+          },
+          onAddPhoto: async (invoiceId, file) => {
+            const result = await addInvoicePhoto({ invoiceId, photoId: newId(), file });
+            if (!result.ok) showError(result.error);
+          },
+          onChange: (invoiceId, patch) => {
+            const next = { ...invoiceEdits[invoiceId], ...patch };
+            setInvoiceEdits((current) => ({ ...current, [invoiceId]: next }));
+            clearTimeout(invoiceTimers.current.get(invoiceId));
+            invoiceTimers.current.set(
+              invoiceId,
+              setTimeout(async () => {
+                const result = await updateInvoice({ invoiceId, patch: next });
+                if (!result.ok) return showError(result.error);
+                setInvoiceEdits((current) => {
+                  const rest = { ...current };
+                  delete rest[invoiceId];
+                  return rest;
+                });
+              }, 600),
+            );
+          },
         }}
         onAvatarChange={async (avatarEmoji) => {
           const result = await updateCustomer({ id: customerId, patch: { avatarEmoji } });

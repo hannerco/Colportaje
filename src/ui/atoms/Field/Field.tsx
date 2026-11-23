@@ -26,7 +26,13 @@ type FieldValue =
       onChange?: (value: string) => void;
     }
   | { kind: 'money'; value: COP | null; onChange?: (value: COP | null) => void }
-  | { kind: 'date'; value: LocalDate | null; onChange?: (value: LocalDate | null) => void }
+  | {
+      kind: 'date';
+      value: LocalDate | null;
+      onChange?: (value: LocalDate | null) => void;
+      /** #62: lo que va en lugar del ícono del calendario (el botón que abre el calendario, `DateField`). */
+      calendarTrigger?: ReactNode;
+    }
   | { kind: 'select'; value: string; onChange?: never };
 
 export type FieldProps = FieldValue & {
@@ -275,6 +281,7 @@ function DateInput({
   placeholder,
   value,
   onChange,
+  calendarTrigger,
 }: Extract<FieldProps, { kind: 'date' }> & { control: ControlAttributes }) {
   const [text, setText] = useState(value === null ? '' : formatDate(value));
   const parsed = parseDisplayDate(text);
@@ -283,7 +290,7 @@ function DateInput({
   if (value !== shown) setText(value === null ? '' : formatDate(value));
   return (
     <>
-      <Icon name="calendar" tone="tertiary" className={styles.adornment} />
+      {calendarTrigger ?? <Icon name="calendar" tone="tertiary" className={styles.adornment} />}
       <input
         {...control}
         className={styles.input}

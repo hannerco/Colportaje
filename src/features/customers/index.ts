@@ -24,6 +24,7 @@ export {
   usePhotoUrl,
   useAssignCopyToCustomer,
   useCreateCustomer,
+  useSaveNewCustomer,
   usePossibleDuplicates,
   useRemoveCopyDuringCreation,
   useReturnCopyFromCustomer,

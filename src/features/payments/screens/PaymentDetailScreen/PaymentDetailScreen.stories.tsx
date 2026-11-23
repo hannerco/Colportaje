@@ -102,7 +102,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Detalle de un abono (HU-PAN-DIN-02) sobre la Plantilla de detalle: la franja con su situación, la isla de identidad con «Cobrar», los datos (fecha acordada, valor, método y Abibono), los demás abonos del cliente y el historial. «Dar más plazo» está en Más acciones. Cobrar pide valor real (sugerido = acordado), fecha y método, y avisa del cobro parcial antes de confirmar. Un abono entregado está bloqueado: candado, sin acciones y con enlace a su Abibono.',
+          'Detalle de un abono (HU-PAN-DIN-02) sobre la Plantilla de detalle: la franja con su situación, la isla de identidad con «Cobrar», con la franja de estado, la cuota, la fecha acordada, el valor grande y «Cobrar» y «Dar más plazo» a la vista (#72), los demás abonos del cliente y el historial completo. Cobrar pide valor real (sugerido = acordado), fecha y método, y avisa del cobro parcial antes de confirmar. Un abono entregado está bloqueado: candado, sin acciones y con enlace a su Abibono.',
       },
     },
   },
@@ -159,10 +159,30 @@ export const Cobrado: Story = {
       method: 'transfer',
       can: { collect: false, edit: true, delete: true, reschedule: false, correctDate: false, cancel: false },
     }),
+    history: [
+      {
+        id: 'collected',
+        kind: 'collected',
+        date: localDate('2026-11-17'),
+        amount: 60000,
+        method: 'transfer',
+      },
+      {
+        id: 'scheduled',
+        kind: 'scheduled',
+        date: localDate('2026-10-03'),
+        amount: 65000,
+        dueDate: localDate('2026-11-14'),
+      },
+    ],
   },
   play: async ({ canvasElement }) => {
     for (const frame of frames(canvasElement)) {
       expect(frame.textContent).toContain('17/11/2026 · 3 días tarde');
+      // #72: valor cobrado con el acordado tachado y el método en lugar de las acciones.
+      expect(frame.textContent).toContain('Valor cobrado');
+      expect(frame.querySelector('s')?.textContent).toBe('$65.000');
+      expect(frame.textContent).toContain('Programado: $65.000 para el 14/11/2026');
       expect(frame.textContent).toContain('Cobrado');
       expect(frame.textContent).toContain('Cobrado: $60.000 en transferencia');
       expect(button(frame, 'Cobrar')).toBeUndefined();
@@ -178,7 +198,7 @@ export const Entregado: Story = {
     const frame = frames(canvasElement)[0]!;
     expect(frame.textContent).toContain('Entregado');
     expect(button(frame, 'Cobrar')).toBeUndefined();
-    expect(button(frame, 'Más acciones')).toBeUndefined();
+    expect(button(frame, 'Dar más plazo')).toBeUndefined();
     expect(frame.querySelector('a[href="#abibono-d1"]')).not.toBeNull();
     expect(frame.querySelector('[data-status="delivered"] svg')).not.toBeNull();
   },
@@ -232,20 +252,67 @@ export const DarMasPlazoAbierto: Story = {
   },
 };
 
-export const MasAcciones: Story = {
-  name: 'Más acciones',
+/**
+ * #72 (diseño aceptado «Detalle de un abono»): la franja de estado arriba de la isla, la cuota «2/4» junto al nombre
+ * (enlace a la ficha), el chip «Fecha acordada», el valor acordado grande y «Cobrar» y «Dar más plazo» a la vista; el
+ * abono abierto resaltado en «Abonos de …» y el Historial con la prórroga y su nota.
+ */
+export const DisenoAceptado: Story = {
+  name: 'Diseño aceptado',
   globals: { platform: 'desktop' },
+  args: {
+    history: [
+      {
+        id: 'rescheduled-0',
+        kind: 'rescheduled',
+        date: localDate('2026-10-24'),
+        from: localDate('2026-10-26'),
+        to: localDate('2026-11-02'),
+        note: 'Pidió esperar a la quincena',
+      },
+      {
+        id: 'scheduled',
+        kind: 'scheduled',
+        date: localDate('2026-10-03'),
+        amount: 30000,
+        dueDate: localDate('2026-10-26'),
+      },
+    ],
+  },
   play: async ({ canvasElement }) => {
     const frame = frames(canvasElement)[0]!;
-    await userEvent.click(button(frame, 'Más acciones')!);
-    const item = await waitFor(() => {
-      const found = [...canvasElement.ownerDocument.querySelectorAll<HTMLElement>('[role="menuitem"]')].find(
-        (i) => i.textContent?.includes('Dar más plazo'),
-      );
-      expect(found).toBeDefined();
-      return found!;
-    });
-    expect(item).toBeDefined();
+    const strip = frame.querySelector<HTMLElement>('[role="status"][data-tone]')!;
+    expect(strip.dataset.tone).toBe('bad');
+    expect(strip.textContent).toContain('Vencido hace');
+    expect(frame.querySelector('h1 a, h2 a')).not.toBeNull();
+    expect(frame.textContent).toContain('Fecha acordada');
+    expect(frame.textContent).toContain('Valor acordado');
+    expect(frame.querySelector('[aria-current="true"]')).not.toBeNull();
+    expect(frame.textContent).toContain('Más plazo: 26/10/2026 → 02/11/2026');
+    expect(frame.textContent).toContain('Pidió esperar a la quincena');
+    await userEvent.click(button(frame, 'Dar más plazo')!);
+    await waitFor(() =>
+      expect(
+        canvasElement.ownerDocument.querySelector('[role="dialog"], [role="alertdialog"]'),
+      ).not.toBeNull(),
+    );
+  },
+};
+
+/** #72: en el celular el estado de cada abono nunca queda encima de su valor. */
+export const MovilSinEncimar: Story = {
+  name: 'Móvil sin encimar',
+  globals: { platform: 'mobile' },
+  play: async ({ canvasElement }) => {
+    const overlap = (a: DOMRect, b: DOMRect) =>
+      a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
+    const rows = [...canvasElement.querySelectorAll<HTMLElement>('a[class*="sibling"]')];
+    expect(rows.length).toBeGreaterThan(0);
+    for (const row of rows) {
+      const pill = row.querySelector<HTMLElement>('[data-status]')!;
+      const amount = row.querySelector<HTMLElement>('[class*="siblingAmount"]')!;
+      expect(overlap(pill.getBoundingClientRect(), amount.getBoundingClientRect())).toBe(false);
+    }
   },
 };
 

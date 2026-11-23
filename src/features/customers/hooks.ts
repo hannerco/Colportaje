@@ -4,7 +4,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { findPossibleDuplicates, type CustomerPatch } from '@/domain/customer-data';
 import { unwrap } from '../shared/app-failure';
 import { useRepositories } from '../shared/repositories-provider';
-import { createCustomer, updateCustomer } from './use-cases/customer-data';
+import { createCustomer, saveNewCustomer, updateCustomer } from './use-cases/customer-data';
+import type { NewCustomerDraft } from '@/domain/new-customer';
 import {
   assignCopyToCustomer,
   loadAssignableData,
@@ -72,6 +73,20 @@ export function useCreateCustomer() {
     },
   });
   return { createCustomer: mutation.mutateAsync, isPending: mutation.isPending };
+}
+
+/** Guarda un cliente nuevo con todo (ronda 35, #57): `saveNewCustomer(draft)` → `Result<{ id }>`. */
+export function useSaveNewCustomer() {
+  const { customers, connectivity } = useRepositories();
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (draft: NewCustomerDraft) => saveNewCustomer({ customers, connectivity }, draft),
+    onSuccess: (result) => {
+      if (!result.ok) return;
+      for (const queryKey of BOOK_AFFECTED_ROOTS) void queryClient.invalidateQueries({ queryKey });
+    },
+  });
+  return { saveNewCustomer: mutation.mutateAsync, isPending: mutation.isPending };
 }
 
 /** Guarda un dato de la ficha (nombre, teléfono, información, dirección, emoji o enlace de Maps). */

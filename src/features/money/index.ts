@@ -11,6 +11,7 @@ export {
   useNewDepositProposal,
   useReopenDeposit,
   usePaymentCustomer,
+  usePaymentHistory,
   usePaymentsList,
   useSaveDepositDraft,
   useUnscheduledCustomers,
