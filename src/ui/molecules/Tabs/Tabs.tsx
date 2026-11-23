@@ -47,7 +47,13 @@ export function Tabs({
   const [current, setCurrent] = useState(items[0]?.id);
   const resolvedWidth = width ?? (variant === 'segmented' ? 'full' : 'auto');
   // #37: el fondo de la activa se desliza a la nueva.
-  useSlidingIndicator(listRef, '[data-state="active"]', value ?? current);
+  // #78: con las mismas pestañas en otra página (p. ej. «Libros en físico / Ejemplares»), sale de donde quedó.
+  useSlidingIndicator(
+    listRef,
+    '[data-state="active"]',
+    value ?? current,
+    `tabs:${variant}:${items.map((item) => item.id).join('|')}`,
+  );
 
   const handleChange = (next: string) => {
     setCurrent(next);
