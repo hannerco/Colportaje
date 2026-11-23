@@ -19,14 +19,12 @@ test('agregar un libro en la ficha nueva, ajustar su precio y quitarlo (CA-1, CA
   await expect(selectButtons.first()).toBeVisible();
   await expect(sheet).toContainText('$75.000');
 
-  // Tocar uno lo vende al cliente; se ajusta su precio (CA-2).
+  // Tocar uno lo elige (#57: se vende al guardar el cliente); se ajusta su precio (CA-2).
   await selectButtons.first().click();
   await expect(sheet).toContainText('Elegido para este cliente');
   const price = sheet.getByLabel('Precio acordado');
   await price.fill('70000');
   await expect(sheet).toContainText('antes $75.000');
-  // Se escribe solo un momento después; se cierra al ver el precio guardado en la ficha.
-  await page.waitForTimeout(1200);
   await page.keyboard.press('Escape');
   await expect(sheet).toHaveCount(0);
 
@@ -36,12 +34,12 @@ test('agregar un libro en la ficha nueva, ajustar su precio y quitarlo (CA-1, CA
   await expect(books).toContainText('$70.000');
   await expect(books.locator('s')).toHaveText('antes $75.000');
 
-  // Quitar durante la creación: sin motivo, vuelve a físico (HU-CLI-09 R4).
+  // Quitar antes de guardar: no deja nada en el historial (#57).
   await books.getByRole('button', { name: /^Quitar Salud y bienestar en familia #\d+$/ }).click();
   await expect(books).not.toContainText('Salud y bienestar en familia');
 
-  // Se descarta para no dejar el cliente en la base de las pruebas.
+  // Salir sin guardar: el cliente nunca existió.
   await page.getByRole('button', { name: 'Descartar' }).click();
-  await page.getByRole('alertdialog').getByRole('button', { name: 'Descartar' }).click();
+  await page.getByRole('alertdialog').getByRole('button', { name: 'Salir' }).click();
   await expect(page).toHaveURL(/\/clientes$/);
 });

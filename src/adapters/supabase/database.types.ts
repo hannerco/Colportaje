@@ -897,6 +897,10 @@ export type Database = {
       };
       return_copy_from_customer: { Args: { p_copy_id: string; p_reason: string }; Returns: string };
       save_deposit_draft: { Args: { p_deposit: Json }; Returns: string };
+      save_new_customer: {
+        Args: { p_books: Json; p_customer: Json; p_down: Json; p_plan: Json };
+        Returns: string;
+      };
       schedule_single_payment: {
         Args: { p_agreed_amount: number; p_customer_id: string; p_due_date: string; p_payment_id: string };
         Returns: undefined;
