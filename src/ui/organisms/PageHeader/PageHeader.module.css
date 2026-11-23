@@ -10,7 +10,7 @@
 
 /* ─── R1: raíz ─── */
 .title {
-  flex: 1 1 auto;
+  flex: 1 0 auto;
   min-width: 0;
   margin: 0;
   overflow: hidden;
@@ -29,8 +29,12 @@
 
 /* ─── R2: botón de resumen ─── */
 .summary {
+  /* El título de la raíz nunca se corta («Din…»): si falta espacio, cede el botón de resumen. */
   display: inline-flex;
-  flex: none;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
   align-items: center;
   gap: var(--space-2);
   height: var(--size-header-summary);
@@ -92,4 +96,16 @@
 
 :global([data-platform='mobile']) .detailTitle {
   text-align: center;
+}
+
+/* Detalle en el celular sin título (el nombre va en la isla de identidad): «‹ Anterior» a la izquierda, ••• a la derecha. */
+:global([data-platform='mobile']) .header[data-kind='detail'][data-hide-title] .start {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+  color: var(--color-accent-text);
+}
+
+:global([data-platform='mobile']) .header[data-kind='detail'][data-hide-title] .start > * {
+  color: inherit;
 }

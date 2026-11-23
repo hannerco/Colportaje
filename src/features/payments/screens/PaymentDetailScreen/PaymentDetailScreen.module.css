@@ -14,7 +14,7 @@
   display: grid;
   grid-template-columns: max-content max-content minmax(max-content, 1fr);
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
   min-height: var(--size-list-row);
   color: var(--color-text);
   text-decoration: none;
@@ -42,6 +42,7 @@
 /* ─── #72: cabecera del diseño «Detalle de un abono» ─── */
 .stripText {
   display: inline-flex;
+  white-space: nowrap;
   align-items: center;
   gap: var(--space-1);
 }
@@ -156,15 +157,17 @@
 }
 
 :global([data-platform='mobile']) .actions {
+  flex-wrap: nowrap;
   width: 100%;
 }
 
 :global([data-platform='mobile']) .actions > * {
-  flex: 1;
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 /* Si no cabe en una línea (pantalla angosta o letra grande), el estado va debajo de la fecha: nunca encima del valor. */
-@container (max-width: 380px) {
+@container (max-width: 260px) {
   .sibling {
     grid-template-columns: minmax(0, 1fr) max-content;
     padding-block: var(--space-2);

@@ -174,15 +174,15 @@ export const EjemplarPagina: Story = {
   },
 };
 
-/** R4: en móvil, avatar `lg` y título `--text-heading` (el `<h1>` es el del Encabezado). */
+/** R4: en móvil, título `--text-heading`; la portada va grande (`xl`, diseño de Ejemplar móvil). */
 export const EjemplarMovil: Story = {
   name: 'Ejemplar · móvil',
   globals: { platform: 'mobile' },
   play: async ({ canvasElement }) => {
     for (const frame of frames(canvasElement)) {
       const identity = blocks(frame)[1]!;
-      expect(identity.querySelector('[data-size="lg"]')).not.toBeNull();
-      expect(getComputedStyle(identity.querySelector('h2')!).fontSize).toBe('20px');
+      expect(identity.querySelector('[data-size="xl"]')).not.toBeNull();
+      expect(getComputedStyle(identity.querySelector('h1, h2')!).fontSize).toBe('20px');
       expect(frame.querySelector('[aria-label="Volver a Inventario"]')).not.toBeNull();
     }
   },

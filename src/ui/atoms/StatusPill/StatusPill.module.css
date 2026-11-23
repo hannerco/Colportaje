@@ -69,3 +69,28 @@
 .text.accent .icon {
   color: var(--color-accent-text);
 }
+
+/* Pequeña (`sm`): filas angostas del celular. */
+.pill[data-size='sm'] {
+  height: var(--size-tag);
+  gap: var(--space-1);
+  padding: 0 var(--space-2);
+  font-size: var(--text-caption);
+}
+
+/* Forma texto teñida: la palabra con el color del estado. */
+.text[data-tinted].ok {
+  color: var(--color-ok);
+}
+
+.text[data-tinted].bad {
+  color: var(--color-bad);
+}
+
+.text[data-tinted].accent {
+  color: var(--color-accent-text);
+}
+
+.text[data-tinted] {
+  font-size: var(--text-secondary);
+}
