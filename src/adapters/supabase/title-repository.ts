@@ -9,6 +9,10 @@ import { mapPostgrestError, mapStorageError } from './errors';
 
 export const TITLE_IMAGES_BUCKET = 'title-images';
 
+/** La dirección pública de una portada (bucket público), o `null` sin portada (#53). */
+export const titleCoverUrl = (client: AppSupabaseClient, imagePath: string | null): string | null =>
+  imagePath ? client.storage.from(TITLE_IMAGES_BUCKET).getPublicUrl(imagePath).data.publicUrl : null;
+
 const TITLE_COLUMNS =
   'id, name, author, description, image_path, public_price, colportor_price, category, is_active' as const;
 
@@ -31,9 +35,7 @@ const toTitle = (client: AppSupabaseClient, raw: unknown): Title => {
     name: row.name,
     author: row.author,
     description: row.description,
-    imageUrl: row.image_path
-      ? client.storage.from(TITLE_IMAGES_BUCKET).getPublicUrl(row.image_path).data.publicUrl
-      : null,
+    imageUrl: titleCoverUrl(client, row.image_path),
     publicPrice: row.public_price,
     colportorPrice: row.colportor_price,
     category: row.category,

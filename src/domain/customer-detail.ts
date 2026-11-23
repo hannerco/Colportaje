@@ -28,6 +28,8 @@ export type CustomerDetailInput = {
   readonly soldCopies: readonly {
     readonly copyId: string;
     readonly titleName: string;
+    /** Portada del título (#53); `null` sin portada. */
+    readonly titleImageUrl?: string | null;
     readonly category: TitleCategory;
     readonly number: number;
     readonly agreedPrice: COP;
@@ -85,6 +87,8 @@ export type CustomerDetail = {
   readonly books: readonly {
     readonly copyId: string;
     readonly titleName: string;
+    /** Portada del título (#53); sin valor, el cuadro de libro. */
+    readonly titleImageUrl?: string | null;
     readonly number: number;
     readonly agreedPrice: COP;
     readonly publicPriceSnapshot: COP | null;
@@ -183,6 +187,7 @@ export const buildCustomerDetail = (input: CustomerDetailInput, today: LocalDate
     .map((c) => ({
       copyId: c.copyId,
       titleName: c.titleName,
+      titleImageUrl: c.titleImageUrl ?? null,
       number: c.number,
       agreedPrice: c.agreedPrice,
       publicPriceSnapshot: c.publicPriceSnapshot,

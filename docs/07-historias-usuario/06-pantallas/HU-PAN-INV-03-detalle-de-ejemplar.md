@@ -43,6 +43,7 @@ FI-01 (devolver a inventario un ejemplar vendido desde aquí) si no está dibuja
   - **Sin la Franja** «Vendido el … · N días después de recibido» que dice la HU: el lienzo no la dibuja. Anterior / siguiente quedan deshabilitados (el detalle no conoce la lista).
   - **Fuera:** FI-01 (devolver al inventario un vendido, FI no dibujada), editar la fecha de venta (HU-CLI-13 en el back; el lienzo no la hace editable aquí), el modal de abonos que no cuadran tras bajar el precio (FC-05, no dibujado; la franja de la ficha del cliente ya avisa) y los minibooks (FI-09).
 - **2026-11-22 (#29):** en escritorio, abrir una fila ya no va siempre a la página completa: abre la Ventana de detalle de la lista con la forma recordada (Lateral o Centrada), como Clientes; si la forma es Página, va a la página. Desde la página, elegir Lateral o Centrada vuelve a la lista con el registro abierto, en vez de cerrarlo. Story «… › Abrir en la Ventana».
+- **2026-11-22 (#56):** «Vendido el» es editable (calendario, sin días futuros ni antes de recibido), como dibuja el lienzo.
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13.

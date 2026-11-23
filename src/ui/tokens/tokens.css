@@ -266,6 +266,7 @@
   --radius-brand: 9px; /* marca de menos de 40 px; desde 40, --radius-md */
   --avatar-emoji-ratio: 0.72; /* el emoji del avatar mide el 72 % del lado */
   --size-textarea: 104px; /* área de texto del campo (HU-UI-09) */
+  --size-textarea-max: 320px; /* hasta aquí crece el texto largo; luego se desplaza (#54) */
   --opacity-field-disabled: 0.6; /* campo deshabilitado (HU-UI-09) */
   --switch-inset: 2px; /* holgura de la perilla del interruptor (HU-UI-10) */
   --tab-gap: 2px; /* separación de las opciones dentro del carril (HU-UI-11) */

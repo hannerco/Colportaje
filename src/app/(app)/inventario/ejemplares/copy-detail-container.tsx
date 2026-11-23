@@ -13,6 +13,7 @@ import {
   useReturnToLeader,
   useUpdateReceivedDate,
 } from '@/features/inventory';
+import { useUpdateSoldAt } from '@/features/customers';
 import { appErrorMessage } from '@/features/shared/app-error-message';
 import { ROUTES, useAppShell } from '@/features/shell';
 import { systemClock } from '@/lib/clock';
@@ -42,6 +43,7 @@ export function CopyDetailContainer({ copyId: id, window, onDeleted }: Props) {
   const { flagCopy, undoResolveCopyIssue } = useCopyIssueActions();
   const { deleteCopy, undoDeleteCopy } = useDeleteCopy();
   const { undoReturnToLeader } = useReturnToLeader();
+  const { updateSoldAt } = useUpdateSoldAt();
 
   const showError = (error: unknown) =>
     toast.show({ message: appErrorMessage(error).message, tone: 'error' });
@@ -71,6 +73,14 @@ export function CopyDetailContainer({ copyId: id, window, onDeleted }: Props) {
         const result = await updateReceivedDate({ copyId: id, date });
         if (!result.ok) return showError(result.error);
         toast.show({ message: t.done.receivedSaved, tone: 'success' });
+      }}
+      onChangeSoldOn={async (date) => {
+        const result = await updateSoldAt({ copyId: id, soldOn: date });
+        if (!result.ok) {
+          showError(result.error);
+          throw new Error(result.error.code);
+        }
+        toast.show({ message: copy.payments.soldDate.saved, tone: 'success' });
       }}
       onFlag={async (note) => {
         const result = await flagCopy({ copyId: id, note });

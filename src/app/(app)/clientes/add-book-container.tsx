@@ -75,6 +75,7 @@ export function AddBookContainer({ customerId, books, onClose }: Props) {
     return {
       copyId: copy.copyId,
       titleName: copy.titleName,
+      imageUrl: copy.imageUrl ?? book?.titleImageUrl ?? null,
       number: copy.number,
       ...chosenBookValues({
         typed: {

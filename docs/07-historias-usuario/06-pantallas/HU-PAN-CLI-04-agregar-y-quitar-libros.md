@@ -41,6 +41,7 @@ Agregar ejemplares nuevos al inventario (HU-PAN-INV-04).
   - En la ficha, la isla Libros se ve también en un prospecto sin libros, para poder agregarle uno.
 - **2026-11-22 (#31):** al elegir un ejemplar, «Vendido el» muestra la fecha de hoy de inmediato (lo mismo que guarda el servidor al vender), igual que el precio; antes quedaba vacío unos 5 segundos hasta que respondía. Lógica en `chosenBookValues` con su prueba.
 - **2026-11-22 (#36, propuesta 2):** cada libro elegido es un bloque: nombre y número arriba, «Precio público» como referencia y «Precio acordado» y «Vendido el» lado a lado; el grupo se llama «Elegidos para este cliente» con el total a la derecha.
+- **2026-11-22 (#53):** los libros elegidos muestran su portada.
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13.

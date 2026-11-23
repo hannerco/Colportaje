@@ -7,6 +7,7 @@ import type { CopyEvent } from '@/domain/copy';
 import type { CopyDetail, HistoryItem as DomainHistoryItem } from '@/domain/copy-detail';
 import { formatCOP } from '@/domain/money';
 import { formatDate, toBogotaDate, type LocalDate } from '@/domain/time';
+import { SoldDateDialog } from '@/features/payments/components/SoldDateDialog';
 import { DatePickerCalendar } from '@/features/payments';
 import { Button } from '@/ui/atoms/Button';
 import { Choice, ChoiceGroup } from '@/ui/atoms/Choice';
@@ -41,6 +42,8 @@ export type CopyDetailScreenProps = {
   onRestorePrice: () => Promise<void>;
   /** Fecha de recibido (HU-INV-05, FI-05). */
   onChangeReceived: (date: LocalDate) => Promise<void>;
+  /** Corregir la fecha de venta (#56, HU-CLI-13). Si falla, que lance. Sin función, la fecha solo se muestra. */
+  onChangeSoldOn?: (date: LocalDate) => Promise<void>;
   /** Marcar con novedad (nota obligatoria, HU-INV-07) y eliminar (nota, HU-INV-08). */
   onFlag: (note: string) => Promise<void>;
   onDelete: (note: string | null) => Promise<void>;
@@ -93,7 +96,7 @@ export function historyText(item: DomainHistoryItem): string {
   }
 }
 
-type Dialog = null | 'flag' | 'delete' | 'undoReturn' | 'price' | 'received';
+type Dialog = null | 'flag' | 'delete' | 'undoReturn' | 'price' | 'received' | 'sold';
 
 /**
  * Detalle de un ejemplar (HU-PAN-INV-03, diseño «3 · Ejemplar»): identidad con su estado, datos (cliente, precio
@@ -191,7 +194,13 @@ export function CopyDetailScreen(props: CopyDetailScreenProps) {
               />
             ) : null}
             {sold && detail.soldAt && (
-              <DataRow label={t.soldOn} value={formatDate(toBogotaDate(detail.soldAt))} />
+              <DataRow
+                label={t.soldOn}
+                {...(detail.can.editSoldAt && isOnline && props.onChangeSoldOn
+                  ? { kind: 'editable' as const, onEdit: () => setDialog('sold') }
+                  : { kind: 'text' as const })}
+                value={formatDate(toBogotaDate(detail.soldAt))}
+              />
             )}
             {!sold && detail.publicPriceSnapshot !== null && (
               <DataRow
@@ -274,6 +283,20 @@ export function CopyDetailScreen(props: CopyDetailScreenProps) {
           onClose={() => setDialog(null)}
           onSave={props.onChangePrice}
           onRestore={props.onRestorePrice}
+        />
+      )}
+      {dialog === 'sold' && detail.soldAt && props.onChangeSoldOn && (
+        <SoldDateDialog
+          open
+          onOpenChange={(next) => !next && setDialog(null)}
+          bookName={t.title(detail.titleName, detail.number)}
+          current={toBogotaDate(detail.soldAt)}
+          today={props.today}
+          receivedOn={detail.receivedAt}
+          onSave={async (date) => {
+            await props.onChangeSoldOn!(date);
+            setDialog(null);
+          }}
         />
       )}
       {dialog === 'received' && (
