@@ -7,6 +7,7 @@ import type { PlanFrequency } from '@/domain/payment-plan';
 import { formatDate, type LocalDate } from '@/domain/time';
 import { ChangeDueDateDialog } from '@/features/payments/components/ChangeDueDateDialog';
 import { Field } from '@/ui/atoms/Field';
+import { DateField } from '@/ui/molecules/DateField';
 import { StatusPill } from '@/ui/atoms/StatusPill';
 import { Icon } from '@/ui/icons';
 import { SegmentedControl } from '@/ui/molecules/SegmentedControl';
@@ -70,8 +71,8 @@ export function PaymentPlanFields({
           error={preview.amountInvalid ? t.amountInvalid : undefined}
           disabled={disabled}
         />
-        <Field
-          kind="date"
+        <DateField
+          today={today}
           label={t.firstDue}
           placeholder="dd/mm/aaaa"
           value={value.firstDueDate}

@@ -1,0 +1,28 @@
+/* Campo de fecha (#62): el ícono del calendario es un botón del tamaño del ícono, sin borde. */
+.trigger {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  margin: calc(var(--space-1) * -1);
+  padding: var(--space-1);
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--color-text-2);
+  cursor: pointer;
+}
+
+.trigger:hover {
+  background: var(--color-tone);
+  color: var(--color-text);
+}
+
+.trigger:focus-visible {
+  outline: 3px solid var(--color-ring);
+}
+
+.trigger:disabled {
+  color: var(--color-text-3);
+  cursor: default;
+}

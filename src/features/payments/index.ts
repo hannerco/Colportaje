@@ -73,7 +73,6 @@ export {
 } from '@/domain/schedule-excess';
 // Piezas del módulo (HU-PAN-CLI-05).
 export { ChangeDueDateDialog, type ChangeDueDateDialogProps } from './components/ChangeDueDateDialog';
-export { DatePickerCalendar, type DatePickerCalendarProps } from './components/DatePickerCalendar';
 // HU-PAN-DIN-02: detalle de un abono, cobrar y dar más plazo.
 export {
   PaymentDetailScreen,

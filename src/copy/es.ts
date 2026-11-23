@@ -146,7 +146,39 @@ export const copy = {
       text: (module: string) => `${module} todavía no está listo. Lo verás aquí cuando esté terminado.`,
     },
     /** Campo de contraseña (Iniciar sesión, HU-PAN-BASE-02): ver u ocultar lo escrito. */
-    field: { showPassword: 'Mostrar', hidePassword: 'Ocultar' },
+    field: {
+      showPassword: 'Mostrar',
+      hidePassword: 'Ocultar',
+      /** #62: el ícono del campo de fecha abre el calendario. */
+      openCalendar: 'Abrir calendario',
+      pickDate: 'Elegir fecha',
+    },
+    /** Calendario para elegir fecha (HU-PAN-CLI-05; en la biblioteca desde #62). */
+    calendar: {
+      weekdays: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
+      months: [
+        'enero',
+        'febrero',
+        'marzo',
+        'abril',
+        'mayo',
+        'junio',
+        'julio',
+        'agosto',
+        'septiembre',
+        'octubre',
+        'noviembre',
+        'diciembre',
+      ],
+      month: (name: string, year: number) => `${name} de ${year}`,
+      /** Nombre de cada día para el lector; contiene el número visible («5 de diciembre de 2026»). */
+      day: (day: number, month: string, year: number) => `${day} de ${month} de ${year}`,
+      previous: 'Mes anterior',
+      next: 'Mes siguiente',
+      /** Junto al día: otro abono del cliente cae ese día. */
+      otherPayment: 'otro abono',
+    },
+
     /** Buscador (HU-UI-12). */
     search: {
       label: 'Buscar',
@@ -560,30 +592,6 @@ export const copy = {
       saved: 'Fecha de venta guardada',
     },
     /** Calendario para elegir fecha (diseño «6 · Cambiar fecha de abono»); la semana empieza el domingo (BR-GEN-07). */
-    calendar: {
-      weekdays: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
-      months: [
-        'enero',
-        'febrero',
-        'marzo',
-        'abril',
-        'mayo',
-        'junio',
-        'julio',
-        'agosto',
-        'septiembre',
-        'octubre',
-        'noviembre',
-        'diciembre',
-      ],
-      month: (name: string, year: number) => `${name} de ${year}`,
-      /** Nombre de cada día para el lector; contiene el número visible («5 de diciembre de 2026»). */
-      day: (day: number, month: string, year: number) => `${day} de ${month} de ${year}`,
-      previous: 'Mes anterior',
-      next: 'Mes siguiente',
-      /** Junto al día: otro abono del cliente cae ese día. */
-      otherPayment: 'otro abono',
-    },
     changeDate: {
       /** El botón de la fecha en la lista de abonos. */
       open: (date: string) => `Cambiar fecha, ${date}`,

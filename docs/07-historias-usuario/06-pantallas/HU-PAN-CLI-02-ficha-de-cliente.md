@@ -50,6 +50,7 @@ Cliente con deuda y abonos (Pagando) · Vencido · Saldado con saldo a favor · 
   - **«Lo programado supera el saldo en $X»** lleva el monto, como en FLOWS.
 - **2026-11-22 (#35, #34):** isla Abonos como el diseño aceptado: fecha (en rojo con «hace N días» si venció) · Pastilla · valor y medio de pago con ícono a la derecha; **Cobrar** en cada abono por cobrar (CollectPaymentDialog, con Deshacer) y **Programar abono** en la cabecera (`SchedulePaymentsDialog`: Plan sobre lo sin programar o Un abono, propuesta 7). El avatar abre el selector de emoji.
 - **2026-11-22 (#53, #56):** cada libro vendido muestra su portada y «Vendido el …», que abre el calendario para corregir la fecha (`SoldDateDialog`, HU-CLI-13).
+- **2026-11-22 (#61):** la ficha de un cliente guardado (no archivado) muestra la isla de factura de Nuevo cliente: «Foto de la factura» si no tiene, «Agregar otra factura» si ya tiene, más fotos por factura y su N.º y fecha (se guardan solos un momento después). Archivado: la factura solo se ve. Prueba: stories «Agregar factura» y «Archivado sin agregar factura».
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E «Archivar y restaurar» (TESTING.md, flujo 14) pasa.

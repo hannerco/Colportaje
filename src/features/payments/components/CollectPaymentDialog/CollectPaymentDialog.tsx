@@ -8,6 +8,7 @@ import type { PayMethod } from '@/domain/payment';
 import { formatDate, type LocalDate } from '@/domain/time';
 import { Choice, ChoiceGroup } from '@/ui/atoms/Choice';
 import { Field } from '@/ui/atoms/Field';
+import { DateField } from '@/ui/molecules/DateField';
 import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
 import styles from './CollectPaymentDialog.module.css';
 
@@ -78,8 +79,9 @@ export function CollectPaymentDialog({
       <div className={styles.form}>
         <div className={styles.fields}>
           <Field kind="money" label={t.paidAmount} value={amount} onChange={setAmount} error={amountError} />
-          <Field
-            kind="date"
+          <DateField
+            noFuture
+            today={today}
             label={t.paidAt}
             placeholder="dd/mm/aaaa"
             value={date}
