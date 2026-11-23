@@ -62,10 +62,10 @@ test('sin permiso de ubicación el selector abre igual y pide ubicar el pin a ma
   await expect(picker).toContainText('Sin permiso de ubicación. Ubica el pin a mano.');
   await expect(picker.getByRole('button', { name: 'Centrar en tu ubicación actual' })).toHaveCount(0);
 
-  // Se deja sin guardar: descartar el cliente de la prueba.
+  // Se sale sin guardar (#57).
   await page.keyboard.press('Escape');
   await expect(picker).toBeHidden();
   await page.getByRole('button', { name: 'Descartar' }).click();
-  await page.getByRole('alertdialog').getByRole('button', { name: 'Descartar' }).click();
+  await page.getByRole('alertdialog').getByRole('button', { name: 'Salir' }).click();
   await expect(page).toHaveURL(/\/clientes$/);
 });
