@@ -263,6 +263,24 @@ export const SinConexion: Story = {
 
 export const Matriz: Story = { parameters: { frames: 'matrix' } };
 
+/**
+ * #29 (corrección del dueño, 2026-11-22): en escritorio, un clic en un ejemplar no navega a su página: lo abre en la
+ * Ventana de detalle de la lista, con la forma recordada (como Clientes).
+ */
+export const AbrirEnLaVentana: Story = {
+  name: 'Abrir en la Ventana',
+  globals: { platform: 'desktop' },
+  args: { onOpenCopy: fn() },
+  play: async ({ canvasElement, args }) => {
+    const onOpen = args.onOpenCopy as ReturnType<typeof fn>;
+    for (const frame of frames(canvasElement)) {
+      onOpen.mockClear();
+      await userEvent.click(frame.querySelector<HTMLAnchorElement>('a[href^="#ejemplar-"]')!);
+      expect(onOpen).toHaveBeenCalledTimes(1);
+    }
+  },
+};
+
 /** #27: misma distancia encabezado → pestañas que en Libros en físico (56 + 12), así no hay salto al cambiar. */
 export const SinSaltoAlCambiarDeSeccion: Story = {
   name: 'Sin salto al cambiar de sección',

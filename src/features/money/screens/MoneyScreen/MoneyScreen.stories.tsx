@@ -87,6 +87,7 @@ type DemoProps = Partial<
     | 'summary'
     | 'onCollectPayment'
     | 'onExtendPayment'
+    | 'onOpenPayment'
   >
 > & { initial?: Partial<PaymentsListParams>; empty?: boolean };
 
@@ -324,3 +325,21 @@ export const SinConexion: Story = {
 };
 
 export const Matriz: Story = { parameters: { frames: 'matrix' } };
+
+/**
+ * #29 (corrección del dueño, 2026-11-22): en escritorio, un clic en el cliente de un abono no navega a su página: lo
+ * abre en la Ventana de detalle de Dinero, con la forma recordada (como Clientes).
+ */
+export const AbrirEnLaVentana: Story = {
+  name: 'Abrir en la Ventana',
+  globals: { platform: 'desktop' },
+  args: { onOpenPayment: fn() },
+  play: async ({ canvasElement, args }) => {
+    const onOpen = args.onOpenPayment as ReturnType<typeof fn>;
+    for (const frame of [...canvasElement.querySelectorAll<HTMLElement>('figure.sb-frame')]) {
+      onOpen.mockClear();
+      await userEvent.click(frame.querySelector<HTMLAnchorElement>('tbody a')!);
+      expect(onOpen).toHaveBeenCalledTimes(1);
+    }
+  },
+};

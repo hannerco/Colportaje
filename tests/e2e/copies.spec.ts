@@ -12,7 +12,7 @@ test('la lista muestra los ejemplares con su estado y tocar uno abre el Ejemplar
   await expect(first).toBeVisible();
   await expect(list(page)).toContainText('Salud y bienestar en familia');
   await first.click();
-  await expect(page).toHaveURL(/\/inventario\/ejemplares\/[0-9a-f-]+$/);
+  await expect(page).toHaveURL(/\/inventario\/ejemplares(\/[0-9a-f-]+$|\?(.*&)?ejemplar=[0-9a-f-]+)/);
 });
 
 test('CA-1: buscar un número trae solo ese ejemplar y la vista queda en la URL', async ({ page }) => {

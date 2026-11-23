@@ -40,6 +40,7 @@ Por cobrar vencido · Por cobrar al día · Cobrado · Entregado (bloqueado, con
   - **Dar más plazo:** `ChangeDueDateDialog` en modo prórroga con nota opcional (`withNote`) y confirmación a más de 2 meses.
   - **Deslizar (CA-5):** en la lista de Dinero (móvil), un abono por cobrar muestra «Cobrar» (a la izquierda) y «Más plazo» (a la derecha) con `SwipeRow`; llevan a `/dinero/abonos/[id]?accion=cobrar|plazo`, que abre el mismo formulario.
   - **Fuera / pendiente:** el modal de abonos que no cuadran al cobrar de más (FD-07; el lienzo no lo dibuja): solo se avisa «Cobras $X más de lo acordado»; el abono abierto desde la ficha (diseño «7», reemplaza el contenido de la ventana de la ficha); el Historial solo trae «Cobrado» (las prórrogas con fecha y nota, la programación y la entrega no se leen en el contrato del back: pide una HU de lectura del historial del abono); la edición del valor cobrado desde el detalle (el lienzo lo dibuja como botón; se corrige desde la ficha).
+- **2026-11-22 (#29):** en escritorio, abrir una fila ya no va siempre a la página completa: abre la Ventana de detalle de la lista con la forma recordada (Lateral o Centrada), como Clientes; si la forma es Página, va a la página. Desde la página, elegir Lateral o Centrada vuelve a la lista con el registro abierto, en vez de cerrarlo. Story «… › Abrir en la Ventana».
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E «Cobrar un abono, parcial, y prórroga» (TESTING.md, flujo 4) pasa.

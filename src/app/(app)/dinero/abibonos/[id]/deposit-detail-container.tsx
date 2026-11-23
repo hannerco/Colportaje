@@ -5,6 +5,7 @@ import { copy } from '@/copy/es';
 import { newId } from '@/lib/ids';
 import {
   DepositDetailScreen,
+  type DepositDetailScreenProps,
   useAddDepositReceipt,
   useDeposit,
   useReopenDeposit,
@@ -21,8 +22,17 @@ const t = copy.money.depositDetail;
 /**
  * Un Abibono entregado (HU-PAN-DIN-05): lo muestra tal como quedó, guarda la nota y los recibos nuevos y lo reabre con
  * un motivo. Al reabrir, la lectura se actualiza y la ruta pasa a mostrar su edición (HU-PAN-DIN-04).
+ *
+ * Con `window`, va dentro de la Ventana de detalle de la lista (escritorio, forma Lateral o Centrada); sin ella, es la
+ * página `/dinero/abibonos/[id]`, y elegir Lateral o Centrada vuelve a la lista con el Abibono abierto (#29).
  */
-export function DepositDetailContainer({ depositId }: { depositId: string }) {
+export function DepositDetailContainer({
+  depositId,
+  window,
+}: {
+  depositId: string;
+  window?: DepositDetailScreenProps['window'];
+}) {
   const router = useRouter();
   const toast = useToast();
   const { isOnline } = useAppShell();
@@ -43,14 +53,16 @@ export function DepositDetailContainer({ depositId }: { depositId: string }) {
       notFound={saved.isError && saved.error instanceof AppFailure && saved.error.error.code === 'NOT_FOUND'}
       onRetry={() => void saved.refetch()}
       isOnline={isOnline}
-      window={{
-        mode: 'page',
-        breadcrumb: { label: t.breadcrumb, href: ROUTES.deposits },
-        onClose: () => router.push(ROUTES.deposits),
-        onModeChange: (mode) => {
-          if (mode !== 'page') router.push(ROUTES.deposits);
-        },
-      }}
+      window={
+        window ?? {
+          mode: 'page',
+          breadcrumb: { label: t.breadcrumb, href: ROUTES.deposits },
+          onClose: () => router.push(ROUTES.deposits),
+          onModeChange: (mode) => {
+            if (mode !== 'page') router.push(ROUTES.depositInList(depositId));
+          },
+        }
+      }
       paymentHref={ROUTES.payment}
       onAddReceipt={async (file) => {
         const result = await addDepositReceipt({ depositId, photoId: newId(), file });
@@ -78,5 +90,5 @@ export function DepositDetailContainer({ depositId }: { depositId: string }) {
       }}
     />
   );
-  return mobile ? screen : <ShellScreenRoute>{screen}</ShellScreenRoute>;
+  return window || mobile ? screen : <ShellScreenRoute>{screen}</ShellScreenRoute>;
 }
