@@ -27,6 +27,7 @@ Con borradores y entregados · ⓘ abierto · Vacío · Cargando · Sin conexió
   - **Tabla como pieza del módulo (`DepositsTable`),** con el mismo criterio que decidió el dueño para los abonos (2026-11-19, HU-PAN-DIN-01): columnas del lienzo Nombre · Fecha · Total · Efectivo · Transferencia · Estado · Recibo; en móvil, filas de dos líneas. Se anota en el README para que el diseño agregue el tipo «abibono» a la Fila de lista.
   - **Estado:** Pastilla «Borrador» o «Entregado» con candado; el borrador sin número muestra «Abibono (n)» con el siguiente libre (I-29). Vacío con «Entregar al líder» (CA-3).
   - **Fuera / pendiente:** abrir una fila lleva al armazón de `/dinero/abibonos/[id]` hasta HU-PAN-DIN-04 (borrador) y HU-PAN-DIN-05 (entregado); en la pestaña de vistas solo hay «Todos», porque la barra de vista de la biblioteca exige pestañas.
+- **2026-11-22 (#29):** en escritorio, abrir una fila ya no va siempre a la página completa: abre la Ventana de detalle de la lista con la forma recordada (Lateral o Centrada), como Clientes; si la forma es Página, va a la página. Desde la página, elegir Lateral o Centrada vuelve a la lista con el registro abierto, en vez de cerrarlo. Story «… › Abrir en la Ventana».
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13.

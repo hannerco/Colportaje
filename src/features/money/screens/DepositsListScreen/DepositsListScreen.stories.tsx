@@ -56,7 +56,10 @@ const DEPOSITS: MoneyDeposit[] = [
 ];
 
 type DemoProps = Partial<
-  Pick<DepositsListScreenProps, 'isOnline' | 'loading' | 'error' | 'banner' | 'onDeliver' | 'onOpenPayments'>
+  Pick<
+    DepositsListScreenProps,
+    'isOnline' | 'loading' | 'error' | 'banner' | 'onDeliver' | 'onOpenPayments' | 'onOpenDeposit'
+  >
 > & { deposits?: MoneyDeposit[]; summary?: DepositsListScreenProps['summary'] };
 
 /** La pantalla con su vista local, como el contenedor (que la guarda en la URL). */
@@ -211,3 +214,21 @@ export const SinConexion: Story = {
 };
 
 export const Matriz: Story = { parameters: { frames: 'matrix' } };
+
+/**
+ * #29 (corrección del dueño, 2026-11-22): en escritorio, un clic en el nombre de un Abibono no navega a su página: lo
+ * abre en la Ventana de detalle de la lista, con la forma recordada (como Clientes).
+ */
+export const AbrirEnLaVentana: Story = {
+  name: 'Abrir en la Ventana',
+  globals: { platform: 'desktop' },
+  args: { onOpenDeposit: fn() },
+  play: async ({ canvasElement, args }) => {
+    const onOpen = args.onOpenDeposit as ReturnType<typeof fn>;
+    for (const frame of [...canvasElement.querySelectorAll<HTMLElement>('figure.sb-frame')]) {
+      onOpen.mockClear();
+      await userEvent.click(frame.querySelector<HTMLAnchorElement>('tbody a')!);
+      expect(onOpen).toHaveBeenCalledTimes(1);
+    }
+  },
+};

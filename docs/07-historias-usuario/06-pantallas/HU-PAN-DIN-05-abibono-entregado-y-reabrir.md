@@ -28,6 +28,7 @@ Entregado · Reabrir (diálogo con motivo) · Con diferencia y nota · Móvil.
   - **Reabrir:** en Más acciones (como pide esta HU), con el diálogo del lienzo «Reabrir Abibono (n)»: Motivo obligatorio (sin motivo avisa «Escribe el motivo.» y no se confirma). Al reabrir, la lectura se actualiza y la misma ruta abre su edición (HU-PAN-DIN-04); conserva su número (I-31) y sus abonos vuelven a Cobrado.
   - **E2E:** flujo 13 a continuación del 5 (nota, reabrir con y sin motivo, y volver a entregar con el recibo que ya tenía).
   - **Fuera / pendiente:** el lienzo dibuja «Reabrir» como botón visible en el panel; aquí va en Más acciones, como dice la HU y «discreto» según BR-DEP-12.
+- **2026-11-22 (#29):** en escritorio, abrir una fila ya no va siempre a la página completa: abre la Ventana de detalle de la lista con la forma recordada (Lateral o Centrada), como Clientes; si la forma es Página, va a la página. Desde la página, elegir Lateral o Centrada vuelve a la lista con el registro abierto, en vez de cerrarlo. Story «… › Abrir en la Ventana».
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E «Reabrir un Abibono» (TESTING.md, flujo 13) pasa.

@@ -13,6 +13,10 @@ export type DepositsTableProps = {
   rows: readonly DepositsListRow[];
   /** Ruta del Abibono (borrador: HU-PAN-DIN-04; entregado: HU-PAN-DIN-05). */
   depositHref: (depositId: string) => string;
+  /** Escritorio (#29): un clic normal en el nombre abre el Abibono en la Ventana de detalle. */
+  onOpen?: (depositId: string) => void;
+  /** El Abibono abierto en la Ventana (fila resaltada). */
+  selectedId?: string;
   'aria-label': string;
 };
 
@@ -26,7 +30,13 @@ const pillOf = (row: DepositsListRow) => (
  * Efectivo · Transferencia · Estado · Recibo; en móvil, filas de dos líneas con el total, el nombre y la fecha. El
  * Abibono entregado lleva la Pastilla con candado; el borrador, la suya con borde punteado.
  */
-export function DepositsTable({ rows, depositHref, 'aria-label': ariaLabel }: DepositsTableProps) {
+export function DepositsTable({
+  rows,
+  depositHref,
+  onOpen,
+  selectedId,
+  'aria-label': ariaLabel,
+}: DepositsTableProps) {
   const mobile = usePlatform() === 'mobile';
   if (mobile)
     return (
@@ -67,9 +77,32 @@ export function DepositsTable({ rows, depositHref, 'aria-label': ariaLabel }: De
       </thead>
       <tbody>
         {rows.map((row) => (
-          <tr key={row.depositId} className={styles.row}>
+          <tr
+            key={row.depositId}
+            className={styles.row}
+            aria-current={row.depositId === selectedId || undefined}
+            data-selected={row.depositId === selectedId || undefined}
+          >
             <td>
-              <a className={styles.link} href={depositHref(row.depositId)}>
+              <a
+                className={styles.link}
+                href={depositHref(row.depositId)}
+                onClick={
+                  onOpen &&
+                  ((event) => {
+                    if (
+                      event.button !== 0 ||
+                      event.metaKey ||
+                      event.ctrlKey ||
+                      event.shiftKey ||
+                      event.altKey
+                    )
+                      return;
+                    event.preventDefault();
+                    onOpen(row.depositId);
+                  })
+                }
+              >
                 {row.title}
               </a>
             </td>

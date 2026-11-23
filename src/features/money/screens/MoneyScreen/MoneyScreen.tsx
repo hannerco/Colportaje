@@ -52,6 +52,11 @@ export type MoneyScreenProps = {
   customerHref: (customerId: string) => string;
   /** Ruta de Dinero (vuelta de la hoja de resumen en móvil). */
   backHref: string;
+  /** Escritorio (#29): abrir un abono en la Ventana de detalle (forma Lateral o Centrada). */
+  onOpenPayment?: (paymentId: string) => void;
+  /** El abono abierto (fila resaltada) y la Ventana con su detalle. */
+  selectedId?: string;
+  detail?: ReactNode;
 };
 
 const t = copy.money.list;
@@ -224,6 +229,7 @@ export function MoneyScreen(props: MoneyScreenProps) {
         }
         state={state}
         emptyState={emptyState}
+        detail={props.detail}
       >
         {params.view === 'to_collect' && summary && (
           <div className={styles.scheduled}>
@@ -268,6 +274,8 @@ export function MoneyScreen(props: MoneyScreenProps) {
             rows={rows}
             grouped={params.view === 'all'}
             paymentHref={props.paymentHref}
+            onOpen={props.onOpenPayment}
+            selectedId={props.selectedId}
             onCollect={props.onCollectPayment}
             onExtend={props.onExtendPayment}
             isOnline={isOnline}

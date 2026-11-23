@@ -25,6 +25,9 @@ import { usePlatform } from '@/ui/platform';
 
 const t = copy.money.depositEditor;
 
+/** En la URL de la lista (`?abibono=nuevo`), el Nuevo Abibono abierto en la Ventana de detalle (#29). */
+export const NEW_DEPOSIT = 'nuevo';
+
 type StagedWithPreview = { photoId: string; thumbUrl: string; staged: StagedReceipt };
 
 /**
@@ -32,7 +35,14 @@ type StagedWithPreview = { photoId: string; thumbUrl: string; staged: StagedRece
  * cobrado libre (no se escribe nada hasta guardar o confirmar; los recibos subidos viajan como `stagedReceipts`, R7);
  * con `depositId`, el borrador guardado (los recibos se crean en el momento). Confirmar y guardar vuelven a la lista.
  */
-export function DepositEditorContainer({ depositId }: { depositId?: string }) {
+export function DepositEditorContainer({
+  depositId,
+  window,
+}: {
+  depositId?: string;
+  /** Con ella va dentro de la Ventana de detalle de la lista (escritorio); sin ella es la página (#29). */
+  window?: DepositEditorScreenProps['window'];
+}) {
   const router = useRouter();
   const toast = useToast();
   const { isOnline } = useAppShell();
@@ -116,14 +126,17 @@ export function DepositEditorContainer({ depositId }: { depositId?: string }) {
       }
       onRetry={() => void (draftOpen ? saved.refetch() : proposal.refetch())}
       isOnline={isOnline}
-      window={{
-        mode: 'page',
-        breadcrumb: { label: t.breadcrumb, href: ROUTES.deposits },
-        onClose: () => router.push(ROUTES.deposits),
-        onModeChange: (mode) => {
-          if (mode !== 'page') router.push(ROUTES.deposits);
-        },
-      }}
+      window={
+        window ?? {
+          mode: 'page',
+          breadcrumb: { label: t.breadcrumb, href: ROUTES.deposits },
+          onClose: () => router.push(ROUTES.deposits),
+          // #29: Lateral o Centrada vuelve a la lista con este Abibono (o el nuevo) abierto, en vez de cerrarlo.
+          onModeChange: (mode) => {
+            if (mode !== 'page') router.push(ROUTES.depositInList(depositId ?? NEW_DEPOSIT));
+          },
+        }
+      }
       canDelete={view?.can.delete}
       onAddReceipt={async (file) => {
         const photoId = newId();
@@ -179,5 +192,5 @@ export function DepositEditorContainer({ depositId }: { depositId?: string }) {
       }}
     />
   );
-  return mobile ? screen : <ShellScreenRoute>{screen}</ShellScreenRoute>;
+  return window || mobile ? screen : <ShellScreenRoute>{screen}</ShellScreenRoute>;
 }

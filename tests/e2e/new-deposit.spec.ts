@@ -50,7 +50,8 @@ test('flujo 5: se precarga con lo cobrado, se guarda y borra un borrador, y con 
   // CA-5: con el recibo, «Marcar como entregado» lo deja Entregado.
   // Desde «Entregar al líder» (sin recargar: la lectura ya se actualizó al borrar el borrador).
   await page.getByRole('button', { name: 'Entregar al líder' }).first().click();
-  await expect(page).toHaveURL(/\/dinero\/abibonos\/nuevo$/);
+  // En escritorio se abre en la Ventana de la lista (#29); con la forma Página, en su ruta.
+  await expect(page).toHaveURL(/\/dinero\/abibonos(\/nuevo$|\?(.*&)?abibono=nuevo)/);
   await expect(page.getByRole('checkbox', { name: 'Abibono E2E' }).first()).toBeChecked();
   await page
     .getByTestId('receipt-input')
@@ -74,7 +75,7 @@ test('flujo 13: un Abibono entregado se ve como quedó, se edita su nota, se rea
   await page.goto('/dinero/abibonos');
   const table = page.getByRole('table', { name: 'Abibonos' });
   await table.getByRole('row').filter({ hasText: 'Entregado' }).getByRole('link').first().click();
-  await expect(page).toHaveURL(/\/dinero\/abibonos\/[0-9a-f-]{36}$/);
+  await expect(page).toHaveURL(/\/dinero\/abibonos(\/[0-9a-f-]{36}$|\?(.*&)?abibono=[0-9a-f-]{36})/);
   const title = page.getByRole('heading', { name: /^Abibono \(\d+\)$/ }).first();
   await expect(title).toBeVisible();
   const name = (await title.textContent())!;

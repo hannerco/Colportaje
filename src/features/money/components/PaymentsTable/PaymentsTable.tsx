@@ -18,6 +18,10 @@ export type PaymentsTableProps = {
   grouped?: boolean;
   /** Ruta del detalle del abono (HU-PAN-DIN-02). */
   paymentHref: (paymentId: string) => string;
+  /** Escritorio (#29): un clic normal en el cliente abre el abono en la Ventana de detalle en vez de ir a la página. */
+  onOpen?: (paymentId: string) => void;
+  /** El abono abierto en la Ventana (fila resaltada). */
+  selectedId?: string;
   /**
    * Móvil: deslizar un abono por cobrar a la izquierda muestra «Cobrar» y a la derecha «Más plazo»; llevan al mismo
    * formulario del detalle (CA-5). Sin conexión se ven deshabilitados.
@@ -45,6 +49,8 @@ export function PaymentsTable({
   rows,
   grouped = false,
   paymentHref,
+  onOpen,
+  selectedId,
   onCollect,
   onExtend,
   isOnline = true,
@@ -80,7 +86,12 @@ export function PaymentsTable({
       </thead>
       <tbody>
         {rows.map((row) => (
-          <tr key={row.paymentId} className={styles.row}>
+          <tr
+            key={row.paymentId}
+            className={styles.row}
+            aria-current={row.paymentId === selectedId || undefined}
+            data-selected={row.paymentId === selectedId || undefined}
+          >
             <td>
               <span className={styles.customer}>
                 <Avatar
@@ -88,7 +99,25 @@ export function PaymentsTable({
                   emoji={row.customer.avatarEmoji ?? undefined}
                   decorative
                 />
-                <a className={styles.link} href={paymentHref(row.paymentId)}>
+                <a
+                  className={styles.link}
+                  href={paymentHref(row.paymentId)}
+                  onClick={
+                    onOpen &&
+                    ((event) => {
+                      if (
+                        event.button !== 0 ||
+                        event.metaKey ||
+                        event.ctrlKey ||
+                        event.shiftKey ||
+                        event.altKey
+                      )
+                        return;
+                      event.preventDefault();
+                      onOpen(row.paymentId);
+                    })
+                  }
+                >
                   {row.customer.name}
                 </a>
                 {row.customer.archived && <span className={styles.muted}>{t.archivedCustomer}</span>}

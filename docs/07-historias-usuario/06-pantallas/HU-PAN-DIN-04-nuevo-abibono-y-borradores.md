@@ -40,6 +40,7 @@ Precargado sin recibo · Con diferencia (nota obligatoria) · Listo para confirm
   - **Recibo (`ReceiptPhotos`, pieza del módulo):** miniaturas con «Quitar», «Añadir foto» / «Añadir otra» (cámara o galería) y, si la subida falla, una Franja con «Reintentar». En la propuesta, los recibos viajan como `stagedReceipts` al guardar o confirmar (R7); en un borrador se crean al subirlos.
   - **Borrar:** «Más acciones ▸ Borrar» solo en un borrador que nunca se confirmó, con `ConfirmDialog` de peligro; sus fotos se borran y sus abonos quedan libres (CA-4).
   - **Fuera / pendiente:** la sección Minibooks (oculta, FD-10); elegir la forma lateral o centrada de la ventana (como el resto de rutas propias, es página); abrir el Abibono ya entregado (HU-PAN-DIN-05).
+- **2026-11-22 (#29):** desde la lista de Abibonos en escritorio, «Entregar al líder» y los borradores se abren en la Ventana de detalle con la forma recordada (`?abibono=nuevo` o `?abibono=id`); desde la página, elegir Lateral o Centrada vuelve a la lista con el Abibono abierto.
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E «Abibono completo» (TESTING.md, flujo 5) pasa.

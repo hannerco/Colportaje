@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useCallback, useMemo } from 'react';
+import { copy } from '@/copy/es';
 import type { PaymentsListParams } from '@/domain/payments-list';
 import {
   DEFAULT_DEPOSITS_LIST_PARAMS,
@@ -14,11 +15,18 @@ import {
   useUnscheduledCustomers,
 } from '@/features/money';
 import { ROUTES, useAppShell } from '@/features/shell';
+import { readStoredDetailWindowMode } from '@/ui/organisms/DetailWindow';
+import { usePlatform } from '@/ui/platform';
+import { PaymentDetailContainer } from './abonos/payment-detail-container';
+
+/** El abono abierto en la Ventana de detalle va en la URL (`?abono=id`): «atrás» la cierra. */
+const OPEN = 'abono';
 
 /**
  * Contenedor de Dinero: resumen y abonos de clientes (HU-PAN-DIN-01). La vista vive en la URL y todo sale de la misma
  * lectura (funciona sin conexión). «Entregar al líder» abre Nuevo Abibono (HU-PAN-DIN-04); una fila abre el abono
- * (HU-PAN-DIN-02).
+ * (HU-PAN-DIN-02): en escritorio, en la Ventana de detalle con la forma recordada; si es «Página», o en el celular, en
+ * su página (#29, igual que Clientes).
  */
 function MoneyRoute() {
   const { nav, isOnline, offlineBanner } = useAppShell();
@@ -33,15 +41,28 @@ function MoneyRoute() {
   const summary = useMoneySummary();
   const unscheduled = useUnscheduledCustomers();
   const deposits = useDepositsList(DEFAULT_DEPOSITS_LIST_PARAMS);
+  const platform = usePlatform();
+  const selectedId = searchParams.get(OPEN) ?? undefined;
 
-  // La vista se escribe en la URL sin agregar pasos al historial y sin ir al servidor (también sin conexión).
-  const onParamsChange = useCallback(
-    (next: PaymentsListParams) => {
-      const text = paymentsListParamsToUrl(next).toString();
-      window.history.replaceState(null, '', text ? `${pathname}?${text}` : pathname);
+  const urlFor = useCallback(
+    (next: PaymentsListParams, open: string | undefined) => {
+      const query = paymentsListParamsToUrl(next);
+      if (open) query.set(OPEN, open);
+      const text = query.toString();
+      return text ? `${pathname}?${text}` : pathname;
     },
     [pathname],
   );
+
+  // La vista se escribe en la URL sin agregar pasos al historial y sin ir al servidor (también sin conexión).
+  const onParamsChange = useCallback(
+    (next: PaymentsListParams) => window.history.replaceState(null, '', urlFor(next, selectedId)),
+    [urlFor, selectedId],
+  );
+  const select = (id: string | undefined) => window.history.replaceState(null, '', urlFor(params, id));
+
+  const rows = list.data?.rows ?? [];
+  const index = rows.findIndex((row) => row.paymentId === selectedId);
 
   return (
     <MoneyScreen
@@ -64,6 +85,30 @@ function MoneyRoute() {
       onExtendPayment={(id) => router.push(`${ROUTES.payment(id)}?accion=plazo`)}
       customerHref={ROUTES.customer}
       backHref={ROUTES.money}
+      selectedId={selectedId}
+      onOpenPayment={(id) =>
+        platform === 'mobile' || readStoredDetailWindowMode() === 'page'
+          ? router.push(ROUTES.payment(id))
+          : select(id)
+      }
+      detail={
+        selectedId && platform === 'desktop' ? (
+          <PaymentDetailContainer
+            key={selectedId}
+            paymentId={selectedId}
+            window={{
+              breadcrumb: { label: copy.ui.nav.items.money, href: ROUTES.money },
+              onClose: () => select(undefined),
+              onPrev: index > 0 ? () => select(rows[index - 1]!.paymentId) : undefined,
+              onNext:
+                index >= 0 && index < rows.length - 1 ? () => select(rows[index + 1]!.paymentId) : undefined,
+              onModeChange: (mode) => {
+                if (mode === 'page') router.push(ROUTES.payment(selectedId));
+              },
+            }}
+          />
+        ) : undefined
+      }
     />
   );
 }
