@@ -553,6 +553,16 @@ export const copy = {
   },
   /** Abonos (HU-PAN-CLI-05). */
   payments: {
+    /** Cambiar la fecha de venta de un libro (#56, HU-CLI-13). */
+    soldDate: {
+      title: 'Fecha de venta',
+      message: (book: string, date: string) => `${book} · hoy dice ${date}`,
+      label: (date: string) => `Vendido el ${date}`,
+      change: (date: string) => `Vendido el ${date}, cambiar`,
+      save: 'Guardar',
+      cancel: 'Cancelar',
+      saved: 'Fecha de venta guardada',
+    },
     /** Calendario para elegir fecha (diseño «6 · Cambiar fecha de abono»); la semana empieza el domingo (BR-GEN-07). */
     calendar: {
       weekdays: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],

@@ -13,6 +13,7 @@ import {
   useCustomerDetail,
   useRestoreCustomer,
   useUpdateCustomer,
+  useUpdateSoldAt,
   SchedulePaymentsDialog,
   type CustomerDetailScreenProps,
 } from '@/features/customers';
@@ -60,6 +61,7 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
   const { clearCustomerLocation } = useClearCustomerLocation();
   const { addCustomerInfoPhoto } = useAddCustomerInfoPhoto();
   const { updateCustomer } = useUpdateCustomer();
+  const { updateSoldAt } = useUpdateSoldAt();
   const { collectPayment } = useCollectPayment();
   const { undoCollectPayment } = useUndoCollectPayment();
   const { applyPaymentPlan } = useApplyPaymentPlan();
@@ -125,6 +127,14 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
         onAvatarChange={async (avatarEmoji) => {
           const result = await updateCustomer({ id: customerId, patch: { avatarEmoji } });
           if (!result.ok) showError(result.error);
+        }}
+        onChangeSoldOn={async (copyId, soldOn) => {
+          const result = await updateSoldAt({ copyId, soldOn });
+          if (!result.ok) {
+            showError(result.error);
+            throw new Error(result.error.code);
+          }
+          toast.show({ message: copy.payments.soldDate.saved, tone: 'success' });
         }}
         onCollect={setCollecting}
         onSchedule={() => setScheduling(true)}

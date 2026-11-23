@@ -216,6 +216,7 @@ function CopyRow({
   return (
     <ListRow
       kind="copy"
+      avatar={{ kind: 'cover', coverUrl: row.imageUrl ?? undefined }}
       title={row.titleName}
       copyNumber={row.number}
       amount={row.price ?? undefined}
