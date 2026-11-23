@@ -10,7 +10,7 @@ const openFirstPayment = async (page: Page, project: string) => {
     .getByRole('link', { name: new RegExp(`Prórroga ${project}`) })
     .first()
     .click();
-  await expect(page).toHaveURL(/\/dinero\/abonos\//);
+  await expect(page).toHaveURL(/\/dinero(\/abonos\/|\?(.*&)?abono=)/);
 };
 
 test('CA-1 y CA-3: abrir un abono por cobrar, cobrarlo con los valores por defecto y «Deshacer» lo devuelve a por cobrar', async ({

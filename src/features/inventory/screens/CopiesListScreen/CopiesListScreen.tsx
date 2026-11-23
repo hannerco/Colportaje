@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import type { MouseEvent, ReactNode } from 'react';
 import { copy } from '@/copy/es';
 import {
   type CopiesListParams,
@@ -36,7 +36,20 @@ export type CopiesListScreenProps = {
   inStockCount?: number;
   /** Volver a «Libros en físico». */
   onOpenInStock: () => void;
+  /**
+   * Abrir un ejemplar con un clic normal (#29): el contenedor decide si va en la Ventana de detalle (escritorio, forma
+   * Lateral o Centrada) o en su página. Sin función, la fila es solo el enlace a la página.
+   */
+  onOpenCopy?: (copyId: string) => void;
+  /** El ejemplar abierto en la Ventana (fila resaltada). */
+  selectedId?: string;
+  /** La Ventana de detalle con el ejemplar abierto (escritorio). */
+  detail?: ReactNode;
 };
+
+/** Un clic normal abre el ejemplar en la app; con Ctrl, Cmd o Mayús el enlace se abre como siempre. */
+const plainClick = (event: MouseEvent) =>
+  event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 
 const t = copy.inventory;
 const VIEWS: CopiesView[] = ['all', 'in_stock', 'sold', 'price_changed'];
@@ -66,6 +79,9 @@ export function CopiesListScreen({
   copyHref,
   inStockCount,
   onOpenInStock,
+  onOpenCopy,
+  selectedId,
+  detail,
 }: CopiesListScreenProps) {
   const set = (patch: Partial<CopiesListParams>) => onParamsChange({ ...params, ...patch });
   const rows = view?.rows ?? [];
@@ -152,6 +168,7 @@ export function CopiesListScreen({
       banner={banner}
       state={state}
       emptyState={emptyState}
+      detail={detail}
     >
       <ListTable kind="copy" aria-label={t.copies.tabsLabel}>
         <ListRow
@@ -162,7 +179,21 @@ export function CopiesListScreen({
           groupCount={rows.length}
         />
         {rows.map((row) => (
-          <CopyRow key={row.copyId} row={row} dateKind={dateKind} href={copyHref(row.copyId)} />
+          <CopyRow
+            key={row.copyId}
+            row={row}
+            dateKind={dateKind}
+            href={copyHref(row.copyId)}
+            selected={row.copyId === selectedId}
+            onOpen={
+              onOpenCopy &&
+              ((event) => {
+                if (!plainClick(event)) return;
+                event.preventDefault();
+                onOpenCopy(row.copyId);
+              })
+            }
+          />
         ))}
       </ListTable>
     </ListTemplate>
@@ -173,10 +204,14 @@ function CopyRow({
   row,
   dateKind,
   href,
+  selected,
+  onOpen,
 }: {
   row: CopiesListRow;
   dateKind: 'received' | 'sold';
   href: string;
+  selected: boolean;
+  onOpen?: (event: MouseEvent) => void;
 }) {
   return (
     <ListRow
@@ -190,6 +225,8 @@ function CopyRow({
       status={row.status}
       priceDelta={row.priceDelta ?? undefined}
       href={href}
+      selected={selected}
+      onOpen={onOpen}
     />
   );
 }

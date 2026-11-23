@@ -12,7 +12,7 @@ test('un ejemplar vendido muestra su cliente, el precio y el historial, y no se 
     .getByRole('link', { name: /Salud y bienestar en familia/ })
     .first()
     .click();
-  await expect(page).toHaveURL(/\/inventario\/ejemplares\/[0-9a-f-]+$/);
+  await expect(page).toHaveURL(/\/inventario\/ejemplares(\/[0-9a-f-]+$|\?(.*&)?ejemplar=[0-9a-f-]+)/);
 
   await expect(page.getByText(/Vendido a Prórroga/).first()).toBeVisible();
   await expect(page.getByText('Precio acordado').first()).toBeVisible();
@@ -33,7 +33,7 @@ test('CA-2: eliminar un ejemplar en físico con nota y «Deshacer» lo devuelve'
   const before = await rows.count();
   // Cada proyecto toma uno distinto: corren a la vez contra la misma base.
   await (testInfo.project.name === 'mobile' ? rows.first() : rows.last()).click();
-  await expect(page).toHaveURL(/\/inventario\/ejemplares\/[0-9a-f-]+$/);
+  await expect(page).toHaveURL(/\/inventario\/ejemplares(\/[0-9a-f-]+$|\?(.*&)?ejemplar=[0-9a-f-]+)/);
 
   await page.getByRole('button', { name: 'Más acciones' }).click();
   await page.getByRole('menuitem', { name: 'Eliminar' }).click();

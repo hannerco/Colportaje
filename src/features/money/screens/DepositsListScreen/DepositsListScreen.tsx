@@ -40,6 +40,11 @@ export type DepositsListScreenProps = {
   depositHref: (depositId: string) => string;
   /** Ruta de Dinero (vuelta de la hoja de resumen en móvil). */
   backHref: string;
+  /** Escritorio (#29): abrir un Abibono en la Ventana de detalle (forma Lateral o Centrada). */
+  onOpenDeposit?: (depositId: string) => void;
+  /** El Abibono abierto (fila resaltada) y la Ventana con su detalle. */
+  selectedId?: string;
+  detail?: ReactNode;
 };
 
 const t = copy.money.deposits;
@@ -155,6 +160,7 @@ export function DepositsListScreen(props: DepositsListScreenProps) {
         }
         state={state}
         emptyState={emptyState}
+        detail={props.detail}
       >
         <div className={styles.total}>
           <span className={styles.totalLabel}>{t.totalDelivered}</span>
@@ -185,7 +191,13 @@ export function DepositsListScreen(props: DepositsListScreenProps) {
             {tipOpen === 'total' ? t.totalDeliveredTip : t.infoTip}
           </p>
         )}
-        <DepositsTable rows={rows} depositHref={props.depositHref} aria-label={t.listLabel} />
+        <DepositsTable
+          rows={rows}
+          depositHref={props.depositHref}
+          onOpen={props.onOpenDeposit}
+          selectedId={props.selectedId}
+          aria-label={t.listLabel}
+        />
       </ListTemplate>
       {chrome.sheet}
     </>
