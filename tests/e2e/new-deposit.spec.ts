@@ -80,7 +80,7 @@ test('flujo 13: un Abibono entregado se ve como quedó, se edita su nota, se rea
   await expect(title).toBeVisible();
   const name = (await title.textContent())!;
 
-  // CA-1: solo se edita la nota; «Reabrir» está en Más acciones.
+  // CA-1: solo se edita la nota; «Reabrir» va en la barra de abajo (#71).
   await expect(page.getByRole('button', { name: 'Marcar como entregado' })).toHaveCount(0);
   await expect(page.getByRole('link', { name: /Abibono E2E/ }).first()).toBeVisible();
   const note = page.getByRole('textbox', { name: /Nota/ });
@@ -89,8 +89,7 @@ test('flujo 13: un Abibono entregado se ve como quedó, se edita su nota, se rea
   await expect(page.getByText('Nota guardada')).toBeVisible();
 
   // CA-2: sin motivo no se reabre; con motivo vuelve a borrador y conserva su número.
-  await page.getByRole('button', { name: 'Más acciones' }).click();
-  await page.getByRole('menuitem', { name: 'Reabrir' }).click();
+  await page.getByRole('button', { name: 'Reabrir', exact: true }).click();
   const dialog = page.getByRole('alertdialog');
   await dialog.getByRole('button', { name: 'Reabrir' }).click();
   await expect(dialog.getByText('Escribe el motivo.')).toBeVisible();

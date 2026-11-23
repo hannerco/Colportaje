@@ -1065,6 +1065,10 @@ export const copy = {
       date: 'Fecha',
       payments: 'Abonos',
       paymentsAll: 'Todos',
+      /** #71: quitar todos los abonos marcados. */
+      paymentsNone: 'Ninguno',
+      include: 'Incluir',
+      includePayment: (name: string) => `Incluir abono de ${name}`,
       paymentInclude: (customer: string) => `Incluir abono de ${customer}`,
       columns: { customer: 'Cliente', paidAt: 'Fecha real', method: 'Método', amount: 'Valor real' },
       methods: { cash: 'Efectivo', transfer: 'Transferencia' },
@@ -1120,6 +1124,18 @@ export const copy = {
       },
     },
     /** Abibono entregado y reabrir (HU-PAN-DIN-05, diseño «3 · Abibonos»: Dinero-d-confirmado, -reabrir). */
+    /** #71: piezas comunes del Abibono (diseño «AbibonoPanel»). */
+    depositPanel: {
+      total: 'Total',
+      payments: (n: number) => (n === 1 ? '1 abono' : `${n} abonos`),
+      paymentsTitle: 'Abonos',
+      selected: (n: number, of: number) => `${n} de ${of} seleccionados`,
+      columns: { customer: 'Cliente', paidAt: 'Fecha real', method: 'Método', amount: 'Valor real' },
+      locked: 'Bloqueado',
+      toDeliver: 'Lo que entregas',
+      receipt: 'Recibo',
+      balance: 'Cuadre',
+    },
     depositDetail: {
       breadcrumb: 'Dinero',
       moreActions: 'Más acciones',

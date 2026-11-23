@@ -102,7 +102,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Abibono entregado y reabrir (HU-PAN-DIN-05): el Abibono tal como quedó, de solo lectura (título, fecha, montos y abonos bloqueados) salvo la nota y los recibos nuevos. La nota no puede quedar vacía si hay diferencia. «Reabrir», en Más acciones, pide un motivo obligatorio y devuelve el Abibono a borrador con su número y sus abonos a Cobrado.',
+          'Abibono entregado y reabrir (HU-PAN-DIN-05): el Abibono tal como quedó, de solo lectura (título, fecha, montos y abonos bloqueados) salvo la nota y los recibos nuevos. La nota no puede quedar vacía si hay diferencia. #71: sigue el diseño aceptado; «Reabrir», en la barra de abajo, pide un motivo obligatorio y devuelve el Abibono a borrador con su número y sus abonos a Cobrado.',
       },
     },
   },
@@ -119,22 +119,18 @@ const button = (root: Element, name: string | RegExp) =>
   });
 const lastDialog = (root: HTMLElement) =>
   [...root.querySelectorAll<HTMLElement>('[role="alertdialog"]')].at(-1)!;
+/** #71: «Reabrir» va en la barra de abajo (diseño aceptado). */
 const openReopen = async (frame: HTMLElement, root: HTMLElement) => {
-  await userEvent.click(button(frame, 'Más acciones')!);
-  const item = await waitFor(() => {
-    const found = [...root.ownerDocument.querySelectorAll<HTMLElement>('[role="menuitem"]')].find((i) =>
-      i.textContent?.includes('Reabrir'),
-    );
-    expect(found).toBeDefined();
-    return found!;
-  });
-  await userEvent.click(item);
+  await userEvent.click(button(frame, 'Reabrir')!);
   return waitFor(() => lastDialog(root));
 };
 
 export const Explorar: Story = {};
 
-/** CA-1: solo la nota se edita; «Reabrir» está en Más acciones y no hay botón de quitar recibos. */
+/**
+ * CA-1: solo la nota se edita y no hay botón de quitar recibos. #71 (diseño aceptado): cabecera con el total y el
+ * desglose por medio, Abonos con candado, Lo que entregas, Recibo, Cuadre y «Reabrir» en la barra de abajo.
+ */
 export const Entregado: Story = {
   play: async ({ canvasElement }) => {
     for (const frame of frames(canvasElement)) {
@@ -146,8 +142,10 @@ export const Entregado: Story = {
       expect(frame.querySelectorAll('textarea')).toHaveLength(1);
       expect(frame.querySelectorAll('input:not([type="file"])')).toHaveLength(0);
       expect(button(frame, /^Quitar foto/)).toBeUndefined();
-      expect(button(frame, 'Más acciones')).toBeDefined();
-      expect(button(frame, 'Reabrir')).toBeUndefined();
+      expect(button(frame, 'Reabrir')).toBeDefined();
+      expect(frame.textContent).toContain('5 abonos');
+      for (const title of ['Lo que entregas', 'Recibo', 'Cuadre'])
+        expect(frame.querySelector(`section[aria-label="${title}"]`)).not.toBeNull();
     }
   },
 };
@@ -250,15 +248,7 @@ export const SinConexion: Story = {
   globals: { platform: 'desktop' },
   play: async ({ canvasElement }) => {
     const frame = frames(canvasElement)[0]!;
-    await userEvent.click(button(frame, 'Más acciones')!);
-    const item = await waitFor(() => {
-      const found = [...canvasElement.ownerDocument.querySelectorAll<HTMLElement>('[role="menuitem"]')].find(
-        (i) => i.textContent?.includes('Reabrir'),
-      );
-      expect(found).toBeDefined();
-      return found!;
-    });
-    expect(item.getAttribute('aria-disabled') === 'true' || item.hasAttribute('data-disabled')).toBe(true);
+    expect(button(frame, 'Reabrir')).toHaveAttribute('aria-disabled', 'true');
   },
 };
 
