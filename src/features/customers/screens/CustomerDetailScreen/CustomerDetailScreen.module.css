@@ -90,6 +90,11 @@
 }
 
 /* ─── Abonos ─── */
+/* #66: la fila se acomoda al ancho de la isla (ventana lateral, pantalla angosta), no al aparato. */
+.paymentList {
+  container-type: inline-size;
+}
+
 .payment {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
@@ -237,6 +242,23 @@
 .dateButton:focus-visible {
   outline: 3px solid var(--color-ring);
   outline-offset: 2px;
+}
+
+/* #66: si la isla es angosta, el estado va debajo de la fecha: nunca encima del valor. */
+@container (max-width: 560px) {
+  .payment {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .paymentState {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .paymentSide {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
 }
 
 /* En el celular, el estado va debajo de la fecha para que quepa el valor. */

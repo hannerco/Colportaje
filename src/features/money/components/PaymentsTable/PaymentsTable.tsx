@@ -7,6 +7,7 @@ import type { PaymentsListRow } from '@/domain/payments-list';
 import { formatDate } from '@/domain/time';
 import { SwipeRow } from '@/features/inventory';
 import { Avatar } from '@/ui/atoms/Avatar';
+import { Button } from '@/ui/atoms/Button';
 import { StatusPill } from '@/ui/atoms/StatusPill';
 import { Icon } from '@/ui/icons';
 import { usePlatform } from '@/ui/platform';
@@ -82,6 +83,11 @@ export function PaymentsTable({
               {t.columns[column]}
             </th>
           ))}
+          {onCollect && (
+            <th scope="col">
+              <span className={styles.visuallyHidden}>{t.columns.actions}</span>
+            </th>
+          )}
         </tr>
       </thead>
       <tbody>
@@ -134,6 +140,21 @@ export function PaymentsTable({
             <td>{day(row.paidAt)}</td>
             <td className={styles.end}>{cop(row.paidAmount)}</td>
             <td>{row.method ? <Method method={row.method} /> : copy.ui.listRow.empty}</td>
+            {onCollect && (
+              <td className={styles.end}>
+                {row.canCollect && (
+                  <Button
+                    variant="secondary"
+                    size="compact"
+                    state={isOnline ? 'normal' : 'disabled'}
+                    aria-label={d.swipe.collect(row.customer.name)}
+                    onClick={() => onCollect(row.paymentId)}
+                  >
+                    {d.collect}
+                  </Button>
+                )}
+              </td>
+            )}
           </tr>
         ))}
       </tbody>

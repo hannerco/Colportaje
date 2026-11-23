@@ -991,6 +991,8 @@ export const copy = {
         paidAt: 'Fecha real',
         paidAmount: 'Valor real',
         method: 'Método',
+        /** #70: la columna de «Cobrar» (solo para el lector). */
+        actions: 'Acciones',
       },
       overdue: (days: number) => (days === 1 ? 'hace 1 día' : `hace ${days} días`),
       overdueStatus: (days: number) => (days === 1 ? 'Vencido · hace 1 día' : `Vencido · hace ${days} días`),

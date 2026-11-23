@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useCallback, useMemo } from 'react';
+import { Suspense, useCallback, useMemo, useState } from 'react';
 import { copy } from '@/copy/es';
 import type { PaymentsListParams } from '@/domain/payments-list';
 import {
@@ -43,6 +43,8 @@ function MoneyRoute() {
   const deposits = useDepositsList(DEFAULT_DEPOSITS_LIST_PARAMS);
   const platform = usePlatform();
   const selectedId = searchParams.get(OPEN) ?? undefined;
+  /** #70: «Cobrar» en la tabla abre el abono en la Ventana con el formulario de cobro ya abierto. */
+  const [collectOnOpen, setCollectOnOpen] = useState<string | null>(null);
 
   const urlFor = useCallback(
     (next: PaymentsListParams, open: string | undefined) => {
@@ -81,7 +83,12 @@ function MoneyRoute() {
       onOpenDeposits={() => router.push(ROUTES.deposits)}
       onDeliver={() => router.push(ROUTES.newDeposit)}
       paymentHref={ROUTES.payment}
-      onCollectPayment={(id) => router.push(`${ROUTES.payment(id)}?accion=cobrar`)}
+      onCollectPayment={(id) => {
+        if (platform === 'mobile' || readStoredDetailWindowMode() === 'page')
+          return router.push(`${ROUTES.payment(id)}?accion=cobrar`);
+        setCollectOnOpen(id);
+        select(id);
+      }}
       onExtendPayment={(id) => router.push(`${ROUTES.payment(id)}?accion=plazo`)}
       customerHref={ROUTES.customer}
       backHref={ROUTES.money}
@@ -94,11 +101,15 @@ function MoneyRoute() {
       detail={
         selectedId && platform === 'desktop' ? (
           <PaymentDetailContainer
-            key={selectedId}
+            key={`${selectedId}-${collectOnOpen === selectedId}`}
             paymentId={selectedId}
+            initialForm={collectOnOpen === selectedId ? 'collect' : null}
             window={{
               breadcrumb: { label: copy.ui.nav.items.money, href: ROUTES.money },
-              onClose: () => select(undefined),
+              onClose: () => {
+                setCollectOnOpen(null);
+                select(undefined);
+              },
               onPrev: index > 0 ? () => select(rows[index - 1]!.paymentId) : undefined,
               onNext:
                 index >= 0 && index < rows.length - 1 ? () => select(rows[index + 1]!.paymentId) : undefined,
