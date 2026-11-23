@@ -163,31 +163,35 @@ export function InStockScreen(props: InStockScreenProps) {
 
   return (
     <div className={styles.screen} data-shape={mobile ? 'mobile' : 'desktop'}>
-      <div className={styles.head}>
-        <PageHeader
-          kind="root"
-          title={t.title}
-          primaryAction={{ label: t.add, icon: 'add', onClick: props.onAdd, disabled: !isOnline }}
-        />
-        {mobile && returnToLeader}
-      </div>
-      <div className={styles.toolbar}>
-        <Tabs
-          variant="segmented"
-          aria-label={t.sections.label}
-          width={mobile ? undefined : 'auto'}
-          value="inStock"
-          onValueChange={(value) => {
-            if (value === 'copies') props.onOpenCopies();
-          }}
-          items={[
-            { id: 'inStock', label: t.sections.inStock, count: total },
-            { id: 'copies', label: t.sections.copies, count: props.copiesCount },
-          ]}
-        />
-        {!mobile && flaggedButton}
-        {!mobile && <span className={styles.spacer} />}
-        {!mobile && returnToLeader}
+      {/* #27: encabezado y pestañas con el mismo ritmo que la Plantilla de lista (Ejemplares), para que al cambiar de
+          sección nada salte aunque uno tenga «Agregar» y el otro no. */}
+      <div className={styles.top}>
+        <div className={styles.head}>
+          <PageHeader
+            kind="root"
+            title={t.title}
+            primaryAction={{ label: t.add, icon: 'add', onClick: props.onAdd, disabled: !isOnline }}
+          />
+          {mobile && returnToLeader}
+        </div>
+        <div className={styles.toolbar}>
+          <Tabs
+            variant="segmented"
+            aria-label={t.sections.label}
+            width={mobile ? undefined : 'auto'}
+            value="inStock"
+            onValueChange={(value) => {
+              if (value === 'copies') props.onOpenCopies();
+            }}
+            items={[
+              { id: 'inStock', label: t.sections.inStock, count: total },
+              { id: 'copies', label: t.sections.copies, count: props.copiesCount },
+            ]}
+          />
+          {!mobile && flaggedButton}
+          {!mobile && <span className={styles.spacer} />}
+          {!mobile && returnToLeader}
+        </div>
       </div>
       {props.banner}
       {mobile && flaggedButton}

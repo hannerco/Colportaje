@@ -9,6 +9,13 @@
   gap: var(--space-3);
 }
 
+/* Como `.top` de la Plantilla de lista: encabezado y pestañas a 12 (#27). */
+.top {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
 .head {
   display: flex;
   align-items: center;

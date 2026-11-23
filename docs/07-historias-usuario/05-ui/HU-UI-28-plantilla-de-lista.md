@@ -69,7 +69,7 @@ Los datos ni los criterios de filtro y orden de cada módulo (los dan las pantal
 - **CA-5.** **Dado** una fila abierta en escritorio, **entonces** la `DetailWindow` se ve y la fila tiene `aria-current`.
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-22 (#28):** en escritorio el contenido va en una tarjeta junto a la barra lateral, como en la ficha Lib-Plantilla-Lista: margen 12 (arriba, derecha y abajo), radio 20, borde de tarjeta, sombra `--shadow-panel` y relleno 28/32; el fondo de alrededor es el de la barra lateral. Story «Plantillas/Lista › Tarjeta de contenido».
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13.
