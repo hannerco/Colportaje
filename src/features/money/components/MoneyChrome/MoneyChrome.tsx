@@ -54,16 +54,16 @@ export function useMoneyChrome(options: MoneyChromeOptions): {
   );
 
   return {
-    header:
-      mobile && summary
-        ? {
-            summary: {
-              label: t.summaryLabel,
-              amount: summary.toDeliver.total,
-              onOpen: () => setSheetOpen(true),
-            },
-          }
-        : {},
+    // #39: en escritorio también es el botón de resumen (como en el celular); el panel grande ya no ocupa la pantalla.
+    header: summary
+      ? {
+          summary: {
+            label: t.summaryLabel,
+            amount: summary.toDeliver.total,
+            onOpen: () => setSheetOpen(true),
+          },
+        }
+      : {},
     sections: (
       <div className={styles.sections}>
         <Tabs
@@ -83,24 +83,23 @@ export function useMoneyChrome(options: MoneyChromeOptions): {
         />
       </div>
     ),
-    aboveList: !mobile && (
-      <>
-        {block}
-        {infoOpen && (
-          <p role="status" className={styles.tip}>
-            {t.toDeliverTip}
-          </p>
-        )}
-      </>
-    ),
-    sheet: mobile && sheetOpen && summary && (
+    aboveList: null,
+    // En el celular es la hoja de abajo; en el computador, la Ventana lateral (la hoja se vuelve lateral, HU-UI-27).
+    sheet: sheetOpen && summary && (
       <DetailWindow
         mode="sheet"
         title={t.summaryTitle}
         breadcrumb={{ label: t.title, href: options.backHref }}
         onClose={() => setSheetOpen(false)}
       >
-        <div className={styles.sheet}>{block}</div>
+        <div className={styles.sheet}>
+          {block}
+          {infoOpen && (
+            <p role="status" className={styles.tip}>
+              {t.toDeliverTip}
+            </p>
+          )}
+        </div>
       </DetailWindow>
     ),
   };

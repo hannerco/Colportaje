@@ -1,7 +1,5 @@
 // HU-PAN-DIN-01 · Dinero: resumen y abonos de clientes, de punta a punta en móvil y escritorio.
-import { expect, test, type Page } from '@playwright/test';
-
-const isMobile = (page: Page) => page.viewportSize()!.width < 768;
+import { expect, test } from '@playwright/test';
 
 test('muestra Dinero con sus pestañas, y Por cobrar lista los abonos de los clientes con plan', async ({
   page,
@@ -17,22 +15,17 @@ test('muestra Dinero con sus pestañas, y Por cobrar lista los abonos de los cli
   await expect(page.getByRole('link', { name: /Prórroga (mobile|desktop)/ }).first()).toBeVisible();
 });
 
-test('CA-4: en móvil «Por entregar» abre la hoja del resumen; en escritorio el resumen está arriba', async ({
+test('CA-4 y #39: «Por entregar» abre el resumen (hoja en móvil, ventana lateral en escritorio)', async ({
   page,
 }) => {
   await page.goto('/dinero');
-  if (isMobile(page)) {
-    await page
-      .getByRole('button', { name: /^Por entregar/ })
-      .first()
-      .click();
-    const sheet = page.getByRole('dialog');
-    await expect(sheet).toContainText('Dinero total');
-    await expect(sheet.getByRole('button', { name: 'Entregar al líder' })).toBeVisible();
-  } else {
-    await expect(page.getByText('Dinero total')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Entregar al líder' })).toBeVisible();
-  }
+  await page
+    .getByRole('button', { name: /^Por entregar/ })
+    .first()
+    .click();
+  const sheet = page.getByRole('dialog');
+  await expect(sheet).toContainText('Dinero total');
+  await expect(sheet.getByRole('button', { name: 'Entregar al líder' })).toBeVisible();
 });
 
 test('buscar un cliente filtra la lista sin cambiar los conteos de las pestañas', async ({ page }) => {

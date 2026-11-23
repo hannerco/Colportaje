@@ -91,28 +91,46 @@
 
 /* ─── Abonos ─── */
 .payment {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) 0;
 }
 
-.paymentMain {
+/* #35 (diseño de la ficha): fecha · estado · valor y medio de pago (o «Cobrar») a la derecha. */
+.paymentWhen {
   display: flex;
-  flex: 1 1 auto;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-1);
   min-width: 0;
 }
 
+.paymentState {
+  display: flex;
+}
+
 .paymentSide {
   display: flex;
-  flex: none;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+.amountBlock {
+  display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: var(--space-1);
+}
+
+.method {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
 }
 
 .date,
@@ -219,4 +237,19 @@
 .dateButton:focus-visible {
   outline: 3px solid var(--color-ring);
   outline-offset: 2px;
+}
+
+/* En el celular, el estado va debajo de la fecha para que quepa el valor. */
+.screen[data-shape='mobile'] .payment {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.screen[data-shape='mobile'] .paymentState {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.screen[data-shape='mobile'] .paymentSide {
+  grid-column: 2;
+  grid-row: 1 / span 2;
 }

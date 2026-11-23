@@ -1,0 +1,19 @@
+/* Panel flotante (#34, #39). */
+.panel {
+  z-index: var(--layer-overlay);
+  width: var(--popover-width);
+  max-height: var(--popover-max-height);
+  overflow-y: auto;
+  padding: var(--space-4);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-panel);
+  box-shadow: var(--shadow-modal);
+  color: var(--color-text);
+}
+
+.title {
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-heading);
+  font-weight: var(--weight-heading);
+}

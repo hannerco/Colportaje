@@ -5,6 +5,7 @@
 }
 
 .list {
+  position: relative;
   display: flex;
   gap: var(--tab-gap);
   padding: var(--space-1);
@@ -73,10 +74,47 @@
 }
 
 .tab[data-state='active'] {
-  background: var(--color-active-bg);
-  box-shadow: var(--shadow-control);
   color: var(--color-accent-text);
   font-weight: var(--weight-strong);
+}
+
+/* #37: el fondo de la activa es un indicador que se desliza; antes de medirlo (primer cuadro), lo pinta la opción. */
+.tab {
+  z-index: 1;
+  transition: color var(--motion-duration) var(--motion-ease);
+}
+
+.list:not([data-indicator]) .tab[data-state='active'] {
+  background: var(--color-active-bg);
+  box-shadow: var(--shadow-control);
+}
+
+.indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--indicator-w, 0);
+  height: var(--indicator-h, 0);
+  border-radius: var(--radius-pill);
+  background: var(--color-active-bg);
+  box-shadow: var(--shadow-control);
+  transform: translate(var(--indicator-x, 0), var(--indicator-y, 0));
+  pointer-events: none;
+}
+
+.list[data-variant='segmented'] .indicator {
+  border-radius: var(--radius-segment);
+}
+
+.list:not([data-indicator]) .indicator {
+  visibility: hidden;
+}
+
+.list[data-indicator] .indicator {
+  transition:
+    transform var(--motion-duration) var(--motion-ease),
+    width var(--motion-duration) var(--motion-ease),
+    height var(--motion-duration) var(--motion-ease);
 }
 
 .tab[data-state='active'] .count {

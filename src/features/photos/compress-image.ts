@@ -26,15 +26,45 @@ async function encodeUnder(
   image: DecodedImage,
   maxLongSide: number,
   targetBytes: number,
+  square = false,
 ): Promise<Blob> {
   const size = fitWithin(image.width, image.height, maxLongSide);
+  // #40: un lienzo cuadrado del lado mayor; la imagen centrada y lo demás transparente.
+  const side = Math.max(size.width, size.height);
+  const frame = square ? { width: side, height: side } : undefined;
   let quality = QUALITY_START;
-  let blob = await codec.encodeWebp(image, size, quality);
+  let blob = await codec.encodeWebp(image, size, quality, frame);
   while (blob.size > targetBytes && quality - QUALITY_STEP >= QUALITY_MIN) {
     quality -= QUALITY_STEP;
-    blob = await codec.encodeWebp(image, size, quality);
+    blob = await codec.encodeWebp(image, size, quality, frame);
   }
   return blob;
+}
+
+/**
+ * Portada de un título (#40): cuadrada de 600 × 600 (~60 KB) y miniatura de 160 × 160 (~8 KB), con el libro entero
+ * centrado sobre fondo transparente. Errores: `IMAGE_UNREADABLE`, `IMAGE_ENCODING_FAILED`.
+ */
+export async function compressCover(
+  codec: ImageCodec,
+  file: Blob,
+  settings: typeof businessConfig.covers = businessConfig.covers,
+): Promise<Result<CompressedPhoto, AppError>> {
+  const image = await codec.decode(file);
+  if (!image) return err(appError(PHOTO_ERROR_CODES.IMAGE_UNREADABLE));
+  try {
+    const full = await encodeUnder(codec, image, settings.sidePx, settings.targetBytes, true);
+    const thumb = await encodeUnder(
+      codec,
+      image,
+      settings.thumbnailSidePx,
+      settings.thumbnailTargetBytes,
+      true,
+    );
+    return ok({ full, thumb, fullBytes: full.size, thumbBytes: thumb.size });
+  } catch {
+    return err(appError(PHOTO_ERROR_CODES.IMAGE_ENCODING_FAILED));
+  }
 }
 
 /**

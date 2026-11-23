@@ -295,6 +295,10 @@
   --panel-padding-top: 28px;
   --panel-padding-x: 32px;
   --panel-padding-bottom: 32px;
+  --size-emoji-badge: 24px; /* lápiz del avatar con emoji (#34) */
+  --size-photo-add: 56px; /* botón «Foto de la factura» (#32) */
+  --popover-width: 400px; /* panel flotante (#34, #39) */
+  --popover-max-height: 480px;
   --sidebar-padding: 12px;
   --size-sidebar-item: 34px;
   --size-nav-square: 22px; /* cuadro de «Nuevo cliente» */
@@ -380,6 +384,7 @@
   --size-header-summary: 36px;
   --radius-island: 18px; /* isla (HU-UI-22) */
   --island-gap: 14px; /* espacio entre los bloques de una isla: campos, listas, mapa (#26, lienzo CrearV5) */
+  --size-island-status: 20px;
   --radius-window: 20px; /* ventana de detalle (HU-UI-27) */
   --island-padding: 18px 24px 10px;
 }
@@ -425,6 +430,7 @@
   --size-header-summary: 40px;
   --radius-island: 16px;
   --island-gap: 14px;
+  --size-island-status: 20px;
   --radius-window: 16px;
   --island-padding: 14px 16px 8px;
 }
@@ -471,8 +477,24 @@
     --size-header-summary: 40px;
     --radius-island: 16px;
     --island-gap: 14px;
+    --size-island-status: 20px;
     --radius-window: 16px;
     --island-padding: 14px 16px 8px;
+  }
+}
+
+/* ─── Movimiento (#37, #38) ─────────────────────────────────────────────────────────────────────────
+ * El fondo de la opción activa se desliza a la nueva; con «Reducir movimiento» el cambio es inmediato. */
+:root {
+  --motion-duration: 220ms;
+  --motion-duration-fade: 150ms;
+  --motion-ease: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration: 0ms;
+    --motion-duration-fade: 0ms;
   }
 }
 

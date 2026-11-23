@@ -67,6 +67,17 @@ export const businessConfig = deepFreeze({
   },
 
   /**
+   * Portadas de los títulos (DT-10 cerrada, ronda 32, #40): cuadradas de 600 × 600 a ~60 KB en WebP. Si la foto no es
+   * cuadrada se centra y el resto queda transparente: nunca se recorta el libro.
+   */
+  covers: {
+    sidePx: 600,
+    targetBytes: 60_000,
+    thumbnailSidePx: 160,
+    thumbnailTargetBytes: 8_000,
+  },
+
+  /**
    * BR-CUS-07: umbral de la búsqueda difusa (Fuse.js: 0 = exacto, 1 = cualquier cosa). Fijado en HU-CLI-05 con
    * su prueba (src/domain/customer-search.test.ts): con 0,3 se toleran errores de una o dos letras ("maria
    * gomes", "cardenaz") y no aparece ruido ("carlos" no trae a "Marcos", que sí aparece con 0,35).

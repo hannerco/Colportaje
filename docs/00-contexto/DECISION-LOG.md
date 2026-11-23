@@ -552,6 +552,22 @@ El dueño revisó las 27 interpretaciones de `07-historias-usuario/INTERPRETACIO
 | 2 | Admin del catálogo | **"crea en admin un CRUD para poder modificar las cosas, añadirle autor, ponerle una imágen de portada"** [D] HU-PAN-ADM-01, sin diseño del lienzo y armada con la biblioteca (como Iniciar sesión). «Borrar» = **desactivar** (BR-TIT-03). Admin deja de mostrar «Próximamente» |
 | 3 | Recargar el catálogo | [D derivada] El script no borra autor, descripción ni portada que se pusieron en Admin: el archivo manda en nombres y precios; Admin, en lo demás |
 
+
+## Ronda 34 — Correcciones de la iteración 1 del front (2026-11-22)
+
+El dueño probó la app y reportó 14 mejoras (issues #24 a #44). Decisiones:
+
+| # | Tema | Resultado |
+|---|---|---|
+| 1 | Cómo se deciden los diseños nuevos | **"Las animaciones sí puedes inventarlas tú … La jerarquía, confío en que uses los tokens … muéstrame tus propuestas en Claude de diseño"** y luego **"No tengo tiempo para revisar el diseño que hiciste. Impleméntalo y sube todo a producción"**. [D] Las 8 propuestas de la pestaña «Propuestas» del lienzo se programan sin revisión previa; el dueño corrige después por *issues*. Las piezas nuevas (Botones segmentados, Panel flotante, factura, selector de emoji) se piden subir a la biblioteca |
+| 2 | Portadas (DT-10, cerrada) | **"que la convierta en algo cuadrado … para que siempre se vea cuadrado pero se alcance a ver todo el libro"** + **"opción a"**. [D] Cuadradas de **600 × 600 (~60 KB)** y miniatura de **160 × 160 (~8 KB)** en WebP; si la foto no es cuadrada se **centra sin recortar** y lo demás queda **transparente** (toma el color de la tarjeta en claro y oscuro). BR-TIT-02 |
+| 3 | Tema claro u oscuro | **"por dispositivo"**. [D] Ajustes ofrece «Como el teléfono», «Claro» y «Oscuro»; se guarda solo en ese dispositivo (no en el perfil) y se aplica antes del primer pintado |
+| 4 | Entrar | **"solo google"** + **"inícialo desde ya"**. [D] Se entra **solo con Google**; nadie se registra solo: el admin **autoriza un correo** y solo ese correo entra. Sin contraseñas, sin «Cambiar contraseña» y sin servicio de correo (**"correcto, no pongamos cambiar contraseña, y sin servicio de correo por ahora"**). Cambian BR-USR-01, BR-USR-02 y BR-USR-05. Hasta que el dueño configure Google, la entrada con contraseña sigue para no dejar a nadie afuera |
+| 5 | Admin · Usuarios | **"diseña también por tu propia cuenta la parte de admin en la que puede ver los usuarios, tanto activos como los que puede añadir"**. [D] Estados Pendiente (autorizado, aún no entra), Activo y Desactivado (BR-USR-07). Un **Pendiente se puede quitar del todo** (**"sí, se puede"**); un usuario que ya entró solo se desactiva |
+| 6 | Nombre corto de los libros | **"lo dejaremos para en un futuro mientras decido, pero probablemente sea la B"**. Queda por decidir (#44); no se programa |
+| 7 | Movimiento | [D] El fondo de la opción activa se desliza en 220 ms con curva de salida suave en Pestañas, Botones segmentados, barra lateral y barra inferior; con «Reducir movimiento» el cambio es inmediato. Tokens `--motion-*` |
+| 8 | Resumen de Dinero en escritorio | **"literal es poner el mismo botoncito que se abre cuando se está en mobile"**. [D] En escritorio el panel grande se reemplaza por el botón «Por entregar $X ▾» del encabezado, que abre el resumen en la Ventana lateral |
+
 ---
 
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)

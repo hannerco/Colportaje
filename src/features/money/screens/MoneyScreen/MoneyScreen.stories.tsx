@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState, type CSSProperties } from 'react';
-import { expect, fn, userEvent, waitFor } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import {
   buildPaymentsListView,
   DEFAULT_PAYMENTS_LIST_PARAMS,
@@ -241,10 +241,17 @@ export const PorEntregar: Story = {
   globals: { platform: 'desktop' },
   play: async ({ canvasElement }) => {
     const frame = frames(canvasElement)[0]!;
-    expect(frame.textContent).toContain('Cobrado');
-    expect(frame.textContent).toContain('Transferencia');
-    await userEvent.click(button(frame, 'Qué es Por entregar')!);
-    await waitFor(() => expect(frame.textContent).toContain('falta entregar al líder'));
+    // #39: en escritorio el resumen se abre con el mismo botón del celular.
+    await userEvent.click(button(frame, /^Por entregar\s*\$385\.000/)!);
+    const dialog = await waitFor(() => {
+      const found = canvasElement.ownerDocument.querySelector<HTMLElement>('[role="dialog"]');
+      expect(found).not.toBeNull();
+      return found!;
+    });
+    expect(dialog.textContent).toContain('Dinero total');
+    expect(dialog.textContent).toContain('Transferencia');
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Qué es Por entregar' }));
+    await waitFor(() => expect(dialog.textContent).toContain('falta entregar al líder'));
   },
 };
 
@@ -264,8 +271,14 @@ export const EntregarAlLider: Story = {
   globals: { platform: 'desktop' },
   play: async ({ canvasElement, args }) => {
     const frame = frames(canvasElement)[0]!;
-    expect(frame.textContent).toContain('$280.000');
-    await userEvent.click(button(frame, 'Entregar al líder')!);
+    await userEvent.click(button(frame, /^Por entregar\s*\$385\.000/)!);
+    const dialog = await waitFor(() => {
+      const found = canvasElement.ownerDocument.querySelector<HTMLElement>('[role="dialog"]');
+      expect(found).not.toBeNull();
+      return found!;
+    });
+    expect(dialog.textContent).toContain('$280.000');
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Entregar al líder' }));
     expect(args.onDeliver).toHaveBeenCalled();
   },
 };

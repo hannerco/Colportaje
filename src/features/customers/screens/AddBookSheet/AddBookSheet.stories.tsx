@@ -152,7 +152,7 @@ export const SeleccionadoEditandoPrecio: Story = {
     for (const frame of frames(canvasElement)) {
       const dialog = dialogOf(frame);
       await userEvent.click(byLabel(dialog, 'Seleccionar Psiconutrición #6')!);
-      await waitFor(() => expect(dialog.textContent).toContain('1 seleccionado'));
+      await waitFor(() => expect(dialog.textContent).toContain('Elegido para este cliente'));
       expect(args.onSelect).toHaveBeenCalledWith('Psiconutrición-6');
       const price = [...dialog.querySelectorAll<HTMLLabelElement>('label')].find((l) =>
         l.textContent?.startsWith('Precio acordado'),

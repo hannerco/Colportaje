@@ -21,7 +21,7 @@ test('agregar un libro en la ficha nueva, ajustar su precio y quitarlo (CA-1, CA
 
   // Tocar uno lo vende al cliente; se ajusta su precio (CA-2).
   await selectButtons.first().click();
-  await expect(sheet).toContainText('1 seleccionado');
+  await expect(sheet).toContainText('Elegido para este cliente');
   const price = sheet.getByLabel('Precio acordado');
   await price.fill('70000');
   await expect(sheet).toContainText('antes $75.000');
