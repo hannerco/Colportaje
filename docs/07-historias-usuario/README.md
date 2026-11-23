@@ -275,8 +275,10 @@ Piezas que las **pantallas** del lienzo dibujan pero que no están en la **bibli
 |---|---|---|
 | Calendario para elegir fecha | Cambiar fecha de abono; Dar más plazo | PAN-CLI-05 (hecho: piezas `DatePickerCalendar` y `ChangeDueDateDialog`), PAN-DIN-02 |
 | Plan de abonos (frecuencia, valor, lista previa) | Crear cliente | PAN-CLI-03 (hecho: pieza `PaymentPlanFields`) |
-| Botones segmentados (Medio de pago, Frecuencia) | Crear cliente | PAN-CLI-03 (se usó la Selección radio de la biblioteca) |
-| **Factura en la ficha nueva** (fotos, N.º y fecha) — dibujada, **sin HU de pantalla** | Crear cliente | Ninguna: decidir dónde va |
+| Botones segmentados (Medio de pago, Frecuencia) | Crear cliente, Programar abono, Ajustes | Hecho (#33): `ui/molecules/SegmentedControl` («Moléculas/Botones segmentados»); subirlo a la biblioteca |
+| Factura en la ficha nueva (fotos, N.º y fecha) | Crear cliente | Hecho (#32): pieza `InvoiceBlock` en la isla «Factura» |
+| Panel flotante junto a un botón (escritorio) | Emoji del cliente | Hecho (#34): `ui/molecules/Popover`; subirlo a la biblioteca |
+| Selector de emoji del avatar (FC-02) | Crear cliente y ficha | Hecho (#34, propuesta 4 del lienzo): pieza `EmojiAvatar` |
 | Mapa y selector de ubicación | Información y dirección; Elegir ubicación | PAN-CLI-06 (hecho: piezas `MapCanvas`, `MapPreview`, `LocationPicker` y `CustomerLocationBlock`; teselas de OpenFreeMap con MapLibre GL, SG-09 decidido) |
 | Íconos de mapa, abrir afuera, cámara, recentrar y GPS tachado | Información y dirección; Elegir ubicación | PAN-CLI-06 (se usaron los de la biblioteca) |
 | Fila que se desliza (móvil) | Dinero (Cobrar / Más plazo); Por resolver | PAN-DIN-02, PAN-INV-01 (hecho: pieza `SwipeRow`, con las acciones también por teclado) |

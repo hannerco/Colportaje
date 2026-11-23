@@ -3,3 +3,4 @@ export { AppShellProvider, useAppShell, type AppShell, type AppShellProviderProp
 export { APP_NAV_ITEMS, appNavItems, COMING_SOON, NAV_HREFS, navIdForPath, ROUTES } from './navigation';
 export { ComingSoonRoute, ShellRoute, ShellScreenRoute } from './shell-route';
 export { ShellScreen, type ShellScreenProps } from './screens/ShellScreen';
+export { setAdminMode, useAdminMode } from './admin-mode';

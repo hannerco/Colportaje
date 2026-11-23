@@ -26,6 +26,7 @@ describe('businessConfig', () => {
         thumbnailTargetBytes: 15_000,
         signedUrlSeconds: 3600,
       },
+      covers: { sidePx: 600, targetBytes: 60_000, thumbnailSidePx: 160, thumbnailTargetBytes: 8_000 },
       search: { fuzzyThreshold: 0.3 },
       duplicates: { nameThreshold: 0.85 },
     });

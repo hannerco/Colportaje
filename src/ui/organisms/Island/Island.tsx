@@ -1,4 +1,5 @@
 import { useId, type MouseEvent, type ReactNode } from 'react';
+import { copy } from '@/copy/es';
 import { Button } from '../../atoms/Button';
 import { Icon, type IconName } from '../../icons';
 import styles from './Island.module.css';
@@ -14,6 +15,13 @@ export type IslandProps = {
     href?: string;
     onClick?: (event: MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => void;
   };
+  /**
+   * Formularios por secciones (lienzo CrearV5, #32): a la derecha del título, un círculo vacío mientras falta algo y un
+   * círculo con chulo verde cuando la sección está completa. Sin valor no se muestra.
+   */
+  complete?: boolean;
+  /** Línea bajo el encabezado, como en las islas de la ficha y de Nuevo cliente (CrearV5, #32 y #35). */
+  divided?: boolean;
   /** Contenido (`contenido`): filas de dato, historial o cualquier otro. */
   children: ReactNode;
   className?: string;
@@ -23,7 +31,7 @@ export type IslandProps = {
  * Isla (HU-UI-22, ficha Lib-Isla): tarjeta que agrupa los datos de un detalle. Un detalle se arma apilando islas
  * (identidad, datos, historial). Es un `<section>` cuyo nombre es su título.
  */
-export function Island({ title, icon, action, children, className }: IslandProps) {
+export function Island({ title, icon, action, complete, divided = false, children, className }: IslandProps) {
   const titleId = useId();
   return (
     <section
@@ -31,7 +39,7 @@ export function Island({ title, icon, action, children, className }: IslandProps
       aria-labelledby={title ? titleId : undefined}
     >
       {title && (
-        <div className={styles.head}>
+        <div className={styles.head} data-divided={divided || undefined}>
           <h2 id={titleId} className={styles.title}>
             {icon && <Icon name={icon} tone="current" className={styles.icon} />}
             {title}
@@ -41,6 +49,12 @@ export function Island({ title, icon, action, children, className }: IslandProps
               {action.label}
             </Button>
           )}
+          {complete !== undefined &&
+            (complete ? (
+              <Icon name="collected" tone="current" className={styles.done} label={copy.ui.island.complete} />
+            ) : (
+              <span role="img" aria-label={copy.ui.island.incomplete} className={styles.pending} />
+            ))}
         </div>
       )}
       {/* #26: lo que va dentro (campos, listas, mapa) se separa siempre con el mismo espacio. */}

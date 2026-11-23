@@ -9,15 +9,17 @@ import type { PayMethod } from '@/domain/payment';
 import type { LocalDate } from '@/domain/time';
 import type { DiscardSummary } from '@/repositories';
 import { Button } from '@/ui/atoms/Button';
-import { Choice, ChoiceGroup } from '@/ui/atoms/Choice';
 import { Field } from '@/ui/atoms/Field';
 import { Banner } from '@/ui/molecules/Banner';
+import { SegmentedControl } from '@/ui/molecules/SegmentedControl';
 import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
 import { Island } from '@/ui/organisms/Island';
 import { usePlatform } from '@/ui/platform';
 import { CustomerAccountSummary } from '../../components/CustomerAccountSummary';
 import { CustomerLocationBlock } from '../../components/CustomerLocationBlock';
+import { EmojiAvatar } from '../../components/EmojiAvatar';
 import { InfoPhotoStrip } from '../../components/InfoPhotoStrip';
+import { InvoiceBlock, type InvoiceBlockProps } from '../../components/InvoiceBlock';
 import { PaymentPlanFields, type PaymentPlanValue } from '../../components/PaymentPlanFields';
 import { AddBookButton, SoldBookList } from '../../components/SoldBookList';
 import type { MapTiles } from '../../map-tiles';
@@ -31,6 +33,17 @@ export type NewCustomerScreenProps = {
   onNameChange: (name: string) => void;
   /** «Escribe el nombre» si se borró el de un cliente ya creado. */
   nameError?: string;
+  /** Emoji del cliente (BR-CUS-15, #34); `null` = avatar de persona. */
+  avatarEmoji: string | null;
+  onAvatarChange?: (emoji: string | null) => void;
+  /** Por qué aún no se puede elegir emoji (sin nombre o sin conexión). */
+  avatarDisabledReason?: string | null;
+  /** Isla «Factura» (#32, HU-CLI-08). */
+  invoices: InvoiceBlockProps['invoices'];
+  onCreateInvoice?: InvoiceBlockProps['onCreate'];
+  onAddInvoicePhoto?: InvoiceBlockProps['onAddPhoto'];
+  onInvoiceChange?: InvoiceBlockProps['onChange'];
+  invoiceDisabledReason?: string | null;
   phone: string;
   onPhoneChange: (phone: string) => void;
   /** HU-PAN-CLI-06: dirección e información en texto (se guardan solas, como el teléfono). */
@@ -149,7 +162,7 @@ export function NewCustomerScreen(props: NewCustomerScreenProps) {
   );
 
   const info = (
-    <Island title={t.info.title} icon="person">
+    <Island title={t.info.title} icon="person" divided complete={props.phone.trim() !== ''}>
       <Field
         kind="phone"
         label={t.info.phone}
@@ -190,7 +203,7 @@ export function NewCustomerScreen(props: NewCustomerScreenProps) {
   );
 
   const bookList = (
-    <Island title={t.books.title} icon="books">
+    <Island title={t.books.title} icon="books" divided complete={books.length > 0}>
       <SoldBookList
         books={books}
         copyHref={props.copyHref}
@@ -210,8 +223,22 @@ export function NewCustomerScreen(props: NewCustomerScreenProps) {
     </Island>
   );
 
+  const invoice = (
+    <Island title={t.invoice.title} icon="receipt" divided complete={props.invoices.length > 0}>
+      <InvoiceBlock
+        invoices={props.invoices}
+        onCreate={props.onCreateInvoice}
+        onAddPhoto={props.onAddInvoicePhoto}
+        onChange={props.onInvoiceChange}
+        disabledReason={props.invoiceDisabledReason}
+      />
+    </Island>
+  );
+
+  // #33: completa cuando la cuota inicial cubre la deuda o el plan reparte el saldo.
+  const paymentsComplete = debt > 0 && (paid >= debt || (preview.items?.length ?? 0) > 0);
   const payments = (
-    <Island title={t.payments.title} icon="money">
+    <Island title={t.payments.title} icon="money" divided complete={paymentsComplete}>
       <div className={styles.downPayment}>
         <p className={styles.subheading}>{t.payments.downPayment}</p>
         <div className={styles.fields}>
@@ -222,6 +249,17 @@ export function NewCustomerScreen(props: NewCustomerScreenProps) {
             value={downPayment.amount}
             onChange={(amount) => props.onDownPaymentChange({ amount })}
           />
+          <SegmentedControl
+            label={t.payments.method}
+            options={METHODS.map((method) => ({
+              value: method,
+              label: copy.customers.detail.payments.method[method],
+            }))}
+            value={downPayment.method}
+            onValueChange={(method) => props.onDownPaymentChange({ method: method as PayMethod })}
+          />
+        </div>
+        <div className={styles.fields}>
           <Field
             kind="date"
             label={t.payments.date}
@@ -231,20 +269,6 @@ export function NewCustomerScreen(props: NewCustomerScreenProps) {
             error={props.downPaymentDateError}
           />
         </div>
-        <ChoiceGroup
-          legend={t.payments.method}
-          value={downPayment.method}
-          onValueChange={(method) => props.onDownPaymentChange({ method: method as PayMethod })}
-        >
-          {METHODS.map((method) => (
-            <Choice
-              key={method}
-              kind="radio"
-              value={method}
-              label={copy.customers.detail.payments.method[method]}
-            />
-          ))}
-        </ChoiceGroup>
       </div>
       <div className={styles.divider} />
       <PaymentPlanFields
@@ -287,13 +311,23 @@ export function NewCustomerScreen(props: NewCustomerScreenProps) {
         <Banner tone="overdue">{copy.customers.detail.notices.excess(formatCOP(props.excess))}</Banner>
       ) : null}
       <div className={styles.top}>
-        <Field
-          label={t.name}
-          placeholder={t.name}
-          value={props.name}
-          onChange={props.onNameChange}
-          error={props.nameError}
-        />
+        <div className={styles.identity}>
+          <EmojiAvatar
+            emoji={props.avatarEmoji}
+            onChange={props.onAvatarChange}
+            disabledReason={props.avatarDisabledReason}
+            backHref={props.backHref}
+          />
+          <div className={styles.identityName}>
+            <Field
+              label={t.name}
+              placeholder={t.name}
+              value={props.name}
+              onChange={props.onNameChange}
+              error={props.nameError}
+            />
+          </div>
+        </div>
         <Island>
           <CustomerAccountSummary account={account} overdueSince={null} />
         </Island>
@@ -302,12 +336,14 @@ export function NewCustomerScreen(props: NewCustomerScreenProps) {
         <div className={styles.column}>
           {info}
           {bookList}
+          {invoice}
           {payments}
         </div>
       ) : (
         <div className={styles.columns}>
           <div className={styles.column}>
             {bookList}
+            {invoice}
             {payments}
           </div>
           <div className={styles.column}>{info}</div>

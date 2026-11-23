@@ -11,6 +11,10 @@ import {
   mapTiles,
   planPreview,
   useAddCustomerInfoPhoto,
+  useAddInvoicePhoto,
+  useCreateInvoiceWithPhoto,
+  useCustomerInvoices,
+  useUpdateInvoice,
   useClearCustomerLocation,
   useCreateCustomer,
   useCustomerDetail,
@@ -39,6 +43,9 @@ import { LocationPickerContainer } from '../location-picker-container';
  * llega con `?nombre=` desde «Crear «texto»») y cada dato se escribe solo un momento después. Salir por la navegación
  * pregunta lo mismo que «Descartar» (BR-CUS-14).
  */
+/** N.º y fecha de la factura se guardan este tiempo después de la última tecla. */
+const INVOICE_DELAY_MS = 600;
+
 function NewCustomerRoute() {
   const shell = useAppShell();
   const router = useRouter();
@@ -84,8 +91,20 @@ function NewCustomerRoute() {
   const { setCustomerLocation } = useSetCustomerLocation();
   const { clearCustomerLocation } = useClearCustomerLocation();
   const { addCustomerInfoPhoto } = useAddCustomerInfoPhoto();
+  const { createInvoiceWithPhoto } = useCreateInvoiceWithPhoto();
+  const { addInvoicePhoto } = useAddInvoicePhoto();
+  const { updateInvoice } = useUpdateInvoice();
+  /** #34: el emoji elegido se ve de una vez, antes de que el servidor responda. */
+  const [emoji, setEmoji] = useState<string | null | undefined>(undefined);
+  /** #32: N.º y fecha de cada factura mientras se escriben (se guardan un momento después). */
+  const [invoiceDrafts, setInvoiceDrafts] = useState<
+    Record<string, { number?: string | null; date?: LocalDate | null }>
+  >({});
+  const invoiceTimers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
+  const invoicePending = useRef<Record<string, { number?: string | null; date?: LocalDate | null }>>({});
   const rememberLastChosenPoint = useRememberLastChosenPoint();
   const detail = useCustomerDetail(created ? id : null);
+  const invoices = useCustomerInvoices(created ? id : null);
   const summary = useDiscardSummary(discardOpen && created ? id : null);
 
   const showError = (error: unknown, retry?: () => void) =>
@@ -230,6 +249,17 @@ function NewCustomerRoute() {
     }
   };
 
+  /** Imágenes, emoji y factura necesitan al cliente creado (con nombre) y conexión. */
+  const needsCustomer = !created
+    ? copy.customers.create.nameRequired
+    : !shell.isOnline
+      ? copy.ui.empty.needsConnection
+      : null;
+  useEffect(() => {
+    const timers = invoiceTimers.current;
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
   const screen = (
     <NewCustomerScreen
       name={name}
@@ -238,6 +268,45 @@ function NewCustomerRoute() {
         void create(value);
       }}
       nameError={created && !name.trim() ? copy.customers.create.nameRequired : undefined}
+      avatarEmoji={emoji !== undefined ? emoji : (detail.data?.avatarEmoji ?? null)}
+      onAvatarChange={async (next) => {
+        setEmoji(next);
+        const result = await updateCustomer({ id, patch: { avatarEmoji: next } });
+        if (!result.ok) {
+          setEmoji(undefined);
+          showError(result.error);
+        }
+      }}
+      avatarDisabledReason={needsCustomer}
+      invoices={(invoices.data ?? []).map((invoice) => ({ ...invoice, ...invoiceDrafts[invoice.invoiceId] }))}
+      onCreateInvoice={async (file) => {
+        const result = await createInvoiceWithPhoto({
+          invoiceId: newId(),
+          photoId: newId(),
+          customerId: id,
+          file,
+        });
+        if (!result.ok) showError(result.error);
+      }}
+      onAddInvoicePhoto={async (invoiceId, file) => {
+        const result = await addInvoicePhoto({ invoiceId, photoId: newId(), file });
+        if (!result.ok) showError(result.error);
+      }}
+      onInvoiceChange={(invoiceId, patch) => {
+        setInvoiceDrafts((current) => ({ ...current, [invoiceId]: { ...current[invoiceId], ...patch } }));
+        invoicePending.current[invoiceId] = { ...invoicePending.current[invoiceId], ...patch };
+        clearTimeout(invoiceTimers.current.get(invoiceId));
+        invoiceTimers.current.set(
+          invoiceId,
+          setTimeout(async () => {
+            const draft = invoicePending.current[invoiceId] ?? {};
+            delete invoicePending.current[invoiceId];
+            const result = await updateInvoice({ invoiceId, patch: draft });
+            if (!result.ok) showError(result.error);
+          }, INVOICE_DELAY_MS),
+        );
+      }}
+      invoiceDisabledReason={needsCustomer}
       phone={phone}
       onPhoneChange={setPhone}
       address={address}
@@ -259,9 +328,7 @@ function NewCustomerRoute() {
         const result = await addCustomerInfoPhoto({ photoId: newId(), customerId: id, file });
         if (!result.ok) showError(result.error);
       }}
-      photoDisabledReason={
-        !created ? copy.customers.create.nameRequired : !shell.isOnline ? copy.ui.empty.needsConnection : null
-      }
+      photoDisabledReason={needsCustomer}
       books={detail.data?.books ?? []}
       copyHref={ROUTES.copy}
       onAddBook={created ? () => setAddingBook(true) : undefined}

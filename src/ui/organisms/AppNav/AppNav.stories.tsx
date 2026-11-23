@@ -140,10 +140,15 @@ export const DineroActivo: Story = {
       expect(item.textContent).toBe('Dinero');
       expect(item.closest('ul')!.previousElementSibling!.textContent).toBe('Dinero');
       const style = getComputedStyle(item);
-      expect(style.backgroundColor).toBe(tokenColor(frame, '--color-card'));
       expect(style.color).toBe(tokenColor(frame, '--color-accent-text'));
       expect(style.fontWeight).toBe('600');
-      expect(style.boxShadow).not.toBe('none');
+      // #38: el fondo (tarjeta con sombra) es el indicador, que se coloca sobre el ítem activo.
+      const nav = navOf(frame);
+      await waitFor(() => expect(nav.dataset.indicator).toBe('ready'));
+      const indicator = nav.querySelector<HTMLElement>(':scope > span[aria-hidden="true"]')!;
+      expect(getComputedStyle(indicator).backgroundColor).toBe(tokenColor(frame, '--color-card'));
+      expect(getComputedStyle(indicator).boxShadow).not.toBe('none');
+      await waitFor(() => expect(nav.style.getPropertyValue('--indicator-y')).toBe(`${item.offsetTop}px`));
     }
   },
 };
@@ -167,7 +172,11 @@ export const ClientesActivoMovil: Story = {
       }
       const active = current(frame)!;
       expect(active.textContent).toBe('Clientes');
-      expect(getComputedStyle(active).backgroundColor).toBe(tokenColor(frame, '--color-bar-active'));
+      // #38: el fondo `bar-active` es el indicador, colocado sobre el destino activo.
+      await waitFor(() => expect(nav.dataset.indicator).toBe('ready'));
+      const indicator = nav.querySelector<HTMLElement>(':scope > span[aria-hidden="true"]')!;
+      expect(getComputedStyle(indicator).backgroundColor).toBe(tokenColor(frame, '--color-bar-active'));
+      await waitFor(() => expect(nav.style.getPropertyValue('--indicator-x')).toBe(`${active.offsetLeft}px`));
       expect(getComputedStyle(active.querySelector('svg')!).strokeWidth).toBe('2px');
       // R3: el botón flotante tiene nombre y queda encima de la barra, a la derecha.
       const fab = frame.querySelector<HTMLElement>('[aria-label="Nuevo cliente"]')!;

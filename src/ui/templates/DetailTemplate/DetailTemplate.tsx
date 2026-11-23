@@ -14,6 +14,8 @@ import styles from './DetailTemplate.module.css';
 export type DetailIdentity = {
   /** Portada del libro o persona (con su emoji). */
   avatar: { kind: Exclude<AvatarKind, 'brand'>; emoji?: string; coverUrl?: string };
+  /** En lugar del avatar, una pieza que lo pinta y permite cambiarlo (el emoji del cliente, #34). */
+  avatarSlot?: ReactNode;
   /** Nombre del libro o del cliente. */
   title: string;
   /** Número del ejemplar («#6»). */
@@ -67,6 +69,7 @@ export function DetailTemplate({ window, banner, identity, children }: DetailTem
 /** R4: avatar `xl` / `lg`, título grande y la acción principal (a todo el ancho en móvil). */
 function IdentityIsland({
   avatar,
+  avatarSlot,
   title,
   number,
   status,
@@ -81,13 +84,15 @@ function IdentityIsland({
   return (
     <Island>
       <div className={styles.identity}>
-        <Avatar
-          kind={avatar.kind}
-          emoji={avatar.emoji}
-          coverUrl={avatar.coverUrl}
-          size={mobile ? 'lg' : 'xl'}
-          decorative
-        />
+        {avatarSlot ?? (
+          <Avatar
+            kind={avatar.kind}
+            emoji={avatar.emoji}
+            coverUrl={avatar.coverUrl}
+            size={mobile ? 'lg' : 'xl'}
+            decorative
+          />
+        )}
         <div className={styles.who}>
           <Heading className={styles.title}>
             {title}

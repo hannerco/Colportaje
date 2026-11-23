@@ -5,10 +5,12 @@ import { copy } from '@/copy/es';
 import { useCurrentProfile, useSignOut, useUpdateTimeFormat } from '@/features/auth';
 import { SettingsScreen } from '@/features/settings';
 import { appErrorMessage } from '@/features/shared/app-error-message';
-import { ROUTES, useAppShell } from '@/features/shell';
+import { ROUTES, setAdminMode, useAdminMode, useAppShell } from '@/features/shell';
+import { useState } from 'react';
+import { applyThemePreference, readThemePreference } from '@/ui/platform';
 import { useToast } from '@/ui/molecules/Toast';
 
-/** Ajustes, versión mínima: formato de hora y cerrar sesión (pedido del dueño, 2026-11-20). */
+/** Ajustes (#42): tema de este dispositivo, modo administrador, formato de hora y cerrar sesión. */
 export default function SettingsPage() {
   const router = useRouter();
   const toast = useToast();
@@ -16,6 +18,8 @@ export default function SettingsPage() {
   const profile = useCurrentProfile();
   const { updateTimeFormat } = useUpdateTimeFormat();
   const { signOut } = useSignOut();
+  const [theme, setTheme] = useState(readThemePreference);
+  const adminMode = useAdminMode();
 
   const fail = (error: unknown): never => {
     toast.show({ message: appErrorMessage(error).message, tone: 'error' });
@@ -33,6 +37,13 @@ export default function SettingsPage() {
         if (!result.ok) fail(result.error);
         toast.show({ message: copy.settings.timeFormatSaved, tone: 'success' });
       }}
+      theme={theme}
+      onThemeChange={(next) => {
+        setTheme(next);
+        applyThemePreference(next);
+      }}
+      adminMode={adminMode}
+      onAdminModeChange={setAdminMode}
       onSignOut={async () => {
         const result = await signOut();
         if (!result.ok) fail(result.error);

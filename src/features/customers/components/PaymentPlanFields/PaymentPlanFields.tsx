@@ -6,10 +6,10 @@ import { formatCOP, type COP } from '@/domain/money';
 import type { PlanFrequency } from '@/domain/payment-plan';
 import { formatDate, type LocalDate } from '@/domain/time';
 import { ChangeDueDateDialog } from '@/features/payments/components/ChangeDueDateDialog';
-import { Choice, ChoiceGroup } from '@/ui/atoms/Choice';
 import { Field } from '@/ui/atoms/Field';
 import { StatusPill } from '@/ui/atoms/StatusPill';
 import { Icon } from '@/ui/icons';
+import { SegmentedControl } from '@/ui/molecules/SegmentedControl';
 import type { PlanPreview } from '../../new-customer-form';
 import styles from './PaymentPlanFields.module.css';
 
@@ -53,21 +53,13 @@ export function PaymentPlanFields({
   return (
     <div className={styles.plan}>
       <p className={styles.heading}>{t.plan(preview.base > 0 ? formatCOP(preview.base) : null)}</p>
-      <ChoiceGroup
-        legend={t.frequency}
+      <SegmentedControl
+        label={t.frequency}
+        options={FREQUENCIES.map((frequency) => ({ value: frequency, label: t.frequencies[frequency] }))}
         value={value.frequency}
         onValueChange={(frequency) => onChange({ frequency: frequency as PlanFrequency })}
-      >
-        {FREQUENCIES.map((frequency) => (
-          <Choice
-            key={frequency}
-            kind="radio"
-            value={frequency}
-            label={t.frequencies[frequency]}
-            disabled={disabled}
-          />
-        ))}
-      </ChoiceGroup>
+        disabled={disabled}
+      />
       <div className={styles.fields}>
         <Field
           kind="money"
@@ -106,6 +98,7 @@ export function PaymentPlanFields({
                         aria-label={cd.open(formatDate(item.dueDate))}
                         onClick={() => setEditing(i)}
                       >
+                        <Icon name="calendar" size={16} tone="current" />
                         {formatDate(item.dueDate)}
                       </button>
                     ) : (
@@ -125,7 +118,10 @@ export function PaymentPlanFields({
                 </li>
               ))}
             </ol>
-            <p className={styles.covers}>{t.covers(items.length, formatCOP(preview.base))}</p>
+            <p className={styles.covers}>
+              <Icon name="check" size={16} tone="current" />
+              {t.covers(items.length, formatCOP(preview.base))}
+            </p>
           </>
         ) : (
           <p className={styles.empty}>{t.previewEmpty}</p>

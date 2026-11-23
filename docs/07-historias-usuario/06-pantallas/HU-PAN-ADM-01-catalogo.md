@@ -55,4 +55,4 @@ Usuarios, invitaciones, ajustes y meta (el resto de Admin espera su diseño); re
 - **Stories con `play`:** `Pantallas/Admin/Catálogo`.
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-22 (#40, DT-10):** la portada se guarda cuadrada de 600 × 600 (~60 KB) con el libro entero centrado y el resto transparente (`compressCover`).

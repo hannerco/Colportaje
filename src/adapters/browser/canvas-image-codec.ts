@@ -15,36 +15,42 @@ export const canvasImageCodec: ImageCodec = {
     }
   },
 
-  async encodeWebp(image: DecodedImage, size, quality) {
+  async encodeWebp(image: DecodedImage, size, quality, frame = size) {
     const bitmap = image.source as ImageBitmap;
     const blob =
       typeof OffscreenCanvas !== 'undefined'
-        ? await encodeOffscreen(bitmap, size, quality)
-        : await encodeWithElement(bitmap, size, quality);
+        ? await encodeOffscreen(bitmap, size, quality, frame)
+        : await encodeWithElement(bitmap, size, quality, frame);
     if (blob.type !== 'image/webp') throw new Error('Este navegador no codifica WebP');
     return blob;
   },
 };
 
-async function encodeOffscreen(
-  bitmap: ImageBitmap,
-  size: { width: number; height: number },
-  quality: number,
-) {
-  const canvas = new OffscreenCanvas(size.width, size.height);
+type Size = { width: number; height: number };
+
+/** La imagen centrada en el lienzo (`frame`); sin pintar el fondo, lo que sobra queda transparente. */
+const offset = (size: Size, frame: Size) => ({
+  x: Math.round((frame.width - size.width) / 2),
+  y: Math.round((frame.height - size.height) / 2),
+});
+
+async function encodeOffscreen(bitmap: ImageBitmap, size: Size, quality: number, frame: Size) {
+  const canvas = new OffscreenCanvas(frame.width, frame.height);
   const context = canvas.getContext('2d');
   if (!context) throw new Error('Canvas 2D no disponible');
-  context.drawImage(bitmap, 0, 0, size.width, size.height);
+  const { x, y } = offset(size, frame);
+  context.drawImage(bitmap, x, y, size.width, size.height);
   return canvas.convertToBlob({ type: 'image/webp', quality });
 }
 
-function encodeWithElement(bitmap: ImageBitmap, size: { width: number; height: number }, quality: number) {
+function encodeWithElement(bitmap: ImageBitmap, size: Size, quality: number, frame: Size) {
   const canvas = document.createElement('canvas');
-  canvas.width = size.width;
-  canvas.height = size.height;
+  canvas.width = frame.width;
+  canvas.height = frame.height;
   const context = canvas.getContext('2d');
   if (!context) throw new Error('Canvas 2D no disponible');
-  context.drawImage(bitmap, 0, 0, size.width, size.height);
+  const { x, y } = offset(size, frame);
+  context.drawImage(bitmap, x, y, size.width, size.height);
   return new Promise<Blob>((resolve, reject) =>
     canvas.toBlob(
       (blob) => (blob ? resolve(blob) : reject(new Error('No se pudo codificar'))),

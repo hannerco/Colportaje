@@ -1,9 +1,9 @@
 'use client';
 
 import * as RadixTabs from '@radix-ui/react-tabs';
-import { useRef, type CSSProperties } from 'react';
+import { useRef, useState, type CSSProperties } from 'react';
 import { Icon, type IconName } from '../../icons';
-import { usePlatform } from '../../platform';
+import { usePlatform, useSlidingIndicator } from '../../platform';
 import styles from './Tabs.module.css';
 
 export type TabItem = {
@@ -44,9 +44,13 @@ export function Tabs({
 }: TabsProps) {
   const platform = usePlatform();
   const listRef = useRef<HTMLDivElement>(null);
+  const [current, setCurrent] = useState(items[0]?.id);
   const resolvedWidth = width ?? (variant === 'segmented' ? 'full' : 'auto');
+  // #37: el fondo de la activa se desliza a la nueva.
+  useSlidingIndicator(listRef, '[data-state="active"]', value ?? current);
 
   const handleChange = (next: string) => {
+    setCurrent(next);
     onValueChange?.(next);
     // R4: en móvil, la activa se desplaza a la vista (los óvalos se desplazan en horizontal).
     if (platform === 'mobile')
@@ -75,6 +79,7 @@ export function Tabs({
       }
     >
       <RadixTabs.List ref={listRef} className={styles.list} data-variant={variant} aria-label={ariaLabel}>
+        <span aria-hidden="true" className={styles.indicator} />
         {items.map((item) => (
           <RadixTabs.Trigger
             key={item.id}

@@ -80,15 +80,26 @@ export function AddBookSheet({
         <SearchBox placeholder={t.search} value={search} onValueChange={onSearchChange} width="auto" />
         {chosen.length > 0 && (
           <section className={styles.section} aria-label={t.selected(chosen.length)}>
-            <h3 className={styles.heading}>{t.selected(chosen.length)}</h3>
-            <ul className={styles.list}>
+            <div className={styles.headingRow}>
+              <h3 className={styles.heading}>{t.selected(chosen.length)}</h3>
+              <span className={styles.total}>
+                {t.total}{' '}
+                <strong>{formatCOP(chosen.reduce((sum, b) => sum + (b.agreedPrice ?? 0), 0))}</strong>
+              </span>
+            </div>
+            <ul className={styles.chosenList}>
               {chosen.map((book) => (
                 <li key={book.copyId} className={styles.chosen}>
                   <div className={styles.row}>
                     <Avatar kind="cover" size="sm" decorative />
-                    <span className={styles.name}>
-                      <span className={styles.ellipsis}>{book.titleName}</span>
-                      <span className={styles.muted}>#{book.number}</span>
+                    <span className={styles.text}>
+                      <span className={styles.chosenName}>
+                        <span className={styles.ellipsis}>{book.titleName}</span>
+                        <span className={styles.muted}>#{book.number}</span>
+                      </span>
+                      {book.publicPrice !== null && (
+                        <span className={styles.price}>{t.reference(formatCOP(book.publicPrice))}</span>
+                      )}
                     </span>
                     <Button
                       variant="secondary"

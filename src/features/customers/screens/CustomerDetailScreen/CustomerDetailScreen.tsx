@@ -20,6 +20,7 @@ import { Island } from '@/ui/organisms/Island';
 import { DetailTemplate } from '@/ui/templates/DetailTemplate';
 import { CustomerAccountSummary } from '../../components/CustomerAccountSummary';
 import { CustomerLocationBlock } from '../../components/CustomerLocationBlock';
+import { EmojiAvatar } from '../../components/EmojiAvatar';
 import { InfoPhotoStrip } from '../../components/InfoPhotoStrip';
 import { AddBookButton, SoldBookList } from '../../components/SoldBookList';
 import type { MapTiles } from '../../map-tiles';
@@ -55,6 +56,12 @@ export type CustomerDetailScreenProps = {
    * función, la fecha no es botón.
    */
   onReschedule?: (paymentId: string, date: LocalDate, confirmed: boolean) => Promise<void>;
+  /** «Cobrar» en un abono por cobrar (#35; diseño de la ficha): abre el formulario de cobro. */
+  onCollect?: (paymentId: string) => void;
+  /** «Programar abono» en la cabecera de la isla Abonos (#35, FC-10). */
+  onSchedule?: () => void;
+  /** Elegir o quitar el emoji del cliente tocando su avatar (BR-CUS-15, #34). */
+  onAvatarChange?: (emoji: string | null) => void;
   /** HU-PAN-CLI-06: teselas del mapa (SG-09). */
   tiles?: MapTiles | null;
   /** «Elegir en mapa» y «Cambiar» abren el selector. Sin función (archivado) no hay botones de ubicación. */
@@ -119,6 +126,9 @@ export function CustomerDetailScreen({
   onChooseLocation,
   onRemoveLocation,
   onAddPhoto,
+  onCollect,
+  onSchedule,
+  onAvatarChange,
 }: CustomerDetailScreenProps) {
   const [archiveOpen, setArchiveOpen] = useState(false);
   const [canceledOpen, setCanceledOpen] = useState(false);
@@ -169,6 +179,16 @@ export function CustomerDetailScreen({
         banner={bannerOf(detail)}
         identity={{
           avatar: detail.avatarEmoji ? { kind: 'emoji', emoji: detail.avatarEmoji } : { kind: 'person' },
+          avatarSlot: onAvatarChange ? (
+            <EmojiAvatar
+              emoji={detail.avatarEmoji}
+              onChange={onAvatarChange}
+              disabledReason={
+                detail.archived ? t.archivedNoEdit : !isOnline ? copy.ui.empty.needsConnection : null
+              }
+              backHref={window.breadcrumb.href}
+            />
+          ) : undefined,
           title: detail.name,
           status: detail.account.standing ?? undefined,
           // R2: los enlaces de contacto solo con teléfono (I-22).
@@ -222,12 +242,22 @@ export function CustomerDetailScreen({
             )}
           </Island>
         )}
-        <Island title={t.payments.title} icon="money">
+        <Island
+          title={t.payments.title}
+          icon="money"
+          divided
+          action={
+            onSchedule && !detail.archived && isOnline
+              ? { label: t.payments.schedule, onClick: onSchedule }
+              : undefined
+          }
+        >
           {detail.payments.length === 0 ? (
             <p className={styles.empty}>{t.payments.empty}</p>
           ) : (
             <PaymentList
               payments={detail.payments}
+              onCollect={!detail.archived && isOnline ? onCollect : undefined}
               {...(onReschedule && today && isOnline ? { reschedule: { today, onSave: onReschedule } } : {})}
             />
           )}
@@ -355,8 +385,10 @@ export function CustomerDetailScreen({
 function PaymentList({
   payments,
   reschedule,
+  onCollect,
 }: {
   payments: readonly PaymentRow[];
+  onCollect?: (paymentId: string) => void;
   reschedule?: {
     today: LocalDate;
     onSave: (paymentId: string, date: LocalDate, confirmed: boolean) => Promise<void>;
@@ -375,7 +407,7 @@ function PaymentList({
           const kind = t.payments.kind[payment.kind];
           return (
             <li key={payment.paymentId} className={styles.payment}>
-              <span className={styles.paymentMain}>
+              <span className={styles.paymentWhen}>
                 {reschedule && payment.can.reschedule && date ? (
                   <button
                     type="button"
@@ -397,12 +429,28 @@ function PaymentList({
                   <span className={styles.overdueAgo}>{t.payments.overdueAgo(payment.overdueDays)}</span>
                 )}
                 {kind && <span className={styles.secondary}>{kind}</span>}
+              </span>
+              <span className={styles.paymentState}>
                 <StatusPill status={pillOf(payment)} />
               </span>
               <span className={styles.paymentSide}>
-                <span className={styles.amount}>{formatCOP(amountOf(payment))}</span>
-                {isPaid(payment) && payment.method && (
-                  <span className={styles.secondary}>{t.payments.method[payment.method]}</span>
+                <span className={styles.amountBlock}>
+                  <span className={styles.amount}>{formatCOP(amountOf(payment))}</span>
+                  {isPaid(payment) && payment.method && (
+                    <span className={styles.method}>
+                      <Icon
+                        name={payment.method === 'cash' ? 'money' : 'transfer'}
+                        size={14}
+                        tone="current"
+                      />
+                      {t.payments.method[payment.method]}
+                    </span>
+                  )}
+                </span>
+                {onCollect && payment.status === 'scheduled' && (
+                  <Button variant="secondary" size="compact" onClick={() => onCollect(payment.paymentId)}>
+                    {t.payments.collect}
+                  </Button>
                 )}
               </span>
             </li>

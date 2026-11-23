@@ -5,6 +5,8 @@ import { copy } from '@/copy/es';
 import { formatTime, type TimeFormat } from '@/domain/time';
 import { Button } from '@/ui/atoms/Button';
 import { Choice, ChoiceGroup } from '@/ui/atoms/Choice';
+import { SegmentedControl } from '@/ui/molecules/SegmentedControl';
+import type { ThemePreference } from '@/ui/platform';
 import { DataList, DataRow } from '@/ui/molecules/DataRow';
 import type { AppNavProps } from '@/ui/organisms/AppNav';
 import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
@@ -25,7 +27,15 @@ export type SettingsScreenProps = {
   onTimeFormatChange: (format: TimeFormat) => Promise<void>;
   /** Cierra la sesión; si falla, que lance para que el diálogo siga abierto. */
   onSignOut: () => Promise<void>;
+  /** Tema de este dispositivo (#42): Como el teléfono, Claro u Oscuro. */
+  theme: ThemePreference;
+  onThemeChange: (theme: ThemePreference) => void;
+  /** Modo administrador (BR-USR-04): solo se muestra si el perfil es admin. */
+  adminMode: boolean;
+  onAdminModeChange: (on: boolean) => void;
 };
+
+const THEMES: readonly ThemePreference[] = ['system', 'light', 'dark'];
 
 const t = copy.settings;
 /** Un ejemplo fijo para mostrar cada formato: 3:30 p. m. en Bogotá. */
@@ -33,9 +43,9 @@ const EXAMPLE = new Date('2026-01-15T20:30:00Z');
 const FORMATS: readonly TimeFormat[] = ['12h', '24h'];
 
 /**
- * Ajustes, versión mínima (pedido del dueño, 2026-11-20; sin diseño del lienzo): la cuenta, el formato de hora
- * (BR-GEN-07, 12 h por defecto) y «Cerrar sesión», que borra de este celular los datos guardados (AF-83). El resto de
- * Ajustes (y el modo administrador, BR-USR-04) espera su diseño.
+ * Ajustes (propuesta 5 del lienzo, #42): el tema de este dispositivo, la cuenta con el modo administrador (BR-USR-04),
+ * el formato de hora (BR-GEN-07, 12 h por defecto) y «Cerrar sesión», que borra de este celular los datos guardados
+ * (AF-83). Sin contraseña: se entra con Google.
  */
 export function SettingsScreen({
   nav,
@@ -44,6 +54,10 @@ export function SettingsScreen({
   isOnline,
   onTimeFormatChange,
   onSignOut,
+  theme,
+  onThemeChange,
+  adminMode,
+  onAdminModeChange,
 }: SettingsScreenProps) {
   const [signingOut, setSigningOut] = useState(false);
   const [saving, setSaving] = useState<TimeFormat | null>(null);
@@ -68,11 +82,30 @@ export function SettingsScreen({
         <EmptyState kind="loading" rows={4} />
       ) : (
         <div className={styles.stack}>
-          <Island title={t.account} icon="person">
+          <Island title={t.appearance} icon="settings" divided>
+            <SegmentedControl
+              label={t.theme}
+              options={THEMES.map((value) => ({ value, label: t.themes[value] }))}
+              value={theme}
+              onValueChange={(value) => onThemeChange(value as ThemePreference)}
+            />
+            <p className={styles.muted}>{t.themeHint}</p>
+          </Island>
+
+          <Island title={t.account} icon="person" divided>
             <DataList>
               <DataRow label={t.name} value={profile.fullName} divider={false} />
               <DataRow label={t.role} value={profile.isAdmin ? t.roles.admin : t.roles.colportor} />
             </DataList>
+            {profile.isAdmin && (
+              <Choice
+                kind="switch"
+                label={t.adminMode}
+                description={t.adminModeHint}
+                checked={adminMode}
+                onCheckedChange={onAdminModeChange}
+              />
+            )}
           </Island>
 
           <Island title={t.timeFormat} icon="scheduled">
