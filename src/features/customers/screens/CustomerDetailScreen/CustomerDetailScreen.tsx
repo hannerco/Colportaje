@@ -17,7 +17,7 @@ import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
 import { DetailWindow, type DetailWindowProps } from '@/ui/organisms/DetailWindow';
 import { EmptyState } from '@/ui/organisms/EmptyState';
 import { Island } from '@/ui/organisms/Island';
-import { DetailTemplate } from '@/ui/templates/DetailTemplate';
+import { DetailSkeleton, DetailTemplate } from '@/ui/templates/DetailTemplate';
 import { CustomerAccountSummary } from '../../components/CustomerAccountSummary';
 import { CustomerLocationBlock } from '../../components/CustomerLocationBlock';
 import { EmojiAvatar } from '../../components/EmojiAvatar';
@@ -163,7 +163,11 @@ export function CustomerDetailScreen({
             action={onRetry ? { label: copy.errors.retry, onClick: onRetry } : undefined}
           />
         ) : (
-          <EmptyState kind="loading" rows={6} />
+          <DetailSkeleton
+            figure
+            actions={2}
+            islands={[{ rows: 2, row: 'cover' }, { rows: 4, row: 'payment' }, { rows: 3 }]}
+          />
         )}
       </DetailWindow>
     );

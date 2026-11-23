@@ -10,8 +10,8 @@ import type { ThemePreference } from '@/ui/platform';
 import { DataList, DataRow } from '@/ui/molecules/DataRow';
 import type { AppNavProps } from '@/ui/organisms/AppNav';
 import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
-import { EmptyState } from '@/ui/organisms/EmptyState';
 import { Island } from '@/ui/organisms/Island';
+import { DetailSkeleton } from '@/ui/templates/DetailTemplate';
 import { ShellScreen } from '@/features/shell';
 import styles from './SettingsScreen.module.css';
 
@@ -79,7 +79,7 @@ export function SettingsScreen({
   return (
     <ShellScreen nav={nav} title={copy.ui.nav.items.settings} banner={banner}>
       {!profile ? (
-        <EmptyState kind="loading" rows={4} />
+        <DetailSkeleton identity={false} islands={[{ rows: 2 }, { rows: 2 }]} />
       ) : (
         <div className={styles.stack}>
           <Island title={t.appearance} icon="settings" divided>

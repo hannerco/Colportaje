@@ -14,7 +14,7 @@ import type { BannerProps } from '@/ui/molecules/Banner';
 import { DetailWindow, type DetailWindowProps } from '@/ui/organisms/DetailWindow';
 import { EmptyState } from '@/ui/organisms/EmptyState';
 import { Island } from '@/ui/organisms/Island';
-import { DetailTemplate } from '@/ui/templates/DetailTemplate';
+import { DetailSkeleton, DetailTemplate } from '@/ui/templates/DetailTemplate';
 import { ChangeDueDateDialog } from '../../components/ChangeDueDateDialog';
 import { CollectPaymentDialog, type CollectPaymentValues } from '../../components/CollectPaymentDialog';
 import styles from './PaymentDetailScreen.module.css';
@@ -143,7 +143,13 @@ export function PaymentDetailScreen(props: PaymentDetailScreenProps) {
             action={props.onRetry ? { label: copy.errors.retry, onClick: props.onRetry } : undefined}
           />
         ) : (
-          <EmptyState kind="loading" rows={6} />
+          <DetailSkeleton
+            strip
+            figure
+            actions={2}
+            status={false}
+            islands={[{ rows: 4, row: 'payment' }, { rows: 2 }]}
+          />
         )}
       </DetailWindow>
     );

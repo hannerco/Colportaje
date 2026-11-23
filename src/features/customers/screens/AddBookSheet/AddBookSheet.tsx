@@ -12,6 +12,7 @@ import { SearchBox } from '@/ui/molecules/SearchBox';
 import { DetailWindow } from '@/ui/organisms/DetailWindow';
 import { EmptyState } from '@/ui/organisms/EmptyState';
 import { usePlatform } from '@/ui/platform';
+import { RowsSkeleton } from '@/ui/templates/ListTemplate';
 import styles from './AddBookSheet.module.css';
 
 /** Un ejemplar ya agregado en esta hoja: se puede ajustar su precio y su fecha de venta, o quitar. */
@@ -146,7 +147,7 @@ export function AddBookSheet({
         <section className={styles.section} aria-label={t.available}>
           <h3 className={styles.heading}>{t.available}</h3>
           {!available ? (
-            <EmptyState kind="loading" rows={4} />
+            <RowsSkeleton leading="cover" rows={4} />
           ) : list.length === 0 ? (
             query ? (
               <EmptyState kind="no-results" title={t.noResults(query)} />

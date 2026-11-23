@@ -13,6 +13,7 @@ import type { AppNavProps } from '@/ui/organisms/AppNav';
 import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
 import { EmptyState } from '@/ui/organisms/EmptyState';
 import { PageHeader } from '@/ui/organisms/PageHeader';
+import { RowsSkeleton } from '@/ui/templates/ListTemplate';
 import { ShellScreen } from '@/features/shell';
 import styles from './AdminUsersScreen.module.css';
 
@@ -80,7 +81,7 @@ export function AdminUsersScreen(props: AdminUsersScreenProps) {
           {...(props.onRetry ? { action: { label: copy.errors.retry, onClick: props.onRetry } } : {})}
         />
       ) : !users ? (
-        <EmptyState kind="loading" rows={4} />
+        <RowsSkeleton rows={4} />
       ) : shown.length === 0 ? (
         <EmptyState kind="empty" title={t.empty} />
       ) : (

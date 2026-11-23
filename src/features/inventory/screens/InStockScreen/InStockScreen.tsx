@@ -17,6 +17,7 @@ import { EmptyState } from '@/ui/organisms/EmptyState';
 import { Island } from '@/ui/organisms/Island';
 import { PageHeader } from '@/ui/organisms/PageHeader';
 import { usePlatform } from '@/ui/platform';
+import { RowsSkeleton } from '@/ui/templates/ListTemplate';
 import { FlaggedCopiesList } from '../../components/FlaggedCopiesList';
 import styles from './InStockScreen.module.css';
 
@@ -104,7 +105,7 @@ export function InStockScreen(props: InStockScreenProps) {
           action={props.onRetry ? { label: copy.errors.retry, onClick: props.onRetry } : undefined}
         />
       ) : (
-        <EmptyState kind="loading" title={copy.ui.empty.loading} />
+        <RowsSkeleton leading="cover" />
       );
     if (allTitles.length === 0 && flaggedCount === 0)
       return <EmptyState kind="empty" title={t.inStock.empty.title} text={t.inStock.empty.text} />;
@@ -228,7 +229,7 @@ export function InStockScreen(props: InStockScreenProps) {
               </ul>
             </div>
           ) : (
-            <EmptyState kind="loading" title={copy.ui.empty.loading} />
+            <RowsSkeleton leading="cover" />
           )}
         </DetailWindow>
       )}
@@ -242,7 +243,7 @@ export function InStockScreen(props: InStockScreenProps) {
           className={mobile ? styles.flaggedPage : undefined}
         >
           {!props.flagged ? (
-            <EmptyState kind="loading" title={copy.ui.empty.loading} />
+            <RowsSkeleton leading="cover" />
           ) : props.flagged.length === 0 ? (
             <EmptyState kind="empty" title={t.flagged.empty.title} />
           ) : (

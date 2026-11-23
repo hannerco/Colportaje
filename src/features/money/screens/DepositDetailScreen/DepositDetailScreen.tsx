@@ -13,6 +13,7 @@ import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
 import { DetailWindow, useDetailWindow, type DetailWindowProps } from '@/ui/organisms/DetailWindow';
 import { EmptyState } from '@/ui/organisms/EmptyState';
 import { Island } from '@/ui/organisms/Island';
+import { DetailSkeleton } from '@/ui/templates/DetailTemplate';
 import {
   AmountsReadOnly,
   BalanceLines,
@@ -70,7 +71,7 @@ export function DepositDetailScreen(props: DepositDetailScreenProps) {
             action={props.onRetry ? { label: copy.errors.retry, onClick: props.onRetry } : undefined}
           />
         ) : (
-          <EmptyState kind="loading" rows={6} />
+          <DetailSkeleton avatar="cover" figure islands={[{ rows: 5, row: 'list' }, { rows: 3 }]} />
         )}
       </DetailWindow>
     );

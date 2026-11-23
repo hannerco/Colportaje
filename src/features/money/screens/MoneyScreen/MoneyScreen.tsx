@@ -18,7 +18,7 @@ import { Choice } from '@/ui/atoms/Choice';
 import type { AppNavProps } from '@/ui/organisms/AppNav';
 import type { EmptyStateProps } from '@/ui/organisms/EmptyState';
 import type { ViewBarFilters, ViewBarSort } from '@/ui/organisms/ViewBar';
-import { ListTemplate, type ListState } from '@/ui/templates/ListTemplate';
+import { ListTemplate, type ListState, ListSkeletonFor } from '@/ui/templates/ListTemplate';
 import { useMoneyChrome } from '../../components/MoneyChrome';
 import { PaymentsTable } from '../../components/PaymentsTable';
 import styles from './MoneyScreen.module.css';
@@ -202,6 +202,11 @@ export function MoneyScreen(props: MoneyScreenProps) {
   return (
     <>
       <ListTemplate
+        skeleton={
+          <ListSkeletonFor
+            columns={['person', 'amount', 'date', 'pill', 'date', 'amount', 'text', 'button']}
+          />
+        }
         nav={nav}
         header={{ title: t.title, ...chrome.header }}
         sections={chrome.sections}
