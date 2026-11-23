@@ -1,80 +1,32 @@
+/* Abibono entregado (HU-PAN-DIN-05; #71, diseño «AbibonoPanel»). */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: var(--detail-max-width);
+  margin: 0 auto;
+}
+
+.heading {
+  margin: 0;
+  font-size: var(--text-title);
+  font-weight: var(--weight-title);
+  line-height: var(--leading-tight);
+}
+
+:global([data-platform='mobile']) .heading {
+  font-size: var(--text-heading);
+}
+
 .note {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: flex-end;
   gap: var(--space-2);
   margin-top: var(--space-3);
 }
 
 .note > :first-child {
   align-self: stretch;
-}
-
-.receipt {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  margin-top: var(--space-3);
-}
-
-.label {
-  color: var(--color-text-2);
-  font-size: var(--text-secondary);
-  font-weight: var(--weight-medium);
-}
-
-.payments {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.payment {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) 1fr 1fr 1fr;
-  align-items: center;
-  gap: var(--space-3);
-  min-height: var(--size-control);
-  border-bottom: 1px solid var(--color-row-line);
-  color: var(--color-text);
-  font-size: var(--text-body);
-  text-decoration: none;
-}
-
-.payment:hover {
-  background: var(--color-hover);
-}
-
-.payment:focus-visible {
-  outline: 3px solid var(--color-ring);
-  outline-offset: 2px;
-}
-
-.customer {
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-.number {
-  font-variant-numeric: var(--font-numeric);
-}
-
-.method {
-  color: var(--color-text-2);
-}
-
-.end {
-  text-align: end;
-}
-
-@media (max-width: 767px) {
-  .payment {
-    grid-template-columns: minmax(0, 1fr) auto;
-    row-gap: 0;
-    padding-block: var(--space-2);
-  }
-
-  .method {
-    display: none;
-  }
 }

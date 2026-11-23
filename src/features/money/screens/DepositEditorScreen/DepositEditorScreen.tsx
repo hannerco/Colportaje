@@ -5,10 +5,11 @@ import { copy } from '@/copy/es';
 import { confirmBlockers, depositContributions, type DepositBlocker } from '@/domain/deposit';
 import { recalcProposal, type DepositPayment } from '@/domain/deposit-draft';
 import { formatCOP, type COP } from '@/domain/money';
-import { formatDate, type LocalDate } from '@/domain/time';
+import type { LocalDate } from '@/domain/time';
 import { Button } from '@/ui/atoms/Button';
 import { Choice } from '@/ui/atoms/Choice';
 import { Field } from '@/ui/atoms/Field';
+import { StatusPill } from '@/ui/atoms/StatusPill';
 import { DateField } from '@/ui/molecules/DateField';
 import { Icon } from '@/ui/icons';
 import { Menu } from '@/ui/molecules/Menu';
@@ -16,7 +17,14 @@ import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
 import { DetailWindow, type DetailWindowProps } from '@/ui/organisms/DetailWindow';
 import { EmptyState } from '@/ui/organisms/EmptyState';
 import { Island } from '@/ui/organisms/Island';
-import { usePlatform } from '@/ui/platform';
+import {
+  BalanceLines,
+  DepositHeader,
+  DepositPaymentsIsland,
+  PanelColumns,
+  PanelIsland,
+  depositCounts,
+} from '../../components/DepositPanel';
 import { ReceiptPhotos } from '../../components/ReceiptPhotos';
 import styles from './DepositEditorScreen.module.css';
 
@@ -64,8 +72,6 @@ export type DepositEditorScreenProps = {
 };
 
 const t = copy.money.depositEditor;
-const signed = (amount: COP) =>
-  amount === 0 ? formatCOP(0) : `${amount < 0 ? '−' : '+'}${formatCOP(Math.abs(amount))}`;
 
 /**
  * Nuevo Abibono y borradores (HU-PAN-DIN-04, diseño «4 · Nuevo Abibono», BR-DEP-03 a BR-DEP-10, BR-DEP-13): la entrega
@@ -105,7 +111,6 @@ function Editor(
   },
 ) {
   const { initial, payments, isOnline } = props;
-  const mobile = usePlatform() === 'mobile';
   const hintId = useId();
   const [name, setName] = useState(initial.title ?? '');
   const [date, setDate] = useState<LocalDate | null>(initial.depositDate);
@@ -115,7 +120,6 @@ function Editor(
   const [note, setNote] = useState(initial.note ?? '');
   const [busy, setBusy] = useState<null | 'save' | 'confirm'>(null);
   const [deleting, setDeleting] = useState(false);
-  const [tip, setTip] = useState<null | 'expected' | 'difference'>(null);
 
   const chosen = payments.filter((p) => selected.has(p.paymentId));
   const calculated = recalcProposal(chosen);
@@ -188,133 +192,107 @@ function Editor(
     <>
       <DetailWindow {...props.window} title={props.title} moreActions={moreActions}>
         <div className={styles.stack}>
-          <Island>
-            <div className={styles.head}>
-              <Field label={t.name} placeholder={initial.displayTitle} value={name} onChange={setName} />
-              <DateField label={t.date} placeholder="dd/mm/aaaa" value={date} onChange={setDate} />
-            </div>
-          </Island>
+          <DepositHeader
+            title={
+              <div className={styles.head}>
+                <Field label={t.name} placeholder={initial.displayTitle} value={name} onChange={setName} />
+                <DateField label={t.date} placeholder="dd/mm/aaaa" value={date} onChange={setDate} />
+              </div>
+            }
+            status={props.mode === 'draft' ? <StatusPill status="draft" /> : undefined}
+            date={null}
+            total={total}
+            cash={cashValue}
+            transfer={transferValue}
+            counts={depositCounts(chosen)}
+          />
 
-          <Island title={t.payments} icon="collected">
-            {payments.length === 0 ? (
+          {payments.length === 0 ? (
+            <Island title={t.payments} icon="collected">
               <p className={styles.muted}>{t.noPayments}</p>
-            ) : (
-              <>
-                <div className={styles.row} data-head="">
-                  <Choice
-                    className={styles.check}
-                    label={t.paymentsAll}
-                    checked={allSelected}
-                    onCheckedChange={(on) =>
-                      select(on ? new Set(payments.map((p) => p.paymentId)) : new Set())
-                    }
-                  />
-                  {!mobile && (
-                    <>
-                      <span>{t.columns.paidAt}</span>
-                      <span>{t.columns.method}</span>
-                      <span className={styles.end}>{t.columns.amount}</span>
-                    </>
-                  )}
-                </div>
-                <ul className={styles.list} aria-label={t.payments}>
-                  {payments.map((p) => (
-                    <li key={p.paymentId} className={styles.row}>
-                      <Choice
-                        className={styles.check}
-                        label={p.customerName}
-                        checked={selected.has(p.paymentId)}
-                        onCheckedChange={(on) => toggle(p.paymentId, on)}
-                      />
-                      <span className={styles.number}>{formatDate(p.paidAt)}</span>
-                      <span>{t.methods[p.method]}</span>
-                      <span className={`${styles.number} ${styles.end}`}>{formatCOP(p.paidAmount)}</span>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </Island>
-
-          <Island title={t.amounts} icon="money">
-            <div className={styles.amounts}>
-              <div className={styles.amount}>
-                <Field kind="money" label={t.cash} value={cash} onChange={setCash} />
-                {cashValue !== calculated.cash && (
-                  <span className={styles.calc}>{t.calculated(formatCOP(calculated.cash))}</span>
-                )}
-              </div>
-              <div className={styles.amount}>
-                <Field kind="money" label={t.transfer} value={transfer} onChange={setTransfer} />
-                {transferValue !== calculated.transfer && (
-                  <span className={styles.calc}>{t.calculated(formatCOP(calculated.transfer))}</span>
-                )}
-              </div>
-              <div className={styles.total}>
-                <span>{t.total}</span>
-                <span className={styles.number}>{formatCOP(total)}</span>
-              </div>
-            </div>
-            {edited && (
-              <Button
-                variant="tertiary"
-                size="compact"
-                icon="undo"
-                onClick={() => {
-                  setCash(calculated.cash);
-                  setTransfer(calculated.transfer);
-                }}
-              >
-                {t.restore}
-              </Button>
-            )}
-            <dl className={styles.balance} aria-label={t.balance}>
-              <Line
-                label={t.expected}
-                value={formatCOP(calculated.expected)}
-                info={{
-                  label: t.expectedInfo,
-                  open: tip === 'expected',
-                  onToggle: () => setTip(tip === 'expected' ? null : 'expected'),
-                }}
-              />
-              <Line label={t.delivered} value={formatCOP(total)} />
-              <Line
-                label={t.difference}
-                value={`${signed(difference)}${difference === 0 ? '' : ` · ${difference < 0 ? t.shortfall : t.surplus}`}`}
-                bad={difference !== 0}
-                info={{
-                  label: t.differenceInfo,
-                  open: tip === 'difference',
-                  onToggle: () => setTip(tip === 'difference' ? null : 'difference'),
-                }}
-              />
-            </dl>
-            {tip && (
-              <p role="status" className={styles.muted}>
-                {tip === 'expected' ? t.expectedTip : t.differenceTip}
-              </p>
-            )}
-          </Island>
-
-          <Island>
-            <Field
-              kind="textarea"
-              label={`${t.note}${noteRequired ? ` · ${t.noteRequired}` : ''}`}
-              placeholder={noteRequired ? t.noteDifferencePlaceholder : t.notePlaceholder}
-              value={note}
-              onChange={setNote}
+            </Island>
+          ) : (
+            <DepositPaymentsIsland
+              payments={payments}
+              caption={copy.money.depositPanel.selected(selected.size, payments.length)}
+              leadingLabel={t.include}
+              headerEnd={
+                <Button
+                  variant="link"
+                  size="compact"
+                  onClick={() => select(allSelected ? new Set() : new Set(payments.map((p) => p.paymentId)))}
+                >
+                  {allSelected ? t.paymentsNone : t.paymentsAllShort}
+                </Button>
+              }
+              leading={(p) => (
+                <Choice
+                  hideLabel
+                  label={t.includePayment(p.customerName)}
+                  checked={selected.has(p.paymentId)}
+                  onCheckedChange={(on) => toggle(p.paymentId, on)}
+                />
+              )}
             />
-            <div className={styles.receipt}>
-              <span className={styles.receiptLabel}>{t.receipt}</span>
-              <ReceiptPhotos
-                photos={props.receipts}
-                onAdd={props.onAddReceipt}
-                onRemove={props.onRemoveReceipt}
-                disabledReason={online ? null : copy.ui.empty.needsConnection}
-              />
-            </div>
-          </Island>
+          )}
+
+          <PanelColumns
+            left={
+              <>
+                <PanelIsland title={copy.money.depositPanel.toDeliver} icon="money">
+                  <div className={styles.amounts}>
+                    <div className={styles.amount}>
+                      <Field kind="money" label={t.cash} value={cash} onChange={setCash} />
+                      {cashValue !== calculated.cash && (
+                        <span className={styles.calc}>{t.calculated(formatCOP(calculated.cash))}</span>
+                      )}
+                    </div>
+                    <div className={styles.amount}>
+                      <Field kind="money" label={t.transfer} value={transfer} onChange={setTransfer} />
+                      {transferValue !== calculated.transfer && (
+                        <span className={styles.calc}>{t.calculated(formatCOP(calculated.transfer))}</span>
+                      )}
+                    </div>
+                  </div>
+                  {edited && (
+                    <Button
+                      variant="tertiary"
+                      size="compact"
+                      icon="undo"
+                      onClick={() => {
+                        setCash(calculated.cash);
+                        setTransfer(calculated.transfer);
+                      }}
+                    >
+                      {t.restore}
+                    </Button>
+                  )}
+                </PanelIsland>
+                <PanelIsland title={copy.money.depositPanel.receipt} icon="receipt">
+                  <ReceiptPhotos
+                    photos={props.receipts}
+                    onAdd={props.onAddReceipt}
+                    onRemove={props.onRemoveReceipt}
+                    disabledReason={online ? null : copy.ui.empty.needsConnection}
+                  />
+                </PanelIsland>
+              </>
+            }
+            right={
+              <PanelIsland title={copy.money.depositPanel.balance} icon="info">
+                <BalanceLines expected={calculated.expected} difference={difference} />
+                <div className={styles.note}>
+                  <Field
+                    kind="textarea"
+                    label={`${t.note}${noteRequired ? ` · ${t.noteRequired}` : ''}`}
+                    placeholder={noteRequired ? t.noteDifferencePlaceholder : t.notePlaceholder}
+                    value={note}
+                    onChange={setNote}
+                  />
+                </div>
+              </PanelIsland>
+            }
+          />
 
           <div className={styles.footer}>
             {blockers.length > 0 && (
@@ -354,37 +332,5 @@ function Editor(
         onConfirm={props.onDelete}
       />
     </>
-  );
-}
-
-function Line({
-  label,
-  value,
-  bad = false,
-  info,
-}: {
-  label: string;
-  value: string;
-  bad?: boolean;
-  info?: { label: string; open: boolean; onToggle: () => void };
-}) {
-  return (
-    <div className={styles.line}>
-      <dt>
-        {label}
-        {info && (
-          <button
-            type="button"
-            className={styles.info}
-            aria-label={info.label}
-            aria-expanded={info.open}
-            onClick={info.onToggle}
-          >
-            <Icon name="info" size={16} tone="current" />
-          </button>
-        )}
-      </dt>
-      <dd className={`${styles.number} ${bad ? styles.bad : ''}`}>{value}</dd>
-    </div>
   );
 }
