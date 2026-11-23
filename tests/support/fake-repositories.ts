@@ -39,6 +39,7 @@ export const fakeCustomerRepository = (overrides: Partial<CustomerRepository> = 
   getAccountData: vi.fn(),
   getDetailData: vi.fn(),
   create: vi.fn(),
+  saveNew: vi.fn(),
   update: vi.fn(),
   listDuplicateCandidates: vi.fn(),
   listRefs: vi.fn(),

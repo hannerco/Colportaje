@@ -210,6 +210,41 @@ export function createSupabaseCustomerRepository(getClient: GetSupabaseClient): 
       });
     },
 
+    async saveNew(draft) {
+      const { error } = await getClient().rpc('save_new_customer', {
+        p_customer: {
+          id: draft.id,
+          name: draft.name,
+          phone: draft.phone,
+          address: draft.address,
+          info: draft.info,
+          avatar_emoji: draft.avatarEmoji,
+          latitude: draft.location?.latitude ?? null,
+          longitude: draft.location?.longitude ?? null,
+          accuracy_m: draft.location?.accuracyMeters ?? null,
+        },
+        p_books: draft.books.map((b) => ({
+          copy_id: b.copyId,
+          agreed_price: b.agreedPrice,
+          sold_on: b.soldOn,
+        })),
+        p_down: draft.downPayment && {
+          payment_id: draft.downPayment.paymentId,
+          amount: draft.downPayment.amount,
+          method: draft.downPayment.method,
+          paid_on: draft.downPayment.paidOn,
+        },
+        p_plan: draft.plan ? [...draft.plan] : null,
+      });
+      if (error)
+        return err(
+          mapRpcError(error, SAVE_NEW_ERRORS, (code, detail) =>
+            code === COMMON_ERROR_CODES.VALIDATION && detail ? { field: detail } : undefined,
+          ),
+        );
+      return ok({ id: draft.id });
+    },
+
     async create({ id, name }) {
       const client = getClient();
       const inserted = await client
@@ -479,6 +514,18 @@ const detailCustomerSchema = z.object({
   archived_at: z.string().nullable(),
   created_at: instant,
 });
+
+/** Lo que puede responder `save_new_customer` (y las funciones que usa): el resto es un error inesperado. */
+const SAVE_NEW_ERRORS = [
+  'COPY_NOT_IN_STOCK',
+  'COPY_IS_MINIBOOK',
+  'PLAN_TOTAL_MISMATCH',
+  'PLAN_REQUIRES_BALANCE',
+  COMMON_ERROR_CODES.VALIDATION,
+  COMMON_ERROR_CODES.CONFLICT,
+  COMMON_ERROR_CODES.FORBIDDEN,
+  COMMON_ERROR_CODES.NOT_FOUND,
+];
 
 const detailCopySchema = z.object({
   id: z.uuid(),

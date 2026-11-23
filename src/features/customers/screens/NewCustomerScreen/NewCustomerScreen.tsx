@@ -419,7 +419,7 @@ function DiscardDialog({
       tone="danger"
       title={d.title}
       message={hasItems ? d.willRemove(discardSummary.books, discardSummary.payments) : d.message}
-      confirmLabel={t.discard}
+      confirmLabel={d.leave}
       cancelLabel={t.keepEditing}
       onConfirm={onDiscard}
     />

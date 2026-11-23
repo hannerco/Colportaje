@@ -48,6 +48,7 @@ Selector de emoji (FC-02, sin diseño en la biblioteca: si el lienzo lo dibuja, 
   - **Factura:** el lienzo la dibuja en la ficha nueva (fotos, número y fecha), pero ninguna HU de pantalla la tiene asignada. Queda fuera; se anota en el README.
   - **Medio de pago y Frecuencia** usan la Selección (radio) de la biblioteca en vez de los botones segmentados del lienzo (manda la biblioteca).
 - **2026-11-22 (#32, #33, #34):** como el lienzo CrearV5: avatar con selector de emoji junto al nombre (propuesta 4), islas con línea y estado de sección, isla **Factura** (foto, N.º y fecha; «Agregar otra factura», HU-CLI-08), Medio de pago y Frecuencia como **Botones segmentados**, Valor de cada abono y Primer abono de a dos, fechas del plan como campo con calendario y «N abonos cubren el saldo» en verde. Story «Como el diseño (CrearV5)».
+- **2026-11-22 (#57, ronda 35, ADR-0051):** el cliente solo existe al guardarlo. Datos, libros elegidos (siguen En físico, sin historial), cuota, plan y fotos viven en el teléfono; «Guardar cliente» guarda todo de una vez (`save_new_customer`) y luego sube las fotos, con «Reintentar» si alguna falla. «Descartar» o salir con algo escrito pregunta «¿Salir sin guardar?». Pruebas: `tests/integration/save-new-customer.test.ts` y E2E de Nuevo cliente y Agregar libro.
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E «Nuevo cliente (ficha viva)» (TESTING.md, flujo 3) pasa en móvil y escritorio.

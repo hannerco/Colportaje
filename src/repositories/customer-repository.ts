@@ -4,6 +4,7 @@ import type { CustomerPatch, DuplicateCandidate } from '@/domain/customer-data';
 import type { CustomerDetailInput } from '@/domain/customer-detail';
 import type { CustomerListCustomer } from '@/domain/customer-list';
 import type { CustomerLocation } from '@/domain/customer-location';
+import type { NewCustomerDraft } from '@/domain/new-customer';
 import type { Payment } from '@/domain/payment';
 import type { AppError } from '@/domain/shared/errors';
 import type { Result } from '@/domain/shared/result';
@@ -59,6 +60,13 @@ export interface CustomerRepository {
    * escrito. Errores: `VALIDATION` (`field: name`), `CONFLICT` (el id es de otro), `NETWORK_ERROR`.
    */
   create(input: { readonly id: string; readonly name: string }): Promise<Result<{ id: string }, AppError>>;
+
+  /**
+   * Guarda un cliente nuevo con todo lo que se le puso (ronda 35, #57): datos, libros vendidos, cuota inicial y plan,
+   * en una sola transacción. Reintentar con el mismo id no duplica. Errores: `VALIDATION`, `COPY_NOT_IN_STOCK` (otro
+   * dispositivo ya lo vendió), `CONFLICT`, `NETWORK_ERROR`.
+   */
+  saveNew(draft: NewCustomerDraft): Promise<Result<{ id: string }, AppError>>;
 
   /**
    * Cambia solo los datos del parche (ya validado). Errores: `VALIDATION` (`details.field`),
