@@ -47,7 +47,7 @@ function fakeCodec(
   return {
     qualities,
     decode: async () => ({ width: 4000, height: 3000, source: null }),
-    encodeWebp: async (_image, size, quality) => {
+    encodeImage: async (_image, size, quality) => {
       qualities.push(Number(quality.toFixed(2)));
       return new Blob([new Uint8Array(bytesAtQuality(quality, size.width))], { type: 'image/webp' });
     },
@@ -72,7 +72,7 @@ describe('compressImage: búsqueda de calidad', () => {
   it('si el dispositivo no codifica WebP devuelve IMAGE_ENCODING_FAILED', async () => {
     const codec: ImageCodec = {
       decode: async () => ({ width: 10, height: 10, source: null }),
-      encodeWebp: async () => {
+      encodeImage: async () => {
         throw new Error('Este navegador no codifica WebP');
       },
     };
@@ -86,7 +86,7 @@ describe('compressCover: portadas cuadradas (#40)', () => {
       [];
     const codec: ImageCodec = {
       decode: async () => ({ width: 404, height: 558, source: null }),
-      encodeWebp: async (_image, size, _quality, frame) => {
+      encodeImage: async (_image, size, _quality, frame) => {
         calls.push({ size, frame });
         return new Blob([new Uint8Array(10)], { type: 'image/webp' });
       },
@@ -103,7 +103,7 @@ describe('compressCover: portadas cuadradas (#40)', () => {
     const frames: unknown[] = [];
     const codec: ImageCodec = {
       decode: async () => ({ width: 1346, height: 1990, source: null }),
-      encodeWebp: async (_image, _size, _quality, frame) => {
+      encodeImage: async (_image, _size, _quality, frame) => {
         frames.push(frame);
         return new Blob([new Uint8Array(10)], { type: 'image/webp' });
       },
@@ -189,7 +189,7 @@ describe('subida de fotos (HU-BASE-05)', () => {
 
   it('un archivo que no es imagen no sube nada', async () => {
     const storage = storageWith();
-    const codec: ImageCodec = { decode: async () => null, encodeWebp: vi.fn() };
+    const codec: ImageCodec = { decode: async () => null, encodeImage: vi.fn() };
     const result = await uploadPhotoFiles({ connectivity: online, auth, imageCodec: codec, storage }, input);
     expect(result).toEqual(err(appError('IMAGE_UNREADABLE')));
     expect(storage.upload).not.toHaveBeenCalled();

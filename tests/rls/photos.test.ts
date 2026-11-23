@@ -103,11 +103,13 @@ describe('bucket user-photos (HU-BASE-05 R2)', () => {
   const objectIn = (folder: string) =>
     `insert into storage.objects (bucket_id, name) values ('user-photos', '${folder}/customer_info/x.webp')`;
 
-  it('es privado, solo acepta WebP y limita el tamaño', async () => {
+  it('es privado, acepta WebP y JPEG (iPhone, #55) y limita el tamaño', async () => {
     const { rows } = await pool.query(
       `select public, file_size_limit, allowed_mime_types from storage.buckets where id = 'user-photos'`,
     );
-    expect(rows).toEqual([{ public: false, file_size_limit: '1048576', allowed_mime_types: ['image/webp'] }]);
+    expect(rows).toEqual([
+      { public: false, file_size_limit: '1048576', allowed_mime_types: ['image/webp', 'image/jpeg'] },
+    ]);
   });
 
   it('CA-2 (SQL): A escribe y lee en su carpeta; no escribe ni ve la de B; un usuario desactivado no accede', async () => {

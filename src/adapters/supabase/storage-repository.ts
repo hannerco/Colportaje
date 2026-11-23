@@ -21,7 +21,11 @@ export function createSupabaseStorageRepository(getClient: GetSupabaseClient): S
   return {
     async upload(path, blob) {
       const { error } = await guard(() =>
-        bucket().upload(path, blob, { upsert: true, contentType: 'image/webp', cacheControl: '3600' }),
+        bucket().upload(path, blob, {
+          upsert: true,
+          contentType: blob.type || 'image/webp',
+          cacheControl: '3600',
+        }),
       );
       return error ? err(mapStorageError(error)) : ok(undefined);
     },

@@ -33,10 +33,10 @@ async function encodeUnder(
   const side = Math.max(size.width, size.height);
   const frame = square ? { width: side, height: side } : undefined;
   let quality = QUALITY_START;
-  let blob = await codec.encodeWebp(image, size, quality, frame);
+  let blob = await codec.encodeImage(image, size, quality, frame);
   while (blob.size > targetBytes && quality - QUALITY_STEP >= QUALITY_MIN) {
     quality -= QUALITY_STEP;
-    blob = await codec.encodeWebp(image, size, quality, frame);
+    blob = await codec.encodeImage(image, size, quality, frame);
   }
   return blob;
 }

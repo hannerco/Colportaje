@@ -95,12 +95,12 @@ describe('Storage de fotos contra Supabase local (HU-BASE-05)', () => {
     expect(data?.filter((f) => path.endsWith(f.name))).toHaveLength(1);
   });
 
-  it('R1: el bucket rechaza lo que no es WebP (nunca el original)', async () => {
+  it('R1: el bucket rechaza lo que no es WebP ni JPEG (nunca el original, p. ej. un PNG o un HEIC)', async () => {
     const a = await signedInUser();
     const { error } = await a.client.storage
       .from(USER_PHOTOS_BUCKET)
-      .upload(`${a.userId}/customer_info/${randomUUID()}.jpg`, new Blob(['x'], { type: 'image/jpeg' }), {
-        contentType: 'image/jpeg',
+      .upload(`${a.userId}/customer_info/${randomUUID()}.png`, new Blob(['x'], { type: 'image/png' }), {
+        contentType: 'image/png',
       });
     expect(error).not.toBeNull();
   });

@@ -113,7 +113,11 @@ export function createSupabaseTitleRepository(getClient: GetSupabaseClient): Tit
         const { error } = await getClient()
           .storage.from(TITLE_IMAGES_BUCKET)
           // Cada portada tiene su propia ruta (titleCoverPath): se puede guardar en caché mucho tiempo.
-          .upload(path, blob, { upsert: true, contentType: 'image/webp', cacheControl: '31536000' });
+          .upload(path, blob, {
+            upsert: true,
+            contentType: blob.type || 'image/webp',
+            cacheControl: '31536000',
+          });
         return error ? err(mapStorageError(error)) : ok(undefined);
       } catch (cause) {
         // Supabase Storage lanza (en vez de devolver error) cuando no hay red.
