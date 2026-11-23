@@ -52,6 +52,7 @@ Cliente con deuda y abonos (Pagando) · Vencido · Saldado con saldo a favor · 
 - **2026-11-22 (#53, #56):** cada libro vendido muestra su portada y «Vendido el …», que abre el calendario para corregir la fecha (`SoldDateDialog`, HU-CLI-13).
 - **2026-11-22 (#61):** la ficha de un cliente guardado (no archivado) muestra la isla de factura de Nuevo cliente: «Foto de la factura» si no tiene, «Agregar otra factura» si ya tiene, más fotos por factura y su N.º y fecha (se guardan solos un momento después). Archivado: la factura solo se ve. Prueba: stories «Agregar factura» y «Archivado sin agregar factura».
 - **2026-11-22 (#61):** la ficha de un cliente guardado y no archivado muestra la isla de factura de Nuevo cliente: «Foto de la factura» si no tiene, «Agregar otra factura» si ya tiene, más fotos por factura, y su N.º y su fecha, que se guardan solos un momento después. Si está archivado, la factura solo se ve. Pruebas: stories «Agregar factura» y «Archivado sin agregar factura».
+- **2026-11-22 (#68, #69; ronda 36):** «Editar» en Datos abre «Editar datos» (nombre, teléfono, dirección e información; guarda solo lo que cambió y el nombre es obligatorio). Al tocar una foto de factura se puede elegir «Cambiar foto» (se sube la nueva y luego se quita la anterior) o «Quitar foto». Pruebas: stories «Editar datos», «Cambiar foto de factura» y las de la pieza Editar datos.
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E «Archivar y restaurar» (TESTING.md, flujo 14) pasa.
