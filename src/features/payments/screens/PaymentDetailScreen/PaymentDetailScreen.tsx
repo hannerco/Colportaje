@@ -7,6 +7,7 @@ import type { PaymentHistoryEntry } from '@/domain/payment-history';
 import { daysBetween, formatDate, type LocalDate } from '@/domain/time';
 import { Button } from '@/ui/atoms/Button';
 import { Icon } from '@/ui/icons';
+import { usePlatform } from '@/ui/platform';
 import { StatusPill } from '@/ui/atoms/StatusPill';
 import { HistoryTimeline } from '@/ui/molecules/HistoryTimeline';
 import type { BannerProps } from '@/ui/molecules/Banner';
@@ -127,6 +128,7 @@ export function paymentBanner(payment: PaymentRow, today: LocalDate): BannerProp
  */
 export function PaymentDetailScreen(props: PaymentDetailScreenProps) {
   const { payment, customer, isOnline, today } = props;
+  const platform = usePlatform();
 
   if (!payment || !customer)
     return (
@@ -154,6 +156,7 @@ export function PaymentDetailScreen(props: PaymentDetailScreenProps) {
   const paidAmount = payment.paidAmount;
 
   const banner = paymentBanner(payment, today);
+  const mobile = platform === 'mobile';
   const stripTone = ({ overdue: 'bad', neutral: 'neutral', collected: 'ok', delivered: 'accent' } as const)[
     (banner?.tone ?? 'neutral') as 'overdue' | 'neutral' | 'collected' | 'delivered'
   ];
@@ -178,7 +181,7 @@ export function PaymentDetailScreen(props: PaymentDetailScreenProps) {
             children: (
               <>
                 {/* El diseño: la Pastilla dice el estado («Por cobrar») y el texto, si está vencido. */}
-                <StatusPill status={payment.status} locked={locked} />
+                <StatusPill status={payment.status} locked={locked} size={mobile ? 'sm' : 'md'} />
                 {banner && (
                   <span className={styles.stripText}>
                     {payment.isOverdue && <Icon name="alert" size={16} tone="current" />}
@@ -241,7 +244,7 @@ export function PaymentDetailScreen(props: PaymentDetailScreenProps) {
                       state={isOnline ? 'normal' : 'disabled'}
                       onClick={() => props.onFormChange('extend')}
                     >
-                      {t.extend}
+                      {mobile ? t.extendShort : t.extend}
                     </Button>
                   )}
                 </div>
@@ -278,7 +281,11 @@ export function PaymentDetailScreen(props: PaymentDetailScreenProps) {
                     {p.isOverdue && <span className={styles.overdueAgo}>{t.overdueAgo(p.overdueDays)}</span>}
                   </span>
                   <span className={styles.siblingState}>
-                    <StatusPill status={p.status} locked={p.status === 'delivered'} />
+                    <StatusPill
+                      status={p.status}
+                      locked={p.status === 'delivered'}
+                      size={mobile ? 'sm' : 'md'}
+                    />
                   </span>
                   <span className={styles.siblingAmount}>
                     {formatCOP(

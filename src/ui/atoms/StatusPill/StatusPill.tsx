@@ -33,6 +33,10 @@ export type StatusPillProps = {
   locked?: boolean;
   /** Texto (`texto`): reemplaza la palabra del estado, p. ej. «Debe» en la lista móvil de clientes. */
   label?: string;
+  /** Forma texto con la palabra del color del estado (Ejemplares en el celular: «Vendido» en verde). */
+  tinted?: boolean;
+  /** Tamaño: `sm` en filas angostas del celular (lienzo «Abonos de …»), con letra de pie. */
+  size?: 'md' | 'sm';
   className?: string;
 };
 
@@ -40,7 +44,15 @@ export type StatusPillProps = {
  * Pastilla de estado (HU-UI-05, ficha Lib-Pastilla): ícono, color y palabra, siempre juntos, para que el estado se
  * entienda aunque no se distinga el color. No es interactiva.
  */
-export function StatusPill({ status, shape = 'pill', locked = false, label, className }: StatusPillProps) {
+export function StatusPill({
+  status,
+  shape = 'pill',
+  locked = false,
+  label,
+  size = 'md',
+  tinted = false,
+  className,
+}: StatusPillProps) {
   const { tone, icon } = PILL_STATUS[status];
   return (
     <span
@@ -50,10 +62,12 @@ export function StatusPill({ status, shape = 'pill', locked = false, label, clas
       data-status={status}
       data-tone={tone}
       data-shape={shape}
+      data-size={size === 'sm' ? 'sm' : undefined}
+      data-tinted={tinted || undefined}
     >
       <Icon
         name={locked ? 'locked' : icon}
-        size={shape === 'text' ? 14 : 15}
+        size={shape === 'text' ? 14 : size === 'sm' ? 13 : 15}
         tone="current"
         className={styles.icon}
       />

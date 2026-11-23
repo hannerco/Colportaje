@@ -244,3 +244,10 @@
 .side .zero {
   color: var(--color-text-3);
 }
+
+/* Ejemplares en el celular: el precio en una línea, con «≠» si cambió. */
+.copyPrice {
+  display: inline-flex;
+  align-items: baseline;
+  white-space: nowrap;
+}

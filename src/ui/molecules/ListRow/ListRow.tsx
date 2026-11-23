@@ -289,18 +289,16 @@ function secondLine(props: ListRowRowProps): ReactNode {
       );
     case 'payment':
       return props.date ? formatDate(props.date) : copy.ui.listRow.empty;
-    case 'copy': {
-      if (!props.date) return copy.ui.listRow.empty;
-      const text = props.dateKind === 'sold' ? copy.ui.listRow.sold : copy.ui.listRow.received;
+    case 'copy':
+      // Diseño móvil de Ejemplares: el estado con su color y, si se vendió, a quién. La fecha va en el grupo.
       return (
         <>
-          <span className={styles.ellipsis}>{text(formatDate(props.date))}</span>
+          {props.status && <StatusPill status={props.status} shape="text" tinted />}
           {props.customerName && (
             <span className={cx(styles.ellipsis, styles.customerName)}>· {props.customerName}</span>
           )}
         </>
       );
-    }
   }
 }
 
@@ -323,12 +321,21 @@ function sideOf(props: ListRowRowProps): ReactNode {
       </>
     );
   }
+  if (props.kind === 'copy')
+    // Diseño móvil de Ejemplares: solo el precio; «≠» si se vendió a un precio distinto del público.
+    return (
+      <span className={styles.copyPrice}>
+        {props.priceDelta ? (
+          <span className={styles.muted} aria-label={formatDelta(props.priceDelta)}>
+            ≠{' '}
+          </span>
+        ) : null}
+        {amount}
+      </span>
+    );
   return (
     <>
       {amount}
-      {props.kind === 'copy' && props.priceDelta ? (
-        <span className={styles.delta}>{formatDelta(props.priceDelta)}</span>
-      ) : null}
       {props.status && <StatusPill status={props.status} shape="text" />}
     </>
   );

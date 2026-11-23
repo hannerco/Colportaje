@@ -101,7 +101,7 @@ function IdentityIsland({
             kind={avatar.kind}
             emoji={avatar.emoji}
             coverUrl={avatar.coverUrl}
-            size={mobile ? 'lg' : 'xl'}
+            size={mobile && avatar.kind !== 'cover' ? 'lg' : 'xl'}
             decorative
           />
         )}

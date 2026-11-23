@@ -14,8 +14,6 @@ import styles from './PaymentsTable.module.css';
 
 export type PaymentsTableProps = {
   rows: readonly PaymentsListRow[];
-  /** La pestaña «Todos» agrupa por estado en móvil (Por cobrar, Cobrado, Entregado). */
-  grouped?: boolean;
   /** Ruta del detalle del abono (HU-PAN-DIN-02). */
   paymentHref: (paymentId: string) => string;
   /** Escritorio (#29): un clic normal en el cliente abre el abono en la Ventana de detalle en vez de ir a la página. */
@@ -47,7 +45,6 @@ const statusOf = (row: PaymentsListRow) => (row.isOverdue ? 'overdue' : row.stat
  */
 export function PaymentsTable({
   rows,
-  grouped = false,
   paymentHref,
   onOpen,
   selectedId,
@@ -59,9 +56,9 @@ export function PaymentsTable({
   const mobile = usePlatform() === 'mobile';
   if (mobile)
     return (
-      <MobileList
+      // Diseño móvil («Dinero · Abonos de clientes»): una sola lista, sin grupos; el estado va en el ícono de cada fila.
+      <Rows
         rows={rows}
-        grouped={grouped}
         paymentHref={paymentHref}
         label={ariaLabel}
         swipe={{ onCollect, onExtend, isOnline }}
@@ -150,37 +147,6 @@ function Method({ method }: { method: PayMethod }) {
   );
 }
 
-const GROUPS = ['scheduled', 'collected', 'delivered'] as const;
-
-function MobileList({
-  rows,
-  grouped,
-  paymentHref,
-  label,
-  swipe,
-}: {
-  rows: readonly PaymentsListRow[];
-  grouped: boolean;
-  paymentHref: (paymentId: string) => string;
-  label: string;
-  swipe: Swipe;
-}) {
-  if (!grouped) return <Rows rows={rows} paymentHref={paymentHref} label={label} swipe={swipe} />;
-  return (
-    <>
-      {GROUPS.map((status) => {
-        const inGroup = rows.filter((row) => row.status === status);
-        return inGroup.length === 0 ? null : (
-          <section key={status} className={styles.group}>
-            <h2 className={styles.groupName}>{copy.status[status]}</h2>
-            <Rows rows={inGroup} paymentHref={paymentHref} label={copy.status[status]} swipe={swipe} />
-          </section>
-        );
-      })}
-    </>
-  );
-}
-
 function Rows({
   rows,
   paymentHref,
@@ -214,46 +180,54 @@ function Rows({
                 swipe.isOnline,
               )}
             >
-              <a className={styles.mobileRow} href={paymentHref(row.paymentId)}>
-                <span className={styles.mobileMain}>
-                  <span className={styles.mobileAmount}>{cop(row.paidAmount ?? row.agreedAmount)}</span>
-                  <span className={styles.mobileName}>
-                    {row.customer.name}
-                    {row.customer.archived && <span className={styles.muted}> {t.archivedCustomer}</span>}
-                  </span>
-                </span>
-                <span className={styles.mobileDate}>
-                  <StatusPill status={statusOf(row)} shape="text" />
-                  <span>
-                    {day(row.paidAt ?? row.agreedDate)}
-                    {row.isOverdue && <span className={styles.overdue}>{t.overdue(row.overdueDays)}</span>}
-                  </span>
-                  {row.method && <Method method={row.method} />}
-                </span>
-              </a>
+              <MobileRow row={row} href={paymentHref(row.paymentId)} />
             </SwipeRow>
           ) : (
-            <a className={styles.mobileRow} href={paymentHref(row.paymentId)}>
-              <span className={styles.mobileMain}>
-                <span className={styles.mobileAmount}>{cop(row.paidAmount ?? row.agreedAmount)}</span>
-                <span className={styles.mobileName}>
-                  {row.customer.name}
-                  {row.customer.archived && <span className={styles.muted}> {t.archivedCustomer}</span>}
-                </span>
-              </span>
-              <span className={styles.mobileDate}>
-                <StatusPill status={statusOf(row)} shape="text" />
-                <span>
-                  {day(row.paidAt ?? row.agreedDate)}
-                  {row.isOverdue && <span className={styles.overdue}>{t.overdue(row.overdueDays)}</span>}
-                </span>
-                {row.method && <Method method={row.method} />}
-              </span>
-            </a>
+            <MobileRow row={row} href={paymentHref(row.paymentId)} />
           )}
         </li>
       ))}
     </ul>
+  );
+}
+
+/** El ícono de la izquierda: el estado y, si ya se cobró, el medio de pago en una insignia. */
+const STATUS_ICON = {
+  scheduled: 'scheduled',
+  overdue: 'scheduled',
+  collected: 'collected',
+  delivered: 'locked',
+  canceled: 'canceled',
+} as const;
+
+/**
+ * Fila del celular (diseño «Dinero · Abonos de clientes» móvil): ícono del estado (con el medio de pago), el valor en
+ * negrita y el cliente debajo, y la fecha a la derecha (en rojo y con «hace N días» si está vencido).
+ */
+function MobileRow({ row, href }: { row: PaymentsListRow; href: string }) {
+  const status = statusOf(row);
+  return (
+    <a className={styles.mobileRow} href={href}>
+      <span className={styles.mobileIcon} data-status={status} aria-label={copy.status[status]} role="img">
+        <Icon name={STATUS_ICON[status]} size={16} tone="current" />
+        {row.method && (
+          <span className={styles.mobileBadge}>
+            <Icon name={row.method === 'cash' ? 'money' : 'transfer'} size={11} tone="current" />
+          </span>
+        )}
+      </span>
+      <span className={styles.mobileMain}>
+        <span className={styles.mobileAmount}>{cop(row.paidAmount ?? row.agreedAmount)}</span>
+        <span className={styles.mobileName}>
+          {row.customer.name}
+          {row.customer.archived && <span className={styles.muted}> {t.archivedCustomer}</span>}
+        </span>
+      </span>
+      <span className={styles.mobileDate} data-overdue={row.isOverdue || undefined}>
+        <span>{day(row.paidAt ?? row.agreedDate)}</span>
+        {row.isOverdue && <span>{t.overdue(row.overdueDays)}</span>}
+      </span>
+    </a>
   );
 }
 

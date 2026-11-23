@@ -167,7 +167,7 @@ export function DetailWindow(props: DetailWindowProps) {
   // En móvil la página ya tiene el `<h1>` del Encabezado; en escritorio, solo si el contenido no pone el suyo.
   const context: DetailWindowContextValue = {
     mode: resolved,
-    heading: resolved === 'page' && !mobile ? 'h1' : 'h2',
+    heading: resolved === 'page' && (!mobile || headingInContent) ? 'h1' : 'h2',
   };
   const body = (
     <DetailWindowContext.Provider value={context}>
@@ -204,6 +204,7 @@ export function DetailWindow(props: DetailWindowProps) {
             title={title}
             back={{ label: breadcrumb.label, href: breadcrumb.href }}
             moreActions={moreActions}
+            hideTitle={headingInContent}
           />
           {body}
         </section>
