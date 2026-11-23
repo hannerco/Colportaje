@@ -3,18 +3,28 @@
 import { useState } from 'react';
 import { copy } from '@/copy/es';
 import type { DepositView } from '@/domain/deposit-draft';
-import { formatCOP, type COP } from '@/domain/money';
-import { formatDate, toBogotaDate } from '@/domain/time';
+import { toBogotaDate } from '@/domain/time';
 import { Button } from '@/ui/atoms/Button';
 import { Field } from '@/ui/atoms/Field';
-import { DataList, DataRow } from '@/ui/molecules/DataRow';
+import { StatusPill } from '@/ui/atoms/StatusPill';
+import { Icon } from '@/ui/icons';
 import { HistoryTimeline } from '@/ui/molecules/HistoryTimeline';
-import { Menu } from '@/ui/molecules/Menu';
 import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
-import { DetailWindow, type DetailWindowProps } from '@/ui/organisms/DetailWindow';
+import { DetailWindow, useDetailWindow, type DetailWindowProps } from '@/ui/organisms/DetailWindow';
 import { EmptyState } from '@/ui/organisms/EmptyState';
 import { Island } from '@/ui/organisms/Island';
-import { DetailSkeleton, DetailTemplate } from '@/ui/templates/DetailTemplate';
+import { DetailSkeleton } from '@/ui/templates/DetailTemplate';
+import {
+  AmountsReadOnly,
+  BalanceLines,
+  DateChip,
+  DepositHeader,
+  DepositPaymentsIsland,
+  PanelColumns,
+  PanelFooter,
+  PanelIsland,
+  depositCounts,
+} from '../../components/DepositPanel';
 import { ReceiptPhotos } from '../../components/ReceiptPhotos';
 import styles from './DepositDetailScreen.module.css';
 
@@ -37,13 +47,12 @@ export type DepositDetailScreenProps = {
 };
 
 const t = copy.money.depositDetail;
-const signed = (amount: COP) =>
-  amount === 0 ? formatCOP(0) : `${amount < 0 ? '−' : '+'}${formatCOP(Math.abs(amount))}`;
 
 /**
  * Abibono entregado y reabrir (HU-PAN-DIN-05, diseño «3 · Abibonos»: Dinero-d-confirmado y -reabrir): el Abibono tal
  * como quedó, solo lectura (título, fecha, montos y abonos bloqueados, BR-DEP-02) salvo la nota y los recibos nuevos
- * (BR-DEP-12). La nota no puede quedar vacía si hay diferencia (I-27). «Reabrir» está en Más acciones y pide un motivo
+ * (BR-DEP-12). La nota no puede quedar vacía si hay diferencia (I-27). #71: sigue el diseño aceptado (cabecera con el
+ * total y el desglose, Abonos, Lo que entregas, Recibo, Cuadre); «Reabrir» va en la barra de abajo y pide un motivo
  * obligatorio; devuelve el Abibono a borrador con su número (I-31) y sus abonos a Cobrado. Pantalla de presentación.
  */
 export function DepositDetailScreen(props: DepositDetailScreenProps) {
@@ -74,20 +83,7 @@ function Detail(props: DepositDetailScreenProps & { deposit: DepositView }) {
   const [reopening, setReopening] = useState(false);
   const { difference } = deposit.summary;
 
-  const moreActions = deposit.can.reopen ? (
-    <Menu
-      trigger={
-        <Button variant="tertiary" iconOnly icon="more">
-          {t.moreActions}
-        </Button>
-      }
-      title={t.moreActions}
-      items={[{ id: 'reopen', label: t.reopen, icon: 'undo' as const, disabled: !isOnline }]}
-      onSelect={() => setReopening(true)}
-    />
-  ) : undefined;
-
-  // Del más reciente al más antiguo (el back los entrega al revés).
+  // Del más reciente al más antiguo (el back los entrega al revés). Solo se muestra si alguna vez se reabrió.
   const history = [...deposit.history].reverse().map((event, i) => ({
     id: `${event.type}-${i}`,
     text: event.type === 'confirmed' ? t.historyConfirmed : t.historyReopened,
@@ -97,67 +93,76 @@ function Detail(props: DepositDetailScreenProps & { deposit: DepositView }) {
 
   return (
     <>
-      <DetailTemplate
-        window={{ ...props.window, title: deposit.displayTitle, moreActions }}
-        identity={{
-          avatar: { kind: 'emoji', emoji: '\u{1F4B5}' },
-          title: deposit.displayTitle,
-          status: 'delivered',
-          statusLocked: true,
-        }}
-      >
-        <Island title={t.data} icon="money">
-          <DataList>
-            <DataRow label={t.date} value={formatDate(deposit.depositDate)} divider={false} />
-            <DataRow kind="amount" label={t.cash} value={formatCOP(deposit.cash)} />
-            <DataRow kind="amount" label={t.transfer} value={formatCOP(deposit.transfer)} />
-            <DataRow kind="amount" label={t.total} value={formatCOP(deposit.summary.total)} />
-            <DataRow kind="amount" label={t.expected} value={formatCOP(deposit.summary.expected)} />
-            <DataRow
-              kind="amount"
-              label={t.difference}
-              value={`${signed(difference)}${difference === 0 ? '' : ` · ${difference < 0 ? t.shortfall : t.surplus}`}`}
-            />
-          </DataList>
-          {/* Si la nota guardada cambia, el editor vuelve a empezar desde ella. */}
-          <NoteEditor
-            key={deposit.note ?? ''}
-            saved={deposit.note}
-            required={difference !== 0}
-            isOnline={isOnline}
-            onSave={props.onSaveNote}
+      <DetailWindow {...props.window} title={deposit.displayTitle} headingInContent>
+        <div className={styles.stack}>
+          <DepositHeader
+            title={<HeaderTitle text={deposit.displayTitle} />}
+            status={<StatusPill status="delivered" locked />}
+            date={<DateChip date={deposit.depositDate} />}
+            total={deposit.summary.total}
+            cash={deposit.cash}
+            transfer={deposit.transfer}
+            counts={depositCounts(deposit.payments)}
           />
-          <div className={styles.receipt}>
-            <span className={styles.label}>{t.receipt}</span>
-            <ReceiptPhotos
-              photos={deposit.receipts}
-              onAdd={props.onAddReceipt}
-              disabledReason={isOnline ? null : copy.ui.empty.needsConnection}
+          <DepositPaymentsIsland
+            payments={deposit.payments}
+            caption={String(deposit.payments.length)}
+            href={props.paymentHref}
+            leadingLabel={copy.money.depositPanel.locked}
+            leading={() => (
+              <Icon name="locked" size={16} tone="current" label={copy.money.depositPanel.locked} />
+            )}
+          />
+          <PanelColumns
+            left={
+              <>
+                <PanelIsland title={copy.money.depositPanel.toDeliver} icon="money">
+                  <AmountsReadOnly cash={deposit.cash} transfer={deposit.transfer} />
+                </PanelIsland>
+                <PanelIsland title={copy.money.depositPanel.receipt} icon="receipt">
+                  <ReceiptPhotos
+                    photos={deposit.receipts}
+                    onAdd={props.onAddReceipt}
+                    disabledReason={isOnline ? null : copy.ui.empty.needsConnection}
+                  />
+                </PanelIsland>
+              </>
+            }
+            right={
+              <PanelIsland title={copy.money.depositPanel.balance} icon="info">
+                <BalanceLines expected={deposit.summary.expected} difference={difference} />
+                {/* Si la nota guardada cambia, el editor vuelve a empezar desde ella. */}
+                <NoteEditor
+                  key={deposit.note ?? ''}
+                  saved={deposit.note}
+                  required={difference !== 0}
+                  isOnline={isOnline}
+                  onSave={props.onSaveNote}
+                />
+              </PanelIsland>
+            }
+          />
+          {history.length > 1 && (
+            <Island title={t.history} icon="note">
+              <HistoryTimeline items={history} />
+            </Island>
+          )}
+          {deposit.can.reopen && (
+            <PanelFooter
+              start={
+                <Button
+                  variant="tertiary"
+                  icon="locked"
+                  state={isOnline ? 'normal' : 'disabled'}
+                  onClick={() => setReopening(true)}
+                >
+                  {t.reopen}
+                </Button>
+              }
             />
-          </div>
-        </Island>
-
-        <Island title={t.payments} icon="collected">
-          <ul className={styles.payments} aria-label={t.payments}>
-            {deposit.payments.map((p) => (
-              <li key={p.paymentId}>
-                <a className={styles.payment} href={props.paymentHref(p.paymentId)}>
-                  <span className={styles.customer}>{p.customerName}</span>
-                  <span className={styles.number}>{formatDate(p.paidAt)}</span>
-                  <span className={styles.method}>{copy.money.depositEditor.methods[p.method]}</span>
-                  <span className={`${styles.number} ${styles.end}`}>{formatCOP(p.paidAmount)}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </Island>
-
-        {history.length > 0 && (
-          <Island title={t.history} icon="note">
-            <HistoryTimeline items={history} />
-          </Island>
-        )}
-      </DetailTemplate>
+          )}
+        </div>
+      </DetailWindow>
       <ReopenDialog
         open={reopening}
         onOpenChange={setReopening}
@@ -166,6 +171,12 @@ function Detail(props: DepositDetailScreenProps & { deposit: DepositView }) {
       />
     </>
   );
+}
+
+/** El nombre del Abibono como encabezado del detalle (`<h1>` en la página, `<h2>` en la ventana). */
+function HeaderTitle({ text }: { text: string }) {
+  const Heading = useDetailWindow()?.heading ?? 'h1';
+  return <Heading className={styles.heading}>{text}</Heading>;
 }
 
 /** La nota: editable, pero no puede quedar vacía si hay diferencia (I-27, CA-3). */

@@ -34,6 +34,11 @@ export type PageHeaderDetailProps = HeaderCommon & {
   };
   /** «Más acciones»: un `Menu` con disparador `more`. */
   moreActions?: ReactElement;
+  /**
+   * Diseño móvil de los detalles (lienzo «‹ Ejemplares», «‹ Dinero»): el nombre ya está en la isla de identidad, así que
+   * arriba solo va «‹ {anterior}» con su texto. El título queda para el lector.
+   */
+  hideTitle?: boolean;
 };
 
 export type PageHeaderProps = PageHeaderRootProps | PageHeaderDetailProps;
@@ -96,13 +101,14 @@ function DetailHeader({
   moreActions,
   className,
   mobile,
+  hideTitle = false,
 }: PageHeaderDetailProps & { mobile: boolean }) {
   const backName = copy.ui.header.back(back.label);
   return (
-    <header className={className} data-kind="detail">
+    <header className={className} data-kind="detail" data-hide-title={hideTitle || undefined}>
       <span className={styles.start}>
         {/* R3: solo ícono en móvil; con texto en escritorio. */}
-        {mobile ? (
+        {mobile && !hideTitle ? (
           <Button variant="tertiary" iconOnly icon="back" href={back.href} onClick={back.onClick}>
             {backName}
           </Button>
@@ -119,7 +125,7 @@ function DetailHeader({
           </Button>
         )}
       </span>
-      <h1 className={styles.detailTitle}>{title}</h1>
+      {!hideTitle && <h1 className={styles.detailTitle}>{title}</h1>}
       <span className={styles.end}>{moreActions}</span>
     </header>
   );

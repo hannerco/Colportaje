@@ -296,6 +296,7 @@
   --panel-padding-top: 28px;
   --panel-padding-x: 32px;
   --panel-padding-bottom: 32px;
+  --size-method-badge: 16px; /* medio de pago sobre el ícono de estado (Dinero móvil) */
   --size-emoji-badge: 24px; /* lápiz del avatar con emoji (#34) */
   --size-photo-add: 56px; /* botón «Foto de la factura» (#32) */
   --popover-width: 400px; /* panel flotante (#34, #39) */
@@ -388,6 +389,8 @@
   --size-island-status: 20px;
   --radius-window: 20px; /* ventana de detalle (HU-UI-27) */
   --island-padding: 18px 24px 10px;
+  --island-padding-top: 18px; /* #72: la franja de estado ocupa el borde de arriba de la isla */
+  --island-padding-x: 24px;
 }
 
 /* ─── Por plataforma · móvil ────────────────────────────────────────────────────────────────────── */
@@ -434,6 +437,8 @@
   --size-island-status: 20px;
   --radius-window: 16px;
   --island-padding: 14px 16px 8px;
+  --island-padding-top: 14px;
+  --island-padding-x: 16px;
 }
 
 /* Sin data-platform en ningún ancestro: móvil por debajo de 768 px (mismos valores que [data-platform='mobile']). */
@@ -481,6 +486,8 @@
     --size-island-status: 20px;
     --radius-window: 16px;
     --island-padding: 14px 16px 8px;
+    --island-padding-top: 14px;
+    --island-padding-x: 16px;
   }
 }
 

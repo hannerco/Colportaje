@@ -1,6 +1,6 @@
 'use client';
 
-import type { MouseEvent, ReactNode } from 'react';
+import { Fragment, type MouseEvent, type ReactNode } from 'react';
 import { copy } from '@/copy/es';
 import {
   type CopiesListParams,
@@ -9,7 +9,9 @@ import {
   type CopiesSortKey,
   type CopiesView,
 } from '@/domain/copies-list';
+import { formatDate, type LocalDate } from '@/domain/time';
 import { Tabs } from '@/ui/molecules/Tabs';
+import { usePlatform } from '@/ui/platform';
 import { ListRow, ListTable } from '@/ui/molecules/ListRow';
 import type { AppNavProps } from '@/ui/organisms/AppNav';
 import type { EmptyStateProps } from '@/ui/organisms/EmptyState';
@@ -83,6 +85,7 @@ export function CopiesListScreen({
   selectedId,
   detail,
 }: CopiesListScreenProps) {
+  const mobile = usePlatform() === 'mobile';
   const set = (patch: Partial<CopiesListParams>) => onParamsChange({ ...params, ...patch });
   const rows = view?.rows ?? [];
   const dateKind = params.sort.key === 'sold' ? 'sold' : 'received';
@@ -172,33 +175,68 @@ export function CopiesListScreen({
       detail={detail}
     >
       <ListTable kind="copy" aria-label={t.copies.tabsLabel}>
-        <ListRow
-          variant="header"
-          kind="copy"
-          dateKind={dateKind}
-          groupLabel={t.copies.tabs[params.view]}
-          groupCount={rows.length}
-        />
-        {rows.map((row) => (
-          <CopyRow
-            key={row.copyId}
-            row={row}
-            dateKind={dateKind}
-            href={copyHref(row.copyId)}
-            selected={row.copyId === selectedId}
-            onOpen={
-              onOpenCopy &&
-              ((event) => {
-                if (!plainClick(event)) return;
-                event.preventDefault();
-                onOpenCopy(row.copyId);
-              })
-            }
-          />
-        ))}
+        {mobile ? (
+          // Diseño móvil de Ejemplares: agrupados por la fecha del orden (recibido o vendido).
+          groupByDate(rows).map(([date, group]) => (
+            <Fragment key={date ?? 'none'}>
+              <ListRow
+                variant="header"
+                kind="copy"
+                groupLabel={date ? formatDate(date) : copy.ui.listRow.empty}
+              />
+              {group.map((row) => (
+                <CopyRow
+                  key={row.copyId}
+                  row={row}
+                  dateKind={dateKind}
+                  href={copyHref(row.copyId)}
+                  selected={false}
+                />
+              ))}
+            </Fragment>
+          ))
+        ) : (
+          <>
+            <ListRow
+              variant="header"
+              kind="copy"
+              dateKind={dateKind}
+              groupLabel={t.copies.tabs[params.view]}
+              groupCount={rows.length}
+            />
+            {rows.map((row) => (
+              <CopyRow
+                key={row.copyId}
+                row={row}
+                dateKind={dateKind}
+                href={copyHref(row.copyId)}
+                selected={row.copyId === selectedId}
+                onOpen={
+                  onOpenCopy &&
+                  ((event) => {
+                    if (!plainClick(event)) return;
+                    event.preventDefault();
+                    onOpenCopy(row.copyId);
+                  })
+                }
+              />
+            ))}
+          </>
+        )}
       </ListTable>
     </ListTemplate>
   );
+}
+
+/** Los ejemplares en grupos de la misma fecha, en el orden en que vienen. */
+function groupByDate(rows: readonly CopiesListRow[]): [LocalDate | null, CopiesListRow[]][] {
+  const groups: [LocalDate | null, CopiesListRow[]][] = [];
+  for (const row of rows) {
+    const last = groups.at(-1);
+    if (last && last[0] === row.rowDate) last[1].push(row);
+    else groups.push([row.rowDate, [row]]);
+  }
+  return groups;
 }
 
 function CopyRow({

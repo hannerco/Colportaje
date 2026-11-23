@@ -1,11 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { copy } from '@/copy/es';
 import {
   CustomerDetailScreen,
   mapTiles,
   useAddCustomerInfoPhoto,
+  useAddInvoicePhoto,
+  useCreateInvoiceWithPhoto,
+  useUpdateInvoice,
+  useDeleteInvoicePhoto,
+  type InvoicePatch,
   useArchiveCustomer,
   useClearCustomerLocation,
   useSetCustomerLocation,
@@ -60,6 +65,13 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
   const { setCustomerLocation } = useSetCustomerLocation();
   const { clearCustomerLocation } = useClearCustomerLocation();
   const { addCustomerInfoPhoto } = useAddCustomerInfoPhoto();
+  const { createInvoiceWithPhoto } = useCreateInvoiceWithPhoto();
+  const { addInvoicePhoto } = useAddInvoicePhoto();
+  const { updateInvoice } = useUpdateInvoice();
+  const { deleteInvoicePhoto } = useDeleteInvoicePhoto();
+  // #61: el N.º y la fecha de una factura se ven al escribirlos y se guardan solos un momento después.
+  const [invoiceEdits, setInvoiceEdits] = useState<Record<string, InvoicePatch>>({});
+  const invoiceTimers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
   const { updateCustomer } = useUpdateCustomer();
   const { updateSoldAt } = useUpdateSoldAt();
   const { collectPayment } = useCollectPayment();
@@ -78,7 +90,15 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
   return (
     <>
       <CustomerDetailScreen
-        detail={detail.data}
+        detail={
+          detail.data && {
+            ...detail.data,
+            invoices: detail.data.invoices.map((invoice) => ({
+              ...invoice,
+              ...(invoiceEdits[invoice.invoiceId] as Partial<typeof invoice>),
+            })),
+          }
+        }
         loading={detail.isPending}
         error={detail.isError}
         onRetry={() => void detail.refetch()}
@@ -123,6 +143,59 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
         onAddPhoto={async (file) => {
           const result = await addCustomerInfoPhoto({ photoId: newId(), customerId, file });
           if (!result.ok) showError(result.error);
+        }}
+        invoiceActions={{
+          onCreate: async (file) => {
+            const result = await createInvoiceWithPhoto({
+              invoiceId: newId(),
+              photoId: newId(),
+              customerId,
+              file,
+            });
+            if (!result.ok) showError(result.error);
+          },
+          onAddPhoto: async (invoiceId, file) => {
+            const result = await addInvoicePhoto({ invoiceId, photoId: newId(), file });
+            if (!result.ok) showError(result.error);
+          },
+          onReplacePhoto: async (invoiceId, photoId, file) => {
+            // Primero la nueva y luego quitar la anterior: así la factura nunca queda sin foto (BR-CUS-17).
+            const added = await addInvoicePhoto({ invoiceId, photoId: newId(), file });
+            if (!added.ok) return showError(added.error);
+            const removed = await deleteInvoicePhoto(photoId);
+            if (!removed.ok) return showError(removed.error);
+            toast.show({ message: copy.customers.photos.replaced, tone: 'success' });
+          },
+          onRemovePhoto: async (photoId) => {
+            const removed = await deleteInvoicePhoto(photoId);
+            if (!removed.ok) return showError(removed.error);
+            toast.show({ message: copy.customers.photos.removed, tone: 'success' });
+          },
+          onChange: (invoiceId, patch) => {
+            const next = { ...invoiceEdits[invoiceId], ...patch };
+            setInvoiceEdits((current) => ({ ...current, [invoiceId]: next }));
+            clearTimeout(invoiceTimers.current.get(invoiceId));
+            invoiceTimers.current.set(
+              invoiceId,
+              setTimeout(async () => {
+                const result = await updateInvoice({ invoiceId, patch: next });
+                if (!result.ok) return showError(result.error);
+                setInvoiceEdits((current) => {
+                  const rest = { ...current };
+                  delete rest[invoiceId];
+                  return rest;
+                });
+              }, 600),
+            );
+          },
+        }}
+        onEditData={async (patch) => {
+          const result = await updateCustomer({ id: customerId, patch });
+          if (!result.ok) {
+            showError(result.error);
+            throw new Error(result.error.code);
+          }
+          toast.show({ message: copy.customers.edit.saved, tone: 'success' });
         }}
         onAvatarChange={async (avatarEmoji) => {
           const result = await updateCustomer({ id: customerId, patch: { avatarEmoji } });

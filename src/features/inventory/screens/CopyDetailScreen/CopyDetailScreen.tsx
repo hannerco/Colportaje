@@ -8,7 +8,7 @@ import type { CopyDetail, HistoryItem as DomainHistoryItem } from '@/domain/copy
 import { formatCOP } from '@/domain/money';
 import { formatDate, toBogotaDate, type LocalDate } from '@/domain/time';
 import { SoldDateDialog } from '@/features/payments/components/SoldDateDialog';
-import { DatePickerCalendar } from '@/features/payments';
+import { DatePickerCalendar } from '@/ui/molecules/DatePickerCalendar';
 import { Button } from '@/ui/atoms/Button';
 import { Choice, ChoiceGroup } from '@/ui/atoms/Choice';
 import { Field } from '@/ui/atoms/Field';

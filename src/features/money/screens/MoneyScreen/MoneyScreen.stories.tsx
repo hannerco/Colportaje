@@ -315,6 +315,25 @@ export const DeslizarMovil: Story = {
   },
 };
 
+/** #70 (diseño «1 · Abonos de clientes»): en escritorio, cada abono por cobrar tiene «Cobrar» al final de su fila. */
+export const CobrarEscritorio: Story = {
+  name: 'Cobrar (escritorio)',
+  args: { initial: { view: 'to_collect' } },
+  globals: { platform: 'desktop' },
+  play: async ({ canvasElement, args }) => {
+    const frame = frames(canvasElement)[0]!;
+    const collect = button(frame, 'Cobrar a María Camila Henao')!;
+    expect(collect.textContent).toBe('Cobrar');
+    await userEvent.click(collect);
+    expect(args.onCollectPayment).toHaveBeenCalledWith('p1');
+    // Un abono cobrado no tiene «Cobrar».
+    await userEvent.click(tab(frame, 'Todos')!);
+    const rows = [...frame.querySelectorAll('tbody tr')];
+    for (const row of rows.filter((r) => r.textContent?.includes('Cobrado')))
+      expect(row.querySelector('button')).toBeNull();
+  },
+};
+
 export const BuscarCliente: Story = {
   name: 'Buscar un cliente',
   globals: { platform: 'desktop' },

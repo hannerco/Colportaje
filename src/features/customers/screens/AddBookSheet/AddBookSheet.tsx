@@ -7,6 +7,7 @@ import type { LocalDate } from '@/domain/time';
 import { Avatar } from '@/ui/atoms/Avatar';
 import { Button } from '@/ui/atoms/Button';
 import { Field } from '@/ui/atoms/Field';
+import { DateField } from '@/ui/molecules/DateField';
 import { SearchBox } from '@/ui/molecules/SearchBox';
 import { DetailWindow } from '@/ui/organisms/DetailWindow';
 import { EmptyState } from '@/ui/organisms/EmptyState';
@@ -128,8 +129,8 @@ export function AddBookSheet({
                       }
                       disabled={!isOnline}
                     />
-                    <Field
-                      kind="date"
+                    <DateField
+                      noFuture
                       label={t.soldOn}
                       placeholder="dd/mm/aaaa"
                       value={book.soldOn}

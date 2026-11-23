@@ -184,9 +184,13 @@ export const ConDescuentosYAumentos: Story = {
   play: async ({ canvasElement }) => {
     for (const frame of frames(canvasElement)) {
       expect(frame.textContent).toContain('$93.000');
-      expect(frame.textContent).toContain('−$5.000');
       expect(frame.textContent).toContain('$95.000');
-      expect(frame.textContent).toContain('+$7.000');
+      // Escritorio: la diferencia; móvil (diseño): «≠» junto al precio.
+      if (isMobile(frame)) expect(frame.textContent).toContain('≠');
+      else {
+        expect(frame.textContent).toContain('−$5.000');
+        expect(frame.textContent).toContain('+$7.000');
+      }
       // Sin diferencia (Un corazón tranquilo #12, a precio público) no entra a esta vista.
       expect(frame.textContent).not.toContain('Luz Marina Restrepo');
     }
@@ -227,7 +231,8 @@ export const OrdenadoPorVenta: Story = {
   args: { initialParams: { ...DEFAULT_COPIES_LIST_PARAMS, sort: { key: 'sold', dir: 'desc' } } },
   play: async ({ canvasElement }) => {
     for (const frame of frames(canvasElement)) {
-      if (isMobile(frame)) expect(frame.textContent).toContain('Vendido 02/11/2026');
+      // Móvil (diseño): agrupados por la fecha de venta.
+      if (isMobile(frame)) expect(frame.textContent).toContain('02/11/2026');
       else expect(frame.textContent).toContain('Vendido el');
     }
   },

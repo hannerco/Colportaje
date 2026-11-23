@@ -7,7 +7,7 @@ import { StatusPill, type PillStatus } from '../../atoms/StatusPill';
 import type { IconName } from '../../icons';
 import { Banner, type BannerProps } from '../../molecules/Banner';
 import { DetailWindow, useDetailWindow, type DetailWindowProps } from '../../organisms/DetailWindow';
-import { Island } from '../../organisms/Island';
+import { Island, type IslandProps } from '../../organisms/Island';
 import { usePlatform } from '../../platform';
 import styles from './DetailTemplate.module.css';
 
@@ -28,6 +28,14 @@ export type DetailIdentity = {
   subtitle?: ReactNode;
   /** Contenido a todo el ancho debajo del nombre (p. ej. la cuenta del cliente: saldo y abonado). */
   details?: ReactNode;
+  /** #72: el nombre es un enlace (p. ej. al cliente del abono). */
+  titleHref?: string;
+  /** #72: junto al nombre, en la misma línea (p. ej. la cuota «2/4» del abono). */
+  titleAddon?: ReactNode;
+  /** #72: a la derecha de la identidad (p. ej. el chip «Fecha acordada»). */
+  aside?: ReactNode;
+  /** #72: franja de estado pegada arriba de la isla (`Island.strip`). */
+  strip?: IslandProps['strip'];
   /** Acción principal del registro (p. ej. Cobrar): va aquí y no en la barra (R7 de la Ventana). */
   primaryAction?: { label: string; icon?: IconName; onClick: () => void; disabled?: boolean };
 };
@@ -77,30 +85,44 @@ function IdentityIsland({
   subtitle,
   details,
   primaryAction,
+  titleHref,
+  titleAddon,
+  aside,
+  strip,
 }: DetailIdentity) {
   const mobile = usePlatform() === 'mobile';
   // El título es el encabezado del detalle: `<h1>` en la página de escritorio, `<h2>` en la ventana o en móvil.
   const Heading = useDetailWindow()?.heading ?? 'h1';
   return (
-    <Island>
+    <Island strip={strip}>
       <div className={styles.identity}>
         {avatarSlot ?? (
           <Avatar
             kind={avatar.kind}
             emoji={avatar.emoji}
             coverUrl={avatar.coverUrl}
-            size={mobile ? 'lg' : 'xl'}
+            size={mobile && avatar.kind !== 'cover' ? 'lg' : 'xl'}
             decorative
           />
         )}
         <div className={styles.who}>
-          <Heading className={styles.title}>
-            {title}
-            {number !== undefined && <span className={styles.number}> #{number}</span>}
-          </Heading>
+          <div className={styles.titleRow}>
+            <Heading className={styles.title}>
+              {titleHref ? (
+                <a className={styles.titleLink} href={titleHref}>
+                  {title}
+                </a>
+              ) : (
+                title
+              )}
+              {number !== undefined && <span className={styles.number}> #{number}</span>}
+            </Heading>
+            {titleAddon}
+          </div>
           {status && <StatusPill status={status} locked={statusLocked} />}
           {subtitle && <div className={styles.subtitle}>{subtitle}</div>}
         </div>
+        {aside && <div className={styles.aside}>{aside}</div>}
       </div>
       {details && <div className={styles.details}>{details}</div>}
       {primaryAction && (

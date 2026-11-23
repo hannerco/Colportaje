@@ -1,0 +1,402 @@
+/* Abibono (#71, diseño «AbibonoPanel»): cabecera con totales, Abonos, Lo que entregas, Recibo, Cuadre y barra de abajo. */
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.badge {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-avatar-xl);
+  height: var(--size-avatar-xl);
+  border: 1px dashed var(--color-line);
+  border-radius: var(--radius-md);
+  color: var(--color-text-2);
+}
+
+.title {
+  min-width: 0;
+}
+
+.title h2 {
+  margin: 0;
+  font-size: var(--text-title);
+  font-weight: var(--weight-title);
+  line-height: var(--leading-tight);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.dateChip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.totals {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  padding-bottom: var(--space-2);
+}
+
+.total {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-tone);
+}
+
+.totalHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}
+
+.chip {
+  padding: 2px var(--space-2);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-2);
+  font-size: var(--text-caption);
+}
+
+.figure {
+  font-size: var(--text-figure);
+  font-weight: var(--weight-title);
+  line-height: var(--leading-tight);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.split {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.method {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-md);
+}
+
+.methodIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-control-sm);
+  height: var(--size-control-sm);
+  border-radius: var(--radius-xs);
+  background: var(--color-tone);
+  color: var(--color-text-2);
+}
+
+.methodText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  font-size: var(--text-secondary);
+}
+
+.methodAmount {
+  font-size: var(--text-heading);
+  font-weight: var(--weight-strong);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.muted {
+  color: var(--color-text-3);
+  font-size: var(--text-caption);
+}
+
+/* ─── Islas pequeñas ─── */
+.island {
+  box-sizing: border-box;
+  padding: var(--island-padding);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-island);
+  background: var(--color-card);
+  box-shadow: var(--shadow-card);
+  color: var(--color-text);
+}
+
+.islandHead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--size-control-sm);
+  margin-bottom: var(--space-2);
+  color: var(--color-text-2);
+}
+
+.divided {
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-row-line);
+}
+
+.islandTitle {
+  margin: 0;
+  color: var(--color-text);
+  font-size: var(--text-body);
+  font-weight: var(--weight-strong);
+}
+
+/* ─── Tabla de abonos ─── */
+.table {
+  container-type: inline-size;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: var(--size-control-sm) minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1.2fr) max-content;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--size-data-row);
+  border-top: 1px solid var(--color-row-line);
+  font-size: var(--text-body);
+}
+
+.headRow {
+  min-height: var(--size-control-sm);
+  border-top: 0;
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}
+
+.lead {
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-text-3);
+}
+
+.customer {
+  overflow: hidden;
+  font-weight: var(--weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.link:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+.methodCell {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-2);
+}
+
+.number {
+  font-variant-numeric: var(--font-numeric);
+}
+
+.end {
+  justify-self: end;
+  text-align: end;
+}
+
+.strong {
+  font-weight: var(--weight-strong);
+}
+
+.bad {
+  color: var(--color-bad);
+  font-weight: var(--weight-strong);
+}
+
+/* Si la isla es angosta: cliente y valor arriba; fecha y método debajo. Nada se encima. */
+/* Isla angosta (diseño móvil): casilla · nombre con «fecha · método» debajo · valor. */
+.meta {
+  display: none;
+}
+
+@container (max-width: 520px) {
+  .row {
+    grid-template-columns: var(--size-control-sm) minmax(0, 1fr) max-content;
+    padding-block: var(--space-2);
+  }
+
+  .headRow {
+    display: none;
+  }
+
+  .row > :nth-child(3),
+  .row > :nth-child(4) {
+    display: none;
+  }
+
+  .customer {
+    display: flex;
+    flex-direction: column;
+    white-space: normal;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    white-space: nowrap;
+    align-items: center;
+    gap: var(--space-1);
+    color: var(--color-text-2);
+    font-size: var(--text-caption);
+    font-weight: var(--weight-regular);
+  }
+}
+
+/* ─── Líneas (Lo que entregas, Cuadre) ─── */
+.lines {
+  margin: 0;
+}
+
+.line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: var(--size-data-row);
+}
+
+.line + .line {
+  border-top: 1px solid var(--color-row-line);
+}
+
+.line dt {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-2);
+}
+
+.line dd {
+  margin: 0;
+}
+
+.info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--size-control-sm);
+  min-height: var(--size-control-sm);
+  margin: calc(-1 * var(--space-2)) 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-3);
+  cursor: pointer;
+}
+
+.info:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+/* ─── Columnas y barra ─── */
+.columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+:global([data-platform='mobile']) .columns,
+:global([data-platform='mobile']) .totals {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-line);
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.line[data-highlight] {
+  margin: 0 calc(-1 * var(--space-3));
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-tone);
+}
+
+/* Celular (diseño): Lo que entregas, Cuadre y Recibo, en ese orden. */
+:global([data-platform='mobile']) .columns {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* Celular: sin el ícono de la cabecera; el nombre y la fecha a todo el ancho. */
+:global([data-platform='mobile']) .badge {
+  display: none;
+}
+
+:global([data-platform='mobile']) .title {
+  flex: 1 1 100%;
+}
+
+:global([data-platform='mobile']) .column {
+  display: contents;
+}
+
+:global([data-platform='mobile']) [data-panel='money'] {
+  order: 1;
+}
+
+:global([data-platform='mobile']) [data-panel='info'] {
+  order: 2;
+}
+
+:global([data-platform='mobile']) [data-panel='receipt'] {
+  order: 3;
+}

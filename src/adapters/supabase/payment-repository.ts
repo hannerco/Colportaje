@@ -5,13 +5,13 @@ import { PAYMENT_ERROR_CODES } from '@/domain/payment';
 import { PAYMENT_PLAN_ERROR_CODES } from '@/domain/payment-plan';
 import { RESCHEDULE_ERROR_CODES } from '@/domain/reschedule';
 import { SCHEDULED_PAYMENT_ERROR_CODES } from '@/domain/scheduled-payment';
-import type { LocalDate } from '@/domain/time';
+import { localDate, type LocalDate } from '@/domain/time';
 import { SCHEDULE_EXCESS_ERROR_CODES } from '@/domain/schedule-excess';
 import { COMMON_ERROR_CODES } from '@/domain/shared/errors';
 import { err, ok } from '@/domain/shared/result';
 import type { PaymentRepository } from '@/repositories';
 import type { GetSupabaseClient } from './client';
-import { mapRpcError } from './errors';
+import { mapPostgrestError, mapRpcError } from './errors';
 
 const RESOLVE_EXCESS_ERRORS = [
   ...Object.values(SCHEDULE_EXCESS_ERROR_CODES),
@@ -158,6 +158,38 @@ export function createSupabasePaymentRepository(getClient: GetSupabaseClient): P
       const { data, error } = await getClient().rpc('undo_collect_payment', { p_payment_id: paymentId });
       if (error) return err(mapCollectedError(error));
       return ok({ customerId: z.uuid().parse(data) });
+    },
+
+    async getHistory(paymentId) {
+      const client = getClient();
+      const [reschedules, events] = await Promise.all([
+        client
+          .from('payment_reschedule')
+          .select('previous_due_date, new_due_date, changed_at, note')
+          .eq('payment_id', paymentId)
+          .order('seq'),
+        client.from('payment_event').select('type, at, data').eq('payment_id', paymentId).order('seq'),
+      ]);
+      if (reschedules.error) return err(mapPostgrestError(reschedules.error));
+      if (events.error) return err(mapPostgrestError(events.error));
+      const amount = (value: unknown) => (typeof value === 'number' ? value : null);
+      return ok({
+        reschedules: reschedules.data.map((r) => ({
+          previousDueDate: localDate(r.previous_due_date),
+          newDueDate: localDate(r.new_due_date),
+          changedAt: new Date(r.changed_at),
+          note: r.note,
+        })),
+        events: events.data.map((e) => {
+          const data = (e.data ?? {}) as Record<string, unknown>;
+          return {
+            type: e.type,
+            at: new Date(e.at),
+            previousAmount: amount(data.previousAmount),
+            newAmount: amount(data.newAmount),
+          };
+        }),
+      });
     },
 
     async delete(paymentId) {

@@ -5,7 +5,7 @@ import { copy } from '@/copy/es';
 import { receivedDateOptions, type AddBatchSummary, type AddCatalogGroup } from '@/domain/add-batch';
 import { formatDate, type LocalDate } from '@/domain/time';
 import type { TitleCategory } from '@/domain/title';
-import { DatePickerCalendar } from '@/features/payments';
+import { DatePickerCalendar } from '@/ui/molecules/DatePickerCalendar';
 import { Avatar } from '@/ui/atoms/Avatar';
 import { Button } from '@/ui/atoms/Button';
 import { Menu } from '@/ui/molecules/Menu';

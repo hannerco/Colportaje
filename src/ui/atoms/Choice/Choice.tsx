@@ -12,6 +12,8 @@ export type ChoiceKind = 'checkbox' | 'radio' | 'switch';
 type ChoiceCommon = {
   /** Texto (`texto`), en positivo: «Recordarme», no «No recordarme». */
   label: string;
+  /** #71: la etiqueta solo para el lector (una casilla en una fila de tabla que ya dice qué es). */
+  hideLabel?: boolean;
   /** Aclaración debajo, en gris (`descripcion`). */
   description?: string;
   /** Deshabilitado (`deshabilitado`): opacidad 0,4 y no cambia. */
@@ -36,7 +38,7 @@ export type ChoiceProps = ChoiceCommon &
  * (efecto inmediato). Radix pone el comportamiento accesible; toda la fila es tocable.
  */
 export function Choice(props: ChoiceProps) {
-  const { label, description, disabled = false, className } = props;
+  const { label, description, disabled = false, className, hideLabel = false } = props;
   const kind = props.kind ?? 'checkbox';
   const id = useId();
   const descriptionId = `${id}-description`;
@@ -55,7 +57,7 @@ export function Choice(props: ChoiceProps) {
     >
       <Control {...props} control={control} />
       <span className={styles.text}>
-        <span className={styles.label}>{label}</span>
+        <span className={hideLabel ? styles.visuallyHidden : styles.label}>{label}</span>
         {description && (
           <span id={descriptionId} className={styles.description}>
             {description}

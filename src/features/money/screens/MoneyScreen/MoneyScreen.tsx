@@ -277,7 +277,6 @@ export function MoneyScreen(props: MoneyScreenProps) {
         ) : (
           <PaymentsTable
             rows={rows}
-            grouped={params.view === 'all'}
             paymentHref={props.paymentHref}
             onOpen={props.onOpenPayment}
             selectedId={props.selectedId}

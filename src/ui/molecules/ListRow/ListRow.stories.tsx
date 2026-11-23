@@ -219,8 +219,12 @@ export const EjemplarConDiferencia: Story = {
   play: async ({ canvasElement }) => {
     for (const frame of frames(canvasElement)) {
       const row = rowOf(frame);
-      expect(row.textContent).toContain('−$5.000');
-      if (isMobile(frame)) expect(row.textContent).toContain('Vendido 02/11/2026· María Camila Henao');
+      // Móvil (diseño de Ejemplares): «≠» junto al precio y el estado con el cliente; la fecha va en el grupo.
+      if (isMobile(frame)) {
+        expect(row.textContent).toContain('≠');
+        expect(row.querySelector('[aria-label="−$5.000"]')).not.toBeNull();
+        expect(row.textContent).toContain('Vendido· María Camila Henao');
+      } else expect(row.textContent).toContain('−$5.000');
     }
   },
 };
@@ -236,7 +240,7 @@ export const Ejemplar: Story = {
     for (const frame of frames(canvasElement)) {
       const row = rowOf(frame);
       expect(row.querySelector('[data-kind="cover"]')).not.toBeNull();
-      if (isMobile(frame)) expect(row.textContent).toContain('Recibido 15/10/2026');
+      if (isMobile(frame)) expect(row.querySelector('[data-tinted]')).not.toBeNull();
       else expect(row.querySelector('[data-kind="number"]')!.textContent).toBe('#6');
     }
   },

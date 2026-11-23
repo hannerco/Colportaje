@@ -578,6 +578,21 @@ El dueño probó la app y reportó 14 mejoras (issues #24 a #44). Decisiones:
 | 3 | Fecha de venta | **"Debes dejarme modificar la fecha de vendido, porque puedo equivocarme."** [D] Editable en la ficha y en el ejemplar (HU-CLI-13, #56) |
 | 4 | Portadas y texto largo | **"debe aparecer cada que se muestre ese libro en cualquier pantalla"** y **"la caja de información … expandirse lo suficiente y cuando ocupe mucho, ahí sí hacer scroll"** (#53, #54) |
 
+
+## Ronda 36 — Correcciones de la prueba en el teléfono (2026-11-22)
+
+| # | Tema | Resultado |
+|---|---|---|
+| 1 | Factura en la ficha | **"cuando el cliente está creado y no tiene factura, no aparece cómo agregársela. debería aparecer."** [D] La ficha muestra la isla de factura de Nuevo cliente (#61) |
+| 2 | Calendario | **"No en todos los lugares me abre el calendario cuando le doy click en el ícono. Debería."** [D] Molécula Campo de fecha: el ícono abre el calendario (#62) |
+| 3 | Emojis | **"Veo muy poquitos emojis… debería ser más de este estilo, con categorías y que hayan más"** (#63) |
+| 4 | Pastillas | **"si tienen el mismo tamaño de letra y el mismo height, déjalos así"**: se verificó que miden igual; se dejan (#64, cerrado) |
+| 5 | Estado sobre el valor | **"Eso de ninguna manera puede suceder"**: el estado baja debajo de la fecha si no cabe (#66) |
+| 6 | Esqueletos | **"necesito que crees un skeleton lógico por cada cosa que lo usa"** (#67) |
+| 7 | Cambiar foto de factura | **"Debo poder cambiar una foto de una factura, en caso de que haya quedado mal"**. [D] «Cambiar foto» y «Quitar foto» al tocarla (BR-CUS-17, #68) |
+| 8 | Editar datos | **"También debería poder modificar la información que puse sobre el cliente, es decir, los datos"**. [D] «Editar» en Datos (BR-CUS-01, #69) |
+| 9 | Diseños aceptados | **"no veo el botón cobrar en los abonos"**, **"tampoco veo que el abibono tenga el diseño que se aceptó"**, **"tampoco cuando se abre un abono desde un cliente"**. [D] Se programan como el lienzo: «Cobrar» en la tabla (#70), Abibono (#71) y detalle del abono con historial completo (#72) |
+
 ---
 
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
