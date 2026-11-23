@@ -47,8 +47,12 @@ export const ElegirYQuitar: Story = {
     const frame = canvasElement.querySelector<HTMLElement>('figure.sb-frame')!;
     await userEvent.click(within(frame).getByRole('button', { name: 'Elegir emoji del cliente' }));
     const body = within(document.body);
-    await userEvent.type(await body.findByRole('searchbox'), 'pan');
-    await userEvent.click(await body.findByRole('button', { name: 'pan panadería' }));
+    // #63: todas las categorías y más de mil emojis.
+    const categories = await body.findByRole('group', { name: 'Categorías de emojis' });
+    expect(within(categories).getByRole('button', { name: 'Animales y naturaleza' })).toBeTruthy();
+    expect(body.getByText(/\d\.\d{3} emojis/)).toBeTruthy();
+    await userEvent.type(await body.findByRole('searchbox'), 'panaderia');
+    await userEvent.click(await body.findByRole('button', { name: 'pan de molde' }));
     expect(args.onChange).toHaveBeenCalledWith('🍞');
     await waitFor(() =>
       expect(within(frame).getByRole('button', { name: 'Cambiar emoji del cliente' })).toBeTruthy(),

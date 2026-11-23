@@ -296,6 +296,7 @@
   --panel-padding-top: 28px;
   --panel-padding-x: 32px;
   --panel-padding-bottom: 32px;
+  --size-emoji-scroller: 320px; /* alto de la cuadrícula del selector de emoji (#63) */
   --size-method-badge: 16px; /* medio de pago sobre el ícono de estado (Dinero móvil) */
   --size-emoji-badge: 24px; /* lápiz del avatar con emoji (#34) */
   --size-photo-add: 56px; /* botón «Foto de la factura» (#32) */

@@ -99,3 +99,47 @@
   color: var(--color-text-2);
   font-size: var(--text-secondary);
 }
+
+/* #63: pestañas de categorías, la cuadrícula con su propio desplazamiento y el conteo abajo. */
+.categories {
+  display: flex;
+  gap: var(--space-1);
+  overflow-x: auto;
+  padding-bottom: var(--space-1);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.category {
+  flex: none;
+  width: var(--size-control);
+  height: var(--size-control);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-size: var(--text-heading);
+  cursor: pointer;
+}
+
+.category:hover {
+  background: var(--color-row-selected);
+}
+
+.category:focus-visible {
+  outline: 3px solid var(--color-ring);
+}
+
+.scroller {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-height: var(--size-emoji-scroller);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.count {
+  margin: 0;
+  color: var(--color-text-3);
+  font-size: var(--text-caption);
+}
