@@ -1,9 +1,11 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { DepositDraftInput } from '@/domain/deposit-draft';
 import type { DepositsListParams } from '@/domain/deposits-list';
+import { depositDisplayTitle } from '@/domain/deposit';
+import { buildPaymentHistory } from '@/domain/payment-history';
 import type { PaymentsListParams } from '@/domain/payments-list';
 import { todayBogota } from '@/domain/time';
 import { systemClock } from '@/lib/clock';
@@ -74,6 +76,38 @@ export function usePaymentCustomer(paymentId: string) {
     const payment = data.payments.find((p) => p.id === paymentId);
     return payment ? { customerId: payment.customerId } : null;
   });
+}
+
+/**
+ * Historial de un abono (#72): programado, prórrogas con su nota, recortes, cancelación y reapertura, cobrado y
+ * entregado al líder (con el nombre del Abibono). Lo que pasó lo lee aparte; el abono y su Abibono salen de Dinero.
+ */
+export function usePaymentHistory(paymentId: string) {
+  const { payments } = useRepositories();
+  const records = useQuery({
+    queryKey: ['payments', 'history', paymentId],
+    queryFn: async () => unwrap(await payments.getHistory(paymentId)),
+  });
+  const money = useMoneyData((data) => {
+    const payment = data.payments.find((p) => p.id === paymentId);
+    const deposit = payment?.depositId ? data.deposits.find((d) => d.id === payment.depositId) : undefined;
+    return { payment, deposit };
+  });
+  const data = useMemo(() => {
+    const payment = money.data?.payment;
+    if (!payment || !records.data) return undefined;
+    const deposit = money.data?.deposit;
+    return buildPaymentHistory({
+      payment,
+      reschedules: records.data.reschedules,
+      events: records.data.events,
+      deposit:
+        deposit && deposit.status === 'confirmed'
+          ? { title: depositDisplayTitle(deposit, 0), date: deposit.depositDate }
+          : null,
+    });
+  }, [money.data, records.data]);
+  return { data, isPending: records.isPending || money.isPending };
 }
 
 /**
