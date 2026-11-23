@@ -445,6 +445,8 @@ export const copy = {
       discard: 'Descartar',
       keepEditing: 'Seguir editando',
       saved: 'Cliente guardado',
+      /** #57: el cliente quedó guardado; alguna foto no subió. */
+      photosFailed: (n: number) => (n === 1 ? 'No se subió 1 foto' : `No se subieron ${n} fotos`),
       info: {
         title: 'Información del cliente',
         phone: 'Teléfono',
@@ -497,9 +499,11 @@ export const copy = {
         paymentsValue: (n: number, amount: string) => `${n} de ${amount}`,
       },
       discardDialog: {
-        title: '¿Descartar este cliente?',
-        /** El texto del lienzo, cuando todavía no hay libros ni abonos. */
-        message: 'Se borra lo que escribiste: información, libros, factura y abonos. No se puede deshacer.',
+        /** Ronda 35 (#57): el cliente no existe hasta guardarlo; salir solo pierde lo escrito. */
+        title: '¿Salir sin guardar?',
+        message:
+          'Se pierde lo que escribiste: información, libros, factura y abonos. Los libros siguen en físico.',
+        leave: 'Salir',
         /** CA-2: «Se quitarán 2 libros y 1 abono» (FC-01). */
         willRemove: (books: number, payments: number) => {
           const parts = [

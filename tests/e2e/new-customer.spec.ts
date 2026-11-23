@@ -1,12 +1,11 @@
-// HU-PAN-CLI-03 · Nuevo cliente (ficha viva), de punta a punta en móvil y escritorio (TESTING.md, flujo 3).
+// HU-PAN-CLI-03 · Nuevo cliente, de punta a punta en móvil y escritorio (TESTING.md, flujo 3). Ronda 35 (#57): el
+// cliente solo existe al guardarlo.
 // Los libros se agregan con HU-PAN-CLI-04; aquí la ficha nueva lleva nombre, teléfono y cuota inicial.
 import { expect, test, type Page } from '@playwright/test';
 
 const isMobile = (page: Page) => page.viewportSize()!.width < 768;
 
-test('flujo 3: la ficha viva crea el cliente al escribir el nombre y «Guardar cliente» lleva a su ficha', async ({
-  page,
-}, testInfo) => {
+test('flujo 3: «Guardar cliente» guarda todo de una vez y lleva a su ficha', async ({ page }, testInfo) => {
   const name = `Lucía Fernanda Mejía ${testInfo.project.name}`;
   await page.goto('/clientes/nuevo');
   await expect(page.getByRole('heading', { name: 'Nuevo cliente' })).toBeVisible();
@@ -35,11 +34,11 @@ test('flujo 3: la ficha viva crea el cliente al escribir el nombre y «Guardar c
   await expect(page.getByText('Efectivo').first()).toBeVisible();
 });
 
-test('descartar borra el cliente nuevo y vuelve a Clientes (BR-CUS-14)', async ({ page }, testInfo) => {
+test('#57: salir sin guardar no deja nada y vuelve a Clientes', async ({ page }, testInfo) => {
   const name = `Descartado ${testInfo.project.name} ${Date.now()}`;
   await page.goto('/clientes/nuevo');
   await page.getByLabel('Nombre del cliente').fill(name);
-  // El cliente existe desde que tiene nombre: «Guardar cliente» se habilita.
+  // Con nombre ya se puede guardar, pero el cliente aún no existe.
   await expect(page.getByRole('button', { name: 'Guardar cliente' })).not.toHaveAttribute(
     'aria-disabled',
     'true',
@@ -47,18 +46,16 @@ test('descartar borra el cliente nuevo y vuelve a Clientes (BR-CUS-14)', async (
 
   await page.getByRole('button', { name: 'Descartar' }).click();
   const dialog = page.getByRole('alertdialog');
-  await expect(dialog).toContainText('¿Descartar este cliente?');
-  await dialog.getByRole('button', { name: 'Descartar' }).click();
+  await expect(dialog).toContainText('¿Salir sin guardar?');
+  await dialog.getByRole('button', { name: 'Salir' }).click();
   await expect(page).toHaveURL(/\/clientes$/);
 
-  // Ya no aparece en ninguna lectura (HU-CLI-03 R3).
+  // Nunca existió: no aparece en ninguna lectura.
   await page.goto(`/clientes?q=${encodeURIComponent(name)}`);
   await expect(page.getByText(`Nadie coincide con «${name}»`)).toBeVisible();
 });
 
-test('salir por la navegación con un cliente a medias pregunta lo mismo que Descartar', async ({
-  page,
-}, testInfo) => {
+test('#57: salir por la navegación con un cliente a medias pregunta antes', async ({ page }, testInfo) => {
   test.skip(isMobile(page), 'En móvil la ficha nueva va sin la barra de navegación.');
   await page.goto('/clientes/nuevo');
   await page.getByLabel('Nombre del cliente').fill(`A medias ${testInfo.project.name} ${Date.now()}`);
@@ -71,7 +68,7 @@ test('salir por la navegación con un cliente a medias pregunta lo mismo que Des
     .getByRole('link', { name: 'Inventario', exact: true })
     .click();
   const dialog = page.getByRole('alertdialog');
-  await expect(dialog).toContainText('¿Descartar este cliente?');
-  await dialog.getByRole('button', { name: 'Descartar' }).click();
+  await expect(dialog).toContainText('¿Salir sin guardar?');
+  await dialog.getByRole('button', { name: 'Salir' }).click();
   await expect(page).toHaveURL(/\/inventario$/);
 });

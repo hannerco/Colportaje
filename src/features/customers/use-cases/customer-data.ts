@@ -6,6 +6,7 @@ import {
   type CustomerPatch,
   type PossibleDuplicate,
 } from '@/domain/customer-data';
+import { validateNewCustomer, type NewCustomerDraft } from '@/domain/new-customer';
 import type { AppError } from '@/domain/shared/errors';
 import { ok, type Result } from '@/domain/shared/result';
 import type { Connectivity, CustomerRepository } from '@/repositories';
@@ -60,4 +61,19 @@ export async function loadPossibleDuplicates(
   const candidates = await deps.customers.listDuplicateCandidates();
   if (!candidates.ok) return candidates;
   return ok(findPossibleDuplicates(candidates.value, query));
+}
+
+/**
+ * Guarda un cliente nuevo con todo lo que se le puso (ronda 35, #57): solo entonces existe. Errores: `OFFLINE`,
+ * `VALIDATION` (`name`), `COPY_NOT_IN_STOCK`, `CONFLICT`, `NETWORK_ERROR`.
+ */
+export async function saveNewCustomer(
+  deps: CustomerDataDeps,
+  draft: NewCustomerDraft,
+): Promise<Result<{ id: string }, AppError>> {
+  return runMutation(deps.connectivity, async () => {
+    const valid = validateNewCustomer(draft);
+    if (!valid.ok) return valid;
+    return deps.customers.saveNew(valid.value);
+  });
 }

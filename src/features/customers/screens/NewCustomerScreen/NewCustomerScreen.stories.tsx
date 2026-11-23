@@ -393,21 +393,18 @@ export const ErrorAlGuardar: Story = {
 };
 
 /** CA-2: con 2 libros y 1 abono, Descartar dice «Se quitarán 2 libros y 1 abono»; al confirmar, descarta. */
+/** #57 (ronda 35): el cliente aún no existe; «Descartar» pregunta «¿Salir sin guardar?» y no deja nada. */
 export const Descartar: Story = {
   globals: { platform: 'desktop' },
-  args: {
-    initialName: 'Natalia Andrea Cárdenas',
-    books: BOOKS,
-    discardSummary: { books: 2, payments: 1, invoices: 0, photos: 0, blockedByDeposit: false },
-  },
+  args: { initialName: 'Natalia Andrea Cárdenas', books: BOOKS },
   play: async ({ canvasElement, args }) => {
     const frame = frames(canvasElement)[0]!;
     await userEvent.click(button(frame, 'Descartar')!);
     await waitFor(() => expect(frame.querySelector('[role="alertdialog"]')).not.toBeNull());
     const dialog = frame.querySelector<HTMLElement>('[role="alertdialog"]')!;
-    expect(dialog.textContent).toContain('¿Descartar este cliente?');
-    expect(dialog.textContent).toContain('Se quitarán 2 libros y 1 abono');
-    await userEvent.click(button(dialog, 'Descartar')!);
+    expect(dialog.textContent).toContain('¿Salir sin guardar?');
+    expect(dialog.textContent).toContain('Se pierde lo que escribiste');
+    await userEvent.click(button(dialog, 'Salir')!);
     expect(args.onDiscard).toHaveBeenCalled();
   },
 };

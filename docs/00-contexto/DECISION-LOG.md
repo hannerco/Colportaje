@@ -568,6 +568,16 @@ El dueño probó la app y reportó 14 mejoras (issues #24 a #44). Decisiones:
 | 7 | Movimiento | [D] El fondo de la opción activa se desliza en 220 ms con curva de salida suave en Pestañas, Botones segmentados, barra lateral y barra inferior; con «Reducir movimiento» el cambio es inmediato. Tokens `--motion-*` |
 | 8 | Resumen de Dinero en escritorio | **"literal es poner el mismo botoncito que se abre cuando se está en mobile"**. [D] En escritorio el panel grande se reemplaza por el botón «Por entregar $X ▾» del encabezado, que abre el resumen en la Ventana lateral |
 
+
+## Ronda 35 — El cliente solo existe al guardarlo y arreglos de la prueba en iPhone (2026-11-22)
+
+| # | Tema | Resultado |
+|---|---|---|
+| 1 | Crear cliente | **"El cliente no existe a menos que yo lo guarde. Si hago todo, pero no lo guardé, no existe. no se queda como borrador ni nada."** + **"el libro sigue en físico hasta guardar. Sin historial"** + **"correcto, pregunta"** + **"A"**. [D] ADR-0051: todo vive en el teléfono; «Guardar cliente» guarda cliente, libros, cuota y plan en una sola transacción (`save_new_customer`) y luego las fotos (si una falla, se ofrece reintentar). Salir pregunta «¿Salir sin guardar?». Cambia BR-CUS-14 (#57) |
+| 2 | Fotos en iPhone | **"No me está dejando subir la foto desde mi iphone 14"**. [D derivada] Safari no codifica WebP: se usa JPEG (PNG en portadas) y el bucket acepta `image/jpeg`. BR-PHO-01 y OQ-43 (#55) |
+| 3 | Fecha de venta | **"Debes dejarme modificar la fecha de vendido, porque puedo equivocarme."** [D] Editable en la ficha y en el ejemplar (HU-CLI-13, #56) |
+| 4 | Portadas y texto largo | **"debe aparecer cada que se muestre ese libro en cualquier pantalla"** y **"la caja de información … expandirse lo suficiente y cuando ocupe mucho, ahí sí hacer scroll"** (#53, #54) |
+
 ---
 
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)
