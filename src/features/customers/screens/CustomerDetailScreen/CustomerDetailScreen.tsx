@@ -22,7 +22,9 @@ import { CustomerAccountSummary } from '../../components/CustomerAccountSummary'
 import { CustomerLocationBlock } from '../../components/CustomerLocationBlock';
 import { EmojiAvatar } from '../../components/EmojiAvatar';
 import { InfoPhotoStrip } from '../../components/InfoPhotoStrip';
+import { EditCustomerDialog } from '../../components/EditCustomerDialog';
 import { InvoiceBlock, type InvoiceBlockProps } from '../../components/InvoiceBlock';
+import type { CustomerPatch } from '@/domain/customer-data';
 import { AddBookButton, SoldBookList } from '../../components/SoldBookList';
 import type { MapTiles } from '../../map-tiles';
 import type { CustomerDetailView } from '../../use-cases/customer-detail';
@@ -76,7 +78,12 @@ export type CustomerDetailScreenProps = {
    * #61: agregar o completar la factura de un cliente ya guardado (la misma isla «Factura» de Nuevo cliente). Sin
    * funciones (archivado), las facturas solo se ven.
    */
-  invoiceActions?: Pick<InvoiceBlockProps, 'onCreate' | 'onAddPhoto' | 'onChange'>;
+  invoiceActions?: Pick<
+    InvoiceBlockProps,
+    'onCreate' | 'onAddPhoto' | 'onChange' | 'onReplacePhoto' | 'onRemovePhoto'
+  >;
+  /** #69: «Editar» en Datos (nombre, teléfono, dirección e información). Si falla, que lance. Sin función, no hay. */
+  onEditData?: (patch: CustomerPatch) => Promise<void>;
 };
 
 const t = copy.customers.detail;
@@ -135,12 +142,14 @@ export function CustomerDetailScreen({
   onRemoveLocation,
   onAddPhoto,
   invoiceActions,
+  onEditData,
   onCollect,
   onSchedule,
   onAvatarChange,
   onChangeSoldOn,
 }: CustomerDetailScreenProps) {
   const [archiveOpen, setArchiveOpen] = useState(false);
+  const [editing, setEditing] = useState(false);
   const [canceledOpen, setCanceledOpen] = useState(false);
 
   if (!detail)
@@ -290,7 +299,15 @@ export function CustomerDetailScreen({
             </>
           )}
         </Island>
-        <Island title={t.data.title} icon="person">
+        <Island
+          title={t.data.title}
+          icon="person"
+          action={
+            onEditData && !detail.archived
+              ? { label: copy.customers.edit.action, onClick: () => setEditing(true) }
+              : undefined
+          }
+        >
           {(detail.contact || detail.address) && (
             <DataList>
               {detail.contact && (
@@ -402,6 +419,19 @@ export function CustomerDetailScreen({
           </DataList>
         </Island>
       </DetailTemplate>
+      {onEditData && (
+        <EditCustomerDialog
+          open={editing}
+          onOpenChange={setEditing}
+          initial={{
+            name: detail.name,
+            phone: detail.contact?.phone ?? '',
+            address: detail.address ?? '',
+            info: detail.info ?? '',
+          }}
+          onSave={onEditData}
+        />
+      )}
       <ArchiveDialog
         open={archiveOpen}
         onOpenChange={setArchiveOpen}

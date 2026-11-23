@@ -19,6 +19,9 @@ export type InvoiceBlockProps = {
   onAddPhoto?: (invoiceId: string, file: File) => Promise<void> | void;
   /** N.º o fecha de una factura (se guardan solos). */
   onChange?: (invoiceId: string, patch: { number?: string | null; date?: LocalDate | null }) => void;
+  /** #68: cambiar o quitar una foto de una factura guardada (al quitar la última, la factura se borra, BR-CUS-17). */
+  onReplacePhoto?: (invoiceId: string, photoId: string, file: File) => Promise<void> | void;
+  onRemovePhoto?: (photoId: string) => Promise<void> | void;
   /** Por qué todavía no se puede (sin nombre o sin conexión). */
   disabledReason?: string | null;
 };
@@ -35,6 +38,8 @@ export function InvoiceBlock({
   onCreate,
   onAddPhoto,
   onChange,
+  onReplacePhoto,
+  onRemovePhoto,
   disabledReason,
 }: InvoiceBlockProps) {
   const input = useRef<HTMLInputElement>(null);
@@ -62,6 +67,10 @@ export function InvoiceBlock({
           <InfoPhotoStrip
             photos={invoice.photos}
             onAdd={onAddPhoto ? (file) => onAddPhoto(invoice.invoiceId, file) : undefined}
+            onReplace={
+              onReplacePhoto ? (photoId, file) => onReplacePhoto(invoice.invoiceId, photoId, file) : undefined
+            }
+            onRemove={onRemovePhoto}
             disabledReason={disabledReason}
           />
           <div className={styles.fields}>
