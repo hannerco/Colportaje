@@ -21,7 +21,7 @@ export type DatePickerCalendarProps = {
   label: string;
 };
 
-const t = copy.payments.calendar;
+const t = copy.ui.calendar;
 
 const dayName = (date: LocalDate) => {
   const { year, month } = yearMonth(date);
@@ -31,7 +31,7 @@ const dayName = (date: LocalDate) => {
 /**
  * Calendario mensual para elegir fecha (HU-PAN-CLI-05, diseño «6 · Cambiar fecha de abono»): semana desde domingo
  * (BR-GEN-07), hoy marcado, el día elegido en acento y un punto en los días con otro abono. Se navega con las flechas
- * (±1 día / ±1 semana), Inicio / Fin y RePág / AvPág (±1 mes). Pieza del módulo: la biblioteca no tiene calendario.
+ * (±1 día / ±1 semana), Inicio / Fin y RePág / AvPág (±1 mes). En la biblioteca desde #62: lo abre el campo de fecha.
  */
 export function DatePickerCalendar({
   value,

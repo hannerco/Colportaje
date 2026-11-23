@@ -433,4 +433,37 @@ export const Movil: Story = {
 };
 
 /** Las combinaciones en claro y oscuro × escritorio y móvil. */
+/** #61: un cliente ya guardado sin factura muestra «Foto de la factura» para agregarla. */
+export const AgregarFactura: Story = {
+  name: 'Agregar factura',
+  args: {
+    detail: aCustomerDetailView({ invoices: [] }),
+    invoiceActions: { onCreate: fn(), onAddPhoto: fn(), onChange: fn() },
+  },
+  play: async ({ canvasElement, args }) => {
+    for (const frame of frames(canvasElement)) {
+      const add = button(frame, 'Foto de la factura');
+      expect(add).toBeDefined();
+      expect(add).toBeEnabled();
+    }
+    const input = frames(canvasElement)[0]!.querySelector<HTMLInputElement>(
+      'input[type="file"][aria-label="Foto de la factura"]',
+    )!;
+    await userEvent.upload(input, new File(['x'], 'factura.jpg', { type: 'image/jpeg' }));
+    expect(args.invoiceActions?.onCreate).toHaveBeenCalled();
+  },
+};
+
+/** #61: archivado, la factura solo se ve (no hay botón para agregarla). */
+export const ArchivadoSinAgregarFactura: Story = {
+  name: 'Archivado sin agregar factura',
+  args: {
+    detail: aCustomerDetailView({ archived: true, invoices: [] }),
+    invoiceActions: { onCreate: fn(), onAddPhoto: fn(), onChange: fn() },
+  },
+  play: async ({ canvasElement }) => {
+    for (const frame of frames(canvasElement)) expect(button(frame, 'Foto de la factura')).toBeUndefined();
+  },
+};
+
 export const Matriz: Story = { parameters: { frames: 'matrix' } };

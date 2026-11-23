@@ -5,6 +5,7 @@ import { copy } from '@/copy/es';
 import type { LocalDate } from '@/domain/time';
 import { Button } from '@/ui/atoms/Button';
 import { Field } from '@/ui/atoms/Field';
+import { DateField } from '@/ui/molecules/DateField';
 import { Icon } from '@/ui/icons';
 import type { CustomerInvoice } from '../../use-cases/customer-invoices';
 import { InfoPhotoStrip } from '../InfoPhotoStrip';
@@ -70,8 +71,7 @@ export function InvoiceBlock({
               value={invoice.number ?? ''}
               onChange={(number) => onChange?.(invoice.invoiceId, { number: number || null })}
             />
-            <Field
-              kind="date"
+            <DateField
               label={t.date}
               placeholder="dd/mm/aaaa"
               value={invoice.date}

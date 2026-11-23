@@ -21,7 +21,7 @@ function Demo({ onChange = () => {} }: { onChange?: (date: LocalDate) => void })
 }
 
 const meta = {
-  title: 'Pantallas/Clientes/Piezas/Calendario',
+  title: 'Moléculas/Calendario',
   component: Demo,
   args: { onChange: fn() },
   parameters: {
