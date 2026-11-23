@@ -22,6 +22,8 @@ export const ROUTES = {
   /** Nuevo Abibono precargado (HU-PAN-DIN-04): hasta entonces es el armazón de la ruta de un Abibono. */
   newDeposit: '/dinero/abibonos/nuevo',
   deposit: (id: string) => `/dinero/abibonos/${encodeURIComponent(id)}`,
+  /** Admin · Usuarios (ronda 34, #43). */
+  adminUsers: '/admin/usuarios',
 } as const;
 
 /** Destino de cada módulo de la navegación. Los que no tienen pantalla no se muestran (`APP_NAV_ITEMS`). */

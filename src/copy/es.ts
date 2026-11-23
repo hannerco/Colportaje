@@ -7,6 +7,13 @@ export const copy = {
   /** Iniciar sesión (HU-PAN-BASE-02, sin diseño del dueño: OQ-44). Los errores de entrada salen de `errors.codes`. */
   auth: {
     signIn: {
+      /** Ronda 34 (#41): solo con Google y con el correo que autorizó el administrador. */
+      googleSubtitle: 'Con la cuenta de Google que autorizó tu líder',
+      google: 'Continuar con Google',
+      googleOpening: 'Abriendo Google…',
+      noAccess:
+        'Ese correo no tiene acceso. Pídele al administrador que lo autorice, o entra con otra cuenta.',
+      googleFailed: 'No se pudo entrar con Google. Intenta de nuevo.',
       subtitle: 'Entra con tu correo y tu contraseña',
       email: 'Correo',
       emailPlaceholder: 'tucorreo@ejemplo.com',
@@ -34,6 +41,38 @@ export const copy = {
   },
   /** Admin · Catálogo (HU-PAN-ADM-01, pedido del dueño, 2026-11-22; sin diseño del lienzo). */
   admin: {
+    /** Partes de Admin (ronda 34). */
+    sections: { label: 'Partes de Admin', catalog: 'Catálogo', users: 'Usuarios' },
+    /** Admin · Usuarios (BR-USR-07, ronda 34, #43). */
+    users: {
+      title: 'Usuarios',
+      authorize: 'Autorizar correo',
+      authorizeHint:
+        'Solo este correo podrá entrar, con «Continuar con Google». Después envíale el enlace de la app por WhatsApp.',
+      authorizeConfirm: 'Autorizar',
+      cancel: 'Cancelar',
+      fullName: 'Nombre',
+      email: 'Correo de Google',
+      isAdmin: 'Es administrador',
+      viewsLabel: 'Vistas de usuarios',
+      views: { all: 'Todos', active: 'Activos', pending: 'Pendientes', inactive: 'Desactivados' },
+      status: { active: 'Activo', pending: 'Pendiente', inactive: 'Desactivado' },
+      statusLabel: (status: string) => `Estado: ${status}`,
+      roles: { admin: 'Admin', colportor: 'Colportor' },
+      actions: (name: string) => `Más acciones de ${name}`,
+      remove: 'Quitar',
+      deactivate: 'Desactivar',
+      reactivate: 'Reactivar',
+      empty: 'No hay usuarios en esta vista',
+      authorized: (email: string) => `${email} autorizado`,
+      copyLink: 'Copiar enlace',
+      linkCopied: 'Enlace copiado',
+      removed: 'Correo quitado',
+      deactivated: 'Usuario desactivado',
+      reactivated: 'Usuario reactivado',
+      alreadyAuthorized: 'Ese correo ya está autorizado',
+      cannotDeactivateSelf: 'No puedes desactivarte a ti mismo',
+    },
     catalog: {
       title: 'Catálogo',
       search: 'Buscar título',

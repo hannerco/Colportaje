@@ -14,6 +14,7 @@ import { appErrorMessage } from '@/features/shared/app-error-message';
 import { NAV_HREFS, useAppShell } from '@/features/shell';
 import { newId } from '@/lib/ids';
 import { useToast } from '@/ui/molecules/Toast';
+import { AdminSections } from './admin-sections';
 
 /** Admin · Catálogo (HU-PAN-ADM-01): crear y editar títulos, sus precios y su portada. Solo administradores. */
 export default function AdminPage() {
@@ -34,6 +35,7 @@ export default function AdminPage() {
       banner={offlineBanner}
       isOnline={isOnline}
       isAdmin={isAdmin}
+      sections={<AdminSections active="catalog" />}
       titles={isAdmin ? titles.data : undefined}
       error={titles.isError}
       onRetry={() => void titles.refetch()}

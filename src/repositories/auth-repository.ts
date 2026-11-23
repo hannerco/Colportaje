@@ -10,6 +10,11 @@ export type AuthChange =
 export interface AuthRepository {
   /** Errores: `INVALID_CREDENTIALS`, `USER_INACTIVE` (bloqueo en Auth), `NETWORK_ERROR`. */
   signIn(input: { email: string; password: string }): Promise<Result<{ userId: string }, AppError>>;
+  /**
+   * Entrar con Google (ronda 34, #41): lleva a Google y vuelve a `redirectTo`; la sesión se abre al volver. Solo entran
+   * los correos que autorizó el admin (gancho de Auth). Errores: `NETWORK_ERROR`.
+   */
+  signInWithGoogle(redirectTo: string): Promise<Result<void, AppError>>;
   signOut(): Promise<Result<void, AppError>>;
   /** Usuario de la sesión guardada en el dispositivo, o `null`. */
   getCurrentUserId(): Promise<string | null>;

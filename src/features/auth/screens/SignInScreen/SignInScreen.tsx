@@ -19,6 +19,11 @@ export type SignInScreenProps = {
   onSubmit: (credentials: { email: string; password: string }) => void | Promise<void>;
   /** El usuario volvió a escribir: quien la usa limpia el error. */
   onEdit?: () => void;
+  /**
+   * Entrar con Google (ronda 34, #41). Con él, la pantalla muestra solo «Continuar con Google» (no hay contraseñas);
+   * sin él, el formulario de correo y contraseña de siempre (transición mientras se configura Google).
+   */
+  google?: { onClick: () => void; pending?: boolean };
 };
 
 const t = copy.auth.signIn;
@@ -34,6 +39,7 @@ export function SignInScreen({
   error = null,
   onSubmit,
   onEdit,
+  google,
 }: SignInScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -44,6 +50,35 @@ export function SignInScreen({
     event.preventDefault();
     if (canSubmit) void onSubmit({ email: email.trim(), password });
   };
+
+  if (google)
+    return (
+      <main className={styles.page}>
+        <div className={styles.column}>
+          {!isOnline && <Banner tone="offline" />}
+          <Island>
+            <div className={styles.form}>
+              <header className={styles.brand}>
+                <Avatar kind="brand" size="xl" decorative />
+                <h1 className={styles.title}>{copy.app.name}</h1>
+                <p className={styles.subtitle}>{t.googleSubtitle}</p>
+              </header>
+              {error && <Banner tone="overdue">{error.message}</Banner>}
+              <Button
+                variant="secondary"
+                width="full"
+                state={google.pending || pending ? 'loading' : isOnline ? 'normal' : 'disabled'}
+                loadingText={t.googleOpening}
+                onClick={google.onClick}
+              >
+                {t.google}
+              </Button>
+              {!isOnline && <p className={styles.subtitle}>{copy.ui.empty.needsConnection}</p>}
+            </div>
+          </Island>
+        </div>
+      </main>
+    );
 
   return (
     <main className={styles.page}>

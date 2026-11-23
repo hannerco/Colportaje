@@ -55,4 +55,4 @@ Usuarios, invitaciones, ajustes y meta (el resto de Admin espera su diseño); re
 - **Stories con `play`:** `Pantallas/Admin/Catálogo`.
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-22 (#43, ronda 34):** Admin tiene dos partes, **Catálogo** y **Usuarios** (`/admin/usuarios`, `AdminUsersScreen`, propuesta 6): Pendiente, Activo y Desactivado; «Autorizar correo» (nombre, correo de Google, administrador) y en Más acciones Quitar (Pendiente), Desactivar o Reactivar. Base: tabla `authorized_email`, gancho `hook_before_user_created`, `admin_users()` y `admin_set_user_active()` (pruebas en `tests/rls/authorized-email.test.ts`).

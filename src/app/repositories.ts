@@ -11,6 +11,7 @@ import { createSupabaseMoneyRepository } from '@/adapters/supabase/money-reposit
 import { createSupabasePaymentRepository } from '@/adapters/supabase/payment-repository';
 import { createSupabasePhotoRepository } from '@/adapters/supabase/photo-repository';
 import { createSupabaseProfileRepository } from '@/adapters/supabase/profile-repository';
+import { createSupabaseUserAdminRepository } from '@/adapters/supabase/user-admin-repository';
 import { createSupabaseStorageRepository } from '@/adapters/supabase/storage-repository';
 import { createSupabaseTitleRepository } from '@/adapters/supabase/title-repository';
 import { getPublicEnv } from '@/lib/env';
@@ -25,6 +26,7 @@ export function createAppRepositories(persister: Persister): Repositories {
   return {
     auth: createSupabaseAuthRepository(getClient),
     profiles: createSupabaseProfileRepository(getClient),
+    users: createSupabaseUserAdminRepository(getClient),
     titles: createSupabaseTitleRepository(getClient),
     copies: createSupabaseCopyRepository(getClient),
     customers: createSupabaseCustomerRepository(getClient),

@@ -25,6 +25,7 @@ function fakeAuth(signInResult: Result<{ userId: string }, AppError> = ok({ user
   let userId: string | null = null;
   const emit = (change: AuthChange) => listeners.forEach((l) => l(change));
   const auth: AuthRepository = {
+    signInWithGoogle: vi.fn(async () => ok(undefined)),
     signIn: vi.fn(async () => {
       if (signInResult.ok) {
         userId = signInResult.value.userId;
