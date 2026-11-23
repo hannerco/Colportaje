@@ -146,7 +146,39 @@ export const copy = {
       text: (module: string) => `${module} todavía no está listo. Lo verás aquí cuando esté terminado.`,
     },
     /** Campo de contraseña (Iniciar sesión, HU-PAN-BASE-02): ver u ocultar lo escrito. */
-    field: { showPassword: 'Mostrar', hidePassword: 'Ocultar' },
+    field: {
+      showPassword: 'Mostrar',
+      hidePassword: 'Ocultar',
+      /** #62: el ícono del campo de fecha abre el calendario. */
+      openCalendar: 'Abrir calendario',
+      pickDate: 'Elegir fecha',
+    },
+    /** Calendario para elegir fecha (HU-PAN-CLI-05; en la biblioteca desde #62). */
+    calendar: {
+      weekdays: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
+      months: [
+        'enero',
+        'febrero',
+        'marzo',
+        'abril',
+        'mayo',
+        'junio',
+        'julio',
+        'agosto',
+        'septiembre',
+        'octubre',
+        'noviembre',
+        'diciembre',
+      ],
+      month: (name: string, year: number) => `${name} de ${year}`,
+      /** Nombre de cada día para el lector; contiene el número visible («5 de diciembre de 2026»). */
+      day: (day: number, month: string, year: number) => `${day} de ${month} de ${year}`,
+      previous: 'Mes anterior',
+      next: 'Mes siguiente',
+      /** Junto al día: otro abono del cliente cae ese día. */
+      otherPayment: 'otro abono',
+    },
+
     /** Buscador (HU-UI-12). */
     search: {
       label: 'Buscar',
@@ -280,6 +312,20 @@ export const copy = {
   },
   /** Módulo Clientes. */
   customers: {
+    /** #69: editar los datos de un cliente guardado. */
+    edit: {
+      action: 'Editar',
+      title: 'Editar datos',
+      message: 'La ubicación, el emoji y las fotos se cambian en la ficha.',
+      name: 'Nombre',
+      phone: 'Teléfono',
+      address: 'Dirección',
+      info: 'Información',
+      nameRequired: 'Escribe el nombre del cliente.',
+      save: 'Guardar',
+      cancel: 'Cancelar',
+      saved: 'Datos guardados',
+    },
     emoji: {
       title: 'Emoji del cliente',
       choose: 'Elegir emoji del cliente',
@@ -549,6 +595,12 @@ export const copy = {
     photos: {
       add: 'Agregar imagen',
       adding: 'Subiendo imagen…',
+      /** #68: el menú de una foto de factura. */
+      photoMenu: (n: number) => `Foto ${n}, cambiar o quitar`,
+      replace: 'Cambiar foto',
+      remove: 'Quitar foto',
+      replaced: 'Foto cambiada',
+      removed: 'Foto quitada',
     },
   },
   /** Abonos (HU-PAN-CLI-05). */
@@ -564,30 +616,6 @@ export const copy = {
       saved: 'Fecha de venta guardada',
     },
     /** Calendario para elegir fecha (diseño «6 · Cambiar fecha de abono»); la semana empieza el domingo (BR-GEN-07). */
-    calendar: {
-      weekdays: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
-      months: [
-        'enero',
-        'febrero',
-        'marzo',
-        'abril',
-        'mayo',
-        'junio',
-        'julio',
-        'agosto',
-        'septiembre',
-        'octubre',
-        'noviembre',
-        'diciembre',
-      ],
-      month: (name: string, year: number) => `${name} de ${year}`,
-      /** Nombre de cada día para el lector; contiene el número visible («5 de diciembre de 2026»). */
-      day: (day: number, month: string, year: number) => `${day} de ${month} de ${year}`,
-      previous: 'Mes anterior',
-      next: 'Mes siguiente',
-      /** Junto al día: otro abono del cliente cae ese día. */
-      otherPayment: 'otro abono',
-    },
     changeDate: {
       /** El botón de la fecha en la lista de abonos. */
       open: (date: string) => `Cambiar fecha, ${date}`,
@@ -640,7 +668,17 @@ export const copy = {
         methods: { cash: 'Efectivo', transfer: 'Transferencia' },
       },
       customerPayments: (name: string) => `Abonos de ${name}`,
+      overdueAgo: (days: number) => (days === 1 ? 'hace 1 día' : `hace ${days} días`),
       history: 'Historial',
+      /** #72: cada entrada del Historial del abono. */
+      historyEntry: {
+        scheduled: (amount: string, date: string) => `Programado: ${amount} para el ${date}`,
+        rescheduled: (from: string, to: string) => `Más plazo: ${from} → ${to}`,
+        reduced: (from: string, to: string) => `Valor cambiado: ${from} → ${to}`,
+        canceled: 'Cancelado',
+        reopened: 'Volvió a por cobrar',
+        delivered: (deposit: string) => `Entregado al líder en el ${deposit}`,
+      },
       collected: (amount: string, method: string) => `Cobrado: ${amount} en ${method}`,
       delivered: 'Entregado al líder',
       error: { title: 'No se pudo cargar', text: 'Inténtalo otra vez.' },
@@ -995,6 +1033,8 @@ export const copy = {
         paidAt: 'Fecha real',
         paidAmount: 'Valor real',
         method: 'Método',
+        /** #70: la columna de «Cobrar» (solo para el lector). */
+        actions: 'Acciones',
       },
       overdue: (days: number) => (days === 1 ? 'hace 1 día' : `hace ${days} días`),
       overdueStatus: (days: number) => (days === 1 ? 'Vencido · hace 1 día' : `Vencido · hace ${days} días`),

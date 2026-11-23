@@ -10,6 +10,7 @@ import { Button } from '@/ui/atoms/Button';
 import { Choice } from '@/ui/atoms/Choice';
 import { Field } from '@/ui/atoms/Field';
 import { StatusPill } from '@/ui/atoms/StatusPill';
+import { DateField } from '@/ui/molecules/DateField';
 import { Icon } from '@/ui/icons';
 import { Menu } from '@/ui/molecules/Menu';
 import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
@@ -195,7 +196,7 @@ function Editor(
             title={
               <div className={styles.head}>
                 <Field label={t.name} placeholder={initial.displayTitle} value={name} onChange={setName} />
-                <Field kind="date" label={t.date} placeholder="dd/mm/aaaa" value={date} onChange={setDate} />
+                <DateField label={t.date} placeholder="dd/mm/aaaa" value={date} onChange={setDate} />
               </div>
             }
             status={props.mode === 'draft' ? <StatusPill status="draft" /> : undefined}

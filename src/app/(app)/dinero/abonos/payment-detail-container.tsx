@@ -6,7 +6,7 @@ import { copy } from '@/copy/es';
 import { formatCOP } from '@/domain/money';
 import { todayBogota } from '@/domain/time';
 import { useCustomerDetail } from '@/features/customers';
-import { usePaymentCustomer } from '@/features/money';
+import { usePaymentCustomer, usePaymentHistory } from '@/features/money';
 import {
   PaymentDetailScreen,
   type PaymentDetailScreenProps,
@@ -44,6 +44,7 @@ export function PaymentDetailContainer({ paymentId: id, window, initialForm = nu
   const owner = usePaymentCustomer(id);
   const customerId = owner.data?.customerId;
   const detail = useCustomerDetail(customerId);
+  const history = usePaymentHistory(id);
   const { collectPayment } = useCollectPayment();
   const { reschedulePayment } = useReschedulePayment();
   const { undoCollectPayment } = useUndoCollectPayment();
@@ -68,6 +69,8 @@ export function PaymentDetailContainer({ paymentId: id, window, initialForm = nu
           : undefined
       }
       payments={detail.data?.payments}
+      history={history.data}
+      depositTitle={history.data?.find((entry) => entry.kind === 'delivered')?.depositTitle}
       loading={owner.isPending || (Boolean(customerId) && detail.isPending)}
       error={owner.isError || detail.isError}
       notFound={owner.isSuccess && owner.data === null}

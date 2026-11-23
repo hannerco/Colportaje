@@ -22,6 +22,9 @@ import { CustomerAccountSummary } from '../../components/CustomerAccountSummary'
 import { CustomerLocationBlock } from '../../components/CustomerLocationBlock';
 import { EmojiAvatar } from '../../components/EmojiAvatar';
 import { InfoPhotoStrip } from '../../components/InfoPhotoStrip';
+import { EditCustomerDialog } from '../../components/EditCustomerDialog';
+import { InvoiceBlock, type InvoiceBlockProps } from '../../components/InvoiceBlock';
+import type { CustomerPatch } from '@/domain/customer-data';
 import { AddBookButton, SoldBookList } from '../../components/SoldBookList';
 import type { MapTiles } from '../../map-tiles';
 import type { CustomerDetailView } from '../../use-cases/customer-detail';
@@ -71,6 +74,16 @@ export type CustomerDetailScreenProps = {
   onRemoveLocation?: () => void;
   /** «Agregar imagen» (HU-CLI-07). Sin función no hay botón. */
   onAddPhoto?: (file: File) => Promise<void> | void;
+  /**
+   * #61: agregar o completar la factura de un cliente ya guardado (la misma isla «Factura» de Nuevo cliente). Sin
+   * funciones (archivado), las facturas solo se ven.
+   */
+  invoiceActions?: Pick<
+    InvoiceBlockProps,
+    'onCreate' | 'onAddPhoto' | 'onChange' | 'onReplacePhoto' | 'onRemovePhoto'
+  >;
+  /** #69: «Editar» en Datos (nombre, teléfono, dirección e información). Si falla, que lance. Sin función, no hay. */
+  onEditData?: (patch: CustomerPatch) => Promise<void>;
 };
 
 const t = copy.customers.detail;
@@ -128,12 +141,15 @@ export function CustomerDetailScreen({
   onChooseLocation,
   onRemoveLocation,
   onAddPhoto,
+  invoiceActions,
+  onEditData,
   onCollect,
   onSchedule,
   onAvatarChange,
   onChangeSoldOn,
 }: CustomerDetailScreenProps) {
   const [archiveOpen, setArchiveOpen] = useState(false);
+  const [editing, setEditing] = useState(false);
   const [canceledOpen, setCanceledOpen] = useState(false);
 
   if (!detail)
@@ -283,7 +299,15 @@ export function CustomerDetailScreen({
             </>
           )}
         </Island>
-        <Island title={t.data.title} icon="person">
+        <Island
+          title={t.data.title}
+          icon="person"
+          action={
+            onEditData && !detail.archived
+              ? { label: copy.customers.edit.action, onClick: () => setEditing(true) }
+              : undefined
+          }
+        >
           {(detail.contact || detail.address) && (
             <DataList>
               {detail.contact && (
@@ -340,32 +364,47 @@ export function CustomerDetailScreen({
                 }
               />
             )}
-            {detail.invoices.map((invoice) => (
+            {invoiceActions && !detail.archived ? (
               <DataRow
-                key={invoice.invoiceId}
                 label={t.data.invoice}
                 value={
-                  <span className={styles.invoice}>
-                    <span>
-                      {[invoice.number, invoice.date && formatDate(invoice.date)].filter(Boolean).join(' · ')}
-                    </span>
-                    {invoice.photos.length > 0 && (
-                      <span className={styles.photos}>
-                        {invoice.photos.map((photo, i) => (
-                          // eslint-disable-next-line @next/next/no-img-element -- miniatura firmada de Storage.
-                          <img
-                            key={photo.photoId}
-                            className={styles.photo}
-                            src={photo.thumbUrl}
-                            alt={t.data.invoicePhoto(invoice.date ? formatDate(invoice.date) : '', i + 1)}
-                          />
-                        ))}
-                      </span>
-                    )}
-                  </span>
+                  <InvoiceBlock
+                    invoices={detail.invoices}
+                    {...invoiceActions}
+                    disabledReason={isOnline ? null : copy.ui.empty.needsConnection}
+                  />
                 }
               />
-            ))}
+            ) : (
+              detail.invoices.map((invoice) => (
+                <DataRow
+                  key={invoice.invoiceId}
+                  label={t.data.invoice}
+                  value={
+                    <span className={styles.invoice}>
+                      <span>
+                        {[invoice.number, invoice.date && formatDate(invoice.date)]
+                          .filter(Boolean)
+                          .join(' · ')}
+                      </span>
+                      {invoice.photos.length > 0 && (
+                        <span className={styles.photos}>
+                          {invoice.photos.map((photo, i) => (
+                            // eslint-disable-next-line @next/next/no-img-element -- miniatura firmada de Storage.
+                            <img
+                              key={photo.photoId}
+                              className={styles.photo}
+                              src={photo.thumbUrl}
+                              alt={t.data.invoicePhoto(invoice.date ? formatDate(invoice.date) : '', i + 1)}
+                            />
+                          ))}
+                        </span>
+                      )}
+                    </span>
+                  }
+                />
+              ))
+            )}
             <DataRow
               label={t.data.since}
               value={formatDate(detail.customerSince)}
@@ -373,12 +412,26 @@ export function CustomerDetailScreen({
                 detail.info ||
                 detail.infoPhotos.length ||
                 (onAddPhoto && !detail.archived) ||
+                (invoiceActions && !detail.archived) ||
                 detail.invoices.length,
               )}
             />
           </DataList>
         </Island>
       </DetailTemplate>
+      {onEditData && (
+        <EditCustomerDialog
+          open={editing}
+          onOpenChange={setEditing}
+          initial={{
+            name: detail.name,
+            phone: detail.contact?.phone ?? '',
+            address: detail.address ?? '',
+            info: detail.info ?? '',
+          }}
+          onSave={onEditData}
+        />
+      )}
       <ArchiveDialog
         open={archiveOpen}
         onOpenChange={setArchiveOpen}
@@ -407,7 +460,7 @@ function PaymentList({
   const open = payments.find((p) => p.paymentId === editing);
   return (
     <>
-      <ul className={styles.list}>
+      <ul className={`${styles.list} ${styles.paymentList}`}>
         {payments.map((payment) => {
           const date = dateOf(payment);
           const overdue = payment.status === 'scheduled' && payment.isOverdue;

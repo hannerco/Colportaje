@@ -6,6 +6,7 @@ import { formatCOP, type COP } from '@/domain/money';
 import { suggestFirstDueDate, type PlanItem } from '@/domain/payment-plan';
 import type { LocalDate } from '@/domain/time';
 import { Field } from '@/ui/atoms/Field';
+import { DateField } from '@/ui/molecules/DateField';
 import { SegmentedControl } from '@/ui/molecules/SegmentedControl';
 import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
 import { planPreview } from '../../new-customer-form';
@@ -108,8 +109,8 @@ export function SchedulePaymentsDialog({
           )
         ) : (
           <div className={styles.fields}>
-            <Field
-              kind="date"
+            <DateField
+              today={today}
               label={t.date}
               placeholder="dd/mm/aaaa"
               value={single.dueDate}

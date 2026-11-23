@@ -401,6 +401,32 @@ export const Lateral: Story = {
   globals: { platform: 'desktop' },
   args: { window: { ...meta.args.window, mode: 'side' } },
 };
+
+/** #66: en una pantalla angosta el estado de un abono nunca queda encima de su valor ni de «Cobrar». */
+export const Angosta: Story = {
+  globals: { platform: 'desktop' },
+  args: { onCollect: fn() },
+  decorators: [
+    (Story) => (
+      <div style={{ width: 420 }}>
+        <Story />
+      </div>
+    ),
+  ],
+  play: async ({ canvasElement }) => {
+    const rows = [...canvasElement.querySelectorAll<HTMLElement>('li[class*="payment"]')];
+    expect(rows.length).toBeGreaterThan(0);
+    const overlap = (a: DOMRect, b: DOMRect) =>
+      a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
+    for (const row of rows) {
+      const pill = row.querySelector<HTMLElement>('[data-status]');
+      const side = row.querySelector<HTMLElement>('[class*="paymentSide"]');
+      if (!pill || !side) continue;
+      for (const child of side.querySelectorAll<HTMLElement>('span, button'))
+        expect(overlap(pill.getBoundingClientRect(), child.getBoundingClientRect())).toBe(false);
+    }
+  },
+};
 export const Centrada: Story = {
   globals: { platform: 'desktop' },
   args: { window: { ...meta.args.window, mode: 'center' } },
@@ -433,4 +459,89 @@ export const Movil: Story = {
 };
 
 /** Las combinaciones en claro y oscuro × escritorio y móvil. */
+/** #61: un cliente ya guardado sin factura muestra «Foto de la factura» para agregarla. */
+export const AgregarFactura: Story = {
+  name: 'Agregar factura',
+  args: {
+    detail: aCustomerDetailView({ invoices: [] }),
+    invoiceActions: { onCreate: fn(), onAddPhoto: fn(), onChange: fn() },
+  },
+  play: async ({ canvasElement, args }) => {
+    for (const frame of frames(canvasElement)) {
+      const add = button(frame, 'Foto de la factura');
+      expect(add).toBeDefined();
+      expect(add).toBeEnabled();
+    }
+    const input = frames(canvasElement)[0]!.querySelector<HTMLInputElement>(
+      'input[type="file"][aria-label="Foto de la factura"]',
+    )!;
+    await userEvent.upload(input, new File(['x'], 'factura.jpg', { type: 'image/jpeg' }));
+    expect(args.invoiceActions?.onCreate).toHaveBeenCalled();
+  },
+};
+
+/** #61: archivado, la factura solo se ve (no hay botón para agregarla). */
+export const ArchivadoSinAgregarFactura: Story = {
+  name: 'Archivado sin agregar factura',
+  args: {
+    detail: aCustomerDetailView({ archived: true, invoices: [] }),
+    invoiceActions: { onCreate: fn(), onAddPhoto: fn(), onChange: fn() },
+  },
+  play: async ({ canvasElement }) => {
+    for (const frame of frames(canvasElement)) expect(button(frame, 'Foto de la factura')).toBeUndefined();
+  },
+};
+
+/** #69: «Editar» en Datos abre el diálogo con lo que tiene el cliente. */
+export const EditarDatos: Story = {
+  name: 'Editar datos',
+  globals: { platform: 'desktop' },
+  args: { onEditData: fn(async () => {}) },
+  play: async ({ canvasElement }) => {
+    const frame = frames(canvasElement)[0]!;
+    await userEvent.click(button(frame, 'Editar')!);
+    await waitFor(() =>
+      expect(canvasElement.ownerDocument.querySelector('[role="alertdialog"]')).not.toBeNull(),
+    );
+    const dialog = canvasElement.ownerDocument.querySelector<HTMLElement>('[role="alertdialog"]')!;
+    expect(dialog.querySelector<HTMLInputElement>('input')!.value).toBe(aCustomerDetailView().name);
+  },
+};
+
+/** #68: tocar una foto de la factura ofrece «Cambiar foto» y «Quitar foto». */
+export const CambiarFotoDeFactura: Story = {
+  name: 'Cambiar foto de factura',
+  globals: { platform: 'desktop' },
+  args: {
+    detail: aCustomerDetailView({
+      invoices: [
+        {
+          invoiceId: 'f1',
+          number: '0042',
+          date: localDate('2026-11-20'),
+          photos: [{ photoId: 'ph1', thumbUrl: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=' }],
+        },
+      ],
+    }),
+    invoiceActions: {
+      onCreate: fn(),
+      onAddPhoto: fn(),
+      onChange: fn(),
+      onReplacePhoto: fn(),
+      onRemovePhoto: fn(),
+    },
+  },
+  play: async ({ canvasElement, args }) => {
+    const frame = frames(canvasElement)[0]!;
+    await userEvent.click(button(frame, 'Foto 1, cambiar o quitar')!);
+    const remove = await waitFor(() => {
+      const found = [...canvasElement.ownerDocument.querySelectorAll<HTMLElement>('[role="menuitem"]')];
+      expect(found.map((i) => i.textContent?.trim())).toEqual(['Cambiar foto', 'Quitar foto']);
+      return found[1]!;
+    });
+    await userEvent.click(remove);
+    expect(args.invoiceActions?.onRemovePhoto).toHaveBeenCalledWith('ph1');
+  },
+};
+
 export const Matriz: Story = { parameters: { frames: 'matrix' } };

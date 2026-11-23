@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { copy } from '@/copy/es';
 import { formatDate, type LocalDate } from '@/domain/time';
 import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
-import { DatePickerCalendar } from '../DatePickerCalendar';
+import { DatePickerCalendar } from '@/ui/molecules/DatePickerCalendar';
 
 export type SoldDateDialogProps = {
   open: boolean;

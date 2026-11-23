@@ -7,7 +7,7 @@ import { formatDate, isPastDate, type LocalDate } from '@/domain/time';
 import { Field } from '@/ui/atoms/Field';
 import { Icon } from '@/ui/icons';
 import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
-import { DatePickerCalendar } from '../DatePickerCalendar';
+import { DatePickerCalendar } from '@/ui/molecules/DatePickerCalendar';
 import styles from './ChangeDueDateDialog.module.css';
 
 export type ChangeDueDateDialogProps = {
