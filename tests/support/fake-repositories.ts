@@ -77,6 +77,7 @@ export const fakePaymentRepository = (overrides: Partial<PaymentRepository> = {}
   reschedule: vi.fn(),
   collect: vi.fn(),
   uncollect: vi.fn(),
+  getHistory: vi.fn(),
   ...overrides,
 });
 

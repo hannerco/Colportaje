@@ -3,12 +3,12 @@
 import { copy } from '@/copy/es';
 import { formatCOP } from '@/domain/money';
 import type { PaymentRow } from '@/domain/customer-detail';
+import type { PaymentHistoryEntry } from '@/domain/payment-history';
 import { daysBetween, formatDate, type LocalDate } from '@/domain/time';
 import { Button } from '@/ui/atoms/Button';
+import { Icon } from '@/ui/icons';
 import { StatusPill } from '@/ui/atoms/StatusPill';
-import { DataList, DataRow } from '@/ui/molecules/DataRow';
 import { HistoryTimeline } from '@/ui/molecules/HistoryTimeline';
-import { Menu } from '@/ui/molecules/Menu';
 import type { BannerProps } from '@/ui/molecules/Banner';
 import { DetailWindow, type DetailWindowProps } from '@/ui/organisms/DetailWindow';
 import { EmptyState } from '@/ui/organisms/EmptyState';
@@ -43,9 +43,37 @@ export type PaymentDetailScreenProps = {
   /** Cobra; si falla, que lance para que el formulario siga abierto (el contenedor ya avisó). */
   onCollect: (values: CollectPaymentValues) => Promise<void>;
   onReschedule: (date: LocalDate, confirmed: boolean, note?: string) => Promise<void>;
+  /** #72: lo que le pasó al abono (`usePaymentHistory`), del más reciente al más antiguo. */
+  history?: readonly PaymentHistoryEntry[];
+  /** #72: el nombre del Abibono en que se entregó («Abibono – 25/10/2026»), para la franja. */
+  depositTitle?: string;
 };
 
 const t = copy.payments.detail;
+
+/** El texto de cada entrada del Historial (#72). */
+const historyText = (entry: PaymentHistoryEntry): { text: string; note?: string } => {
+  const h = t.historyEntry;
+  switch (entry.kind) {
+    case 'scheduled':
+      return { text: h.scheduled(formatCOP(entry.amount), formatDate(entry.dueDate)) };
+    case 'rescheduled':
+      return {
+        text: h.rescheduled(formatDate(entry.from), formatDate(entry.to)),
+        note: entry.note ?? undefined,
+      };
+    case 'reduced':
+      return { text: h.reduced(formatCOP(entry.from), formatCOP(entry.to)) };
+    case 'canceled':
+      return { text: h.canceled };
+    case 'reopened':
+      return { text: h.reopened };
+    case 'collected':
+      return { text: t.collected(formatCOP(entry.amount), t.data.methods[entry.method].toLowerCase()) };
+    case 'delivered':
+      return { text: h.delivered(entry.depositTitle) };
+  }
+};
 
 /** La cuota «2 de 4»: la posición del abono entre los programados del cliente (por fecha original). */
 export function installmentOf(
@@ -121,114 +149,116 @@ export function PaymentDetailScreen(props: PaymentDetailScreenProps) {
   const siblings = props.payments ?? [payment];
   const installment = installmentOf(siblings, payment.paymentId);
   const locked = payment.status === 'delivered';
-  const shownStatus = payment.isOverdue ? 'overdue' : payment.status;
   const collected = payment.status === 'collected' || payment.status === 'delivered';
   const agreedAmount = payment.agreedAmount;
   const paidAmount = payment.paidAmount;
 
-  const moreActions = payment.can.reschedule ? (
-    <Menu
-      trigger={
-        <Button variant="tertiary" iconOnly icon="more">
-          {t.moreActions}
-        </Button>
-      }
-      title={t.moreActions}
-      items={[{ id: 'extend', label: t.extend, icon: 'calendar' as const, disabled: !isOnline }]}
-      onSelect={() => props.onFormChange('extend')}
-    />
-  ) : undefined;
-
-  const history =
-    collected && payment.paidAt && paidAmount !== null && payment.method
-      ? [
-          {
-            id: 'collected',
-            text: t.collected(formatCOP(paidAmount), t.data.methods[payment.method].toLowerCase()),
-            date: payment.paidAt,
-          },
-        ]
-      : [];
+  const banner = paymentBanner(payment, today);
+  const stripTone = ({ overdue: 'bad', neutral: 'neutral', collected: 'ok', delivered: 'accent' } as const)[
+    (banner?.tone ?? 'neutral') as 'overdue' | 'neutral' | 'collected' | 'delivered'
+  ];
+  const firstName = customer.name.split(' ')[0] ?? customer.name;
+  const shownAmount = collected ? paidAmount : agreedAmount;
+  const history = (props.history ?? []).map((entry) => ({
+    id: entry.id,
+    date: entry.date,
+    ...historyText(entry),
+  }));
 
   return (
     <>
       <DetailTemplate
-        window={{ ...props.window, title: t.title(customer.name), moreActions }}
-        banner={paymentBanner(payment, today)}
+        window={{ ...props.window, title: t.title(customer.name) }}
         identity={{
           avatar: customer.avatarEmoji ? { kind: 'emoji', emoji: customer.avatarEmoji } : { kind: 'person' },
           title: customer.name,
-          status: shownStatus,
-          statusLocked: locked,
-          subtitle: installment ? (
-            <span aria-label={t.installment(installment.index, installment.total)}>
+          titleHref: props.customerHref(customer.id),
+          strip: {
+            tone: stripTone,
+            children: (
+              <>
+                {/* El diseño: la Pastilla dice el estado («Por cobrar») y el texto, si está vencido. */}
+                <StatusPill status={payment.status} locked={locked} />
+                {banner && (
+                  <span className={styles.stripText}>
+                    {payment.isOverdue && <Icon name="alert" size={16} tone="current" />}
+                    {banner.children}
+                  </span>
+                )}
+                {payment.deposit?.status === 'confirmed' && (
+                  <>
+                    <span aria-hidden="true">·</span>
+                    <a className={styles.stripLink} href={props.depositHref(payment.deposit.id)}>
+                      <Icon name="locked" size={14} tone="current" />
+                      {props.depositTitle ?? t.data.depositConfirmed}
+                    </a>
+                  </>
+                )}
+              </>
+            ),
+          },
+          titleAddon: installment ? (
+            <span
+              className={styles.fraction}
+              aria-label={t.installment(installment.index, installment.total)}
+            >
               {installment.index}/{installment.total}
             </span>
           ) : undefined,
-          primaryAction: payment.can.collect
-            ? {
-                label: t.collect,
-                icon: 'check',
-                onClick: () => props.onFormChange('collect'),
-                disabled: !isOnline,
-              }
-            : undefined,
+          aside: payment.dueDate ? (
+            <span className={styles.dateChip}>
+              <Icon name="calendar" size={16} tone="current" />
+              <span className={styles.dateChipLabel}>{t.data.agreedDate}</span>
+              <strong>{formatDate(payment.dueDate)}</strong>
+            </span>
+          ) : undefined,
+          details: (
+            <div className={styles.value}>
+              <div className={styles.valueText}>
+                <span className={styles.valueLabel}>
+                  {collected ? t.data.paidAmount : t.data.agreedAmount}
+                </span>
+                <span className={styles.figure}>{shownAmount === null ? '—' : formatCOP(shownAmount)}</span>
+                {collected && agreedAmount !== null && paidAmount !== null && agreedAmount !== paidAmount && (
+                  <s className={styles.previous}>{formatCOP(agreedAmount)}</s>
+                )}
+              </div>
+              {payment.can.collect || payment.can.reschedule ? (
+                <div className={styles.actions}>
+                  {payment.can.collect && (
+                    <Button
+                      icon="money"
+                      state={isOnline ? 'normal' : 'disabled'}
+                      onClick={() => props.onFormChange('collect')}
+                    >
+                      {t.collect}
+                    </Button>
+                  )}
+                  {payment.can.reschedule && (
+                    <Button
+                      variant="secondary"
+                      icon="calendar"
+                      state={isOnline ? 'normal' : 'disabled'}
+                      onClick={() => props.onFormChange('extend')}
+                    >
+                      {t.extend}
+                    </Button>
+                  )}
+                </div>
+              ) : (
+                collected &&
+                payment.method && (
+                  <span className={styles.method}>
+                    <Icon name={payment.method === 'cash' ? 'money' : 'transfer'} size={16} tone="current" />
+                    {t.data.methods[payment.method]}
+                  </span>
+                )
+              )}
+            </div>
+          ),
         }}
       >
-        <Island>
-          <DataList>
-            <DataRow
-              kind="link"
-              label={t.data.kind[payment.kind]}
-              icon="person"
-              divider={false}
-              href={props.customerHref(customer.id)}
-              value={customer.name}
-            />
-            {payment.dueDate && (
-              <DataRow
-                label={t.data.agreedDate}
-                value={formatDate(payment.dueDate)}
-                previous={
-                  payment.originalDueDate && payment.originalDueDate !== payment.dueDate
-                    ? formatDate(payment.originalDueDate)
-                    : undefined
-                }
-              />
-            )}
-            {collected ? (
-              <>
-                {paidAmount !== null && (
-                  <DataRow
-                    kind="amount"
-                    label={t.data.paidAmount}
-                    value={formatCOP(paidAmount)}
-                    previous={
-                      agreedAmount !== null && agreedAmount !== paidAmount
-                        ? formatCOP(agreedAmount)
-                        : undefined
-                    }
-                  />
-                )}
-                {payment.paidAt && <DataRow label={t.data.paidAt} value={formatDate(payment.paidAt)} />}
-                {payment.method && <DataRow label={t.data.method} value={t.data.methods[payment.method]} />}
-              </>
-            ) : (
-              agreedAmount !== null && (
-                <DataRow kind="amount" label={t.data.agreedAmount} value={formatCOP(agreedAmount)} />
-              )
-            )}
-            {payment.deposit && (
-              <DataRow
-                kind="link"
-                label={t.data.deposit}
-                href={props.depositHref(payment.deposit.id)}
-                value={payment.deposit.status === 'confirmed' ? t.data.depositConfirmed : t.data.depositDraft}
-              />
-            )}
-          </DataList>
-        </Island>
-        <Island title={t.customerPayments(customer.name.split(' ')[0] ?? customer.name)} icon="calendar">
+        <Island title={t.customerPayments(firstName)} icon="calendar" count={siblings.length}>
           <ul className={styles.siblings}>
             {siblings.map((p) => (
               <li key={p.paymentId}>
@@ -238,13 +268,18 @@ export function PaymentDetailScreen(props: PaymentDetailScreenProps) {
                   aria-current={p.paymentId === payment.paymentId ? 'true' : undefined}
                 >
                   <span className={styles.siblingDate}>
-                    {p.dueDate
-                      ? formatDate(p.dueDate)
-                      : p.paidAt
-                        ? formatDate(p.paidAt)
-                        : copy.ui.listRow.empty}
+                    <span className={p.isOverdue ? styles.overdue : undefined}>
+                      {p.dueDate
+                        ? formatDate(p.dueDate)
+                        : p.paidAt
+                          ? formatDate(p.paidAt)
+                          : copy.ui.listRow.empty}
+                    </span>
+                    {p.isOverdue && <span className={styles.overdueAgo}>{t.overdueAgo(p.overdueDays)}</span>}
                   </span>
-                  <StatusPill status={p.isOverdue ? 'overdue' : p.status} shape="text" />
+                  <span className={styles.siblingState}>
+                    <StatusPill status={p.status} locked={p.status === 'delivered'} />
+                  </span>
                   <span className={styles.siblingAmount}>
                     {formatCOP(
                       (p.status === 'collected' || p.status === 'delivered'
