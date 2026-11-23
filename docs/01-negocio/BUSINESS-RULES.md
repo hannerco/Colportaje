@@ -258,7 +258,7 @@ Notación: "colportor" = usuario con rol colportor. Fechas calendario en **Ameri
 
 ## 14. Fotos
 
-- **BR-PHO-01** Toda foto se **comprime en el cliente** antes de subir: WebP, lado mayor ≤ 1280 px, objetivo ~150 KB; se genera una miniatura de ~15 KB. Las listas usan miniaturas. La captura usa `<input type="file" accept="image/*" capture>`.
+- **BR-PHO-01** Toda foto se **comprime en el cliente** antes de subir: WebP, lado mayor ≤ 1280 px, objetivo ~150 KB; se genera una miniatura de ~15 KB. Las listas usan miniaturas. La captura usa `<input type="file" accept="image/*" capture>`. *(#55, 2026-11-22: si el teléfono no sabe crear WebP —Safari del iPhone— la foto se guarda en **JPEG** con el mismo peso objetivo, y una portada en **PNG** para conservar el fondo transparente.)*
 - **BR-PHO-02** Buckets privados por usuario con URLs firmadas (imágenes de Títulos: lectura pública). Ruta: `{owner_id}/{tipo}/{uuid}.webp`.
 - **BR-PHO-03** El recibo del Abibono es **obligatorio** para confirmar (BR-DEP-09). Las fotos de recibo de un Abibono **confirmado** no se pueden borrar (para cambiar una, se reabre, BR-DEP-12); en un borrador sí. Las fotos de **factura** y de **información** del cliente se pueden borrar siempre (ronda 26: una factura equivocada se borra y se sube la correcta). Todo borrado de foto es lógico.
 - **BR-PHO-04** Se mide el uso de almacenamiento; al 70 % se alerta al admin (migración a Cloudflare R2, ver ADR-0013).

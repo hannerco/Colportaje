@@ -11,10 +11,10 @@ export interface ImageCodec {
   /** `null` si el archivo no es una imagen legible. */
   decode(file: Blob): Promise<DecodedImage | null>;
   /**
-   * WebP con las dimensiones y la calidad (0–1) pedidas. Con `frame`, el lienzo mide eso y la imagen va centrada en
+   * La imagen en WebP (o JPEG/PNG si el dispositivo no sabe WebP, #55) con las dimensiones y la calidad (0–1) pedidas. Con `frame`, el lienzo mide eso y la imagen va centrada en
    * él; lo que sobra queda transparente (portadas cuadradas, #40).
    */
-  encodeWebp(
+  encodeImage(
     image: DecodedImage,
     size: { width: number; height: number },
     quality: number,

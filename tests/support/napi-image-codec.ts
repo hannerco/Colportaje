@@ -13,7 +13,7 @@ export const napiImageCodec: ImageCodec = {
     }
   },
 
-  async encodeWebp(image: DecodedImage, size, quality) {
+  async encodeImage(image: DecodedImage, size, quality) {
     const canvas = createCanvas(size.width, size.height);
     canvas.getContext('2d').drawImage(image.source as Image, 0, 0, size.width, size.height);
     const bytes = await canvas.encode('webp', Math.round(quality * 100));
