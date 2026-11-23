@@ -8,7 +8,7 @@ import { createTitle, removeTitleCover, setTitleCover, updateTitle } from './use
 
 const codec: ImageCodec = {
   decode: async () => ({ width: 1200, height: 1800, source: null }),
-  encodeWebp: async () => new Blob([new Uint8Array(100)], { type: 'image/webp' }),
+  encodeImage: async () => new Blob([new Uint8Array(100)], { type: 'image/webp' }),
 };
 const file = new Blob([new Uint8Array(10)], { type: 'image/jpeg' });
 

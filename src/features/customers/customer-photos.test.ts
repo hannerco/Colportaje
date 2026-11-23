@@ -15,7 +15,7 @@ const OWNER = 'u-1';
 const auth = { getCurrentUserId: async () => OWNER } as unknown as AuthRepository;
 const codec: ImageCodec = {
   decode: async () => ({ width: 800, height: 600, source: null }),
-  encodeWebp: async () => new Blob([new Uint8Array(100)], { type: 'image/webp' }),
+  encodeImage: async () => new Blob([new Uint8Array(100)], { type: 'image/webp' }),
 };
 const file = new Blob([new Uint8Array(10)], { type: 'image/jpeg' });
 
