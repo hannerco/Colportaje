@@ -17,7 +17,7 @@ import { ListRow, ListTable } from '@/ui/molecules/ListRow';
 import type { AppNavProps } from '@/ui/organisms/AppNav';
 import type { EmptyStateProps } from '@/ui/organisms/EmptyState';
 import type { ViewBarFilters, ViewBarSort } from '@/ui/organisms/ViewBar';
-import { ListTemplate, type ListState } from '@/ui/templates/ListTemplate';
+import { ListTemplate, type ListState, ListSkeletonFor } from '@/ui/templates/ListTemplate';
 import { customerListScreenState, type CustomerListScreenState } from '../../customer-list-screen-state';
 import styles from './CustomerListScreen.module.css';
 
@@ -200,6 +200,7 @@ export function CustomerListScreen({
   const rows = view?.rows ?? [];
   return (
     <ListTemplate
+      skeleton={<ListSkeletonFor columns={['person', 'text', 'amount', 'pill']} />}
       nav={{
         ...nav,
         fab: {

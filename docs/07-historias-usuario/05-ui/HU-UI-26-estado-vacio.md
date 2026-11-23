@@ -43,7 +43,7 @@ Ilustraciones grandes ni chistes.
 - **CA-3.** **Dado** `kind="empty"` con acción «Nuevo cliente», **entonces** el botón es principal; en `no-results` es secundario.
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-22 (#67):** los esqueletos tienen la forma de lo que cargan. Nuevo átomo **Esqueleto** (`Skeleton` + `SkeletonScope`, que anuncia «Cargando…» una sola vez), y con él: `DetailSkeleton` (identidad con franja, cifra y botones, más islas de datos, de lista o de abonos), `TableSkeleton` (las columnas de cada tabla), `RowsSkeleton` (filas de dos líneas) y `ListSkeletonFor` (tabla en escritorio, filas en el celular). Cada pantalla arma el suyo: ficha, abono, ejemplar, Abibono, Ajustes, listas de Clientes, Ejemplares, Dinero, Abibonos, Usuarios, Catálogo, Libros en físico, Agregar, Devolver y Agregar libro.
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13.

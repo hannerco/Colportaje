@@ -14,7 +14,7 @@ import { ListRow, ListTable } from '@/ui/molecules/ListRow';
 import type { AppNavProps } from '@/ui/organisms/AppNav';
 import type { EmptyStateProps } from '@/ui/organisms/EmptyState';
 import type { ViewBarSort } from '@/ui/organisms/ViewBar';
-import { ListTemplate, type ListState } from '@/ui/templates/ListTemplate';
+import { ListTemplate, type ListState, ListSkeletonFor } from '@/ui/templates/ListTemplate';
 
 export type CopiesListScreenProps = {
   /** Navegación del armazón (`useAppShell().nav`). */
@@ -126,6 +126,7 @@ export function CopiesListScreen({
 
   return (
     <ListTemplate
+      skeleton={<ListSkeletonFor leading="cover" columns={['cover', 'date', 'pill', 'amount']} />}
       nav={nav}
       header={{ title: t.title }}
       sections={

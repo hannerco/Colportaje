@@ -11,7 +11,7 @@ import type { AppNavProps } from '@/ui/organisms/AppNav';
 import type { EmptyStateProps } from '@/ui/organisms/EmptyState';
 import type { ViewBarSort } from '@/ui/organisms/ViewBar';
 import { usePlatform } from '@/ui/platform';
-import { ListTemplate, type ListState } from '@/ui/templates/ListTemplate';
+import { ListTemplate, type ListState, ListSkeletonFor } from '@/ui/templates/ListTemplate';
 import { DepositsTable } from '../../components/DepositsTable';
 import { useMoneyChrome } from '../../components/MoneyChrome';
 import styles from './DepositsListScreen.module.css';
@@ -135,6 +135,7 @@ export function DepositsListScreen(props: DepositsListScreenProps) {
   return (
     <>
       <ListTemplate
+        skeleton={<ListSkeletonFor leading="none" columns={['text', 'date', 'amount', 'amount', 'pill']} />}
         nav={nav}
         header={{ title: copy.money.list.title, ...chrome.header }}
         sections={chrome.sections}

@@ -19,7 +19,7 @@ import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
 import { DetailWindow, type DetailWindowProps } from '@/ui/organisms/DetailWindow';
 import { EmptyState } from '@/ui/organisms/EmptyState';
 import { Island } from '@/ui/organisms/Island';
-import { DetailTemplate } from '@/ui/templates/DetailTemplate';
+import { DetailSkeleton, DetailTemplate } from '@/ui/templates/DetailTemplate';
 import styles from './CopyDetailScreen.module.css';
 
 export type CopyDetailScreenProps = {
@@ -118,7 +118,7 @@ export function CopyDetailScreen(props: CopyDetailScreenProps) {
             action={props.onRetry ? { label: copy.errors.retry, onClick: props.onRetry } : undefined}
           />
         ) : (
-          <EmptyState kind="loading" rows={6} />
+          <DetailSkeleton avatar="cover" islands={[{ rows: 5 }, { rows: 3 }]} />
         )}
       </DetailWindow>
     );

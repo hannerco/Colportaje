@@ -23,6 +23,8 @@ export type ListTemplateProps = {
   state?: ListState;
   /** Textos del estado actual (los pone la pantalla desde `copy/es.ts`). */
   emptyState?: Omit<EmptyStateProps, 'kind'>;
+  /** #67: el esqueleto con la forma de esta lista (`TableSkeleton` o `RowsSkeleton`). Sin valor, filas genéricas. */
+  skeleton?: ReactNode;
   /** La `ListTable` con sus filas. */
   children: ReactNode;
   /** La `DetailWindow` abierta, si la hay (R5). */
@@ -51,6 +53,7 @@ export function ListTemplate({
   banner,
   state = 'ready',
   emptyState,
+  skeleton,
   children,
   detail,
   className,
@@ -122,7 +125,7 @@ export function ListTemplate({
         </div>
         <div ref={list} className={styles.list}>
           {banner}
-          {empty ? <EmptyState {...empty} /> : children}
+          {state === 'loading' && skeleton ? skeleton : empty ? <EmptyState {...empty} /> : children}
         </div>
       </main>
       {detail}

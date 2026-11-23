@@ -15,6 +15,7 @@ import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
 import { EmptyState } from '@/ui/organisms/EmptyState';
 import { Island } from '@/ui/organisms/Island';
 import { usePlatform } from '@/ui/platform';
+import { RowsSkeleton } from '@/ui/templates/ListTemplate';
 import { QuantityControl } from '../../components/QuantityControl';
 import { TitleTile } from '../../components/TitleTile';
 import styles from './AddCopiesScreen.module.css';
@@ -94,7 +95,7 @@ export function AddCopiesScreen(props: AddCopiesScreenProps) {
 
   const visibleGroups = mobile ? props.groups.filter((group) => group.category === category) : props.groups;
   const catalog = props.loading ? (
-    <EmptyState kind="loading" title={copy.ui.empty.loading} />
+    <RowsSkeleton leading="cover" trailing={false} />
   ) : props.groups.length === 0 ? (
     props.search ? (
       <EmptyState kind="no-results" title={t.noResults(props.search)} />

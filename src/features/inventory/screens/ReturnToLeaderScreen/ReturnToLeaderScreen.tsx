@@ -14,6 +14,7 @@ import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
 import { EmptyState } from '@/ui/organisms/EmptyState';
 import { Island } from '@/ui/organisms/Island';
 import { usePlatform } from '@/ui/platform';
+import { RowsSkeleton } from '@/ui/templates/ListTemplate';
 import styles from './ReturnToLeaderScreen.module.css';
 
 export type ReturnToLeaderScreenProps = {
@@ -178,7 +179,7 @@ function Candidates({
   minibooksOpen,
   onMinibooksOpenChange,
 }: ReturnToLeaderScreenProps & { minibooksOpen: boolean; onMinibooksOpenChange: (open: boolean) => void }) {
-  if (loading) return <EmptyState kind="loading" title={copy.ui.empty.loading} />;
+  if (loading) return <RowsSkeleton leading="cover" />;
   if (error)
     return (
       <EmptyState

@@ -15,6 +15,7 @@ import { EmptyState } from '@/ui/organisms/EmptyState';
 import { Island } from '@/ui/organisms/Island';
 import type { AppNavProps } from '@/ui/organisms/AppNav';
 import { usePlatform } from '@/ui/platform';
+import { RowsSkeleton } from '@/ui/templates/ListTemplate';
 import { ShellScreen } from '@/features/shell';
 import styles from './AdminCatalogScreen.module.css';
 
@@ -109,7 +110,7 @@ export function AdminCatalogScreen(props: AdminCatalogScreenProps) {
           action={props.onRetry ? { label: copy.errors.retry, onClick: props.onRetry } : undefined}
         />
       ) : (
-        <EmptyState kind="loading" title={copy.ui.empty.loading} />
+        <RowsSkeleton leading="cover" />
       );
     if (titles.length === 0)
       return (
@@ -210,7 +211,7 @@ export function AdminCatalogScreen(props: AdminCatalogScreenProps) {
         >
           {!editing.isNew && !editingTitle ? (
             // Recién creado: se espera a que vuelva de la base para mostrarlo con su portada.
-            <EmptyState kind="loading" title={copy.ui.empty.loading} />
+            <RowsSkeleton leading="cover" />
           ) : (
             <TitleEditor
               key={editing.id}

@@ -1,0 +1,73 @@
+/* Esqueleto (#67): la forma de lo que va a aparecer, con un brillo suave (sin brillo si se reduce el movimiento). */
+.skeleton {
+  display: block;
+  flex: none;
+  width: var(--skeleton-width, 60%);
+  height: var(--size-skeleton-bar);
+  border-radius: var(--radius-pill);
+  background: var(--color-skeleton);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.skeleton[data-shape='title'] {
+  width: var(--skeleton-width, 45%);
+  height: calc(var(--text-title) * 0.8);
+  border-radius: var(--radius-xs);
+}
+
+.skeleton[data-shape='figure'] {
+  width: var(--skeleton-width, 9em);
+  height: calc(var(--text-figure) * 0.85);
+  border-radius: var(--radius-xs);
+}
+
+.skeleton[data-shape='circle'] {
+  width: var(--skeleton-width, var(--size-avatar-lg));
+  height: var(--skeleton-width, var(--size-avatar-lg));
+}
+
+.skeleton[data-shape='pill'] {
+  width: var(--skeleton-width, 6.5em);
+  height: var(--size-pill);
+}
+
+.skeleton[data-shape='cover'] {
+  width: var(--skeleton-width, var(--size-avatar-lg));
+  height: var(--skeleton-width, var(--size-avatar-lg));
+  border-radius: var(--radius-xs);
+}
+
+.skeleton[data-shape='button'] {
+  width: var(--skeleton-width, 8em);
+  height: var(--size-control);
+}
+
+.skeleton[data-shape='block'] {
+  width: var(--skeleton-width, 100%);
+  height: var(--size-map-preview);
+  border-radius: var(--radius-md);
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
