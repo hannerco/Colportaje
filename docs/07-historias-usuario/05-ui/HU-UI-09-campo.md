@@ -58,6 +58,7 @@ El estado «enfocado» del diseño es el foco real del navegador: no es una prop
 ## Cambios por iteración
 - **2026-11-22 (#54):** el texto largo crece con lo que se escribe desde 104 hasta `--size-textarea-max` (320) y desde ahí se desplaza por dentro. Story «Átomos/Campo › Texto largo que crece».
 - **2026-11-22 (#62):** el ícono del calendario de una fecha abre el calendario. Nueva molécula **Campo de fecha** (`src/ui/molecules/DateField`): el Campo `dd/mm/aaaa` con el ícono como botón «Abrir calendario» que abre el calendario en un Panel flotante; elegir un día lo escribe y lo cierra. Con `noFuture` no deja elegir días después de hoy (Cobrar, cuota inicial, fecha de venta). El calendario (`DatePickerCalendar`) pasó de Pagos a la biblioteca. La usan todos los formularios con fecha. Prueba: stories «Elegir en el calendario» y «Sin fechas futuras».
+- **2026-11-22 (#62):** el ícono del calendario de una fecha abre el calendario. Nueva molécula **Campo de fecha** (`src/ui/molecules/DateField`): el Campo `dd/mm/aaaa` con el ícono como botón «Abrir calendario», que abre el calendario en un Panel flotante; al elegir un día, lo escribe y se cierra. Con `noFuture` no deja elegir días después de hoy (Cobrar, cuota inicial, fecha de venta). El calendario (`DatePickerCalendar`) pasó de Pagos a la biblioteca. Lo usan todos los formularios con fecha. Pruebas: stories «Elegir en el calendario» y «Sin fechas futuras».
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13.
