@@ -668,7 +668,17 @@ export const copy = {
         methods: { cash: 'Efectivo', transfer: 'Transferencia' },
       },
       customerPayments: (name: string) => `Abonos de ${name}`,
+      overdueAgo: (days: number) => (days === 1 ? 'hace 1 día' : `hace ${days} días`),
       history: 'Historial',
+      /** #72: cada entrada del Historial del abono. */
+      historyEntry: {
+        scheduled: (amount: string, date: string) => `Programado: ${amount} para el ${date}`,
+        rescheduled: (from: string, to: string) => `Más plazo: ${from} → ${to}`,
+        reduced: (from: string, to: string) => `Valor cambiado: ${from} → ${to}`,
+        canceled: 'Cancelado',
+        reopened: 'Volvió a por cobrar',
+        delivered: (deposit: string) => `Entregado al líder en el ${deposit}`,
+      },
       collected: (amount: string, method: string) => `Cobrado: ${amount} en ${method}`,
       delivered: 'Entregado al líder',
       error: { title: 'No se pudo cargar', text: 'Inténtalo otra vez.' },
