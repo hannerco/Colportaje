@@ -1,6 +1,15 @@
 'use client';
 
-import { useId, useState, type CSSProperties, type ReactElement, type ReactNode } from 'react';
+import {
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ComponentProps,
+  type CSSProperties,
+  type ReactElement,
+  type ReactNode,
+} from 'react';
 import { copy } from '@/copy/es';
 import { groupCOP, parseTypedCOP, type COP } from '@/domain/money';
 import { formatDate, parseDisplayDate, type LocalDate } from '@/domain/time';
@@ -195,7 +204,7 @@ function Control(props: FieldProps & { control: ControlAttributes }) {
     }
     case 'textarea':
       return (
-        <textarea
+        <AutoGrowTextarea
           {...control}
           className={styles.input}
           placeholder={placeholder}
@@ -293,4 +302,19 @@ function DateInput({
       />
     </>
   );
+}
+
+/**
+ * #54: el texto largo crece con lo que se escribe, desde el alto mínimo del campo hasta su alto máximo (tokens
+ * `--size-textarea` y `--size-textarea-max`); desde ahí se desplaza por dentro.
+ */
+function AutoGrowTextarea(props: ComponentProps<'textarea'>) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+  useLayoutEffect(() => {
+    const area = ref.current;
+    if (!area) return;
+    area.style.height = 'auto';
+    area.style.height = `${area.scrollHeight}px`;
+  }, [props.value]);
+  return <textarea ref={ref} {...props} />;
 }

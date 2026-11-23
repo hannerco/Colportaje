@@ -45,7 +45,7 @@ export function FlaggedCopiesList({
         const name = t.copyName(item.titleName, item.number);
         const info = (
           <a className={styles.info} href={copyHref(item.copyId)}>
-            <Avatar kind="cover" decorative />
+            <Avatar kind="cover" coverUrl={item.imageUrl ?? undefined} decorative />
             <span className={styles.text}>
               <span className={styles.name}>
                 {item.titleName}{' '}

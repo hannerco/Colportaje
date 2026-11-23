@@ -27,7 +27,8 @@
 
 .field[data-kind='textarea'] .box {
   align-items: stretch;
-  height: var(--size-textarea);
+  height: auto;
+  min-height: var(--size-textarea);
   padding: var(--space-3);
 }
 
@@ -82,7 +83,12 @@
   -webkit-text-fill-color: currentColor;
 }
 
+/* #54: crece con el texto (lo ajusta el componente) hasta el alto máximo; desde ahí se desplaza. */
 textarea.input {
+  /* El alto mínimo del campo menos su relleno y su borde (1 px arriba y abajo). */
+  min-height: calc(var(--size-textarea) - 2 * var(--space-3) - 2px);
+  max-height: var(--size-textarea-max);
+  overflow-y: auto;
   resize: none;
 }
 

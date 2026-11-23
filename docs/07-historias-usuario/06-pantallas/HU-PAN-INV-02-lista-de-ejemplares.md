@@ -36,6 +36,7 @@ FI-08 (filtro Estado abierto) si no está dibujado; FI-09 (detalle de un miniboo
   - **Abrir una fila** lleva a `/inventario/ejemplares/[id]` (HU-PAN-INV-03): hasta entonces es el armazón. Sin Ventana de detalle en escritorio.
   - **Fuera:** el filtro «Estado» (el lienzo dibuja el botón sin abrir, FI-08) y el detalle de un minibook (FI-09).
 - **2026-11-22 (#29):** en escritorio, abrir una fila ya no va siempre a la página completa: abre la Ventana de detalle de la lista con la forma recordada (Lateral o Centrada), como Clientes; si la forma es Página, va a la página. Desde la página, elegir Lateral o Centrada vuelve a la lista con el registro abierto, en vez de cerrarlo. Story «… › Abrir en la Ventana».
+- **2026-11-22 (#53):** cada fila muestra la portada del título.
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13.

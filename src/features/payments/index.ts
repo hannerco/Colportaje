@@ -87,3 +87,4 @@ export {
   type CollectPaymentDialogProps,
   type CollectPaymentValues,
 } from './components/CollectPaymentDialog';
+export { SoldDateDialog, type SoldDateDialogProps } from './components/SoldDateDialog';

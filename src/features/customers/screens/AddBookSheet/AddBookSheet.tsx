@@ -17,6 +17,8 @@ import styles from './AddBookSheet.module.css';
 export type ChosenBook = {
   copyId: string;
   titleName: string;
+  /** Portada del título (#53). */
+  imageUrl?: string | null;
   number: number;
   agreedPrice: COP | null;
   /** Precio público copiado: se ve tachado si el acordado es otro. */
@@ -91,7 +93,7 @@ export function AddBookSheet({
               {chosen.map((book) => (
                 <li key={book.copyId} className={styles.chosen}>
                   <div className={styles.row}>
-                    <Avatar kind="cover" size="sm" decorative />
+                    <Avatar kind="cover" size="sm" coverUrl={book.imageUrl ?? undefined} decorative />
                     <span className={styles.text}>
                       <span className={styles.chosenName}>
                         <span className={styles.ellipsis}>{book.titleName}</span>

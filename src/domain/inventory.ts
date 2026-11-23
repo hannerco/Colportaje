@@ -109,6 +109,8 @@ export type FlaggedCopyInput = {
 export type FlaggedCopy = {
   readonly copyId: string;
   readonly titleName: string;
+  /** Portada del título (#53). */
+  readonly imageUrl?: string | null;
   readonly number: number;
   readonly note: string | null;
   readonly flaggedAt: Instant;
@@ -117,15 +119,17 @@ export type FlaggedCopy = {
 /** Por resolver (BR-COPY-10): del más reciente al más antiguo; incluye minibooks. */
 export const flaggedCopies = (
   items: readonly FlaggedCopyInput[],
-  titles: readonly Pick<Title, 'id' | 'name'>[],
+  titles: readonly (Pick<Title, 'id' | 'name'> & Partial<Pick<Title, 'imageUrl'>>)[],
 ): FlaggedCopy[] => {
   const names = new Map(titles.map((t) => [t.id, t.name]));
+  const covers = new Map(titles.map((t) => [t.id, t.imageUrl ?? null]));
   return items
     .filter((item) => names.has(item.titleId))
     .sort((a, b) => b.flaggedAt.getTime() - a.flaggedAt.getTime() || compareIds(a.copyId, b.copyId))
     .map((item) => ({
       copyId: item.copyId,
       titleName: names.get(item.titleId)!,
+      ...(covers.get(item.titleId) ? { imageUrl: covers.get(item.titleId)! } : {}),
       number: item.number,
       note: item.note,
       flaggedAt: item.flaggedAt,

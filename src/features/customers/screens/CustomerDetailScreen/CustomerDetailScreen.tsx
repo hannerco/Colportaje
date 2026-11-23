@@ -62,6 +62,8 @@ export type CustomerDetailScreenProps = {
   onSchedule?: () => void;
   /** Elegir o quitar el emoji del cliente tocando su avatar (BR-CUS-15, #34). */
   onAvatarChange?: (emoji: string | null) => void;
+  /** Corregir la fecha de venta de un libro (#56). Si falla, que lance. */
+  onChangeSoldOn?: (copyId: string, soldOn: LocalDate) => Promise<void>;
   /** HU-PAN-CLI-06: teselas del mapa (SG-09). */
   tiles?: MapTiles | null;
   /** «Elegir en mapa» y «Cambiar» abren el selector. Sin función (archivado) no hay botones de ubicación. */
@@ -129,6 +131,7 @@ export function CustomerDetailScreen({
   onCollect,
   onSchedule,
   onAvatarChange,
+  onChangeSoldOn,
 }: CustomerDetailScreenProps) {
   const [archiveOpen, setArchiveOpen] = useState(false);
   const [canceledOpen, setCanceledOpen] = useState(false);
@@ -227,7 +230,11 @@ export function CustomerDetailScreen({
         {/* Prospecto sin libros: la isla se ve igual, para poder agregarle uno (HU-PAN-CLI-04). */}
         {(detail.books.length > 0 || onAddBook) && (
           <Island title={t.books.title} icon="books">
-            <SoldBookList books={detail.books} copyHref={copyHref} />
+            <SoldBookList
+              books={detail.books}
+              copyHref={copyHref}
+              {...(onChangeSoldOn && today && isOnline && !detail.archived ? { onChangeSoldOn, today } : {})}
+            />
             {onAddBook && (
               <AddBookButton
                 disabledReason={

@@ -36,6 +36,7 @@ Con libros · Un título abierto · Por resolver abierto · Apareció con Deshac
   - **«Devolver al líder»** (escritorio: botón; móvil: «Más acciones») aparece cuando llegue HU-PAN-INV-05; hoy la pantalla lo admite pero el contenedor no lo pasa. El panel «Agregar al inventario» que el lienzo pone junto a la lista en escritorio es HU-PAN-INV-04; aquí «Agregar» lleva a `/inventario/agregar`.
   - **Textos sin dibujo:** el vacío («Todavía no tienes libros en físico» / «Cuando agregues libros al inventario, aparecen aquí por título.»), «No hay nada por resolver», el título de la nota de Eliminar («Eliminar · …») y su Aviso («… se eliminó»).
 - **2026-11-22 (#27):** encabezado y pestañas van juntos a 12, como en la Plantilla de lista, para que al pasar entre Libros en físico (con «Agregar») y Ejemplares (sin él) nada salte. Story «… › Sin salto al cambiar de sección», también en Ejemplares.
+- **2026-11-22 (#53):** Por resolver muestra la portada de cada ejemplar.
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13.

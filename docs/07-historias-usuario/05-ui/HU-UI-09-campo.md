@@ -56,7 +56,7 @@ El estado «enfocado» del diseño es el foco real del navegador: no es una prop
 - **CA-5.** **Dado** `disabled`, **entonces** no se puede escribir y el texto se ve en `text-3`.
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-22 (#54):** el texto largo crece con lo que se escribe desde 104 hasta `--size-textarea-max` (320) y desde ahí se desplaza por dentro. Story «Átomos/Campo › Texto largo que crece».
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13.

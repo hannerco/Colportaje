@@ -262,3 +262,27 @@ export const Matriz: Story = {
     </div>
   ),
 };
+
+/**
+ * #54 (corrección del dueño, 2026-11-22): el texto largo crece con lo que se escribe hasta su alto máximo; desde ahí
+ * se desplaza por dentro.
+ */
+export const TextoLargoQueCrece: Story = {
+  name: 'Texto largo que crece',
+  args: {
+    kind: 'textarea',
+    label: 'Información',
+    value: Array.from(
+      { length: 4 },
+      (_, i) => `Línea ${i + 1}: le cobro el 30 todo completo si lo tiene.`,
+    ).join('\n'),
+  },
+  play: async ({ canvasElement }) => {
+    for (const frame of [...canvasElement.querySelectorAll<HTMLElement>('figure.sb-frame')]) {
+      const area = frame.querySelector<HTMLTextAreaElement>('textarea')!;
+      // Con 4 líneas ya es más alto que el mínimo (104) y no se desplaza: se ve todo.
+      expect(area.getBoundingClientRect().height).toBeGreaterThan(104 - 24);
+      expect(area.scrollHeight).toBeLessThanOrEqual(area.clientHeight + 1);
+    }
+  },
+};

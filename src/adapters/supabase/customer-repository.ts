@@ -6,6 +6,7 @@ import { appError, COMMON_ERROR_CODES } from '@/domain/shared/errors';
 import { err, ok } from '@/domain/shared/result';
 import type { LocalDate } from '@/domain/time';
 import type { CustomerRepository } from '@/repositories';
+import { titleCoverUrl } from './title-repository';
 import type { GetSupabaseClient } from './client';
 import { mapPostgrestError, mapRpcError } from './errors';
 import { selectAll } from './select-all';
@@ -121,7 +122,9 @@ export function createSupabaseCustomerRepository(getClient: GetSupabaseClient): 
         selectAll((from, to) =>
           client
             .from('copy')
-            .select('id, number, agreed_price, public_price_snapshot, sold_at, title(name, category)')
+            .select(
+              'id, number, agreed_price, public_price_snapshot, sold_at, title(name, category, image_path)',
+            )
             .eq('customer_id', customerId)
             .eq('status', 'sold')
             .is('deleted_at', null)
@@ -188,6 +191,7 @@ export function createSupabaseCustomerRepository(getClient: GetSupabaseClient): 
           return {
             copyId: c.id,
             titleName: c.title.name,
+            titleImageUrl: titleCoverUrl(client, c.title.image_path),
             category: c.title.category,
             number: c.number,
             agreedPrice: c.agreed_price,
@@ -482,7 +486,11 @@ const detailCopySchema = z.object({
   agreed_price: z.number().int(),
   public_price_snapshot: z.number().int().nullable(),
   sold_at: instant,
-  title: z.object({ name: z.string(), category: z.enum(['cultural', 'religious', 'minibook']) }),
+  title: z.object({
+    name: z.string(),
+    category: z.enum(['cultural', 'religious', 'minibook']),
+    image_path: z.string().nullable(),
+  }),
 });
 
 const depositLinkSchema = z.object({ leader_deposit_id: z.uuid().nullable() });

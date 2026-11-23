@@ -44,6 +44,8 @@ export type CustomerRef = { readonly id: string; readonly name: string; readonly
 export type CopiesListRow = {
   readonly copyId: string;
   readonly titleName: string;
+  /** Portada del título (#53). */
+  readonly imageUrl?: string | null;
   readonly number: number;
   readonly status: CopyStatus;
   readonly customer: CustomerRef | null;
@@ -139,7 +141,7 @@ const comparator =
  */
 export const buildCopiesListView = (
   copies: readonly CopiesListCopy[],
-  titles: readonly Pick<Title, 'id' | 'name' | 'category'>[],
+  titles: readonly (Pick<Title, 'id' | 'name' | 'category'> & Partial<Pick<Title, 'imageUrl'>>)[],
   customers: readonly CustomerRef[],
   params: CopiesListParams,
 ): CopiesListView => {
@@ -157,6 +159,7 @@ export const buildCopiesListView = (
       row: {
         copyId: copy.id,
         titleName: title.name,
+        ...(title.imageUrl ? { imageUrl: title.imageUrl } : {}),
         number: copy.number,
         status: copy.status,
         customer: sold && copy.customerId ? (customerById.get(copy.customerId) ?? null) : null,
