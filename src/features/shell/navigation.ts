@@ -28,6 +28,8 @@ export const ROUTES = {
   deposit: (id: string) => `/dinero/abibonos/${encodeURIComponent(id)}`,
   /** La lista de Abibonos con uno abierto en la Ventana de detalle (escritorio, #29). */
   depositInList: (id: string) => `/dinero/abibonos?abibono=${encodeURIComponent(id)}`,
+  /** Admin · Usuarios (ronda 34, #43). */
+  adminUsers: '/admin/usuarios',
 } as const;
 
 /** Destino de cada módulo de la navegación. Los que no tienen pantalla no se muestran (`APP_NAV_ITEMS`). */

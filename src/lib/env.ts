@@ -28,3 +28,10 @@ export const getPublicEnv = (): PublicEnv => {
   });
   return cached;
 };
+
+/**
+ * Entrar con Google (ronda 34, #41). Se enciende con `NEXT_PUBLIC_GOOGLE_SIGN_IN=on` en Vercel cuando el dueño ya
+ * configuró Google en Supabase (DEPLOYMENT §5.6); mientras tanto la pantalla sigue con correo y contraseña, para no
+ * dejar a nadie afuera.
+ */
+export const googleSignInEnabled = (): boolean => process.env.NEXT_PUBLIC_GOOGLE_SIGN_IN === 'on';

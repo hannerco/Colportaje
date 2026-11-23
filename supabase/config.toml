@@ -286,9 +286,12 @@ max_frequency = "5s"
 # inactivity_timeout = "8h"
 
 # This hook runs before a new user is created and allows developers to reject the request based on the incoming user object.
+# Ronda 34 (#41): en la nube se activa desde el panel (DEPLOYMENT §5.6) con la función
+# public.hook_before_user_created, que solo deja crear cuentas a los correos autorizados en Admin · Usuarios.
+# En local queda apagado para que los scripts y las pruebas creen usuarios; la función se prueba en tests/rls.
 # [auth.hook.before_user_created]
 # enabled = true
-# uri = "pg-functions://postgres/auth/before-user-created-hook"
+# uri = "pg-functions://postgres/public/hook_before_user_created"
 
 # This hook runs before a token is issued and allows you to add additional claims based on the authentication method used.
 # [auth.hook.custom_access_token]

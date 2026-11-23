@@ -101,6 +101,20 @@ pnpm <script> …
 2. Catálogo inicial: `pnpm catalog:load scripts/data/catalog.json` (idempotente; la lista de precios 2026-2027, 34 títulos, ya está en staging). Después, los ajustes se hacen en **Admin · Catálogo** (HU-PAN-ADM-01). Recargar el archivo no borra el autor, la descripción ni la portada puestos ahí.
 3. Las invitaciones desde el panel de admin esperan su diseño.
 
+### 5.6 Entrar con Google (ronda 34, #41 y #43) — lo hace el dueño, en este orden
+
+Solo entran con Google los correos que el admin autoriza en **Admin · Usuarios**. Mientras no se termine el paso 5, la app sigue con correo y contraseña (nadie queda afuera).
+
+1. **Google Cloud (gratis).** En https://console.cloud.google.com crea un proyecto «Colportor». En *Google Auth Platform*: *Branding* (nombre «Colportor» y tu correo de soporte), *Audience* = **External** y publícalo («In production»); *Data access*: deja `email`, `profile` y `openid`. En *Clients* → *Create client* → **Web application**:
+   - *Authorized JavaScript origins*: `https://colportor-six.vercel.app`
+   - *Authorized redirect URIs*: `https://mmqswsutskhoeyzlorbc.supabase.co/auth/v1/callback` (y, para staging, `https://lwuzauizwmlgvtubkisq.supabase.co/auth/v1/callback` en el cliente de staging o en el mismo).
+   Copia el **Client ID** y el **Client secret** (no los pegues en el chat).
+2. **Supabase · Google.** En cada proyecto (`colportor-prod` y `colportor-staging`): *Authentication → Sign In / Providers → Google* → activar y pegar Client ID y secret. En *URL Configuration*, agrega `https://colportor-six.vercel.app/entrar` (prod) y `https://*-emprendum.vercel.app/entrar` (staging) a *Redirect URLs*.
+3. **Supabase · el filtro de correos (primero esto).** *Authentication → Hooks → Add hook → Before User Created* → tipo **Postgres** → esquema `public` → función `hook_before_user_created` → guardar. Sin este paso, el paso 4 dejaría entrar a cualquiera.
+4. **Supabase · permitir altas (solo después del 3).** *Authentication → Sign In / Providers*: **Allow new users to sign up** = activado; en **Email**, *Enable email signup* = **desactivado** (así nadie crea cuentas con correo y contraseña). El filtro del paso 3 rechaza a todo correo que no esté autorizado.
+5. **Vercel.** En el proyecto `colportor` agrega la variable `NEXT_PUBLIC_GOOGLE_SIGN_IN` = `on` (Production y Preview) y vuelve a desplegar. Desde ese momento la pantalla de entrada muestra solo «Continuar con Google».
+6. **Prueba.** Entra con tu cuenta de Google del correo `@unac.edu.co`: Supabase la une a tu usuario de siempre (mismo correo). Luego, en Admin · Usuarios, autoriza el correo de un colportor y pídele que entre.
+
 ## 6. Migraciones
 - Todo cambio de esquema = nueva migración en `supabase/migrations/` (`supabase migration new <nombre>`), revisada por PR. **Nunca** editar una migración ya aplicada.
 - Local: `supabase db reset` reconstruye con migraciones + seed.

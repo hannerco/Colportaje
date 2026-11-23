@@ -1,0 +1,101 @@
+/* Admin · Usuarios (#43, propuesta 6 del lienzo). */
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--size-list-row);
+  padding: var(--space-2) 0;
+}
+
+.row + .row {
+  border-top: 1px solid var(--color-row-line);
+}
+
+.person {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.who {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.name,
+.nameMuted {
+  overflow: hidden;
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nameMuted {
+  color: var(--color-text-3);
+}
+
+.email {
+  overflow: hidden;
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.role {
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}
+
+/* Estado: Activo en verde (dinero recibido no aplica; aquí «puede entrar»), Pendiente punteado, Desactivado gris. */
+.status {
+  display: inline-flex;
+  align-items: center;
+  height: var(--size-pill);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-neutral-border);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.status[data-status='active'] {
+  border-color: var(--color-ok-border);
+  background: var(--color-ok-bg);
+  color: var(--color-ok);
+}
+
+.status[data-status='pending'] {
+  border-style: dashed;
+}
+
+.status[data-status='inactive'] {
+  background: var(--color-tone);
+  color: var(--color-text-3);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* En el celular, rol y estado bajan debajo del nombre. */
+:global([data-platform='mobile']) .row {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+:global([data-platform='mobile']) .role {
+  display: none;
+}

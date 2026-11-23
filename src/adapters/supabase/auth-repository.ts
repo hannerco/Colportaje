@@ -14,6 +14,15 @@ export function createSupabaseAuthRepository(getClient: GetSupabaseClient): Auth
       return ok({ userId: data.user.id });
     },
 
+    async signInWithGoogle(redirectTo) {
+      const { error } = await getClient().auth.signInWithOAuth({
+        provider: 'google',
+        // Que Google pregunte la cuenta: en un celular compartido evita entrar con la de otra persona.
+        options: { redirectTo, queryParams: { prompt: 'select_account' } },
+      });
+      return error ? err(mapAuthError(error)) : ok(undefined);
+    },
+
     async signOut() {
       signOutRequested = true;
       const { error } = await getClient().auth.signOut();

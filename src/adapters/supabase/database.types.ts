@@ -19,6 +19,39 @@ export type Database = {
         };
         Relationships: [];
       };
+      authorized_email: {
+        Row: {
+          authorized_by: string | null;
+          created_at: string;
+          email: string;
+          full_name: string;
+          is_admin: boolean;
+        };
+        ComputedFields: never;
+        Insert: {
+          authorized_by?: string | null;
+          created_at?: string;
+          email: string;
+          full_name: string;
+          is_admin?: boolean;
+        };
+        Update: {
+          authorized_by?: string | null;
+          created_at?: string;
+          email?: string;
+          full_name?: string;
+          is_admin?: boolean;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'authorized_email_authorized_by_fkey';
+            columns: ['authorized_by'];
+            isOneToOne: false;
+            referencedRelation: 'profile';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       copy: {
         Row: {
           agreed_price: number | null;
@@ -747,6 +780,18 @@ export type Database = {
         };
         Returns: undefined;
       };
+      admin_set_user_active: { Args: { p_active: boolean; p_user_id: string }; Returns: undefined };
+      admin_users: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          created_at: string;
+          email: string;
+          full_name: string;
+          is_admin: boolean;
+          status: string;
+          user_id: string;
+        }[];
+      };
       apply_payment_plan: {
         Args: { p_customer_id: string; p_items: Json; p_mode: string };
         Returns: undefined;
@@ -809,6 +854,7 @@ export type Database = {
       deposit_difference: { Args: { p_deposit_id: string }; Returns: number };
       discard_new_customer: { Args: { p_customer_id: string }; Returns: undefined };
       flag_copy: { Args: { p_copy_id: string; p_note: string }; Returns: undefined };
+      hook_before_user_created: { Args: { event: Json }; Returns: Json };
       is_active_user: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
       lock_scheduled_payment: { Args: { p_owner: string; p_payment_id: string }; Returns: string };

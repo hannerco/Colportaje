@@ -10,6 +10,7 @@ import type { PaymentRepository } from './payment-repository';
 import type { ImageCodec, PhotoRepository, StorageRepository } from './photo-ports';
 import type { ProfileRepository } from './profile-repository';
 import type { TitleRepository } from './title-repository';
+import type { UserAdminRepository } from './user-admin-repository';
 
 export type { AuthChange, AuthRepository } from './auth-repository';
 export type { Connectivity } from './connectivity';
@@ -35,6 +36,7 @@ export type { LastPickerPointStore } from './last-picker-point';
 export type { DepositRecord, MoneyRepository } from './money-repository';
 export type { ProfileRepository } from './profile-repository';
 export type { TitleRepository, TitleWrite } from './title-repository';
+export type { UserAdminRepository } from './user-admin-repository';
 
 /**
  * Contratos de datos que la app recibe inyectados (ARCHITECTURE §2).
@@ -56,4 +58,6 @@ export interface Repositories {
   readonly connectivity: Connectivity;
   readonly offlineCache: OfflineCache;
   readonly lastPickerPoint: LastPickerPointStore;
+  /** Admin · Usuarios (ronda 34, #43). */
+  readonly users: UserAdminRepository;
 }

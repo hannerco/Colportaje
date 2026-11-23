@@ -7,6 +7,7 @@ import type { AuthRepository } from '@/repositories';
 import { unwrap } from '../shared/app-failure';
 import { useRepositories } from '../shared/repositories-provider';
 import { createSessionStore, type SessionStore } from './session-store';
+import { signInWithGoogle } from './use-cases/sign-in-with-google';
 import { signIn } from './use-cases/sign-in';
 import { updateTimeFormat } from './use-cases/update-time-format';
 import type { TimeFormat } from '@/domain/time';
@@ -71,6 +72,15 @@ export function useSignIn() {
     },
   });
   return { signIn: mutation.mutateAsync, isPending: mutation.isPending };
+}
+
+/** `signInWithGoogle(redirectTo)` → `Result<void>`: sale a Google (ronda 34, #41). */
+export function useSignInWithGoogle() {
+  const repositories = useRepositories();
+  const mutation = useMutation({
+    mutationFn: (redirectTo: string) => signInWithGoogle(repositories, redirectTo),
+  });
+  return { signInWithGoogle: mutation.mutateAsync, isPending: mutation.isPending };
 }
 
 /**

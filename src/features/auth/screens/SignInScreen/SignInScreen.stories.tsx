@@ -131,3 +131,36 @@ export const SinConexion: Story = {
 
 /** Las combinaciones en claro y oscuro × escritorio y móvil. */
 export const Matriz: Story = { parameters: { frames: 'matrix' } };
+
+/** #41 (ronda 34): solo con Google; no hay correo ni contraseña. */
+export const ConGoogle: Story = {
+  name: 'Con Google',
+  args: { google: { onClick: fn() } },
+  play: async ({ canvasElement, args }) => {
+    for (const frame of [...canvasElement.querySelectorAll<HTMLElement>('figure.sb-frame')]) {
+      expect(frame.querySelector('input[type="password"]')).toBeNull();
+      const button = [...frame.querySelectorAll('button')].find(
+        (b) => b.textContent === 'Continuar con Google',
+      )!;
+      await userEvent.click(button);
+    }
+    expect(args.google!.onClick).toHaveBeenCalled();
+  },
+};
+
+/** #41: el correo no está autorizado; la app lo dice y no se crea ninguna cuenta. */
+export const CorreoSinAcceso: Story = {
+  name: 'Correo sin acceso',
+  args: {
+    google: { onClick: fn() },
+    error: {
+      kind: 'other',
+      message:
+        'Ese correo no tiene acceso. Pídele al administrador que lo autorice, o entra con otra cuenta.',
+    },
+  },
+  play: async ({ canvasElement }) => {
+    for (const frame of [...canvasElement.querySelectorAll<HTMLElement>('figure.sb-frame')])
+      expect(frame.textContent).toContain('Ese correo no tiene acceso');
+  },
+};

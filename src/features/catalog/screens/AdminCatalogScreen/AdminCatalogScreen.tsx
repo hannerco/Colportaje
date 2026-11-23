@@ -29,6 +29,8 @@ export type AdminCatalogScreenProps = {
   isOnline: boolean;
   /** Si el usuario es admin; sin valor mientras carga el perfil. */
   isAdmin?: boolean;
+  /** Catálogo · Usuarios (las partes de Admin, ronda 34). */
+  sections?: ReactNode;
   /** `useAllTitles().data`; sin valor mientras carga o si falló. */
   titles?: readonly Title[];
   error?: boolean;
@@ -172,6 +174,7 @@ export function AdminCatalogScreen(props: AdminCatalogScreenProps) {
   return (
     <ShellScreen nav={props.nav} title={copy.ui.nav.items.admin} banner={props.banner}>
       <div className={styles.screen} data-shape={mobile ? 'mobile' : 'desktop'}>
+        {props.isAdmin && props.sections}
         {showToolbar && (
           <div className={styles.toolbar}>
             <SearchBox
