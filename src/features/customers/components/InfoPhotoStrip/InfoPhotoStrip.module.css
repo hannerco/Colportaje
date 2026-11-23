@@ -71,3 +71,22 @@
     transform: rotate(360deg);
   }
 }
+
+/* #68: la foto se toca para cambiarla o quitarla. */
+.photoButton {
+  display: inline-flex;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  cursor: pointer;
+}
+
+.photoButton:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+.photoButton[aria-busy='true'] {
+  opacity: var(--opacity-field-disabled);
+}

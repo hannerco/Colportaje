@@ -466,4 +466,56 @@ export const ArchivadoSinAgregarFactura: Story = {
   },
 };
 
+/** #69: «Editar» en Datos abre el diálogo con lo que tiene el cliente. */
+export const EditarDatos: Story = {
+  name: 'Editar datos',
+  globals: { platform: 'desktop' },
+  args: { onEditData: fn(async () => {}) },
+  play: async ({ canvasElement }) => {
+    const frame = frames(canvasElement)[0]!;
+    await userEvent.click(button(frame, 'Editar')!);
+    await waitFor(() =>
+      expect(canvasElement.ownerDocument.querySelector('[role="alertdialog"]')).not.toBeNull(),
+    );
+    const dialog = canvasElement.ownerDocument.querySelector<HTMLElement>('[role="alertdialog"]')!;
+    expect(dialog.querySelector<HTMLInputElement>('input')!.value).toBe(aCustomerDetailView().name);
+  },
+};
+
+/** #68: tocar una foto de la factura ofrece «Cambiar foto» y «Quitar foto». */
+export const CambiarFotoDeFactura: Story = {
+  name: 'Cambiar foto de factura',
+  globals: { platform: 'desktop' },
+  args: {
+    detail: aCustomerDetailView({
+      invoices: [
+        {
+          invoiceId: 'f1',
+          number: '0042',
+          date: localDate('2026-11-20'),
+          photos: [{ photoId: 'ph1', thumbUrl: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=' }],
+        },
+      ],
+    }),
+    invoiceActions: {
+      onCreate: fn(),
+      onAddPhoto: fn(),
+      onChange: fn(),
+      onReplacePhoto: fn(),
+      onRemovePhoto: fn(),
+    },
+  },
+  play: async ({ canvasElement, args }) => {
+    const frame = frames(canvasElement)[0]!;
+    await userEvent.click(button(frame, 'Foto 1, cambiar o quitar')!);
+    const remove = await waitFor(() => {
+      const found = [...canvasElement.ownerDocument.querySelectorAll<HTMLElement>('[role="menuitem"]')];
+      expect(found.map((i) => i.textContent?.trim())).toEqual(['Cambiar foto', 'Quitar foto']);
+      return found[1]!;
+    });
+    await userEvent.click(remove);
+    expect(args.invoiceActions?.onRemovePhoto).toHaveBeenCalledWith('ph1');
+  },
+};
+
 export const Matriz: Story = { parameters: { frames: 'matrix' } };

@@ -312,6 +312,20 @@ export const copy = {
   },
   /** Módulo Clientes. */
   customers: {
+    /** #69: editar los datos de un cliente guardado. */
+    edit: {
+      action: 'Editar',
+      title: 'Editar datos',
+      message: 'La ubicación, el emoji y las fotos se cambian en la ficha.',
+      name: 'Nombre',
+      phone: 'Teléfono',
+      address: 'Dirección',
+      info: 'Información',
+      nameRequired: 'Escribe el nombre del cliente.',
+      save: 'Guardar',
+      cancel: 'Cancelar',
+      saved: 'Datos guardados',
+    },
     emoji: {
       title: 'Emoji del cliente',
       choose: 'Elegir emoji del cliente',
@@ -577,6 +591,12 @@ export const copy = {
     photos: {
       add: 'Agregar imagen',
       adding: 'Subiendo imagen…',
+      /** #68: el menú de una foto de factura. */
+      photoMenu: (n: number) => `Foto ${n}, cambiar o quitar`,
+      replace: 'Cambiar foto',
+      remove: 'Quitar foto',
+      replaced: 'Foto cambiada',
+      removed: 'Foto quitada',
     },
   },
   /** Abonos (HU-PAN-CLI-05). */
