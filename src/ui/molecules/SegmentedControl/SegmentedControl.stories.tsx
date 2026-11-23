@@ -92,3 +92,45 @@ export const Frecuencia: Story = {
 export const Deshabilitado: Story = { args: { disabled: true } };
 
 export const Matriz: Story = { parameters: { frames: 'matrix' } };
+
+/** Dos «páginas» con el mismo control: al pasar de una a otra, el control se vuelve a montar. */
+function TwoPages() {
+  const [page, setPage] = useState<'a' | 'b'>('a');
+  return (
+    <>
+      <button type="button" onClick={() => setPage(page === 'a' ? 'b' : 'a')}>
+        Cambiar de página
+      </button>
+      <SegmentedControl
+        key={page}
+        label="Sección"
+        options={[
+          { value: 'in-stock', label: 'Libros en físico' },
+          { value: 'copies', label: 'Ejemplares' },
+        ]}
+        value={page === 'a' ? 'in-stock' : 'copies'}
+        onValueChange={(next) => setPage(next === 'in-stock' ? 'a' : 'b')}
+      />
+    </>
+  );
+}
+
+/**
+ * #78 («como en WhatsApp»): al cambiar de página, el indicador no aparece de la nada; sale de donde estaba y se desliza
+ * hasta la opción nueva.
+ */
+export const DeUnaPaginaAOtra: Story = {
+  name: 'De una página a otra',
+  render: () => <TwoPages />,
+  play: async ({ canvasElement }) => {
+    const frame = canvasElement.querySelector<HTMLElement>('figure.sb-frame') ?? canvasElement;
+    const toggle = [...frame.querySelectorAll('button')].find((b) => b.textContent === 'Cambiar de página')!;
+    // Como en la app: el clic cambia de página y el navegador pinta en el siguiente cuadro (sin mirar antes).
+    toggle.click();
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    const indicator = frame.querySelector<HTMLElement>('[class*="indicator"]')!;
+    // Recién montado ya va en camino: hay una transición corriendo hacia «Ejemplares».
+    expect(indicator.getAnimations().length).toBeGreaterThan(0);
+    await waitFor(() => expect(indicator.getAnimations().length).toBe(0));
+  },
+};

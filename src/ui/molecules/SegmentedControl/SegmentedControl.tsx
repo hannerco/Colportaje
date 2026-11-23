@@ -32,7 +32,13 @@ export function SegmentedControl({
 }: SegmentedControlProps) {
   const labelId = useId();
   const groupRef = useRef<HTMLDivElement>(null);
-  useSlidingIndicator(groupRef, '[data-state="checked"]', value);
+  // #78: el mismo control en otra página sale de donde quedó.
+  useSlidingIndicator(
+    groupRef,
+    '[data-state="checked"]',
+    value,
+    `segmented:${options.map((option) => option.value).join('|')}`,
+  );
   return (
     <div className={styles.field}>
       <span id={labelId} className={hideLabel ? styles.visuallyHidden : styles.label}>

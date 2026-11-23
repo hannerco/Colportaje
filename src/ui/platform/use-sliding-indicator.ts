@@ -10,8 +10,32 @@ import { useLayoutEffect, type RefObject } from 'react';
  */
 type Box = { x: number; y: number; w: number; h: number };
 
-/** Última posición de cada indicador con memoria: al cambiar de módulo la navegación se vuelve a pintar (#38). */
+/**
+ * Última posición de cada indicador con memoria: al cambiar de módulo la navegación se vuelve a pintar (#38). Se guarda
+ * también en la sesión del navegador (#78): si la página se recarga al navegar, el indicador igual sale de donde estaba.
+ */
 const remembered = new Map<string, Box>();
+const STORAGE_KEY = 'colportor:indicators';
+
+const recall = (key: string): Box | undefined => {
+  const inMemory = remembered.get(key);
+  if (inMemory) return inMemory;
+  try {
+    const stored = JSON.parse(sessionStorage.getItem(STORAGE_KEY) ?? '{}') as Record<string, Box>;
+    return stored[key];
+  } catch {
+    return undefined;
+  }
+};
+
+const remember = (key: string, box: Box) => {
+  remembered.set(key, box);
+  try {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(Object.fromEntries(remembered)));
+  } catch {
+    // Sin almacenamiento (ventana privada): basta con la memoria de esta página.
+  }
+};
 
 export function useSlidingIndicator(
   container: RefObject<HTMLElement | null>,
@@ -43,16 +67,19 @@ export function useSlidingIndicator(
         return;
       }
       set(box);
-      if (memory) remembered.set(memory, box);
+      if (memory) remember(memory, box);
     };
-    const previous = memory ? remembered.get(memory) : undefined;
+    const previous = memory ? recall(memory) : undefined;
     const target = measure();
     let frame: number;
     if (previous && target && root.getAttribute('data-indicator') !== 'ready') {
-      // Nueva página: aparece donde estaba y se desliza a la opción activa.
+      // Nueva página (#78, «como en WhatsApp»): aparece donde estaba y se desliza hasta la opción activa. Hay que
+      // obligar al navegador a calcular la posición de antes; si no, ambas se aplican juntas y no hay movimiento.
       set(previous);
       root.setAttribute('data-indicator', 'ready');
-      frame = requestAnimationFrame(place);
+      void root.getBoundingClientRect();
+      place();
+      frame = 0;
     } else {
       place();
       // La primera vez aparece en su sitio; desde el siguiente cuadro, los cambios se animan.
@@ -62,7 +89,7 @@ export function useSlidingIndicator(
     observer?.observe(root);
     root.querySelectorAll<HTMLElement>(':scope > *').forEach((child) => observer?.observe(child));
     return () => {
-      cancelAnimationFrame(frame);
+      if (frame) cancelAnimationFrame(frame);
       observer?.disconnect();
     };
   }, [container, activeSelector, activeKey, memory]);
