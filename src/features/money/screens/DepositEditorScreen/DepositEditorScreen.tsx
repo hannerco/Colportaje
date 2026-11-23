@@ -222,7 +222,7 @@ function Editor(
                   size="compact"
                   onClick={() => select(allSelected ? new Set() : new Set(payments.map((p) => p.paymentId)))}
                 >
-                  {allSelected ? t.paymentsNone : t.paymentsAll}
+                  {allSelected ? t.paymentsNone : t.paymentsAllShort}
                 </Button>
               }
               leading={(p) => (

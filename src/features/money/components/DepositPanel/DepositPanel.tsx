@@ -155,6 +155,12 @@ export function DepositPaymentsIsland({
               ) : (
                 p.customerName
               )}
+              {/* En una isla angosta (diseño móvil): «04/11/2026 · Efectivo» debajo del nombre. */}
+              <span className={styles.meta} aria-hidden="true">
+                {formatDate(p.paidAt)} ·{' '}
+                <Icon name={p.method === 'cash' ? 'money' : 'transfer'} size={13} tone="current" />
+                {methods[p.method]}
+              </span>
             </span>
             <span role="cell" className={styles.number}>
               {formatDate(p.paidAt)}
@@ -184,7 +190,7 @@ export function PanelIsland({
   children: ReactNode;
 }) {
   return (
-    <section className={styles.island} aria-label={title}>
+    <section className={styles.island} aria-label={title} data-panel={icon}>
       <div className={`${styles.islandHead} ${styles.divided}`}>
         <Icon name={icon} size={16} tone="current" />
         <h2 className={styles.islandTitle}>{title}</h2>
@@ -237,7 +243,11 @@ export function BalanceLines({ expected, difference }: { expected: COP; differen
     <>
       <dl className={styles.lines}>
         {rows.map((row) => (
-          <div key={row.id} className={styles.line}>
+          <div
+            key={row.id}
+            className={styles.line}
+            data-highlight={(row.id === 'difference' && row.bad) || undefined}
+          >
             <dt>
               {row.label}
               <button

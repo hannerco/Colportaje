@@ -1106,7 +1106,8 @@ export const copy = {
       payments: 'Abonos',
       paymentsAll: 'Todos',
       /** #71: quitar todos los abonos marcados. */
-      paymentsNone: 'Ninguno',
+      paymentsNone: 'Quitar todos',
+      paymentsAllShort: 'Marcar todos',
       include: 'Incluir',
       includePayment: (name: string) => `Incluir abono de ${name}`,
       paymentInclude: (customer: string) => `Incluir abono de ${customer}`,
@@ -1169,7 +1170,7 @@ export const copy = {
       total: 'Total',
       payments: (n: number) => (n === 1 ? '1 abono' : `${n} abonos`),
       paymentsTitle: 'Abonos',
-      selected: (n: number, of: number) => `${n} de ${of} seleccionados`,
+      selected: (n: number, of: number) => `${n} de ${of}`,
       columns: { customer: 'Cliente', paidAt: 'Fecha real', method: 'Método', amount: 'Valor real' },
       locked: 'Bloqueado',
       toDeliver: 'Lo que entregas',
