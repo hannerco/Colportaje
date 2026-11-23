@@ -326,3 +326,25 @@ export const TecladoEnPestanas: Story = {
 
 /** Claro y oscuro × escritorio y móvil. */
 export const Matriz: Story = { parameters: { frames: 'matrix' } };
+
+/**
+ * #28 (corrección del dueño, 2026-11-22): en escritorio el contenido va en una tarjeta junto a la barra lateral, con
+ * radio 20 y 12 de margen arriba, a la derecha y abajo (ficha Lib-Plantilla-Lista).
+ */
+export const TarjetaDeContenido: Story = {
+  name: 'Tarjeta de contenido',
+  globals: { platform: 'desktop' },
+  play: async ({ canvasElement }) => {
+    for (const frame of [...canvasElement.querySelectorAll<HTMLElement>('figure.sb-frame')]) {
+      const main = getComputedStyle(frame.querySelector('main')!);
+      expect(main.borderTopLeftRadius).toBe('20px');
+      expect([main.marginTop, main.marginRight, main.marginBottom, main.marginLeft]).toEqual([
+        '12px',
+        '12px',
+        '12px',
+        '0px',
+      ]);
+      expect(main.borderTopWidth).toBe('1px');
+    }
+  },
+};

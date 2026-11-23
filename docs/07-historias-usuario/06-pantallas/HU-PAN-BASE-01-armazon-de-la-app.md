@@ -39,6 +39,8 @@
 ## Cambios por iteración
 - **2026-11-20 (a pedido del dueño):** la navegación muestra **todos** los módulos, estén listos o no: Hoy, Clientes, Inventario, Minibooks, Calendario, Dinero, Hacer inventario y Ajustes (Admin solo con el rol admin). Hoy, Minibooks, Calendario, Hacer inventario, Ajustes y Admin tienen su ruta (`/hoy`, `/minibooks`, `/calendario`, `/hacer-inventario`, `/ajustes`, `/admin`) con la pantalla «Próximamente» dentro del armazón (`ComingSoonRoute`, «<Módulo> todavía no está listo. Lo verás aquí cuando esté terminado.»). La lista `COMING_SOON` dice cuáles son; al terminar un módulo se quita de ella y su ruta pasa a su pantalla. En móvil la barra inferior queda con Hoy, Clientes, Inventario y Más.
 - **2026-11-20:** Ajustes deja «Próximamente» con su versión mínima (formato de hora y cerrar sesión; DECISION-LOG 103).
+- **2026-11-22 (#28):** el armazón de escritorio usa la misma tarjeta de contenido que la Plantilla de lista.
+- **2026-11-22 (#24, #25):** el armazón suma el modo «tarea» (`task`): en el celular, Agregar al inventario y Devolver al líder van sin barra inferior y con el margen lateral de 16. La app usa toda la pantalla del iPhone (`viewport-fit=cover`) con los tokens `--safe-top` y `--safe-bottom`; una franja del color de la página tapa lo que se desplaza bajo la hora y la batería. Story «Pantallas/Armazón › Tarea en móvil».
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E de HU-BASE-06 (lectura sin conexión) corre en Playwright en móvil y escritorio.

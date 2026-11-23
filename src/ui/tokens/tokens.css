@@ -79,6 +79,7 @@
   /* Elevación */
   --shadow-control: 0 1px 2px rgba(31, 30, 29, 0.05); /* ctlShadow */
   --shadow-card: 0 1px 2px rgba(31, 30, 29, 0.04); /* shadow */
+  --shadow-panel: 0 1px 3px rgba(31, 30, 29, 0.05); /* panelShadow: tarjeta del contenido en escritorio (#28) */
   --shadow-modal: 0 20px 60px rgba(31, 30, 29, 0.2); /* modalShadow */
   --shadow-bar: 0 8px 24px rgba(31, 30, 29, 0.1); /* barShadow */
 
@@ -141,6 +142,7 @@
   --color-bar-active: #363634;
   --shadow-control: none;
   --shadow-card: none;
+  --shadow-panel: none;
   --shadow-modal: 0 24px 64px rgba(0, 0, 0, 0.6);
   --shadow-bar: 0 8px 24px rgba(0, 0, 0, 0.45);
 
@@ -204,6 +206,7 @@
     --color-bar-active: #363634;
     --shadow-control: none;
     --shadow-card: none;
+    --shadow-panel: none;
     --shadow-modal: 0 24px 64px rgba(0, 0, 0, 0.6);
     --shadow-bar: 0 8px 24px rgba(0, 0, 0, 0.45);
 
@@ -273,6 +276,7 @@
   --size-search-clear: 24px; /* botón ✕ del buscador */
   --toast-width: 380px; /* aviso en escritorio (HU-UI-15) */
   --layer-toast: 50; /* el aviso queda sobre el contenido */
+  --layer-safe-area: 35; /* franja bajo la hora del iPhone: sobre el contenido y la barra, debajo de hojas y avisos (#25) */
   --metric-card-width: 240px; /* tarjeta de métrica (HU-UI-17) */
   --size-swatch: 10px; /* cuadro de color del grupo (tarjeta de métrica y medidor) */
   --radius-swatch: 3px;
@@ -285,6 +289,12 @@
   --sheet-handle-height: 4px;
   --layer-overlay: 40; /* fondo y hoja, debajo del aviso */
   --sidebar-width: 248px; /* barra lateral (HU-UI-23) */
+  /* Tarjeta del contenido en escritorio, junto a la barra lateral (lienzo: Plantilla de lista e Inventario, #28). */
+  --panel-inset: 12px;
+  --radius-panel: 20px;
+  --panel-padding-top: 28px;
+  --panel-padding-x: 32px;
+  --panel-padding-bottom: 32px;
   --sidebar-padding: 12px;
   --size-sidebar-item: 34px;
   --size-nav-square: 22px; /* cuadro de «Nuevo cliente» */
@@ -307,7 +317,12 @@
   --size-window-bar: 52px;
   --filter-panel-width: 280px; /* menú de filtros de la barra de vista (HU-UI-28) */
   --detail-max-width: 900px; /* contenido de la plantilla de detalle en escritorio (HU-UI-29) */
-  --template-height: 100dvh; /* alto de la plantilla de lista (la lista se desplaza por dentro en escritorio) */
+  /* Áreas seguras del iPhone (hora y batería arriba, barra de inicio abajo); 0 donde no existen (#25). */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --template-height: calc(
+    100dvh - var(--safe-top)
+  ); /* alto de la plantilla de lista, sin el área segura de arriba */
   --data-row-label-width: 170px; /* columna de etiquetas de la fila de dato en escritorio (HU-UI-13) */
   --size-progress: 8px; /* barra «Abonado el N %» de la ficha de cliente (HU-PAN-CLI-02) */
   --radius-progress: 4px;
@@ -364,6 +379,7 @@
   --size-header: 56px; /* encabezado de pantalla (HU-UI-21) */
   --size-header-summary: 36px;
   --radius-island: 18px; /* isla (HU-UI-22) */
+  --island-gap: 14px; /* espacio entre los bloques de una isla: campos, listas, mapa (#26, lienzo CrearV5) */
   --radius-window: 20px; /* ventana de detalle (HU-UI-27) */
   --island-padding: 18px 24px 10px;
 }
@@ -408,6 +424,7 @@
   --size-header: 52px;
   --size-header-summary: 40px;
   --radius-island: 16px;
+  --island-gap: 14px;
   --radius-window: 16px;
   --island-padding: 14px 16px 8px;
 }
@@ -453,6 +470,7 @@
     --size-header: 52px;
     --size-header-summary: 40px;
     --radius-island: 16px;
+    --island-gap: 14px;
     --radius-window: 16px;
     --island-padding: 14px 16px 8px;
   }

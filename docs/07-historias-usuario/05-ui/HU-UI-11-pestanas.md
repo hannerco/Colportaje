@@ -46,7 +46,7 @@ El contenido de cada pestaña (lo pinta quien la usa).
 - **CA-4.** **Dado** `count` indefinido en una opción, **entonces** no se ve número.
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-22 (#30):** el segmento reparte el ancho con una rejilla de columnas iguales que miden al menos su texto: con «Abonos de clientes 3» se ensancha en vez de desbordar y correr el fondo de la activa. Si el espacio no alcanza para partes iguales (un celular angosto), cada opción mide al menos su texto; CA-3 («cada una la mitad») vale cuando caben. Story «Moléculas/Pestañas › Segmento con texto largo».
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13.

@@ -196,3 +196,29 @@ export const ContenidoLargoYAncho: Story = {
     }
   },
 };
+
+/**
+ * #24 (corrección del dueño, 2026-11-22): una pantalla de una tarea (Agregar al inventario, Devolver al líder) en el
+ * celular va sin la barra inferior y con el margen lateral de la app (16), para que nada quede pegado a los bordes.
+ */
+export const TareaEnMovil: Story = {
+  name: 'Tarea en móvil',
+  globals: { platform: 'mobile' },
+  args: {
+    title: undefined,
+    task: true,
+    children: (
+      <p style={{ whiteSpace: 'nowrap', overflow: 'hidden' }}>
+        {'Cancelar · Agregar al inventario · Listo '}
+      </p>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    for (const frame of frames(canvasElement)) {
+      expect(frame.querySelector('nav[aria-label="Principal"]')).toBeNull();
+      const main = frame.querySelector('main')!;
+      expect(getComputedStyle(main).paddingLeft).toBe('16px');
+      expect(getComputedStyle(main).paddingRight).toBe('16px');
+    }
+  },
+};

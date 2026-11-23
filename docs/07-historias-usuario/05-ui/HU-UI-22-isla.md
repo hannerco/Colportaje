@@ -37,7 +37,7 @@ El orden de las islas de un detalle (Plantilla de detalle, HU-UI-29).
 - **CA-3.** **Dado** `action={{ label: 'Agregar' }}`, **cuando** la pulso, **entonces** se llama su `onClick`.
 
 ## Cambios por iteración
-*(vacío)*
+- **2026-11-22 (#26):** el contenido de la Isla va en un cuerpo que separa sus bloques (campos, listas, mapa) con el token `--island-gap` (14, como en CrearV5 del lienzo). Antes los campos quedaban pegados en Nuevo cliente, la ficha y el editor de Abibonos. Story «Organismos/Isla › Campos». Falta subirlo a la ficha Lib-Isla.
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13.

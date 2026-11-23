@@ -280,3 +280,17 @@ export const AbrirEnLaVentana: Story = {
     }
   },
 };
+
+/** #27: misma distancia encabezado → pestañas que en Libros en físico (56 + 12), así no hay salto al cambiar. */
+export const SinSaltoAlCambiarDeSeccion: Story = {
+  name: 'Sin salto al cambiar de sección',
+  globals: { platform: 'desktop' },
+  play: async ({ canvasElement }) => {
+    for (const frame of [...canvasElement.querySelectorAll<HTMLElement>('figure.sb-frame')]) {
+      const header = frame.querySelector('header[data-kind="root"]')!.getBoundingClientRect();
+      const tabs = frame.querySelector('[role="tablist"]')!.getBoundingClientRect();
+      expect(Math.round(header.height)).toBe(56);
+      expect(Math.round(tabs.top - header.top)).toBe(68);
+    }
+  },
+};

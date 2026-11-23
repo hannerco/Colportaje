@@ -5,18 +5,20 @@ import { useEffect, useRef, useState } from 'react';
 import type { AssignableCopy } from '@/domain/assignable-copies';
 import type { CustomerDetail } from '@/domain/customer-detail';
 import type { COP } from '@/domain/money';
-import { toBogotaDate, type LocalDate } from '@/domain/time';
+import { toBogotaDate, todayBogota, type LocalDate } from '@/domain/time';
 import {
   AddBookSheet,
   useAssignableCopies,
   useAssignCopyToCustomer,
   useRemoveCopyDuringCreation,
   useUpdateSoldAt,
+  chosenBookValues,
   type ChosenBook,
 } from '@/features/customers';
 import { useAgreedPrice } from '@/features/inventory';
 import { appErrorMessage } from '@/features/shared/app-error-message';
 import { ROUTES, useAppShell } from '@/features/shell';
+import { systemClock } from '@/lib/clock';
 import { useToast } from '@/ui/molecules/Toast';
 
 type Props = {
@@ -49,6 +51,7 @@ export function AddBookContainer({ customerId, books, onClose }: Props) {
   const [prices, setPrices] = useState<Record<string, COP | null>>({});
   const [soldOns, setSoldOns] = useState<Record<string, LocalDate | null>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [today] = useState(() => todayBogota(systemClock));
   const timers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
   useEffect(() => {
     const pending = timers.current;
@@ -73,9 +76,16 @@ export function AddBookContainer({ customerId, books, onClose }: Props) {
       copyId: copy.copyId,
       titleName: copy.titleName,
       number: copy.number,
-      agreedPrice: copy.copyId in prices ? prices[copy.copyId]! : (book?.agreedPrice ?? copy.price),
+      ...chosenBookValues({
+        typed: {
+          ...(copy.copyId in prices && { agreedPrice: prices[copy.copyId]! }),
+          ...(copy.copyId in soldOns && { soldOn: soldOns[copy.copyId]! }),
+        },
+        saved: book && { agreedPrice: book.agreedPrice, soldOn: toBogotaDate(book.soldAt) },
+        publicPrice: copy.price,
+        today,
+      }),
       publicPrice: book?.publicPriceSnapshot ?? copy.price,
-      soldOn: copy.copyId in soldOns ? soldOns[copy.copyId]! : book ? toBogotaDate(book.soldAt) : null,
       error: errors[copy.copyId],
     };
   });
