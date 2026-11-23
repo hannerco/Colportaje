@@ -333,6 +333,21 @@ export const copy = {
       search: 'Buscar emoji',
       remove: 'Quitar',
       noResults: 'No hay emojis con ese nombre.',
+      /** #63: las pestañas de categorías y el conteo. */
+      categoriesLabel: 'Categorías de emojis',
+      categories: {
+        recent: 'Recientes',
+        smileys: 'Caras',
+        people: 'Personas',
+        animals: 'Animales y naturaleza',
+        food: 'Comida y bebida',
+        travel: 'Viajes y lugares',
+        activities: 'Actividades',
+        objects: 'Objetos',
+        symbols: 'Símbolos',
+        flags: 'Banderas',
+      },
+      count: (n: number) => (n === 1 ? '1 emoji' : `${n.toLocaleString('es-CO')} emojis`),
     },
     /** Lista de clientes (HU-PAN-CLI-01, BR-CUS-05). */
     list: {
