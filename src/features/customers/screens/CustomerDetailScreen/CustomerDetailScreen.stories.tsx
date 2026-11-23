@@ -401,6 +401,32 @@ export const Lateral: Story = {
   globals: { platform: 'desktop' },
   args: { window: { ...meta.args.window, mode: 'side' } },
 };
+
+/** #66: en una pantalla angosta el estado de un abono nunca queda encima de su valor ni de «Cobrar». */
+export const Angosta: Story = {
+  globals: { platform: 'desktop' },
+  args: { onCollect: fn() },
+  decorators: [
+    (Story) => (
+      <div style={{ width: 420 }}>
+        <Story />
+      </div>
+    ),
+  ],
+  play: async ({ canvasElement }) => {
+    const rows = [...canvasElement.querySelectorAll<HTMLElement>('li[class*="payment"]')];
+    expect(rows.length).toBeGreaterThan(0);
+    const overlap = (a: DOMRect, b: DOMRect) =>
+      a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
+    for (const row of rows) {
+      const pill = row.querySelector<HTMLElement>('[data-status]');
+      const side = row.querySelector<HTMLElement>('[class*="paymentSide"]');
+      if (!pill || !side) continue;
+      for (const child of side.querySelectorAll<HTMLElement>('span, button'))
+        expect(overlap(pill.getBoundingClientRect(), child.getBoundingClientRect())).toBe(false);
+    }
+  },
+};
 export const Centrada: Story = {
   globals: { platform: 'desktop' },
   args: { window: { ...meta.args.window, mode: 'center' } },

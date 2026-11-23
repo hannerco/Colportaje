@@ -43,6 +43,7 @@ Deslizar en móvil (HU-PAN-DIN-02); el «Totalizador B» del lienzo (`Dinero-d-t
   - **Fuera / pendiente:** la acción «Cobrar» de la fila y «Más plazo» al deslizar (HU-PAN-DIN-02); «Entregar al líder» lleva a `/dinero/abibonos/nuevo` (armazón hasta HU-PAN-DIN-04) y abrir una fila, al armazón del abono (HU-PAN-DIN-02); el «Totalizador B» y los grupos «Vencidos» de la lista (el lienzo los separa; aquí el vencido es la Pastilla y el filtro).
 - **2026-11-22 (#39):** en escritorio el panel grande del resumen se reemplaza por el botón «Por entregar $X ▾» del encabezado (como en el celular), que abre el resumen en la Ventana lateral. Igual en Abibonos.
 - **2026-11-22 (#29):** en escritorio, abrir una fila ya no va siempre a la página completa: abre la Ventana de detalle de la lista con la forma recordada (Lateral o Centrada), como Clientes; si la forma es Página, va a la página. Desde la página, elegir Lateral o Centrada vuelve a la lista con el registro abierto, en vez de cerrarlo. Story «… › Abrir en la Ventana».
+- **2026-11-22 (#70):** en escritorio, la tabla lleva «Cobrar» al final de cada abono por cobrar, como en el diseño aceptado («1 · Abonos de clientes»). Abre el abono en la Ventana de detalle con el formulario de cobro abierto (en la forma «Página», la página del abono con `?accion=cobrar`). Sin conexión se ve deshabilitado. Prueba: story «Cobrar (escritorio)».
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13.

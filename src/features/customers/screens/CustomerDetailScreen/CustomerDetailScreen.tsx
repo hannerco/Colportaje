@@ -460,7 +460,7 @@ function PaymentList({
   const open = payments.find((p) => p.paymentId === editing);
   return (
     <>
-      <ul className={styles.list}>
+      <ul className={`${styles.list} ${styles.paymentList}`}>
         {payments.map((payment) => {
           const date = dateOf(payment);
           const overdue = payment.status === 'scheduled' && payment.isOverdue;
