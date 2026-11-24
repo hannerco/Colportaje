@@ -3,6 +3,7 @@ import {
   addCatalogGroups,
   batchLines,
   createAddBatch,
+  rebaseAddBatch,
   receivedDateOptions,
   validateAddCopiesInput,
   type AddCopiesInput,
@@ -239,5 +240,24 @@ describe('add-batch: validar antes de confirmar (R4)', () => {
       ok: false,
       error: { code: 'VALIDATION', details: { field } },
     });
+  });
+});
+
+describe('add-batch: el catálogo llega o se actualiza (#94)', () => {
+  it('un lote armado sin títulos no suma; al llegar el catálogo, sí', () => {
+    const sinCatalogo = createAddBatch([]).increment(CORAZON);
+    expect(sinCatalogo.total()).toBe(0);
+    expect(rebaseAddBatch(sinCatalogo, CATALOG).increment(CORAZON).quantityOf(CORAZON)).toBe(1);
+  });
+
+  it('al actualizarse el catálogo conserva lo que ya se llevaba (y suelta lo que ya no está)', () => {
+    const lote = empty().increment(CORAZON).increment(CORAZON).increment(ATLAS);
+    const nuevo = rebaseAddBatch(
+      lote,
+      CATALOG.filter((t) => t.id !== ATLAS),
+    );
+    expect(nuevo.quantityOf(CORAZON)).toBe(2);
+    expect(nuevo.quantityOf(ATLAS)).toBe(0);
+    expect(nuevo.total()).toBe(2);
   });
 });

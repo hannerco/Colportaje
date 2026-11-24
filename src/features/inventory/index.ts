@@ -70,6 +70,7 @@ export {
 export {
   ADD_COPIES_ERROR_CODES,
   createAddBatch,
+  rebaseAddBatch,
   receivedDateOptions,
   type AddBatch,
   type AddBatchLine,

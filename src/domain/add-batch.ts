@@ -90,6 +90,15 @@ const batchOf = (
 export const createAddBatch = (titles: readonly AddBatchTitle[]): AddBatch =>
   batchOf(new Map(titles.map((t) => [t.id, t])), new Map());
 
+/**
+ * #94: el mismo lote sobre una lista nueva de títulos (llegó o se actualizó el catálogo). Conserva lo que ya se llevaba
+ * de cada título que sigue en la lista; nunca vacía el lote por recargar el catálogo.
+ */
+export const rebaseAddBatch = (batch: AddBatch, titles: readonly AddBatchTitle[]): AddBatch =>
+  batch
+    .summary()
+    .lines.reduce((next, line) => next.setQuantity(line.titleId, line.quantity), createAddBatch(titles));
+
 /** Líneas para confirmar: un UUID por ejemplar, generados UNA vez para que reintentar no duplique (R6). */
 export const batchLines = (batch: AddBatch, newId: () => string): { titleId: string; copyIds: string[] }[] =>
   batch.summary().lines.map((line) => ({
