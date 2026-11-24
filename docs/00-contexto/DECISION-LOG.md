@@ -604,6 +604,7 @@ El dueño probó la app y reportó 14 mejoras (issues #24 a #44). Decisiones:
 | 4 | El «+» | **"Muchas veces el + deja de funcionar"**. Causa: en el celular el aviso (Deshacer) quedaba encima del botón flotante y se comía el toque. [D] El aviso sube por encima del botón (#89) |
 | 5 | Marca en la app | [D] Lo de «Marca e instalación» del lienzo, programado (#92): íconos de instalación (192, 512, maskable, monocromo, iPhone, atajos «Nuevo cliente» y «Cobrar»), favicon con variante oscura, imagen para compartir de 1200 × 630, logo en la barra lateral y en «Más», arranque, error y sin conexión, invitación a instalar (solo si el navegador lo permite; «Ahora no» la esconde en ese dispositivo), Ajustes › Acerca de con «Invitar a otro colportor» y recibo del Abibono (papel blanco también en oscuro; al imprimir, tinta negra) |
 | 6 | El «+» de Agregar | **"en «Agregar al inventario» el darle + a un libro. A veces funciona, a veces no"**. Causa: con el catálogo ya cargado, el lote nacía vacío y nunca se rearmaba. [D] El lote se arma con los títulos que ya hay y, si el catálogo cambia, conserva lo que se llevaba (#94) |
+| 7 | Velocidad entre módulos | **"No sé por qué se está demorando taaaanto en pasar de un módulo a otro"**. Medido: cada cambio esperaba la pantalla del servidor (0,4–2 s en producción) con la anterior congelada; los datos de Supabase tardan 0,3–0,5 s y van en paralelo. [D] Las pantallas de los módulos se traen de fondo al entrar (y al volver a la app) y, si aún no llegó una, se ve al instante la navegación con un esqueleto (#96) |
 
 ---
 
