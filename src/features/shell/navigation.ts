@@ -4,6 +4,8 @@ import type { NavId } from '@/ui/organisms/AppNav';
 export const ROUTES = {
   home: '/',
   signIn: '/entrar',
+  /** Pública, sin sesión: la política de privacidad que pide Google. */
+  privacy: '/privacidad',
   customers: '/clientes',
   newCustomer: '/clientes/nuevo',
   /** «Crear «texto»» de la búsqueda sin resultados: Nuevo cliente con ese nombre (BR-CUS-14, HU-CLI-05). */

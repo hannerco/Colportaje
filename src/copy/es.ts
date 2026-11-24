@@ -4,6 +4,47 @@
 export const copy = {
   /** Nombre de la app (título de la pestaña y del ícono instalado). */
   app: { name: 'Colportor' },
+  /** Página pública de privacidad (la pide Google para publicar «Entrar con Google»). Texto base: el dueño lo revisa. */
+  privacy: {
+    title: 'Política de privacidad',
+    updated: 'Última actualización: 23 de noviembre de 2026',
+    intro:
+      'Colportor es una aplicación de Emprendum para que los colportores lleven sus ventas de libros a cuotas, sus clientes y su inventario. Esta página explica qué datos usa y para qué.',
+    sections: [
+      {
+        heading: 'Qué datos recibimos de Google',
+        body: [
+          'Si entras con Google, recibimos solo tu correo electrónico, tu nombre y tu foto de perfil. No pedimos ningún otro permiso ni accedemos a tu Gmail, tus contactos, tu Drive ni a ningún otro dato de tu cuenta.',
+        ],
+      },
+      {
+        heading: 'Para qué los usamos',
+        body: [
+          'Usamos tu correo para comprobar que el administrador te autorizó y para identificarte dentro de la app. Tu nombre y tu foto se muestran solo en tu propia cuenta.',
+          'Solo pueden entrar las personas cuyo correo autorizó el administrador. Si tu correo no está autorizado, no se crea ninguna cuenta.',
+        ],
+      },
+      {
+        heading: 'Los datos que tú registras',
+        body: [
+          'Los clientes, ventas, abonos e inventario que registras en la app son tuyos y de tu trabajo. Cada persona solo ve sus propios datos, y los guardamos en un servicio de base de datos con acceso protegido.',
+        ],
+      },
+      {
+        heading: 'Lo que no hacemos',
+        body: [
+          'No vendemos tus datos, no los compartimos con terceros para publicidad y no los usamos para nada distinto de que la app funcione.',
+        ],
+      },
+      {
+        heading: 'Cómo borrar tus datos',
+        body: [
+          'Si quieres que borremos tu cuenta y tus datos, pídeselo al administrador o a tu líder en Emprendum.',
+        ],
+      },
+    ],
+    back: 'Volver a la app',
+  },
   /** Iniciar sesión (HU-PAN-BASE-02, sin diseño del dueño: OQ-44). Los errores de entrada salen de `errors.codes`. */
   auth: {
     signIn: {
