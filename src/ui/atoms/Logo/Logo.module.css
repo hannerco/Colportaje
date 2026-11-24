@@ -1,0 +1,67 @@
+/* Logo (lienzo: Logo.dc.html). Llegan --logo-size y --logo-name-size (el 60 %); el espacio mide el 30 %. */
+.logo {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: calc(var(--logo-size) * 0.3);
+  color: var(--color-accent-text);
+  line-height: 1;
+}
+
+.mark {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.svg {
+  display: block;
+}
+
+.floor {
+  opacity: 0.35;
+}
+
+.floorBig {
+  opacity: 0.22;
+}
+
+.glow {
+  fill: var(--color-brand-glow);
+}
+
+.name {
+  font-size: var(--logo-name-size);
+  font-weight: var(--weight-strong);
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+/* Ícono de app: cuadro accent con la marca blanca al 60 %, radio del 22,5 %. */
+.logo[data-variant='app-icon'] .mark {
+  width: var(--logo-size);
+  height: var(--logo-size);
+  border-radius: calc(var(--logo-size) * 0.225);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+/* Monocromo: una sola tinta, sin la luz del piso. */
+.logo[data-variant='mono'] {
+  color: var(--color-text);
+}
+
+.logo[data-variant='mono'] .floor {
+  opacity: 0;
+}
+
+/* Sobre el panel marino de la marca: en blanco, en claro y en oscuro. */
+.logo[data-on-brand] {
+  color: var(--color-on-brand);
+}
+
+.logo[data-on-brand] .name {
+  color: var(--color-on-brand);
+}

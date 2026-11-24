@@ -594,6 +594,13 @@ El dueño probó la app y reportó 14 mejoras (issues #24 a #44). Decisiones:
 | 9 | Diseños aceptados | **"no veo el botón cobrar en los abonos"**, **"tampoco veo que el abibono tenga el diseño que se aceptó"**, **"tampoco cuando se abre un abono desde un cliente"**. [D] Se programan como el lienzo: «Cobrar» en la tabla (#70), Abibono (#71) y detalle del abono con historial completo (#72) |
 | 10 | Tema en Ajustes | **"Este overflow está terrible… Además dice teléfono siempre, aunque esté en desktop. Debe decir, dispositivo"** (2026-11-23). [D] «Como el dispositivo»; en los botones segmentados, una etiqueta que no cabe pasa a dos líneas en vez de montarse sobre la vecina (#84) |
 
+## Ronda 37 — Marca: el logo elegido (2026-11-23)
+
+| # | Tema | Resultado |
+|---|---|---|
+| 1 | Logo | **"El logo elegido es la opción 1, «La puerta abierta»"**. [D] Componente Logo en la biblioteca del lienzo (Lib-Logo): marca, ícono de app, logotipo y monocromo; versión reducida dibujada a píxel por debajo de 32 px. Frase fija de la marca: «Tu colportaje, en orden.» |
+| 2 | Entrar | [D] La pantalla de Entrar sigue la Propuesta 9 del lienzo con el componente Logo (#87). El resto de la marca (íconos de instalación, arranque, compartir, recibo) queda diseñado en el lienzo, pendiente de programar |
+
 ---
 
 ## Decisiones derivadas (consecuencias lógicas de las respuestas, no preguntadas aparte)

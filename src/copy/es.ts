@@ -3,7 +3,8 @@
 
 export const copy = {
   /** Nombre de la app (título de la pestaña y del ícono instalado). */
-  app: { name: 'Colportor' },
+  /** Frase de la marca (fija, 2026-11-23). */
+  app: { name: 'Colportor', tagline: 'Tu colportaje, en orden.' },
   /** Página pública de privacidad (la pide Google para publicar «Entrar con Google»). Texto base: el dueño lo revisa. */
   privacy: {
     title: 'Política de privacidad',
@@ -49,7 +50,15 @@ export const copy = {
   auth: {
     signIn: {
       /** Ronda 34 (#41): solo con Google y con el correo que autorizó el administrador. */
-      googleSubtitle: 'Con la cuenta de Google que autorizó tu líder',
+      googleSubtitle: 'Con la cuenta de Google que autorizó tu líder.',
+      /** Pantalla de Entrar con el logo (Propuesta 9 del lienzo). */
+      heading: 'Entrar',
+      quote: '«…abrirían puertas hasta entonces cerradas»',
+      quoteSource: 'Elena G. de White · El ministerio de publicaciones, p. 33',
+      noSignUp:
+        'No hay registro: entra el correo de Google que autorizó tu líder. Si no tienes acceso, pídeselo a él.',
+      offline:
+        'Sin conexión. La primera vez necesitas internet para entrar; después Colportor funciona sin señal.',
       google: 'Continuar con Google',
       googleOpening: 'Abriendo Google…',
       noAccess:
