@@ -89,6 +89,45 @@ export const Frecuencia: Story = {
   },
 };
 
+/**
+ * #84: una etiqueta larga en poco espacio («Como el dispositivo» en Ajustes, en el celular) pasa a dos líneas; ninguna
+ * opción se monta sobre otra ni se sale del carril.
+ */
+export const EtiquetaLarga: Story = {
+  name: 'Etiqueta larga en poco espacio',
+  args: {
+    label: 'Tema',
+    options: [
+      { value: 'system', label: 'Como el dispositivo' },
+      { value: 'light', label: 'Claro' },
+      { value: 'dark', label: 'Oscuro' },
+    ],
+    value: 'light',
+  },
+  decorators: [
+    (Story) => (
+      // Ancho del carril en el celular más angosto (320 px, menos los márgenes de la página y de la isla).
+      <div style={{ width: 256 }}>
+        <Story />
+      </div>
+    ),
+  ],
+  play: async ({ canvasElement }) => {
+    for (const frame of frames(canvasElement)) {
+      const group = frame.querySelector<HTMLElement>('[role="radiogroup"]')!.getBoundingClientRect();
+      const boxes = [...frame.querySelectorAll<HTMLElement>('[role="radio"]')].map((r) => {
+        expect(r.scrollWidth).toBeLessThanOrEqual(r.clientWidth);
+        return r.getBoundingClientRect();
+      });
+      boxes.forEach((box, i) => {
+        expect(box.left).toBeGreaterThanOrEqual(group.left);
+        expect(box.right).toBeLessThanOrEqual(group.right + 0.5);
+        if (i > 0) expect(box.left).toBeGreaterThanOrEqual(boxes[i - 1]!.right - 0.5);
+      });
+    }
+  },
+};
+
 export const Deshabilitado: Story = { args: { disabled: true } };
 
 export const Matriz: Story = { parameters: { frames: 'matrix' } };

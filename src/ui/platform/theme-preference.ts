@@ -1,4 +1,4 @@
-// Tema elegido en Ajustes (#42, propuesta 5): «Como el teléfono», «Claro» u «Oscuro», guardado solo en este dispositivo.
+// Tema elegido en Ajustes (#42, propuesta 5): «Como el dispositivo», «Claro» u «Oscuro», guardado solo en este dispositivo.
 // Sin elección, `<html>` no lleva `data-theme` y los tokens siguen al sistema (I-38).
 
 export type ThemePreference = 'system' | 'light' | 'dark';

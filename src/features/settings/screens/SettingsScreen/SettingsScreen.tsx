@@ -27,7 +27,7 @@ export type SettingsScreenProps = {
   onTimeFormatChange: (format: TimeFormat) => Promise<void>;
   /** Cierra la sesión; si falla, que lance para que el diálogo siga abierto. */
   onSignOut: () => Promise<void>;
-  /** Tema de este dispositivo (#42): Como el teléfono, Claro u Oscuro. */
+  /** Tema de este dispositivo (#42): Como el dispositivo, Claro u Oscuro. */
   theme: ThemePreference;
   onThemeChange: (theme: ThemePreference) => void;
   /** Modo administrador (BR-USR-04): solo se muestra si el perfil es admin. */

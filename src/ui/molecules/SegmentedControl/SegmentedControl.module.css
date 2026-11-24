@@ -1,4 +1,7 @@
-/* Botones segmentados (#33): carril del segmento de las Pestañas, opciones iguales e indicador que se desliza (#37). */
+/*
+ * Botones segmentados (#33): carril del segmento de las Pestañas, opciones iguales e indicador que se desliza (#37).
+ * #84: si una etiqueta no cabe en su parte, pasa a dos líneas; nunca se monta sobre la vecina.
+ */
 .field {
   display: flex;
   flex-direction: column;
@@ -13,9 +16,7 @@
 
 .group {
   position: relative;
-  display: grid;
-  grid-auto-columns: 1fr;
-  grid-auto-flow: column;
+  display: flex;
   padding: var(--space-1);
   border-radius: var(--radius-sm);
   background: var(--color-tab-track);
@@ -24,9 +25,10 @@
 .option {
   position: relative;
   z-index: 1;
-  min-width: 0;
-  height: var(--size-tab);
-  padding: 0 var(--space-3);
+  flex: 1 1 0;
+  min-width: min-content;
+  min-height: var(--size-tab);
+  padding: var(--space-1) var(--space-2);
   border: 0;
   border-radius: var(--radius-segment);
   background: transparent;
@@ -34,7 +36,8 @@
   font: inherit;
   font-size: var(--text-body);
   font-weight: var(--weight-medium);
-  white-space: nowrap;
+  line-height: var(--leading-tight);
+  text-wrap: balance;
   cursor: pointer;
   transition: color var(--motion-duration) var(--motion-ease);
 }

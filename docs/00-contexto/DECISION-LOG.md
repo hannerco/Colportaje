@@ -592,6 +592,7 @@ El dueño probó la app y reportó 14 mejoras (issues #24 a #44). Decisiones:
 | 7 | Cambiar foto de factura | **"Debo poder cambiar una foto de una factura, en caso de que haya quedado mal"**. [D] «Cambiar foto» y «Quitar foto» al tocarla (BR-CUS-17, #68) |
 | 8 | Editar datos | **"También debería poder modificar la información que puse sobre el cliente, es decir, los datos"**. [D] «Editar» en Datos (BR-CUS-01, #69) |
 | 9 | Diseños aceptados | **"no veo el botón cobrar en los abonos"**, **"tampoco veo que el abibono tenga el diseño que se aceptó"**, **"tampoco cuando se abre un abono desde un cliente"**. [D] Se programan como el lienzo: «Cobrar» en la tabla (#70), Abibono (#71) y detalle del abono con historial completo (#72) |
+| 10 | Tema en Ajustes | **"Este overflow está terrible… Además dice teléfono siempre, aunque esté en desktop. Debe decir, dispositivo"** (2026-11-23). [D] «Como el dispositivo»; en los botones segmentados, una etiqueta que no cabe pasa a dos líneas en vez de montarse sobre la vecina (#84) |
 
 ---
 
