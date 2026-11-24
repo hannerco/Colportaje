@@ -30,15 +30,14 @@ import { useToast } from '@/ui/molecules/Toast';
 import { usePlatform } from '@/ui/platform';
 import { LocationPickerContainer } from '../location-picker-container';
 import { DraftBooksContainer, type DraftBook } from './draft-books';
-
-/** Una foto tomada antes de guardar: vive en el teléfono hasta «Guardar cliente». */
-type LocalPhoto = { readonly photoId: string; readonly file: File; readonly thumbUrl: string };
-type LocalInvoice = {
-  readonly invoiceId: string;
-  readonly number: string | null;
-  readonly date: LocalDate | null;
-  readonly photos: readonly LocalPhoto[];
-};
+import {
+  removeInvoicePhoto,
+  removePhoto,
+  replaceInvoicePhoto,
+  replacePhoto,
+  type LocalInvoice,
+  type LocalPhoto,
+} from './local-photos';
 
 const localPhoto = (file: File): LocalPhoto => ({
   photoId: newId(),
@@ -277,6 +276,10 @@ function NewCustomerRoute() {
       onInvoiceChange={(invoiceId, patch) =>
         setInvoices((current) => current.map((i) => (i.invoiceId === invoiceId ? { ...i, ...patch } : i)))
       }
+      onReplaceInvoicePhoto={(invoiceId, photoId, file) =>
+        setInvoices((current) => replaceInvoicePhoto(current, invoiceId, photoId, localPhoto(file)))
+      }
+      onRemoveInvoicePhoto={(photoId) => setInvoices((current) => removeInvoicePhoto(current, photoId))}
       invoiceDisabledReason={null}
       phone={phone}
       onPhoneChange={setPhone}
@@ -296,6 +299,10 @@ function NewCustomerRoute() {
       onRemoveLocation={() => setLocation(null)}
       photos={photos.map(({ photoId, thumbUrl }) => ({ photoId, thumbUrl }))}
       onAddPhoto={(file) => setPhotos((current) => [...current, localPhoto(file)])}
+      onReplacePhoto={(photoId, file) =>
+        setPhotos((current) => replacePhoto(current, photoId, localPhoto(file)))
+      }
+      onRemovePhoto={(photoId) => setPhotos((current) => removePhoto(current, photoId))}
       photoDisabledReason={null}
       books={books.map((b) => {
         const agreed = b.agreedPrice ?? b.price ?? 0;

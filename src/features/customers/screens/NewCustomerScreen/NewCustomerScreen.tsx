@@ -44,6 +44,9 @@ export type NewCustomerScreenProps = {
   onCreateInvoice?: InvoiceBlockProps['onCreate'];
   onAddInvoicePhoto?: InvoiceBlockProps['onAddPhoto'];
   onInvoiceChange?: InvoiceBlockProps['onChange'];
+  /** Cambiar o quitar una foto de factura antes de guardar (al quitar la última, la factura se va). */
+  onReplaceInvoicePhoto?: InvoiceBlockProps['onReplacePhoto'];
+  onRemoveInvoicePhoto?: InvoiceBlockProps['onRemovePhoto'];
   invoiceDisabledReason?: string | null;
   phone: string;
   onPhoneChange: (phone: string) => void;
@@ -64,6 +67,9 @@ export type NewCustomerScreenProps = {
   /** «Imágenes» del cliente (HU-CLI-07). */
   photos: readonly { photoId: string; thumbUrl: string }[];
   onAddPhoto?: (file: File) => Promise<void> | void;
+  /** Cambiar o quitar una imagen antes de guardar. */
+  onReplacePhoto?: (photoId: string, file: File) => Promise<void> | void;
+  onRemovePhoto?: (photoId: string) => Promise<void> | void;
   /** Por qué aún no se puede agregar una imagen (sin nombre o sin conexión). */
   photoDisabledReason?: string | null;
   /** Libros vendidos al cliente (los agrega HU-PAN-CLI-04). */
@@ -200,6 +206,8 @@ export function NewCustomerScreen(props: NewCustomerScreenProps) {
         <InfoPhotoStrip
           photos={props.photos}
           onAdd={props.onAddPhoto}
+          onReplace={props.onReplacePhoto}
+          onRemove={props.onRemovePhoto}
           disabledReason={props.photoDisabledReason}
         />
       </div>
@@ -234,6 +242,8 @@ export function NewCustomerScreen(props: NewCustomerScreenProps) {
         onCreate={props.onCreateInvoice}
         onAddPhoto={props.onAddInvoicePhoto}
         onChange={props.onInvoiceChange}
+        onReplacePhoto={props.onReplaceInvoicePhoto}
+        onRemovePhoto={props.onRemoveInvoicePhoto}
         disabledReason={props.invoiceDisabledReason}
       />
     </Island>
