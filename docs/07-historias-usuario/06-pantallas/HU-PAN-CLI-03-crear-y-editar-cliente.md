@@ -51,6 +51,7 @@ Selector de emoji (FC-02, sin diseño en la biblioteca: si el lienzo lo dibuja, 
 - **2026-11-22 (#57, ronda 35, ADR-0051):** el cliente solo existe al guardarlo. Datos, libros elegidos (siguen En físico, sin historial), cuota, plan y fotos viven en el teléfono; «Guardar cliente» guarda todo de una vez (`save_new_customer`) y luego sube las fotos, con «Reintentar» si alguna falla. «Descartar» o salir con algo escrito pregunta «¿Salir sin guardar?». Pruebas: `tests/integration/save-new-customer.test.ts` y E2E de Nuevo cliente y Agregar libro.
 - **2026-11-23 (#63):** el selector de emoji trae todos los emojis (1.849, Unicode ≤ 14) con nombres en español (`emoji-catalog.json`, generado por `scripts/generate-emoji-catalog.mjs` desde emojibase-data). Lleva pestañas por categoría con Recientes primero (en este dispositivo) y el conteo, y se carga al abrirlo. Pruebas: `emoji-data.test.ts` y la story «Elegir y quitar».
 - Ronda 36, #84 (2026-11-23): Botones segmentados: si una etiqueta no cabe en su parte, pasa a dos líneas; ninguna opción se monta sobre otra.
+- Ronda 37, #90 (2026-11-23): el valor de cada abono de «Así quedan los abonos» se toca y se cambia; los demás se ajustan (BR-PAY-15b).
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E «Nuevo cliente (ficha viva)» (TESTING.md, flujo 3) pasa en móvil y escritorio.

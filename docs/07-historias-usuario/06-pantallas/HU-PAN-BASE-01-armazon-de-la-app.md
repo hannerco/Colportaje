@@ -43,6 +43,7 @@
 - **2026-11-22 (#24, #25):** el armazón suma el modo «tarea» (`task`): en el celular, Agregar al inventario y Devolver al líder van sin barra inferior y con el margen lateral de 16. La app usa toda la pantalla del iPhone (`viewport-fit=cover`) con los tokens `--safe-top` y `--safe-bottom`; una franja del color de la página tapa lo que se desplaza bajo la hora y la batería. Story «Pantallas/Armazón › Tarea en móvil».
 - Ronda 36, #84 (2026-11-23): en Ajustes el tema dice «Como el dispositivo» (no «teléfono») y no se monta sobre «Claro» en el celular.
 - Ronda 37, #92 (2026-11-23): marca en el armazón: logo en la barra lateral y en «Más», arranque, error, sin conexión e invitación a instalar; íconos, manifest, favicon e imagen para compartir.
+- Ronda 37, #89 (2026-11-23): en el celular, el aviso sale por encima del botón flotante «+» (antes lo tapaba y el toque no llegaba).
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E de HU-BASE-06 (lectura sin conexión) corre en Playwright en móvil y escritorio.

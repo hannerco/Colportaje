@@ -1,12 +1,14 @@
 import fc from 'fast-check';
-import { describe, expect, it } from 'vitest';
+import { assert, describe, expect, it } from 'vitest';
 import {
+  adjustPlanAmounts,
   buildPaymentPlan,
   nextDueDate,
   planBase,
   suggestFirstDueDate,
   withPaymentIds,
   type PlanFrequency,
+  type PlanItem,
 } from './payment-plan';
 import { addDays, localDate } from './time';
 
@@ -147,5 +149,59 @@ describe('payment-plan: base y ids', () => {
     expect(withPaymentIds([{ dueDate: today, amount: 1_000 }], () => `p${++n}`)).toEqual([
       { paymentId: 'p1', dueDate: today, amount: 1_000 },
     ]);
+  });
+});
+
+describe('valor de un abono cambiado a mano (#90, BR-PAY-15b)', () => {
+  const base = 300_000;
+  const plan = (amount: number) =>
+    buildPaymentPlan({ base, frequency: 'weekly', amount, firstDueDate: localDate('2026-12-05') });
+  const adjust = (items: PlanItem[], overrides: Record<number, number>) =>
+    adjustPlanAmounts({ base, frequency: 'weekly', amount: 50_000, items, overrides });
+  const total = (items: readonly PlanItem[]) => items.reduce((sum, item) => sum + item.amount, 0);
+
+  it('si el abono cambiado sube, se descuenta de los últimos y sigue sumando el saldo', () => {
+    const items = plan(50_000);
+    assert(items.ok);
+    const r = adjust(items.value, { 1: 100_000 });
+    assert(r.ok);
+    expect(r.value.map((i) => i.amount)).toEqual([50_000, 100_000, 50_000, 50_000, 50_000]);
+    expect(total(r.value)).toBe(base);
+  });
+
+  it('si baja, se agregan abonos al final con el valor de cada abono', () => {
+    const items = plan(50_000);
+    assert(items.ok);
+    const r = adjust(items.value, { 0: 20_000 });
+    assert(r.ok);
+    expect(r.value.map((i) => i.amount)).toEqual([20_000, 50_000, 50_000, 50_000, 50_000, 50_000, 30_000]);
+    expect(r.value[6]!.dueDate > r.value[5]!.dueDate).toBe(true);
+    expect(total(r.value)).toBe(base);
+  });
+
+  it('los abonos cambiados no se tocan al ajustar', () => {
+    const items = plan(50_000);
+    assert(items.ok);
+    const r = adjust(items.value, { 5: 120_000 });
+    assert(r.ok);
+    expect(r.value.filter((i) => i.amountChanged).map((i) => i.amount)).toEqual([120_000]);
+    expect(r.value.map((i) => i.amount)).toEqual([50_000, 50_000, 50_000, 30_000, 120_000]);
+    expect(total(r.value)).toBe(base);
+  });
+
+  it('si los cambiados pasan del saldo, no se puede', () => {
+    const items = plan(50_000);
+    assert(items.ok);
+    const r = adjust(items.value, { 0: 200_000, 1: 150_000 });
+    expect(!r.ok && r.error.code).toBe('PLAN_AMOUNTS_EXCEED');
+  });
+
+  it('como todo abono editado a mano, acepta cualquier entero mayor que cero (BR-PAY-15)', () => {
+    const items = plan(50_000);
+    assert(items.ok);
+    const r = adjust(items.value, { 0: 12_345 });
+    assert(r.ok);
+    expect(total(r.value)).toBe(base);
+    expect(adjust(items.value, { 0: 0 }).ok).toBe(false);
   });
 });

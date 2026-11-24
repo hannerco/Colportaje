@@ -5,6 +5,7 @@ import { Suspense, useEffect, useRef, useState } from 'react';
 import { copy } from '@/copy/es';
 import { mapsLinkFor, type CustomerLocation } from '@/domain/customer-location';
 import type { NewCustomerDraft } from '@/domain/new-customer';
+import type { COP } from '@/domain/money';
 import { suggestFirstDueDate, withPaymentIds } from '@/domain/payment-plan';
 import { todayBogota, type LocalDate } from '@/domain/time';
 import {
@@ -87,6 +88,8 @@ function NewCustomerRoute() {
   });
   /** Fechas del plan corregidas a mano (HU-PAN-CLI-05); se descartan si el plan se recalcula (I-08). */
   const [overrides, setOverrides] = useState<Record<number, LocalDate>>({});
+  /** Valores de abonos cambiados a mano (#90); también se descartan si el plan se recalcula. */
+  const [amountOverrides, setAmountOverrides] = useState<Record<number, COP>>({});
   const [leaveOpen, setLeaveOpen] = useState(false);
   const [leaveTo, setLeaveTo] = useState<string>(ROUTES.customers);
   const saved = useRef(false);
@@ -133,7 +136,7 @@ function NewCustomerRoute() {
   // El primer abono sugerido sigue a la frecuencia hasta que se cambia a mano (HU-ABO-03 R3).
   const firstDueDate =
     plan.firstDueDate ?? (plan.amount !== null ? suggestFirstDueDate(plan.frequency, today) : null);
-  const preview = planPreview({
+  const planInput = {
     debt,
     downPayment: down.amount,
     frequency: plan.frequency,
@@ -141,7 +144,10 @@ function NewCustomerRoute() {
     firstDueDate,
     today,
     overrides,
-  });
+  };
+  // Si después de cambiar valores baja el saldo (se quita un libro) y ya no caben, el plan vuelve a lo calculado.
+  const withAmounts = planPreview({ ...planInput, amountOverrides });
+  const preview = withAmounts.amountsExceed ? planPreview(planInput) : withAmounts;
   const downDateInFuture = down.paidOn > today;
 
   /** Sube las fotos del cliente ya guardado; devuelve lo que falló, para reintentar. */
@@ -316,8 +322,17 @@ function NewCustomerRoute() {
       onPlanChange={(patch) => {
         setPlan((current) => ({ ...current, ...patch }));
         setOverrides({});
+        setAmountOverrides({});
       }}
       onPlanDateChange={(index, date) => setOverrides((current) => ({ ...current, [index]: date }))}
+      onPlanAmountChange={(index, amount) =>
+        setAmountOverrides((current) => ({ ...current, [index]: amount }))
+      }
+      validatePlanAmount={(index, amount) => {
+        const next = planPreview({ ...planInput, amountOverrides: { ...amountOverrides, [index]: amount } });
+        if (next.amountsExceed) return copy.payments.changeAmount.exceed;
+        return next.items ? undefined : copy.payments.changeAmount.invalid;
+      }}
       today={today}
       preview={preview}
       excess={null}

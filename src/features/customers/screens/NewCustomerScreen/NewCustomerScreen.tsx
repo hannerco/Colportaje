@@ -84,6 +84,9 @@ export type NewCustomerScreenProps = {
   preview: PlanPreview;
   /** HU-PAN-CLI-05: corregir la fecha de un abono del plan en el calendario (solo ese, sin historial). */
   onPlanDateChange?: (index: number, date: LocalDate) => void;
+  /** #90: cambiar el valor de un abono del plan (los demás se ajustan) y por qué no sirve un valor. */
+  onPlanAmountChange?: (index: number, amount: COP) => void;
+  validatePlanAmount?: (index: number, amount: COP) => string | undefined;
   /** Hoy (calendario y avisos de fecha pasada). */
   today: LocalDate;
   /** BR-PAY-13: lo programado supera el saldo (franja). */
@@ -279,6 +282,8 @@ export function NewCustomerScreen(props: NewCustomerScreenProps) {
         preview={preview}
         today={props.today}
         onChangeDate={props.onPlanDateChange}
+        onChangeAmount={props.onPlanAmountChange}
+        validateAmount={props.validatePlanAmount}
       />
     </Island>
   );

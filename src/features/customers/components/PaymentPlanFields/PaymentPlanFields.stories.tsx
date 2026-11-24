@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
-import { expect } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { localDate } from '@/domain/time';
 import { planPreview } from '../../new-customer-form';
 import { PaymentPlanFields, type PaymentPlanValue } from './PaymentPlanFields';
@@ -9,11 +9,22 @@ const today = localDate('2026-11-17');
 
 function Demo({ debt, initial }: { debt: number; initial: PaymentPlanValue }) {
   const [value, setValue] = useState(initial);
+  const [amounts, setAmounts] = useState<Record<number, number>>({});
+  const input = { debt, downPayment: null, ...value, today };
   return (
     <PaymentPlanFields
       value={value}
-      onChange={(patch) => setValue((v) => ({ ...v, ...patch }))}
-      preview={planPreview({ debt, downPayment: null, ...value, today })}
+      onChange={(patch) => {
+        setValue((v) => ({ ...v, ...patch }));
+        setAmounts({});
+      }}
+      preview={planPreview({ ...input, amountOverrides: amounts })}
+      onChangeAmount={(i, amount) => setAmounts((current) => ({ ...current, [i]: amount }))}
+      validateAmount={(i, amount) =>
+        planPreview({ ...input, amountOverrides: { ...amounts, [i]: amount } }).amountsExceed
+          ? 'Con ese valor los abonos pasan del saldo.'
+          : undefined
+      }
     />
   );
 }
@@ -88,6 +99,30 @@ export const FechaPasada: Story = {
   args: { initial: { frequency: 'monthly', amount: 70000, firstDueDate: localDate('2026-11-01') } },
   play: async ({ canvasElement }) => {
     for (const frame of frames(canvasElement)) expect(frame.textContent).toContain('Esta fecha ya pasó');
+  },
+};
+
+/**
+ * #90: el valor de un abono se toca y se cambia; los demás se ajustan para seguir cubriendo el saldo ($140.000 en
+ * 4 de $35.000: el segundo pasa a $70.000 y quedan 3).
+ */
+export const CambiarValor: Story = {
+  name: 'Cambiar el valor de un abono',
+  play: async ({ canvasElement }) => {
+    const frame = frames(canvasElement)[0]!;
+    await userEvent.click(within(frame).getAllByRole('button', { name: /Cambiar valor/ })[1]!);
+    const dialog = await within(document.body).findByRole('alertdialog');
+    const input = within(dialog).getByRole('textbox');
+    await userEvent.clear(input);
+    await userEvent.type(input, '70000');
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Guardar valor' }));
+    await waitFor(() => expect(frame.querySelectorAll('li')).toHaveLength(3));
+    expect([...frame.querySelectorAll('li')].map((li) => li.textContent)).toEqual([
+      expect.stringContaining('35.000'),
+      expect.stringContaining('70.000'),
+      expect.stringContaining('35.000'),
+    ]);
+    expect(frame.textContent).toContain('Valor cambiado');
   },
 };
 
