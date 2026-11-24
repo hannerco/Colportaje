@@ -9,6 +9,7 @@ import {
   AddCopiesScreen,
   createAddBatch,
   prepareAddCopies,
+  rebaseAddBatch,
   useAddCatalog,
   useAddCopiesBatch,
 } from '@/features/inventory';
@@ -43,12 +44,14 @@ export default function AddToInventoryPage() {
       ),
     [all.data],
   );
-  const [batch, setBatch] = useState(() => createAddBatch([]));
-  // El lote se crea cuando llega el catálogo; mientras tanto es uno vacío sobre ningún título.
+  // #94: el lote se arma sobre los títulos que ya hay (si el catálogo estaba guardado, desde el primer cuadro). Antes
+  // nacía vacío y, con el catálogo ya en la caché, nunca se rearmaba: el «+» no sumaba. Si el catálogo llega o se
+  // actualiza después, el lote se pasa a la lista nueva conservando lo que ya se llevaba.
+  const [batch, setBatch] = useState(() => createAddBatch(titles));
   const [batchTitles, setBatchTitles] = useState(titles);
   if (batchTitles !== titles) {
     setBatchTitles(titles);
-    setBatch(createAddBatch(titles));
+    setBatch((current) => rebaseAddBatch(current, titles));
   }
   const { addCopiesBatch } = useAddCopiesBatch();
   const summary = batch.summary();

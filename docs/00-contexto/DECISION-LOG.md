@@ -603,6 +603,7 @@ El dueño probó la app y reportó 14 mejoras (issues #24 a #44). Decisiones:
 | 3 | Valor de un abono del plan | **"Debo poder modificar el valor del abono cuando agrego un cliente y se está creando el plan"**. [D] BR-PAY-15b: se toca el valor y los demás se ajustan para cubrir el saldo (#90) |
 | 4 | El «+» | **"Muchas veces el + deja de funcionar"**. Causa: en el celular el aviso (Deshacer) quedaba encima del botón flotante y se comía el toque. [D] El aviso sube por encima del botón (#89) |
 | 5 | Marca en la app | [D] Lo de «Marca e instalación» del lienzo, programado (#92): íconos de instalación (192, 512, maskable, monocromo, iPhone, atajos «Nuevo cliente» y «Cobrar»), favicon con variante oscura, imagen para compartir de 1200 × 630, logo en la barra lateral y en «Más», arranque, error y sin conexión, invitación a instalar (solo si el navegador lo permite; «Ahora no» la esconde en ese dispositivo), Ajustes › Acerca de con «Invitar a otro colportor» y recibo del Abibono (papel blanco también en oscuro; al imprimir, tinta negra) |
+| 6 | El «+» de Agregar | **"en «Agregar al inventario» el darle + a un libro. A veces funciona, a veces no"**. Causa: con el catálogo ya cargado, el lote nacía vacío y nunca se rearmaba. [D] El lote se arma con los títulos que ya hay y, si el catálogo cambia, conserva lo que se llevaba (#94) |
 
 ---
 

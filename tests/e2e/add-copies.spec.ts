@@ -51,3 +51,33 @@ test('sin conexión, «Agregar N» queda deshabilitado', async ({ page, context 
   await expect(page.getByRole('button', { name: 'Agregar 1' })).toHaveAttribute('aria-disabled', 'true');
   await context.setOffline(false);
 });
+
+test('#94: al volver a Agregar con el catálogo ya cargado, el «+» suma', async ({ page }) => {
+  const addAny = () =>
+    page.getByRole('button', { name: new RegExp(`^Agregar (un|otro) ejemplar de ${TITLE}`) }).first();
+  await page.goto('/inventario/agregar');
+  await addAny().waitFor();
+  // Se sale a Inventario y se vuelve sin recargar la página: el catálogo queda en la caché.
+  if (isMobile(page))
+    await page
+      .getByRole('link', { name: 'Cancelar' })
+      .or(page.getByRole('button', { name: 'Cancelar' }))
+      .first()
+      .click();
+  else
+    await page
+      .getByRole('navigation', { name: 'Principal' })
+      .getByRole('link', { name: 'Inventario' })
+      .first()
+      .click();
+  await expect(page).toHaveURL(/\/inventario$/);
+  // Móvil: el botón flotante «Agregar al inventario»; escritorio: «Agregar» en el encabezado.
+  await page
+    .getByRole('button', { name: isMobile(page) ? 'Agregar al inventario' : 'Agregar', exact: true })
+    .first()
+    .click();
+  await expect(page).toHaveURL(/\/inventario\/agregar$/);
+  await addAny().click();
+  if (isMobile(page)) await expect(page.getByRole('group', { name: `Cantidad de ${TITLE}` })).toBeVisible();
+  else await expect(page.getByRole('button', { name: 'Agregar 1' })).toBeVisible();
+});
