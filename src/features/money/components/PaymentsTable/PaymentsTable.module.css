@@ -121,11 +121,16 @@
   color: var(--color-text-2);
 }
 
+/* #98 (lienzo DineroMovil): el círculo lleva el color del estado, no solo el ícono. */
 .mobileIcon[data-status='collected'] {
+  border: 1px solid var(--color-ok-border);
+  background: var(--color-ok-bg);
   color: var(--color-ok);
 }
 
 .mobileIcon[data-status='delivered'] {
+  border: 1px solid var(--color-accent-border);
+  background: var(--color-accent-bg-2);
   color: var(--color-accent-text);
 }
 

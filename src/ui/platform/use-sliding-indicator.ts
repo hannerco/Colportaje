@@ -70,12 +70,13 @@ export function useSlidingIndicator(
       if (memory) remember(memory, box);
     };
     const previous = memory ? recall(memory) : undefined;
-    const target = measure();
     let frame: number;
-    if (previous && target && root.getAttribute('data-indicator') !== 'ready') {
-      // Nueva página (#78, «como en WhatsApp»): aparece donde estaba y se desliza hasta la opción activa. Hay que
-      // obligar al navegador a calcular la posición de antes; si no, ambas se aplican juntas y no hay movimiento.
+    if (previous && root.getAttribute('data-indicator') !== 'ready') {
+      // Nueva página (#78, «como en WhatsApp»): aparece donde estaba y se desliza hasta la opción activa. La posición de
+      // antes se pone y se calcula SIN transición, antes de medir nada (#98: medir primero dejaba calculada la esquina
+      // de arriba y el indicador salía de ahí); luego se activa la transición y se mueve a la opción activa.
       set(previous);
+      void root.getBoundingClientRect();
       root.setAttribute('data-indicator', 'ready');
       void root.getBoundingClientRect();
       place();
