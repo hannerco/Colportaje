@@ -76,15 +76,22 @@ export const MedioDePago: Story = {
   },
 };
 
-/** Tres opciones del mismo ancho. */
+/**
+ * Tres opciones del mismo ancho cuando caben (en escritorio, con cualquier letra). Si una no cabe en su parte (#84:
+ * celular angosto o letra más ancha), crece lo justo en vez de montarse sobre la vecina.
+ */
 export const Frecuencia: Story = {
   args: { label: 'Frecuencia', options: FREQUENCIES, value: 'biweekly' },
   play: async ({ canvasElement }) => {
     for (const frame of frames(canvasElement)) {
-      const widths = [...frame.querySelectorAll<HTMLElement>('[role="radio"]')].map((r) =>
-        Math.round(r.getBoundingClientRect().width),
-      );
-      expect(new Set(widths).size).toBe(1);
+      const radios = [...frame.querySelectorAll<HTMLElement>('[role="radio"]')];
+      const boxes = radios.map((r) => r.getBoundingClientRect());
+      boxes.forEach((box, i) => {
+        if (i > 0) expect(box.left).toBeGreaterThanOrEqual(boxes[i - 1]!.right - 0.5);
+      });
+      if (frame.getAttribute('aria-label')?.startsWith('Escritorio')) {
+        expect(new Set(boxes.map((b) => Math.round(b.width))).size).toBe(1);
+      }
     }
   },
 };
