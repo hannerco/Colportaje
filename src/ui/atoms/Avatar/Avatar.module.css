@@ -74,15 +74,7 @@
   object-fit: cover;
 }
 
-/* R4: marca; radio 9, y 12 desde 40 px. */
+/* R4 (ronda 37): la marca es el componente Logo como ícono de app; el cuadro y su radio (22,5 %) los pone el Logo. */
 .avatar[data-kind='brand'] {
-  --icon-size: calc(var(--avatar-side) * 0.5);
-
-  border-radius: var(--radius-brand);
-  background: var(--color-accent);
-  color: var(--color-on-accent);
-}
-
-.avatar[data-kind='brand']:is([data-size='lg'], [data-size='xl']) {
-  border-radius: var(--radius-md);
+  background: transparent;
 }

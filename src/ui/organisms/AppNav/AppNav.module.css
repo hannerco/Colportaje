@@ -275,6 +275,36 @@
   background: var(--color-neutral-border);
 }
 
+/* Ronda 37: cabecera de «Más» con la marca y la cuenta (la misma tarjeta de la barra lateral). */
+.sheetAccount {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-1);
+  padding: var(--space-3);
+  border: 1px solid var(--color-card-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-card);
+  box-shadow: var(--shadow-control);
+}
+
+.sheetAccountText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.sheetAccountApp {
+  color: var(--color-text-3);
+  font-size: var(--text-caption);
+}
+
+.sheetAccountName {
+  color: var(--color-text);
+  font-size: var(--text-body);
+  font-weight: var(--weight-strong);
+}
+
 .sheetTitle {
   margin: 0;
   padding: 0 var(--space-3);

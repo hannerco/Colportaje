@@ -4,3 +4,7 @@ export { APP_NAV_ITEMS, appNavItems, COMING_SOON, NAV_HREFS, navIdForPath, ROUTE
 export { ComingSoonRoute, ShellRoute, ShellScreenRoute } from './shell-route';
 export { ShellScreen, type ShellScreenProps } from './screens/ShellScreen';
 export { setAdminMode, useAdminMode } from './admin-mode';
+export { BootScreen } from './screens/BootScreen';
+export { FailureScreen, type FailureScreenProps } from './screens/FailureScreen';
+export { InstallGate, InstallPrompt, type InstallPromptProps } from './components/InstallPrompt';
+export { useInstallPrompt } from './install-prompt';

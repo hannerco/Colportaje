@@ -44,6 +44,8 @@ export type DepositDetailScreenProps = {
   onSaveNote: (note: string | null) => Promise<void>;
   /** Reabre con el motivo; si falla, que lance para que el diálogo siga abierto (el contenedor ya avisó). */
   onReopen: (reason: string) => Promise<void>;
+  /** Ronda 37: la página del recibo (ver, compartir, imprimir o guardar PDF). */
+  receiptHref?: string;
 };
 
 const t = copy.money.depositDetail;
@@ -147,17 +149,26 @@ function Detail(props: DepositDetailScreenProps & { deposit: DepositView }) {
               <HistoryTimeline items={history} />
             </Island>
           )}
-          {deposit.can.reopen && (
+          {(deposit.can.reopen || props.receiptHref) && (
             <PanelFooter
+              end={
+                props.receiptHref ? (
+                  <Button variant="secondary" icon="receipt" href={props.receiptHref}>
+                    {copy.money.depositReceipt.open}
+                  </Button>
+                ) : undefined
+              }
               start={
-                <Button
-                  variant="tertiary"
-                  icon="locked"
-                  state={isOnline ? 'normal' : 'disabled'}
-                  onClick={() => setReopening(true)}
-                >
-                  {t.reopen}
-                </Button>
+                deposit.can.reopen ? (
+                  <Button
+                    variant="tertiary"
+                    icon="locked"
+                    state={isOnline ? 'normal' : 'disabled'}
+                    onClick={() => setReopening(true)}
+                  >
+                    {t.reopen}
+                  </Button>
+                ) : undefined
               }
             />
           )}

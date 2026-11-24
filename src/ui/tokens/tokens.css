@@ -57,6 +57,10 @@
   --color-on-brand-2: rgba(255, 255, 255, 0.78);
   --color-on-brand-3: rgba(255, 255, 255, 0.6);
   --color-brand-glow: rgba(255, 255, 255, 0.1);
+  --color-paper: #ffffff;
+  --color-paper-ink: #1f1e1d;
+  --color-paper-ink-2: #5f5c57;
+  --color-paper-line: #e6e3de;
   /* Semánticos */
   --color-ok: #1d6b40; /* green */
   --color-ok-bg: rgba(29, 107, 64, 0.05); /* okBg */
@@ -129,6 +133,10 @@
   --color-on-brand-2: rgba(255, 255, 255, 0.78);
   --color-on-brand-3: rgba(255, 255, 255, 0.6);
   --color-brand-glow: rgba(255, 255, 255, 0.1);
+  --color-paper: #ffffff;
+  --color-paper-ink: #1f1e1d;
+  --color-paper-ink-2: #5f5c57;
+  --color-paper-line: #e6e3de;
   --color-ok: #7bcf9b;
   --color-ok-bg: rgba(123, 207, 155, 0.06);
   --color-ok-border: rgba(123, 207, 155, 0.38);
@@ -198,6 +206,10 @@
     --color-on-brand-2: rgba(255, 255, 255, 0.78);
     --color-on-brand-3: rgba(255, 255, 255, 0.6);
     --color-brand-glow: rgba(255, 255, 255, 0.1);
+    --color-paper: #ffffff;
+    --color-paper-ink: #1f1e1d;
+    --color-paper-ink-2: #5f5c57;
+    --color-paper-line: #e6e3de;
     --color-ok: #7bcf9b;
     --color-ok-bg: rgba(123, 207, 155, 0.06);
     --color-ok-border: rgba(123, 207, 155, 0.38);

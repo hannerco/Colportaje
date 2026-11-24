@@ -66,6 +66,7 @@ const GROUPS: { title: string; rows: Row[] }[] = [
     title: 'Objetos',
     rows: [
       { name: 'info', design: 'ayuda', lucide: 'info', usage: 'Ayuda e información' },
+      { name: 'share', design: 'compartir', lucide: 'share', usage: 'Compartir e invitar a otro colportor' },
       { name: 'books', design: 'libros', lucide: 'book-open', usage: 'Libros y títulos' },
       { name: 'person', design: 'persona', lucide: 'user', usage: 'Cliente sin foto' },
       { name: 'transfer', design: 'transferencia', lucide: 'smartphone', usage: 'Transferencia' },
@@ -106,7 +107,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Ícono de Lucide (licencia ISC) con nombre propio de Colportor: 46 íconos, siempre con trazo 1,8 sobre 24 × 24. Cambiar el ícono Lucide asignado a un nombre lo cambia en toda la web. Decorativo por defecto; con «etiqueta» se anuncia.',
+          'Ícono de Lucide (licencia ISC) con nombre propio de Colportor: 47 íconos, siempre con trazo 1,8 sobre 24 × 24. Cambiar el ícono Lucide asignado a un nombre lo cambia en toda la web. Decorativo por defecto; con «etiqueta» se anuncia.',
       },
     },
   },
@@ -224,16 +225,16 @@ function FullSet() {
   );
 }
 
-/** CA-5: exactamente 46 íconos, cada uno el de su nombre Lucide en la tabla. */
+/** CA-5: exactamente 47 íconos, cada uno el de su nombre Lucide en la tabla. */
 export const JuegoCompleto: Story = {
   name: 'Juego completo',
   render: () => <FullSet />,
   play: async ({ canvasElement }) => {
-    expect(ROWS).toHaveLength(46);
+    expect(ROWS).toHaveLength(47);
     expect(new Set(ROWS.map((r) => r.name))).toEqual(new Set(ICON_NAMES));
     for (const frame of frames(canvasElement)) {
       const cells = [...frame.querySelectorAll<HTMLElement>('[data-row]')];
-      expect(cells).toHaveLength(46);
+      expect(cells).toHaveLength(47);
       for (const cell of cells)
         expect(cell.querySelector('svg')!.classList.contains(`lucide-${cell.dataset.expected}`)).toBe(true);
     }

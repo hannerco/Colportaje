@@ -600,6 +600,9 @@ El dueño probó la app y reportó 14 mejoras (issues #24 a #44). Decisiones:
 |---|---|---|
 | 1 | Logo | **"El logo elegido es la opción 1, «La puerta abierta»"**. [D] Componente Logo en la biblioteca del lienzo (Lib-Logo): marca, ícono de app, logotipo y monocromo; versión reducida dibujada a píxel por debajo de 32 px. Frase fija de la marca: «Tu colportaje, en orden.» |
 | 2 | Entrar | [D] La pantalla de Entrar sigue la Propuesta 9 del lienzo con el componente Logo (#87). El resto de la marca (íconos de instalación, arranque, compartir, recibo) queda diseñado en el lienzo, pendiente de programar |
+| 3 | Valor de un abono del plan | **"Debo poder modificar el valor del abono cuando agrego un cliente y se está creando el plan"**. [D] BR-PAY-15b: se toca el valor y los demás se ajustan para cubrir el saldo (#90) |
+| 4 | El «+» | **"Muchas veces el + deja de funcionar"**. Causa: en el celular el aviso (Deshacer) quedaba encima del botón flotante y se comía el toque. [D] El aviso sube por encima del botón (#89) |
+| 5 | Marca en la app | [D] Lo de «Marca e instalación» del lienzo, programado (#92): íconos de instalación (192, 512, maskable, monocromo, iPhone, atajos «Nuevo cliente» y «Cobrar»), favicon con variante oscura, imagen para compartir de 1200 × 630, logo en la barra lateral y en «Más», arranque, error y sin conexión, invitación a instalar (solo si el navegador lo permite; «Ahora no» la esconde en ese dispositivo), Ajustes › Acerca de con «Invitar a otro colportor» y recibo del Abibono (papel blanco también en oscuro; al imprimir, tinta negra) |
 
 ---
 

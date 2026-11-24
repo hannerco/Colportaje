@@ -12,8 +12,15 @@ declare global {
 
 declare const self: ServiceWorkerGlobalScope;
 
+// Ronda 37: si se abre sin conexión una página que aún no está guardada, se muestra «Sin conexión» (con el logo) en
+// vez del error del navegador. La página se guarda al instalar el service worker.
+const OFFLINE_PAGE = '/sin-conexion';
+
 const serwist = new Serwist({
-  precacheEntries: self.__SW_MANIFEST,
+  precacheEntries: [...(self.__SW_MANIFEST ?? []), { url: OFFLINE_PAGE, revision: 'marca-1' }],
+  fallbacks: {
+    entries: [{ url: OFFLINE_PAGE, matcher: ({ request }) => request.destination === 'document' }],
+  },
   skipWaiting: true,
   clientsClaim: true,
   navigationPreload: true,

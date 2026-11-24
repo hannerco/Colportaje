@@ -4,6 +4,8 @@ import type { NavId } from '@/ui/organisms/AppNav';
 export const ROUTES = {
   home: '/',
   signIn: '/entrar',
+  /** Ronda 37: página que muestra el service worker si se abre sin conexión una página que no está guardada. */
+  offline: '/sin-conexion',
   /** Pública, sin sesión: la política de privacidad que pide Google. */
   privacy: '/privacidad',
   customers: '/clientes',
@@ -28,6 +30,8 @@ export const ROUTES = {
   /** Nuevo Abibono precargado (HU-PAN-DIN-04): hasta entonces es el armazón de la ruta de un Abibono. */
   newDeposit: '/dinero/abibonos/nuevo',
   deposit: (id: string) => `/dinero/abibonos/${encodeURIComponent(id)}`,
+  /** Ronda 37: recibo del Abibono entregado (ver, compartir, imprimir o guardar PDF). */
+  depositReceipt: (id: string) => `/dinero/abibonos/${encodeURIComponent(id)}/recibo`,
   /** La lista de Abibonos con uno abierto en la Ventana de detalle (escritorio, #29). */
   depositInList: (id: string) => `/dinero/abibonos?abibono=${encodeURIComponent(id)}`,
   /** Admin · Usuarios (ronda 34, #43). */

@@ -3,8 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, type ReactNode } from 'react';
 import { useSession } from '@/features/auth';
-import { AppShellProvider, ROUTES } from '@/features/shell';
-import { EmptyState } from '@/ui/organisms/EmptyState';
+import { AppShellProvider, BootScreen, InstallGate, ROUTES } from '@/features/shell';
 
 /** Rutas de la app (HU-PAN-BASE-01): exigen sesión y dan a cada pantalla la navegación y el estado de conexión. */
 export default function AppLayout({ children }: { children: ReactNode }) {
@@ -20,15 +19,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
   const navigate = useCallback((href: string) => router.push(href), [router]);
 
-  if (session.status !== 'signed_in')
-    return (
-      <main>
-        <EmptyState kind="loading" />
-      </main>
-    );
+  // Ronda 37: mientras se abre la sesión, la pantalla de arranque con el logo.
+  if (session.status !== 'signed_in') return <BootScreen />;
   return (
     <AppShellProvider pathname={pathname} navigate={navigate}>
       {children}
+      <InstallGate />
     </AppShellProvider>
   );
 }

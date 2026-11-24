@@ -220,6 +220,9 @@ export const HojaMasAbierta: Story = {
       await waitFor(() => expect(frame.querySelector('[role="dialog"]')).not.toBeNull());
       const sheet = frame.querySelector<HTMLElement>('[role="dialog"]')!;
       expect(labels(sheet, 'h3')).toEqual(['Trabajo', 'Dinero', 'Cuenta']);
+      // Ronda 37: la cabecera lleva la marca (Logo como ícono de app) y la cuenta.
+      expect(sheet.textContent).toContain('Juan Pablo Ríos');
+      expect(sheet.querySelector('path[d="M4 22V2h16v20h-2V4H6v18z"]')).not.toBeNull();
       for (const group of sheet.querySelectorAll('section'))
         expect(group.querySelectorAll('a').length).toBeLessThanOrEqual(4);
       expect(sheet.querySelector('[aria-current="page"]')!.textContent).toBe('Dinero');
