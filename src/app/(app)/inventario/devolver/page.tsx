@@ -10,7 +10,7 @@ import {
   ReturnToLeaderScreen,
   type ReturnSelection,
 } from '@/features/inventory';
-import { appErrorMessage } from '@/features/shared/app-error-message';
+import { errorToast } from '@/features/shared/error-report';
 import { ROUTES, ShellScreen, useAppShell } from '@/features/shell';
 import { newId } from '@/lib/ids';
 import { useToast } from '@/ui/molecules/Toast';
@@ -60,11 +60,11 @@ export default function ReturnToLeaderPage() {
     prepared.current = input;
     const result = await returnCopiesToLeader(input);
     if (!result.ok) {
-      toast.show({
-        message: appErrorMessage(result.error).message,
-        tone: 'error',
-        action: { label: copy.errors.retry, onAction: () => setSummaryOpen(true) },
-      });
+      toast.show(
+        errorToast(result.error, {
+          action: { label: copy.errors.retry, onAction: () => setSummaryOpen(true) },
+        }),
+      );
       // Que el diálogo no se cierre: la selección sigue ahí para reintentar con el mismo opId.
       throw new Error(result.error.code);
     }
@@ -80,7 +80,7 @@ export default function ReturnToLeaderPage() {
           for (const copyId of returnedCopyIds) {
             const undone = await undoReturnToLeader({ copyId, note: input.note });
             if (!undone.ok) {
-              toast.show({ message: appErrorMessage(undone.error).message, tone: 'error' });
+              toast.show(errorToast(undone.error));
               return;
             }
           }

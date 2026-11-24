@@ -13,7 +13,7 @@ import {
   useAddCatalog,
   useAddCopiesBatch,
 } from '@/features/inventory';
-import { appErrorMessage } from '@/features/shared/app-error-message';
+import { errorToast } from '@/features/shared/error-report';
 import { ROUTES, ShellScreen, useAppShell } from '@/features/shell';
 import { systemClock } from '@/lib/clock';
 import { useToast } from '@/ui/molecules/Toast';
@@ -67,11 +67,11 @@ export default function AddToInventoryPage() {
     prepared.current = input;
     const result = await addCopiesBatch(input);
     if (!result.ok) {
-      toast.show({
-        message: appErrorMessage(result.error).message,
-        tone: 'error',
-        action: { label: copy.errors.retry, onAction: () => setSummaryOpen(true) },
-      });
+      toast.show(
+        errorToast(result.error, {
+          action: { label: copy.errors.retry, onAction: () => setSummaryOpen(true) },
+        }),
+      );
       // Que el diálogo no se cierre: el lote sigue ahí para reintentar con los mismos identificadores.
       throw new Error(result.error.code);
     }

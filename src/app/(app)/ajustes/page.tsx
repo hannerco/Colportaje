@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { copy } from '@/copy/es';
 import { useCurrentProfile, useSignOut, useUpdateTimeFormat } from '@/features/auth';
 import { SettingsScreen } from '@/features/settings';
-import { appErrorMessage } from '@/features/shared/app-error-message';
+import { errorToast } from '@/features/shared/error-report';
 import { ROUTES, setAdminMode, useAdminMode, useAppShell } from '@/features/shell';
 import { useState } from 'react';
 import packageJson from '../../../../package.json';
@@ -23,7 +23,7 @@ export default function SettingsPage() {
   const adminMode = useAdminMode();
 
   const fail = (error: unknown): never => {
-    toast.show({ message: appErrorMessage(error).message, tone: 'error' });
+    toast.show(errorToast(error));
     throw error instanceof Error ? error : new Error('FAILED');
   };
 

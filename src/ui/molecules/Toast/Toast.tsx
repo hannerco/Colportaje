@@ -23,6 +23,8 @@ export type ToastAction = { label: string; onAction: () => void };
 export type ToastProps = {
   /** Qué pasó, en pasado (`mensaje`). */
   message: string;
+  /** #104: una segunda línea más pequeña, p. ej. el código y la referencia de un error para reportarlo. */
+  detail?: string;
   /** Botón del aviso (`accion`), p. ej. «Deshacer» o «Reintentar». Sin acción no hay botón. */
   action?: ToastAction;
   /** Tipo (`tipo`): cambia el ícono (éxito ✓, error ⚠; información sin ícono). */
@@ -53,6 +55,7 @@ const ICON = { success: 'check', error: 'alert' } as const;
  */
 export function Toast({
   message,
+  detail,
   action,
   tone = 'success',
   durationMs,
@@ -112,7 +115,10 @@ export function Toast({
       onBlur={handleBlur}
     >
       {icon && <Icon name={icon} size={18} tone="current" className={styles.icon} />}
-      <span className={styles.message}>{message}</span>
+      <span className={styles.message}>
+        {message}
+        {detail && <span className={styles.detail}>{detail}</span>}
+      </span>
       {action && (
         <button type="button" className={styles.action} onClick={handleAction}>
           {action.label}

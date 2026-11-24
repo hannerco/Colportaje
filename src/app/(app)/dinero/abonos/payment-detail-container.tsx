@@ -15,7 +15,7 @@ import {
   useUndoCollectPayment,
   type PaymentDetailForm,
 } from '@/features/payments';
-import { appErrorMessage } from '@/features/shared/app-error-message';
+import { errorToast } from '@/features/shared/error-report';
 import { ROUTES, useAppShell } from '@/features/shell';
 import { systemClock } from '@/lib/clock';
 import { useToast } from '@/ui/molecules/Toast';
@@ -49,8 +49,7 @@ export function PaymentDetailContainer({ paymentId: id, window, initialForm = nu
   const { reschedulePayment } = useReschedulePayment();
   const { undoCollectPayment } = useUndoCollectPayment();
 
-  const showError = (error: unknown) =>
-    toast.show({ message: appErrorMessage(error).message, tone: 'error' });
+  const showError = (error: unknown) => toast.show(errorToast(error));
   const rows = detail.data ? [...detail.data.payments, ...detail.data.canceledPayments] : undefined;
   const payment = rows?.find((p) => p.paymentId === id);
   const customer = detail.data;

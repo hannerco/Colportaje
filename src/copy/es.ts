@@ -1372,6 +1372,8 @@ export const copy = {
     /** Un código sin texto (no debería pasar: lo vigila la prueba). */
     unknown: 'Algo salió mal. Vuelve a intentarlo.',
     retry: 'Reintentar',
+    /** #104: para reportar un error (el código dice qué fue; la referencia, cuál de todos). */
+    reference: (code: string, ref: string) => `Código ${code} · ref. ${ref}`,
     codes: {
       // Comunes (00-REGLAS-COMUNES §3)
       OFFLINE: 'Sin conexión: puedes consultar, pero no registrar.',

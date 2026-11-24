@@ -22,7 +22,7 @@ import {
   type PaymentPlanValue,
 } from '@/features/customers';
 import { DEFAULT_PAY_METHOD } from '@/features/payments';
-import { appErrorMessage } from '@/features/shared/app-error-message';
+import { errorToast } from '@/features/shared/error-report';
 import { ROUTES, ShellScreen, useAppShell } from '@/features/shell';
 import { systemClock } from '@/lib/clock';
 import { newId } from '@/lib/ids';
@@ -101,8 +101,7 @@ function NewCustomerRoute() {
   const { updateInvoice } = useUpdateInvoice();
   const rememberLastChosenPoint = useRememberLastChosenPoint();
 
-  const showError = (error: unknown) =>
-    toast.show({ message: appErrorMessage(error).message, tone: 'error' });
+  const showError = (error: unknown) => toast.show(errorToast(error));
 
   const hasName = name.trim() !== '';
   const dirty =

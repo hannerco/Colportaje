@@ -10,6 +10,8 @@ export type FailureScreenProps = {
   onRetry: () => void;
   /** Solo en `error`: un enlace para volver al inicio. */
   homeHref?: string;
+  /** #104: código y referencia del error, para reportarlo. */
+  reference?: string;
 };
 
 const t = copy.app.failure;
@@ -18,7 +20,7 @@ const t = copy.app.failure;
  * Página de error y «sin conexión» del arranque (lienzo «Marca · arranque», ronda 37): logo pequeño arriba, un mensaje
  * corto y una sola acción principal. Fuera del armazón (sin navegación): puede fallar antes de que exista.
  */
-export function FailureScreen({ kind, onRetry, homeHref }: FailureScreenProps) {
+export function FailureScreen({ kind, onRetry, homeHref, reference }: FailureScreenProps) {
   const error = kind === 'error';
   return (
     <main className={styles.page}>
@@ -29,6 +31,7 @@ export function FailureScreen({ kind, onRetry, homeHref }: FailureScreenProps) {
         <Icon name={error ? 'alert' : 'offline'} size={40} tone="current" className={styles.icon} />
         <h1 className={styles.title}>{error ? t.errorTitle : t.offlineTitle}</h1>
         <p className={styles.message}>{error ? t.errorMessage : t.offlineMessage}</p>
+        {reference && <p className={styles.reference}>{reference}</p>}
         <div className={styles.actions}>
           <Button width="full" onClick={onRetry}>
             {t.retry}

@@ -1,5 +1,7 @@
 'use client';
 
+import { GlobalErrorReporter } from '@/features/shared/global-error-reporter';
+
 import { SerwistProvider } from '@serwist/turbopack/react';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { useEffect, useState, type ReactNode } from 'react';
@@ -33,7 +35,10 @@ export function Providers({ children }: { children: ReactNode }) {
       >
         <RepositoriesProvider repositories={repositories}>
           {/* HU-UI-15: el aviso «Deshacer» dura `undo.toastSeconds` (I-34). */}
-          <ToastProvider durationMs={businessConfig.undo.toastSeconds * 1000}>{children}</ToastProvider>
+          <ToastProvider durationMs={businessConfig.undo.toastSeconds * 1000}>
+            <GlobalErrorReporter />
+            {children}
+          </ToastProvider>
         </RepositoriesProvider>
       </PersistQueryClientProvider>
     </SerwistProvider>
