@@ -20,7 +20,7 @@ test('entrar con correo y contraseña lleva a Clientes; una contraseña equivoca
   await createUser(admin, { email, fullName: 'Entrar E2E', password });
 
   await page.goto('/entrar');
-  await expect(page.getByRole('heading', { name: 'Colportor' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Entrar' })).toBeVisible();
   const submit = page.getByRole('button', { name: 'Entrar' });
   await expect(submit).toHaveAttribute('aria-disabled', 'true');
 
