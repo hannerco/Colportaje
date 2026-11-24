@@ -259,7 +259,7 @@ export const AnadirRecibo: Story = {
   play: async ({ canvasElement, args }) => {
     const frame = frames(canvasElement)[0]!;
     const file = new File(['x'], 'recibo.png', { type: 'image/png' });
-    await userEvent.upload(frame.querySelector<HTMLInputElement>('[data-testid="receipt-input"]')!, file);
+    await userEvent.upload(frame.querySelector<HTMLInputElement>('[data-testid="photo-input"]')!, file);
     await waitFor(() => expect(args.onAddReceipt).toHaveBeenCalled());
   },
 };

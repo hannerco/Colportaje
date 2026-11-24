@@ -10,7 +10,7 @@ import type { LocalDate } from '@/domain/time';
 import type { DiscardSummary } from '@/repositories';
 import { Button } from '@/ui/atoms/Button';
 import { Field } from '@/ui/atoms/Field';
-import { DateField } from '@/ui/molecules/DateField';
+import { DateField } from '@/ui/organisms/DateField';
 import { Banner } from '@/ui/molecules/Banner';
 import { SegmentedControl } from '@/ui/molecules/SegmentedControl';
 import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
@@ -19,7 +19,7 @@ import { usePlatform } from '@/ui/platform';
 import { CustomerAccountSummary } from '../../components/CustomerAccountSummary';
 import { CustomerLocationBlock } from '../../components/CustomerLocationBlock';
 import { EmojiAvatar } from '../../components/EmojiAvatar';
-import { InfoPhotoStrip } from '../../components/InfoPhotoStrip';
+import { PhotoStrip } from '@/ui/organisms/PhotoStrip';
 import { InvoiceBlock, type InvoiceBlockProps } from '../../components/InvoiceBlock';
 import { PaymentPlanFields, type PaymentPlanValue } from '../../components/PaymentPlanFields';
 import { AddBookButton, SoldBookList } from '../../components/SoldBookList';
@@ -203,8 +203,9 @@ export function NewCustomerScreen(props: NewCustomerScreenProps) {
       />
       <div className={styles.images}>
         <p className={styles.imagesLabel}>{t.info.images}</p>
-        <InfoPhotoStrip
+        <PhotoStrip
           photos={props.photos}
+          addLabel={copy.customers.photos.add}
           onAdd={props.onAddPhoto}
           onReplace={props.onReplacePhoto}
           onRemove={props.onRemovePhoto}

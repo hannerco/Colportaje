@@ -14,6 +14,7 @@ import { DetailWindow, useDetailWindow, type DetailWindowProps } from '@/ui/orga
 import { EmptyState } from '@/ui/organisms/EmptyState';
 import { Island } from '@/ui/organisms/Island';
 import { DetailSkeleton } from '@/ui/templates/DetailTemplate';
+import { PhotoStrip } from '@/ui/organisms/PhotoStrip';
 import {
   AmountsReadOnly,
   BalanceLines,
@@ -25,7 +26,6 @@ import {
   PanelIsland,
   depositCounts,
 } from '../../components/DepositPanel';
-import { ReceiptPhotos } from '../../components/ReceiptPhotos';
 import styles from './DepositDetailScreen.module.css';
 
 export type DepositDetailScreenProps = {
@@ -40,6 +40,8 @@ export type DepositDetailScreenProps = {
   paymentHref: (paymentId: string) => string;
   /** Sube otro recibo (se pueden añadir, no quitar: BR-DEP-12, BR-PHO-03); devuelve si se subió. */
   onAddReceipt: (file: File) => Promise<boolean>;
+  /** Trae la foto completa del recibo para verla en grande. */
+  receiptUrl?: (photoId: string) => Promise<string>;
   /** Guarda la nota (`null` = sin nota); si falla, que lance (el contenedor ya avisó). */
   onSaveNote: (note: string | null) => Promise<void>;
   /** Reabre con el motivo; si falla, que lance para que el diálogo siga abierto (el contenedor ya avisó). */
@@ -122,8 +124,11 @@ function Detail(props: DepositDetailScreenProps & { deposit: DepositView }) {
                   <AmountsReadOnly cash={deposit.cash} transfer={deposit.transfer} />
                 </PanelIsland>
                 <PanelIsland title={copy.money.depositPanel.receipt} icon="receipt">
-                  <ReceiptPhotos
+                  <PhotoStrip
                     photos={deposit.receipts}
+                    photoLabel={copy.money.depositEditor.receiptPhoto}
+                    addLabel={copy.money.depositEditor.addPhoto}
+                    fullUrl={props.receiptUrl}
                     onAdd={props.onAddReceipt}
                     disabledReason={isOnline ? null : copy.ui.empty.needsConnection}
                   />

@@ -324,12 +324,13 @@ export const CambiarFechaDeRecibido: Story = {
   play: async ({ canvasElement, args }) => {
     await userEvent.click(button(frames(canvasElement)[0]!, 'Editar Recibido el, 20/10/2026')!);
     const dialog = await waitFor(() => lastDialog(canvasElement));
-    const yesterday = [...dialog.querySelectorAll<HTMLElement>('label')].find((l) =>
-      l.textContent?.includes('Ayer'),
+    // La fecha de recibido se elige en la misma ventana de calendario de toda la app.
+    const day = [...dialog.querySelectorAll<HTMLButtonElement>('button')].find((b) =>
+      (b.getAttribute('aria-label') ?? '').startsWith('19 de octubre de 2026'),
     );
-    await userEvent.click(yesterday!);
+    await userEvent.click(day!);
     await userEvent.click(button(dialog, 'Guardar fecha')!);
-    await waitFor(() => expect(args.onChangeReceived).toHaveBeenCalledWith('2026-11-16'));
+    await waitFor(() => expect(args.onChangeReceived).toHaveBeenCalledWith('2026-10-19'));
   },
 };
 

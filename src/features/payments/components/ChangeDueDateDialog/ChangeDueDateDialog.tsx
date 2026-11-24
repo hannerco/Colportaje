@@ -3,12 +3,10 @@
 import { useRef, useState } from 'react';
 import { copy } from '@/copy/es';
 import { rescheduleConfirmLimit } from '@/domain/reschedule';
-import { formatDate, isPastDate, type LocalDate } from '@/domain/time';
+import { formatDate, type LocalDate } from '@/domain/time';
 import { Field } from '@/ui/atoms/Field';
-import { Icon } from '@/ui/icons';
 import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
-import { DatePickerCalendar } from '@/ui/molecules/DatePickerCalendar';
-import styles from './ChangeDueDateDialog.module.css';
+import { DatePickerDialog } from '@/ui/organisms/DatePickerDialog';
 
 export type ChangeDueDateDialogProps = {
   open: boolean;
@@ -40,8 +38,8 @@ export type ChangeDueDateDialogProps = {
 const t = copy.payments.changeDate;
 
 /**
- * Cambiar la fecha de un abono (HU-PAN-CLI-05, diseño «6 · Cambiar fecha de abono»): el calendario dentro del Diálogo
- * de la biblioteca (centrado en escritorio, hoja en móvil), «Cancelar» y «Guardar fecha». Una fecha pasada avisa «Esta
+ * Cambiar la fecha de un abono (HU-PAN-CLI-05, diseño «6 · Cambiar fecha de abono»): la ventana «Elegir fecha» de la
+ * biblioteca (centrada en escritorio, hoja en móvil), «Cancelar» y «Guardar fecha». Una fecha pasada avisa «Esta
  * fecha ya pasó» y se permite (I-33). Solo se mueve ese abono (I-08). Pieza del módulo.
  */
 export function ChangeDueDateDialog({
@@ -57,45 +55,34 @@ export function ChangeDueDateDialog({
   subtitle,
   onSave,
 }: ChangeDueDateDialogProps) {
-  const [selected, setSelected] = useState<LocalDate>(current);
   const [confirming, setConfirming] = useState<LocalDate | null>(null);
   const [note, setNote] = useState('');
   // La confirmación se abre al cerrarse el primer diálogo: con esto, ese cierre no avisa «terminado» a quien lo usa.
   const goingToConfirm = useRef(false);
   const title = withNote ? t.extendTitle : t.title(index, total);
-  const unchanged = selected === current;
-  const needsConfirmation = mode === 'reschedule' && selected > rescheduleConfirmLimit(today);
 
   return (
     <>
-      <ConfirmDialog
+      <DatePickerDialog
         open={open && confirming === null}
         onOpenChange={(next) => {
-          if (next) {
-            setSelected(current);
-            setNote('');
-          }
+          if (next) setNote('');
           if (!next && goingToConfirm.current) return;
           onOpenChange(next);
         }}
         title={title}
-        message={
-          <span className={styles.message}>
-            {subtitle && <span>{subtitle}</span>}
-            {t.newDate(formatDate(selected))}
-            {isPastDate(selected, today) && (
-              <span className={styles.past}>
-                <Icon name="alert" size={16} tone="current" />
-                {t.past}
-              </span>
-            )}
-          </span>
-        }
+        value={current}
+        today={today}
+        marked={otherDates}
+        // Prórroga: solo una fecha posterior a la actual (HU-ABO-05 R2).
+        isDisabled={mode === 'reschedule' ? (date) => date <= current : undefined}
+        subtitle={subtitle}
+        warnPast
         confirmLabel={t.save}
         cancelLabel={t.cancel}
-        onConfirm={async () => {
-          if (unchanged) return;
-          if (needsConfirmation) {
+        onConfirm={async (selected) => {
+          if (selected === current) return;
+          if (mode === 'reschedule' && selected > rescheduleConfirmLimit(today)) {
             goingToConfirm.current = true;
             setConfirming(selected);
             return;
@@ -103,15 +90,6 @@ export function ChangeDueDateDialog({
           await onSave(selected, false, withNote ? note.trim() || undefined : undefined);
         }}
       >
-        <DatePickerCalendar
-          label={title}
-          value={selected}
-          onChange={setSelected}
-          today={today}
-          marked={otherDates}
-          // Prórroga: solo una fecha posterior a la actual (HU-ABO-05 R2).
-          isDisabled={mode === 'reschedule' ? (date) => date <= current : undefined}
-        />
         {withNote && (
           <Field
             kind="textarea"
@@ -121,7 +99,7 @@ export function ChangeDueDateDialog({
             onChange={setNote}
           />
         )}
-      </ConfirmDialog>
+      </DatePickerDialog>
       <ConfirmDialog
         open={confirming !== null}
         onOpenChange={(next) => {

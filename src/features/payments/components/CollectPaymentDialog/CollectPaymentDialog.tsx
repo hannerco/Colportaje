@@ -8,7 +8,7 @@ import type { PayMethod } from '@/domain/payment';
 import { formatDate, type LocalDate } from '@/domain/time';
 import { Choice, ChoiceGroup } from '@/ui/atoms/Choice';
 import { Field } from '@/ui/atoms/Field';
-import { DateField } from '@/ui/molecules/DateField';
+import { DateField } from '@/ui/organisms/DateField';
 import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
 import styles from './CollectPaymentDialog.module.css';
 

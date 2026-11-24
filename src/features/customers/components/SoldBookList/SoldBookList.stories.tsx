@@ -49,7 +49,7 @@ export const CambiarFechaDeVenta: Story = {
     const dialog = await within(document.body).findByRole('alertdialog');
     const days = within(dialog).getAllByRole('button', { name: /20/ });
     await userEvent.click(days[0]!);
-    await userEvent.click(within(dialog).getByRole('button', { name: 'Guardar' }));
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Guardar fecha' }));
     await waitFor(() => expect(args.onChangeSoldOn).toHaveBeenCalled());
   },
 };

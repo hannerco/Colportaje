@@ -11,6 +11,7 @@ import {
   useReopenDeposit,
   useUpdateDepositNote,
 } from '@/features/money';
+import { usePhotoUrlResolver } from '@/features/customers';
 import { AppFailure } from '@/features/shared/app-failure';
 import { errorToast } from '@/features/shared/error-report';
 import { ROUTES, ShellScreenRoute, useAppShell } from '@/features/shell';
@@ -41,6 +42,7 @@ export function DepositDetailContainer({
   const { updateDepositNote } = useUpdateDepositNote();
   const { reopenDeposit } = useReopenDeposit();
   const { addDepositReceipt } = useAddDepositReceipt();
+  const photoUrl = usePhotoUrlResolver();
 
   const showError = (error: unknown) => toast.show(errorToast(error));
 
@@ -64,6 +66,7 @@ export function DepositDetailContainer({
         }
       }
       paymentHref={ROUTES.payment}
+      receiptUrl={photoUrl}
       onAddReceipt={async (file) => {
         const result = await addDepositReceipt({ depositId, photoId: newId(), file });
         if (!result.ok) {

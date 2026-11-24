@@ -7,7 +7,7 @@ import type { PlanFrequency } from '@/domain/payment-plan';
 import { formatDate, type LocalDate } from '@/domain/time';
 import { ChangeDueDateDialog } from '@/features/payments/components/ChangeDueDateDialog';
 import { Field } from '@/ui/atoms/Field';
-import { DateField } from '@/ui/molecules/DateField';
+import { DateField } from '@/ui/organisms/DateField';
 import { StatusPill } from '@/ui/atoms/StatusPill';
 import { Icon } from '@/ui/icons';
 import { SegmentedControl } from '@/ui/molecules/SegmentedControl';

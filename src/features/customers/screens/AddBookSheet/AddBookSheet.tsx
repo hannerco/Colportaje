@@ -7,7 +7,7 @@ import type { LocalDate } from '@/domain/time';
 import { Avatar } from '@/ui/atoms/Avatar';
 import { Button } from '@/ui/atoms/Button';
 import { Field } from '@/ui/atoms/Field';
-import { DateField } from '@/ui/molecules/DateField';
+import { DateField } from '@/ui/organisms/DateField';
 import { SearchBox } from '@/ui/molecules/SearchBox';
 import { DetailWindow } from '@/ui/organisms/DetailWindow';
 import { EmptyState } from '@/ui/organisms/EmptyState';

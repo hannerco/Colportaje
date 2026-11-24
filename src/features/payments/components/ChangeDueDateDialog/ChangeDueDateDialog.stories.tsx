@@ -77,7 +77,7 @@ export const CalendarioAbierto: Story = {
     for (const frame of frames(canvasElement)) expect(frame.textContent).toContain('Abono 2 de 4');
     const dialog = lastDialog(canvasElement);
     await userEvent.click(dialog.querySelector<HTMLButtonElement>('[data-date="2026-12-05"]')!);
-    expect(dialog.textContent).toContain('Nueva fecha: 05/12/2026');
+    expect(dialog.textContent).toContain('Fecha elegida: 05/12/2026');
     await userEvent.click(button(dialog, 'Guardar fecha')!);
     expect(args.onSave).toHaveBeenCalledWith('2026-12-05', false);
   },

@@ -16,6 +16,7 @@ import {
   type DepositEditorScreenProps,
   type DepositEditorValues,
 } from '@/features/money';
+import { usePhotoUrlResolver } from '@/features/customers';
 import { AppFailure } from '@/features/shared/app-failure';
 import { errorToast } from '@/features/shared/error-report';
 import { ROUTES, ShellScreenRoute, useAppShell } from '@/features/shell';
@@ -54,6 +55,7 @@ export function DepositEditorContainer({
   const { addDepositReceipt } = useAddDepositReceipt();
   const { deleteDepositReceipt } = useDeleteDepositReceipt();
   const { deleteDepositDraft } = useDeleteDepositDraft();
+  const photoUrl = usePhotoUrlResolver();
   const [staged, setStaged] = useState<StagedWithPreview[]>([]);
 
   const showError = (error: unknown) => toast.show(errorToast(error));
@@ -137,6 +139,7 @@ export function DepositEditorContainer({
         }
       }
       canDelete={view?.can.delete}
+      receiptUrl={photoUrl}
       onAddReceipt={async (file) => {
         const photoId = newId();
         const result = await addDepositReceipt({ depositId: id, photoId, file });

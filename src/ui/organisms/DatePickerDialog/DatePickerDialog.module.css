@@ -1,0 +1,19 @@
+/* Elegir fecha: contexto, fecha elegida y avisos, uno debajo del otro. */
+.message {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.selected {
+  color: var(--color-text);
+  font-weight: var(--weight-strong);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.note {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--color-bad);
+}

@@ -14,6 +14,7 @@ import type { BannerProps } from '@/ui/molecules/Banner';
 import { DataList, DataRow } from '@/ui/molecules/DataRow';
 import { Menu } from '@/ui/molecules/Menu';
 import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
+import { PhotoStrip } from '@/ui/organisms/PhotoStrip';
 import { DetailWindow, type DetailWindowProps } from '@/ui/organisms/DetailWindow';
 import { EmptyState } from '@/ui/organisms/EmptyState';
 import { Island } from '@/ui/organisms/Island';
@@ -21,7 +22,6 @@ import { DetailSkeleton, DetailTemplate } from '@/ui/templates/DetailTemplate';
 import { CustomerAccountSummary } from '../../components/CustomerAccountSummary';
 import { CustomerLocationBlock } from '../../components/CustomerLocationBlock';
 import { EmojiAvatar } from '../../components/EmojiAvatar';
-import { InfoPhotoStrip } from '../../components/InfoPhotoStrip';
 import { EditCustomerDialog } from '../../components/EditCustomerDialog';
 import { InvoiceBlock, type InvoiceBlockProps } from '../../components/InvoiceBlock';
 import type { CustomerPatch } from '@/domain/customer-data';
@@ -74,6 +74,9 @@ export type CustomerDetailScreenProps = {
   onRemoveLocation?: () => void;
   /** «Agregar imagen» (HU-CLI-07). Sin función no hay botón. */
   onAddPhoto?: (file: File) => Promise<void> | void;
+  /** Cambiar o quitar una imagen desde el visor (revisión 2026-11-24: como en las facturas). */
+  onReplacePhoto?: (photoId: string, file: File) => Promise<void> | void;
+  onRemovePhoto?: (photoId: string) => Promise<void> | void;
   /** #99: trae la foto completa (imágenes y facturas) para verla en grande. */
   photoUrl?: (photoId: string) => Promise<string>;
   /**
@@ -143,6 +146,8 @@ export function CustomerDetailScreen({
   onChooseLocation,
   onRemoveLocation,
   onAddPhoto,
+  onReplacePhoto,
+  onRemovePhoto,
   invoiceActions,
   onEditData,
   onCollect,
@@ -363,9 +368,12 @@ export function CustomerDetailScreen({
                 label={t.data.images}
                 divider={Boolean(detail.info)}
                 value={
-                  <InfoPhotoStrip
+                  <PhotoStrip
                     photos={detail.infoPhotos}
+                    addLabel={copy.customers.photos.add}
                     onAdd={detail.archived ? undefined : onAddPhoto}
+                    onReplace={detail.archived ? undefined : onReplacePhoto}
+                    onRemove={detail.archived ? undefined : onRemovePhoto}
                     disabledReason={isOnline ? null : copy.ui.empty.needsConnection}
                     fullUrl={photoUrl}
                   />
@@ -398,17 +406,13 @@ export function CustomerDetailScreen({
                           .join(' · ')}
                       </span>
                       {invoice.photos.length > 0 && (
-                        <span className={styles.photos}>
-                          {invoice.photos.map((photo, i) => (
-                            // eslint-disable-next-line @next/next/no-img-element -- miniatura firmada de Storage.
-                            <img
-                              key={photo.photoId}
-                              className={styles.photo}
-                              src={photo.thumbUrl}
-                              alt={t.data.invoicePhoto(invoice.date ? formatDate(invoice.date) : '', i + 1)}
-                            />
-                          ))}
-                        </span>
+                        <PhotoStrip
+                          photos={invoice.photos}
+                          photoLabel={(n) =>
+                            t.data.invoicePhoto(invoice.date ? formatDate(invoice.date) : '', n)
+                          }
+                          fullUrl={photoUrl}
+                        />
                       )}
                     </span>
                   }

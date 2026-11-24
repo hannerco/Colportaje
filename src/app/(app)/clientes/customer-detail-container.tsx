@@ -6,6 +6,7 @@ import {
   CustomerDetailScreen,
   mapTiles,
   useAddCustomerInfoPhoto,
+  useDeleteCustomerInfoPhoto,
   useAddInvoicePhoto,
   useCreateInvoiceWithPhoto,
   useUpdateInvoice,
@@ -67,6 +68,7 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
   const { setCustomerLocation } = useSetCustomerLocation();
   const { clearCustomerLocation } = useClearCustomerLocation();
   const { addCustomerInfoPhoto } = useAddCustomerInfoPhoto();
+  const { deleteCustomerInfoPhoto } = useDeleteCustomerInfoPhoto();
   const { createInvoiceWithPhoto } = useCreateInvoiceWithPhoto();
   const { addInvoicePhoto } = useAddInvoicePhoto();
   const { updateInvoice } = useUpdateInvoice();
@@ -145,6 +147,19 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
         onAddPhoto={async (file) => {
           const result = await addCustomerInfoPhoto({ photoId: newId(), customerId, file });
           if (!result.ok) showError(result.error);
+        }}
+        onReplacePhoto={async (photoId, file) => {
+          // Primero la nueva y luego quitar la anterior (BR-PHO-03), igual que en las facturas.
+          const added = await addCustomerInfoPhoto({ photoId: newId(), customerId, file });
+          if (!added.ok) return showError(added.error);
+          const removed = await deleteCustomerInfoPhoto(photoId);
+          if (!removed.ok) return showError(removed.error);
+          toast.show({ message: copy.customers.photos.replaced, tone: 'success' });
+        }}
+        onRemovePhoto={async (photoId) => {
+          const removed = await deleteCustomerInfoPhoto(photoId);
+          if (!removed.ok) return showError(removed.error);
+          toast.show({ message: copy.customers.photos.removed, tone: 'success' });
         }}
         invoiceActions={{
           onCreate: async (file) => {

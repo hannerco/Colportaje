@@ -238,6 +238,19 @@ export const copy = {
       openCalendar: 'Abrir calendario',
       pickDate: 'Elegir fecha',
     },
+    /** Fotos (revisión 2026-11-24: una sola pieza para imágenes, facturas y recibos). */
+    photos: {
+      photo: (n: number) => `Foto ${n}`,
+      add: 'Agregar foto',
+      adding: 'Subiendo foto…',
+      /** Tocar una foto la abre en grande (#99). */
+      open: (n: number) => `Ver foto ${n}`,
+      viewerTitle: (n: number, total: number) => `Foto ${n} de ${total}`,
+      replace: 'Cambiar foto',
+      remove: 'Quitar foto',
+      uploadFailed: 'No se pudo subir la foto',
+      retry: 'Reintentar',
+    },
     /** Calendario para elegir fecha (HU-PAN-CLI-05; en la biblioteca desde #62). */
     calendar: {
       weekdays: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
@@ -262,6 +275,11 @@ export const copy = {
       next: 'Mes siguiente',
       /** Junto al día: otro abono del cliente cae ese día. */
       otherPayment: 'otro abono',
+      /** Ventana para elegir fecha (revisión 2026-11-24: el único calendario de la app). */
+      selected: (date: string) => `Fecha elegida: ${date}`,
+      past: 'Esta fecha ya pasó',
+      confirm: 'Elegir fecha',
+      cancel: 'Cancelar',
     },
 
     /** Buscador (HU-UI-12). */
@@ -722,7 +740,7 @@ export const copy = {
       message: (book: string, date: string) => `${book} · hoy dice ${date}`,
       label: (date: string) => `Vendido el ${date}`,
       change: (date: string) => `Vendido el ${date}, cambiar`,
-      save: 'Guardar',
+      save: 'Guardar fecha',
       cancel: 'Cancelar',
       saved: 'Fecha de venta guardada',
     },
@@ -743,7 +761,6 @@ export const copy = {
       /** El botón de la fecha en la lista de abonos. */
       open: (date: string) => `Cambiar fecha, ${date}`,
       title: (index: number, total: number) => `Abono ${index} de ${total}`,
-      newDate: (date: string) => `Nueva fecha: ${date}`,
       save: 'Guardar fecha',
       cancel: 'Cancelar',
       changed: 'fecha cambiada',
@@ -1009,11 +1026,6 @@ export const copy = {
       /** Fecha de recibido: Hoy, Ayer, Anteayer u otra (el lienzo «Fecha de recibido»). */
       receivedMenu: {
         title: 'Fecha de recibido',
-        today: 'Hoy',
-        yesterday: 'Ayer',
-        day_before: 'Anteayer',
-        other: 'Otra fecha…',
-        pick: 'Elegir fecha',
         save: 'Guardar fecha',
         cancel: 'Cancelar',
       },

@@ -138,7 +138,6 @@ export { LocationPicker, type LocationPickerProps } from './components/LocationP
 export { CustomerLocationBlock, type CustomerLocationBlockProps } from './components/CustomerLocationBlock';
 export { MapPreview, type MapPreviewProps } from './components/MapPreview';
 export { MapCanvas, type MapView } from './components/MapCanvas';
-export { InfoPhotoStrip, type InfoPhotoStripProps } from './components/InfoPhotoStrip';
 export {
   PICKER_POINT_ZOOM,
   formatCoordinates,

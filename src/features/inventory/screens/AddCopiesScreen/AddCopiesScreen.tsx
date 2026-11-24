@@ -5,13 +5,13 @@ import { copy } from '@/copy/es';
 import { receivedDateOptions, type AddBatchSummary, type AddCatalogGroup } from '@/domain/add-batch';
 import { formatDate, type LocalDate } from '@/domain/time';
 import type { TitleCategory } from '@/domain/title';
-import { DatePickerCalendar } from '@/ui/molecules/DatePickerCalendar';
 import { Avatar } from '@/ui/atoms/Avatar';
 import { Button } from '@/ui/atoms/Button';
 import { Menu } from '@/ui/molecules/Menu';
 import { SearchBox } from '@/ui/molecules/SearchBox';
 import { Tabs } from '@/ui/molecules/Tabs';
 import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
+import { DatePickerDialog } from '@/ui/organisms/DatePickerDialog';
 import { EmptyState } from '@/ui/organisms/EmptyState';
 import { Island } from '@/ui/organisms/Island';
 import { usePlatform } from '@/ui/platform';
@@ -286,7 +286,7 @@ function SummaryDialog({
   );
 }
 
-/** «Otra fecha…»: el calendario; nunca una fecha futura (BR-COPY-04). */
+/** «Otra fecha…»: la ventana «Elegir fecha»; nunca una fecha futura (BR-COPY-04). */
 function OtherDateDialog({
   current,
   today,
@@ -298,26 +298,19 @@ function OtherDateDialog({
   onClose: () => void;
   onSave: (date: LocalDate) => void;
 }) {
-  const [picked, setPicked] = useState<LocalDate>(current);
   return (
-    <ConfirmDialog
+    <DatePickerDialog
       open
       onOpenChange={(open) => {
         if (!open) onClose();
       }}
       title={t.date.title}
-      message={formatDate(picked)}
+      value={current}
+      today={today}
+      isDisabled={(date) => date > today}
       confirmLabel={t.date.save}
       cancelLabel={t.date.cancel}
-      onConfirm={() => onSave(picked)}
-    >
-      <DatePickerCalendar
-        label={t.date.pick}
-        value={picked}
-        onChange={setPicked}
-        today={today}
-        isDisabled={(date) => date > today}
-      />
-    </ConfirmDialog>
+      onConfirm={onSave}
+    />
   );
 }

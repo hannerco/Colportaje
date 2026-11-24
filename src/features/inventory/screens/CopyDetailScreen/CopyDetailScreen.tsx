@@ -2,20 +2,18 @@
 
 import { useState } from 'react';
 import { copy } from '@/copy/es';
-import { receivedDateOptions } from '@/domain/add-batch';
 import type { CopyEvent } from '@/domain/copy';
 import type { CopyDetail, HistoryItem as DomainHistoryItem } from '@/domain/copy-detail';
 import { formatCOP } from '@/domain/money';
 import { formatDate, toBogotaDate, type LocalDate } from '@/domain/time';
 import { SoldDateDialog } from '@/features/payments/components/SoldDateDialog';
-import { DatePickerCalendar } from '@/ui/molecules/DatePickerCalendar';
 import { Button } from '@/ui/atoms/Button';
-import { Choice, ChoiceGroup } from '@/ui/atoms/Choice';
 import { Field } from '@/ui/atoms/Field';
 import { DataList, DataRow } from '@/ui/molecules/DataRow';
 import { HistoryTimeline } from '@/ui/molecules/HistoryTimeline';
 import { Menu } from '@/ui/molecules/Menu';
 import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
+import { DatePickerDialog } from '@/ui/organisms/DatePickerDialog';
 import { DetailWindow, type DetailWindowProps } from '@/ui/organisms/DetailWindow';
 import { EmptyState } from '@/ui/organisms/EmptyState';
 import { Island } from '@/ui/organisms/Island';
@@ -425,7 +423,7 @@ function PriceDialog({
   );
 }
 
-/** Fecha de recibido: Hoy, Ayer, Anteayer u otra fecha en el calendario; nunca futura ni posterior a la venta. */
+/** Fecha de recibido: la ventana «Elegir fecha»; nunca futura ni posterior a la venta. */
 function ReceivedDateDialog({
   current,
   today,
@@ -440,46 +438,22 @@ function ReceivedDateDialog({
   onSave: (date: LocalDate) => Promise<void>;
 }) {
   const m = t.receivedMenu;
-  const options = receivedDateOptions(today);
-  const presetOf = (date: LocalDate) => options.find((o) => o.date === date)?.key;
-  const [choice, setChoice] = useState<string>(presetOf(current) ?? 'other');
-  const [other, setOther] = useState<LocalDate>(current);
-  const chosen = choice === 'other' ? other : (options.find((o) => o.key === choice)?.date ?? current);
   return (
-    <ConfirmDialog
+    <DatePickerDialog
       open
       onOpenChange={(next) => {
         if (!next) onClose();
       }}
       title={m.title}
-      message=""
+      value={current}
+      today={today}
+      isDisabled={(date) => date > today || (soldOn !== null && date > soldOn)}
       confirmLabel={m.save}
       cancelLabel={m.cancel}
-      onConfirm={async () => {
-        if (chosen === current) return;
-        await onSave(chosen);
+      onConfirm={async (date) => {
+        if (date === current) return;
+        await onSave(date);
       }}
-    >
-      <ChoiceGroup legend={m.title} value={choice} onValueChange={setChoice}>
-        {options.map((option) => (
-          <Choice
-            key={option.key}
-            kind="radio"
-            value={option.key}
-            label={`${m[option.key]} · ${formatDate(option.date)}`}
-          />
-        ))}
-        <Choice kind="radio" value="other" label={m.other} />
-      </ChoiceGroup>
-      {choice === 'other' && (
-        <DatePickerCalendar
-          label={m.pick}
-          value={other}
-          onChange={setOther}
-          today={today}
-          isDisabled={(date) => date > today || (soldOn !== null && date > soldOn)}
-        />
-      )}
-    </ConfirmDialog>
+    />
   );
 }
