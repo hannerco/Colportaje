@@ -45,6 +45,7 @@
 - Ronda 37, #92 (2026-11-23): marca en el armazón: logo en la barra lateral y en «Más», arranque, error, sin conexión e invitación a instalar; íconos, manifest, favicon e imagen para compartir.
 - Ronda 37, #89 (2026-11-23): en el celular, el aviso sale por encima del botón flotante «+» (antes lo tapaba y el toque no llegaba).
 - Ronda 37, #96 (2026-11-23): las pantallas de los módulos se traen de fondo al entrar y al volver a la app; mientras llega una, la navegación con un esqueleto (loading.tsx).
+- Ronda 37, #98 y #104 (2026-11-24): al tocar un módulo se marca de inmediato con el indicador deslizándose desde el anterior y una barra de progreso arriba; los errores se avisan con código y referencia y se registran.
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E de HU-BASE-06 (lectura sin conexión) corre en Playwright en móvil y escritorio.

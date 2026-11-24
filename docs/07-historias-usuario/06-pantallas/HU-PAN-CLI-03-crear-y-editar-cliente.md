@@ -52,6 +52,7 @@ Selector de emoji (FC-02, sin diseño en la biblioteca: si el lienzo lo dibuja, 
 - **2026-11-23 (#63):** el selector de emoji trae todos los emojis (1.849, Unicode ≤ 14) con nombres en español (`emoji-catalog.json`, generado por `scripts/generate-emoji-catalog.mjs` desde emojibase-data). Lleva pestañas por categoría con Recientes primero (en este dispositivo) y el conteo, y se carga al abrirlo. Pruebas: `emoji-data.test.ts` y la story «Elegir y quitar».
 - Ronda 36, #84 (2026-11-23): Botones segmentados: si una etiqueta no cabe en su parte, pasa a dos líneas; ninguna opción se monta sobre otra.
 - Ronda 37, #90 (2026-11-23): el valor de cada abono de «Así quedan los abonos» se toca y se cambia; los demás se ajustan (BR-PAY-15b).
+- Ronda 37, #99 y #100 (2026-11-24): las fotos se ven en grande al tocarlas; facturas en tarjetas con estado de subida; el pin del mapa ya no tapa los diálogos.
 
 ## Terminado cuando
 Se cumple `00-REGLAS-COMUNES-FRONT.md` §13 y la E2E «Nuevo cliente (ficha viva)» (TESTING.md, flujo 3) pasa en móvil y escritorio.
