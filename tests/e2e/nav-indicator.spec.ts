@@ -32,29 +32,23 @@ test('el indicador de la navegación se desliza al cambiar de módulo', async ({
   await page.goto('/clientes');
   await expect(page.getByRole('heading', { level: 1, name: 'Clientes' })).toBeVisible();
   const nav = page.getByRole('navigation', { name: mobile ? /.+/ : 'Principal' }).last();
+  // #98: el indicador se desliza desde el toque (el módulo se marca de inmediato), no al llegar la página: se escucha
+  // desde antes de tocar.
+  await page.evaluate(() => {
+    (window as unknown as { indicatorMoved: boolean }).indicatorMoved = false;
+    document.addEventListener('transitionrun', (event) => {
+      const target = event.target as Element;
+      if (
+        event.propertyName === 'transform' &&
+        target.closest('nav') &&
+        /indicator/i.test(String(target.className))
+      )
+        (window as unknown as { indicatorMoved: boolean }).indicatorMoved = true;
+    });
+  });
   await nav.getByRole('link', { name: 'Inventario', exact: true }).click();
   await expect(page).toHaveURL(/\/inventario/);
-  const moving = await page.evaluate(
-    () =>
-      new Promise<boolean>((resolve) => {
-        const start = performance.now();
-        const check = () => {
-          const running = document.getAnimations().some((a) => {
-            const target = (a.effect as KeyframeEffect | null)?.target as Element | null;
-            return (
-              a instanceof CSSTransition &&
-              String(a.transitionProperty).includes('transform') &&
-              Boolean(target?.closest('nav')) &&
-              /indicator/i.test(String(target?.className))
-            );
-          });
-          if (running) return resolve(true);
-          if (performance.now() - start > 1500) return resolve(false);
-          requestAnimationFrame(check);
-        };
-        check();
-      }),
-  );
+  const moving = await page.evaluate(() => (window as unknown as { indicatorMoved: boolean }).indicatorMoved);
   expect(moving, `${testInfo.project.name}: el indicador debe moverse`).toBe(true);
 });
 

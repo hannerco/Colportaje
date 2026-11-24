@@ -21,8 +21,9 @@ import {
   useUpdateSoldAt,
   SchedulePaymentsDialog,
   type CustomerDetailScreenProps,
+  usePhotoUrlResolver,
 } from '@/features/customers';
-import { appErrorMessage } from '@/features/shared/app-error-message';
+import { errorToast } from '@/features/shared/error-report';
 import { ROUTES, useAppShell } from '@/features/shell';
 import { todayBogota } from '@/domain/time';
 import {
@@ -58,6 +59,7 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
   const { archiveCustomer } = useArchiveCustomer();
   const { restoreCustomer } = useRestoreCustomer();
   const toast = useToast();
+  const photoUrl = usePhotoUrlResolver();
   const { reschedulePayment } = useReschedulePayment();
   const [today] = useState(() => todayBogota(systemClock));
   const [tiles] = useState(mapTiles);
@@ -84,12 +86,12 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
   const collectingRow = detail.data?.payments.find((p) => p.paymentId === collecting);
   const r = copy.payments.detail.result;
   const s = copy.customers.detail.payments.scheduleForm;
-  const showError = (error: unknown) =>
-    toast.show({ message: appErrorMessage(error).message, tone: 'error' });
+  const showError = (error: unknown) => toast.show(errorToast(error));
 
   return (
     <>
       <CustomerDetailScreen
+        photoUrl={photoUrl}
         detail={
           detail.data && {
             ...detail.data,
@@ -115,7 +117,7 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
           toast.show(
             result.ok
               ? { message: copy.customers.detail.archive.done, tone: 'success' }
-              : { message: appErrorMessage(result.error).message, tone: 'error' },
+              : errorToast(result.error),
           );
         }}
         onAddBook={() => setAddingBook(true)}
@@ -128,7 +130,7 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
             currentDueDate: current,
             confirmed,
           });
-          if (!result.ok) toast.show({ message: appErrorMessage(result.error).message, tone: 'error' });
+          if (!result.ok) toast.show(errorToast(result.error));
         }}
         tiles={tiles}
         onChooseLocation={() => setChoosingLocation(true)}
@@ -137,7 +139,7 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
           toast.show(
             result.ok
               ? { message: copy.customers.location.removed, tone: 'success' }
-              : { message: appErrorMessage(result.error).message, tone: 'error' },
+              : errorToast(result.error),
           );
         }}
         onAddPhoto={async (file) => {
@@ -216,7 +218,7 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
           toast.show(
             result.ok
               ? { message: copy.customers.detail.archive.restored, tone: 'success' }
-              : { message: appErrorMessage(result.error).message, tone: 'error' },
+              : errorToast(result.error),
           );
         }}
       />

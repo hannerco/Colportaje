@@ -2,7 +2,7 @@
 
 import { copy } from '@/copy/es';
 import { useCurrentProfile } from '@/features/auth';
-import { appErrorMessage } from '@/features/shared/app-error-message';
+import { errorToast } from '@/features/shared/error-report';
 import { useAppShell } from '@/features/shell';
 import {
   AdminUsersScreen,
@@ -25,8 +25,7 @@ export default function AdminUsersPage() {
   const { removePendingEmail } = useRemovePendingEmail();
   const { setUserActive } = useSetUserActive();
   const t = copy.admin.users;
-  const showError = (error: unknown) =>
-    toast.show({ message: appErrorMessage(error).message, tone: 'error' });
+  const showError = (error: unknown) => toast.show(errorToast(error));
 
   return (
     <AdminUsersScreen
@@ -40,11 +39,11 @@ export default function AdminUsersPage() {
       onAuthorize={async (input) => {
         const result = await authorizeEmail(input);
         if (!result.ok) {
-          toast.show({
-            message:
-              result.error.code === 'CONFLICT' ? t.alreadyAuthorized : appErrorMessage(result.error).message,
-            tone: 'error',
-          });
+          toast.show(
+            result.error.code === 'CONFLICT'
+              ? { message: t.alreadyAuthorized, tone: 'error' }
+              : errorToast(result.error),
+          );
           throw new Error(result.error.code);
         }
         // El enlace de la app, para enviarlo por WhatsApp (BR-USR-05).

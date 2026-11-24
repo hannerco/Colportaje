@@ -11,6 +11,7 @@ import {
   useUpdateTitle,
 } from '@/features/catalog';
 import { appErrorMessage } from '@/features/shared/app-error-message';
+import { errorToast } from '@/features/shared/error-report';
 import { NAV_HREFS, useAppShell } from '@/features/shell';
 import { newId } from '@/lib/ids';
 import { useToast } from '@/ui/molecules/Toast';
@@ -53,20 +54,12 @@ export default function AdminPage() {
       }}
       onSetCover={async (titleId, file) => {
         const result = await setTitleCover({ titleId, coverId: newId(), file });
-        toast.show(
-          result.ok
-            ? { message: t.coverSaved, tone: 'success' }
-            : { message: appErrorMessage(result.error).message, tone: 'error' },
-        );
+        toast.show(result.ok ? { message: t.coverSaved, tone: 'success' } : errorToast(result.error));
         return result.ok;
       }}
       onRemoveCover={async (titleId) => {
         const result = await removeTitleCover(titleId);
-        toast.show(
-          result.ok
-            ? { message: t.coverRemoved, tone: 'success' }
-            : { message: appErrorMessage(result.error).message, tone: 'error' },
-        );
+        toast.show(result.ok ? { message: t.coverRemoved, tone: 'success' } : errorToast(result.error));
         return result.ok;
       }}
     />

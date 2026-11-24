@@ -12,7 +12,8 @@ export const PILL_STATUS: Record<PillStatus, { tone: PillTone; icon: IconName }>
   scheduled: { tone: 'neutral', icon: 'scheduled' },
   overdue: { tone: 'bad', icon: 'alert' },
   collected: { tone: 'ok', icon: 'collected' },
-  delivered: { tone: 'accent', icon: 'delivered' },
+  // #98: todo lo entregado al líder lleva candado (la doble palomita no fue un diseño aceptado).
+  delivered: { tone: 'accent', icon: 'locked' },
   canceled: { tone: 'neutral', icon: 'canceled' },
   draft: { tone: 'draft', icon: 'draft' },
   current: { tone: 'neutral', icon: 'scheduled' },

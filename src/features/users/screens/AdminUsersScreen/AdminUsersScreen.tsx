@@ -52,8 +52,21 @@ export function AdminUsersScreen(props: AdminUsersScreenProps) {
     users ? users.filter((u) => status === 'all' || u.status === status).length : undefined;
   const shown = (users ?? []).filter((u) => view === 'all' || u.status === view);
 
+  const startAuthorizing = () => {
+    setDraft({ email: '', fullName: '', isAdmin: false });
+    setAuthorizing(true);
+  };
+
   return (
-    <ShellScreen nav={props.nav} banner={props.banner}>
+    // #102: en el celular el encabezado no muestra la acción principal (va en el botón flotante); aquí no había botón
+    // flotante y «Autorizar correo» no se veía. Ahora es el botón flotante de esta pantalla.
+    <ShellScreen
+      nav={{
+        ...props.nav,
+        fab: { icon: 'new-customer', label: t.authorize, onClick: startAuthorizing, disabled: !isOnline },
+      }}
+      banner={props.banner}
+    >
       <PageHeader
         kind="root"
         title={t.title}
@@ -61,10 +74,7 @@ export function AdminUsersScreen(props: AdminUsersScreenProps) {
         primaryAction={{
           label: t.authorize,
           icon: 'add',
-          onClick: () => {
-            setDraft({ email: '', fullName: '', isAdmin: false });
-            setAuthorizing(true);
-          },
+          onClick: startAuthorizing,
           disabled: !isOnline,
         }}
       />

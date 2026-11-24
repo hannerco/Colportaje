@@ -17,6 +17,7 @@ import {
 } from '@/features/customers';
 import { useAgreedPrice } from '@/features/inventory';
 import { appErrorMessage } from '@/features/shared/app-error-message';
+import { errorToast } from '@/features/shared/error-report';
 import { ROUTES, useAppShell } from '@/features/shell';
 import { systemClock } from '@/lib/clock';
 import { useToast } from '@/ui/molecules/Toast';
@@ -107,12 +108,12 @@ export function AddBookContainer({ customerId, books, onClose }: Props) {
         const result = await assignCopyToCustomer({ copyId, customerId });
         if (!result.ok) {
           setPicked((list) => list.filter((c) => c.copyId !== copyId));
-          toast.show({ message: appErrorMessage(result.error).message, tone: 'error' });
+          toast.show(errorToast(result.error));
         }
       }}
       onRemove={async (copyId) => {
         const result = await removeCopyDuringCreation(copyId);
-        if (!result.ok) return toast.show({ message: appErrorMessage(result.error).message, tone: 'error' });
+        if (!result.ok) return toast.show(errorToast(result.error));
         setPicked((list) => list.filter((c) => c.copyId !== copyId));
       }}
       onPriceChange={(copyId, price) => {

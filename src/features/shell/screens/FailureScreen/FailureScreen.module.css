@@ -54,3 +54,11 @@
   width: 100%;
   margin-top: var(--space-4);
 }
+
+/* #104: código y referencia del error, para reportarlo. */
+.reference {
+  margin: 0;
+  color: var(--color-text-3);
+  font-size: var(--text-caption);
+  font-variant-numeric: var(--font-numeric);
+}

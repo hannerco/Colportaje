@@ -12,7 +12,7 @@ import {
   useUpdateDepositNote,
 } from '@/features/money';
 import { AppFailure } from '@/features/shared/app-failure';
-import { appErrorMessage } from '@/features/shared/app-error-message';
+import { errorToast } from '@/features/shared/error-report';
 import { ROUTES, ShellScreenRoute, useAppShell } from '@/features/shell';
 import { useToast } from '@/ui/molecules/Toast';
 import { usePlatform } from '@/ui/platform';
@@ -42,8 +42,7 @@ export function DepositDetailContainer({
   const { reopenDeposit } = useReopenDeposit();
   const { addDepositReceipt } = useAddDepositReceipt();
 
-  const showError = (error: unknown) =>
-    toast.show({ message: appErrorMessage(error).message, tone: 'error' });
+  const showError = (error: unknown) => toast.show(errorToast(error));
 
   const screen = (
     <DepositDetailScreen

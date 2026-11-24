@@ -510,7 +510,7 @@ export const EditarDatos: Story = {
 
 /** #68: tocar una foto de la factura ofrece «Cambiar foto» y «Quitar foto». */
 export const CambiarFotoDeFactura: Story = {
-  name: 'Cambiar foto de factura',
+  name: 'Ver y quitar foto de factura',
   globals: { platform: 'desktop' },
   args: {
     detail: aCustomerDetailView({
@@ -533,11 +533,16 @@ export const CambiarFotoDeFactura: Story = {
   },
   play: async ({ canvasElement, args }) => {
     const frame = frames(canvasElement)[0]!;
-    await userEvent.click(button(frame, 'Foto 1, cambiar o quitar')!);
+    // #99: tocar la foto la abre en grande; desde el visor se cambia o se quita.
+    await userEvent.click(frame.querySelector<HTMLElement>('[aria-label="Ver foto 1"]')!);
     const remove = await waitFor(() => {
-      const found = [...canvasElement.ownerDocument.querySelectorAll<HTMLElement>('[role="menuitem"]')];
-      expect(found.map((i) => i.textContent?.trim())).toEqual(['Cambiar foto', 'Quitar foto']);
-      return found[1]!;
+      const viewer = frame.querySelector<HTMLElement>('[role="dialog"]');
+      expect(viewer).not.toBeNull();
+      const actions = [...viewer!.querySelectorAll<HTMLElement>('button')].map((b) => b.textContent?.trim());
+      expect(actions).toEqual(expect.arrayContaining(['Cambiar foto', 'Quitar foto']));
+      return [...viewer!.querySelectorAll<HTMLElement>('button')].find(
+        (b) => b.textContent?.trim() === 'Quitar foto',
+      )!;
     });
     await userEvent.click(remove);
     expect(args.invoiceActions?.onRemovePhoto).toHaveBeenCalledWith('ph1');

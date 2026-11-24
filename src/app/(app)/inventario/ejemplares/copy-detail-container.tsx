@@ -14,7 +14,7 @@ import {
   useUpdateReceivedDate,
 } from '@/features/inventory';
 import { useUpdateSoldAt } from '@/features/customers';
-import { appErrorMessage } from '@/features/shared/app-error-message';
+import { errorToast } from '@/features/shared/error-report';
 import { ROUTES, useAppShell } from '@/features/shell';
 import { systemClock } from '@/lib/clock';
 import { useToast } from '@/ui/molecules/Toast';
@@ -45,8 +45,7 @@ export function CopyDetailContainer({ copyId: id, window, onDeleted }: Props) {
   const { undoReturnToLeader } = useReturnToLeader();
   const { updateSoldAt } = useUpdateSoldAt();
 
-  const showError = (error: unknown) =>
-    toast.show({ message: appErrorMessage(error).message, tone: 'error' });
+  const showError = (error: unknown) => toast.show(errorToast(error));
   const copyName = detail.data ? t.title(detail.data.titleName, detail.data.number) : '';
 
   const screen = (

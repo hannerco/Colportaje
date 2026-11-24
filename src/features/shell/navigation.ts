@@ -52,6 +52,24 @@ export const NAV_HREFS: Record<NavId, string> = {
 };
 
 /**
+ * Pantallas que se traen de fondo apenas hay sesión (#96): así cambiar de módulo no espera a pedirle la pantalla al
+ * servidor (en producción, 0,4–2 s por cambio). Los módulos con pantalla y las acciones de todos los días.
+ */
+export const PREFETCH_ROUTES: readonly string[] = [
+  // Primero lo de todos los días: los módulos y sus dos acciones principales.
+  ROUTES.inventory,
+  ROUTES.customers,
+  ROUTES.money,
+  ROUTES.addToInventory,
+  ROUTES.newCustomer,
+  ROUTES.copies,
+  ROUTES.deposits,
+  ROUTES.newDeposit,
+  NAV_HREFS.settings,
+  NAV_HREFS.admin,
+];
+
+/**
  * Todos los módulos, en el orden de la navegación. Se repite aquí (y una prueba lo compara con el de `AppNav`) porque
  * este archivo también lo leen componentes de servidor y `AppNav` es del cliente: ahí solo llegan los componentes.
  */

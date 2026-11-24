@@ -16,10 +16,10 @@ export const metadata: Metadata = {
   description: copy.app.support,
   icons: {
     icon: [
-      { url: '/favicon.ico', sizes: '16x16 32x32' },
-      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico?v=marca-1', sizes: '16x16 32x32' },
+      { url: '/icon.svg?v=marca-1', type: 'image/svg+xml' },
     ],
-    apple: '/apple-touch-icon.png',
+    apple: '/apple-touch-icon.png?v=marca-1',
     other: [{ rel: 'mask-icon', url: '/safari-pinned-tab.svg' }],
   },
   appleWebApp: { capable: true, title: copy.app.name, statusBarStyle: 'default' },

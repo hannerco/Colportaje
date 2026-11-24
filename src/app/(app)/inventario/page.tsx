@@ -14,7 +14,7 @@ import {
   type FlaggedCopy,
   type FlaggedResolution,
 } from '@/features/inventory';
-import { appErrorMessage } from '@/features/shared/app-error-message';
+import { errorToast } from '@/features/shared/error-report';
 import { ROUTES, ShellScreen, useAppShell } from '@/features/shell';
 import { useToast } from '@/ui/molecules/Toast';
 
@@ -47,8 +47,7 @@ function InStockRoute() {
     // Sin ir al servidor (también sin conexión); `useSearchParams` se entera igual.
     window.history.pushState(null, '', query ? `${pathname}?${query}` : pathname);
   };
-  const showError = (error: unknown) =>
-    toast.show({ message: appErrorMessage(error).message, tone: 'error' });
+  const showError = (error: unknown) => toast.show(errorToast(error));
 
   const resolve = async (item: FlaggedCopy, resolution: FlaggedResolution, note: string | null) => {
     const result = await resolveCopyIssue({ copyId: item.copyId, resolution, note });

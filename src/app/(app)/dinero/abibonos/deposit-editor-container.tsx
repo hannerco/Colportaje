@@ -17,7 +17,7 @@ import {
   type DepositEditorValues,
 } from '@/features/money';
 import { AppFailure } from '@/features/shared/app-failure';
-import { appErrorMessage } from '@/features/shared/app-error-message';
+import { errorToast } from '@/features/shared/error-report';
 import { ROUTES, ShellScreenRoute, useAppShell } from '@/features/shell';
 import { newId } from '@/lib/ids';
 import { useToast } from '@/ui/molecules/Toast';
@@ -56,8 +56,7 @@ export function DepositEditorContainer({
   const { deleteDepositDraft } = useDeleteDepositDraft();
   const [staged, setStaged] = useState<StagedWithPreview[]>([]);
 
-  const showError = (error: unknown) =>
-    toast.show({ message: appErrorMessage(error).message, tone: 'error' });
+  const showError = (error: unknown) => toast.show(errorToast(error));
   const view = saved.data;
   const draftOpen = Boolean(depositId);
 

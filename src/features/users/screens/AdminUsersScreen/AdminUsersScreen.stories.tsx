@@ -107,6 +107,19 @@ export const AutorizarCorreo: Story = {
   },
 };
 
+/** #102: en el celular, «Autorizar correo» es el botón flotante (antes no se veía) y abre el mismo formulario. */
+export const AutorizarCorreoMovil: Story = {
+  name: 'Autorizar correo · móvil',
+  globals: { platform: 'mobile' },
+  // Con el diálogo abierto, el resto queda oculto al lector (es lo esperado de un diálogo).
+  parameters: { a11y: { config: { rules: [{ id: 'aria-hidden-focus', enabled: false }] } } },
+  play: async ({ canvasElement }) => {
+    const frame = frames(canvasElement)[0]!;
+    await userEvent.click(within(frame).getByRole('button', { name: 'Autorizar correo' }));
+    await waitFor(() => expect(frame.querySelector('[role="alertdialog"]')).not.toBeNull());
+  },
+};
+
 export const Cargando: Story = { args: { users: undefined } };
 
 export const Matriz: Story = { parameters: { frames: 'matrix' } };

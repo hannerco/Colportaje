@@ -1,6 +1,7 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import { findPossibleDuplicates, type CustomerPatch } from '@/domain/customer-data';
 import { unwrap } from '../shared/app-failure';
 import { useRepositories } from '../shared/repositories-provider';
@@ -233,6 +234,21 @@ export function usePhotoUrl(photoId: string | null | undefined) {
     enabled: Boolean(photoId),
     staleTime: signedUrlStaleMs,
   });
+}
+
+/** #99: trae la URL firmada de la foto completa para el visor (la guarda en la caché igual que `usePhotoUrl`). */
+export function usePhotoUrlResolver(): (photoId: string) => Promise<string> {
+  const { photos, storage } = useRepositories();
+  const queryClient = useQueryClient();
+  return useCallback(
+    (photoId: string) =>
+      queryClient.fetchQuery({
+        queryKey: customerQueryKeys.photoUrl(photoId),
+        queryFn: async () => unwrap(await getPhotoUrl({ photos, storage }, photoId)),
+        staleTime: signedUrlStaleMs,
+      }),
+    [photos, storage, queryClient],
+  );
 }
 
 /** Agrega una foto de información (comprimir → subir → fila). Devuelve `Result`; reintentable con el mismo id. */

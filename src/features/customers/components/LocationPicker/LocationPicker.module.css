@@ -6,6 +6,8 @@
 }
 
 .mapArea {
+  /* #100: el pin (z-index 500) se queda dentro del mapa. */
+  isolation: isolate;
   position: relative;
   height: var(--size-map-picker);
   overflow: hidden;

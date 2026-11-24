@@ -93,7 +93,20 @@ export type AppNavProps = {
  * botón flotante de crear en móvil. Va en las pantallas raíz.
  */
 export function AppNav(props: AppNavProps) {
-  return usePlatform() === 'mobile' ? <BottomBar {...props} /> : <Sidebar {...props} />;
+  const mobile = usePlatform() === 'mobile';
+  // #98: al tocar un módulo se marca de inmediato (y su fondo se desliza), sin esperar a que llegue la pantalla nueva.
+  // Si el módulo marcado cambia por fuera (llegó la pantalla), se vuelve a seguir lo que diga quien la usa.
+  const [pending, setPending] = useState<{ id: NavId; from: NavId } | null>(null);
+  const active = pending && pending.from === props.active ? pending.id : props.active;
+  const onNavigate = props.onNavigate
+    ? (href: string) => {
+        const id = (Object.keys(props.hrefs) as NavId[]).find((key) => props.hrefs[key] === href);
+        if (id) setPending({ id, from: props.active });
+        props.onNavigate!(href);
+      }
+    : undefined;
+  const nav = { ...props, active, onNavigate };
+  return mobile ? <BottomBar {...nav} /> : <Sidebar {...nav} />;
 }
 
 const shown = (items: NavId[] | undefined) => new Set(items ?? ALL_NAV_IDS);
