@@ -12,6 +12,7 @@ import { StatusPill } from '@/ui/atoms/StatusPill';
 import { Icon } from '@/ui/icons';
 import { SegmentedControl } from '@/ui/molecules/SegmentedControl';
 import type { PlanPreview } from '../../new-customer-form';
+import { ChangeAmountDialog } from './ChangeAmountDialog';
 import styles from './PaymentPlanFields.module.css';
 
 export type PaymentPlanValue = {
@@ -30,6 +31,10 @@ export type PaymentPlanFieldsProps = {
   today?: LocalDate;
   /** HU-PAN-CLI-05: corregir la fecha de un abono (solo ese, sin historial). Sin función, la fecha no es botón. */
   onChangeDate?: (index: number, date: LocalDate) => void;
+  /** #90: cambiar el valor de un abono (los demás se ajustan). Sin función, el valor no es botón. */
+  onChangeAmount?: (index: number, amount: COP) => void;
+  /** #90: por qué no sirve ese valor para ese abono (múltiplo de 1.000, que no pase del saldo). */
+  validateAmount?: (index: number, amount: COP) => string | undefined;
 };
 
 const t = copy.customers.create.payments;
@@ -47,9 +52,13 @@ export function PaymentPlanFields({
   disabled = false,
   today,
   onChangeDate,
+  onChangeAmount,
+  validateAmount,
 }: PaymentPlanFieldsProps) {
   const items = preview.items;
   const [editing, setEditing] = useState<number | null>(null);
+  const [editingAmount, setEditingAmount] = useState<number | null>(null);
+  const ca = copy.payments.changeAmount;
   const cd = copy.payments.changeDate;
   return (
     <div className={styles.plan}>
@@ -115,7 +124,21 @@ export function PaymentPlanFields({
                       </span>
                     )}
                   </span>
-                  <span className={styles.amount}>{formatCOP(item.amount)}</span>
+                  <span className={styles.amountCell}>
+                    {onChangeAmount && !disabled ? (
+                      <button
+                        type="button"
+                        className={[styles.dateButton, styles.amount].join(' ')}
+                        aria-label={ca.open(formatCOP(item.amount))}
+                        onClick={() => setEditingAmount(i)}
+                      >
+                        {formatCOP(item.amount)}
+                      </button>
+                    ) : (
+                      <span className={styles.amount}>{formatCOP(item.amount)}</span>
+                    )}
+                    {item.amountChanged && <span className={styles.changed}>{ca.changed}</span>}
+                  </span>
                 </li>
               ))}
             </ol>
@@ -128,6 +151,20 @@ export function PaymentPlanFields({
           <p className={styles.empty}>{t.previewEmpty}</p>
         )}
       </section>
+      {items && editingAmount !== null && items[editingAmount] && onChangeAmount && (
+        <ChangeAmountDialog
+          open
+          onOpenChange={(open) => !open && setEditingAmount(null)}
+          index={editingAmount + 1}
+          total={items.length}
+          current={items[editingAmount]!.amount}
+          validate={(amount) => validateAmount?.(editingAmount, amount)}
+          onSave={(amount) => {
+            onChangeAmount(editingAmount, amount);
+            setEditingAmount(null);
+          }}
+        />
+      )}
       {items && editing !== null && items[editing] && onChangeDate && today && (
         <ChangeDueDateDialog
           open

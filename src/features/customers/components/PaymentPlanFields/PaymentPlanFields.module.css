@@ -82,6 +82,14 @@
   font-variant-numeric: var(--font-numeric);
 }
 
+/* #90: el valor de cada abono también se puede tocar para cambiarlo. */
+.amountCell {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+}
+
 .covers,
 .empty {
   margin: 0;

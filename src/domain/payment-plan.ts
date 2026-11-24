@@ -10,6 +10,8 @@ import { addDays, lastDayOfMonth, localDate, type LocalDate } from './time';
 export const PAYMENT_PLAN_ERROR_CODES = {
   PLAN_REQUIRES_BALANCE: 'PLAN_REQUIRES_BALANCE',
   PLAN_TOTAL_MISMATCH: 'PLAN_TOTAL_MISMATCH',
+  /** #90: los valores cambiados a mano ya pasan del saldo. */
+  PLAN_AMOUNTS_EXCEED: 'PLAN_AMOUNTS_EXCEED',
 } as const;
 
 export type PlanFrequency = 'weekly' | 'biweekly' | 'monthly';
@@ -91,6 +93,59 @@ export const buildPaymentPlan = (input: {
     dueDate = nextDueDate(dueDate, input.frequency);
   }
   return ok(items);
+};
+
+/**
+ * #90 (BR-PAY-15b): valores de abonos cambiados a mano en el plan, por posición. Esos abonos quedan fijos y el resto se
+ * ajusta para que el plan siga sumando exactamente la base: si falta, se agregan abonos al final con el valor de cada
+ * abono (el último lleva lo que quede); si sobra, se descuenta de los últimos abonos no cambiados (y se quitan los que
+ * quedan en 0). Si los cambiados ya pasan de la base, `PLAN_AMOUNTS_EXCEED`. Como todo abono editado a mano (BR-PAY-15),
+ * el valor cambiado es cualquier entero > 0: el múltiplo de $1.000 es solo del cálculo automático. `amountChanged` marca los cambiados (al quitar un
+ * abono en 0 las posiciones se corren; por eso la marca viaja con el abono).
+ */
+export const adjustPlanAmounts = (input: {
+  readonly base: COP;
+  readonly frequency: PlanFrequency;
+  readonly amount: COP;
+  readonly items: readonly PlanItem[];
+  readonly overrides: Readonly<Record<number, COP>>;
+}): Result<(PlanItem & { readonly amountChanged: boolean })[], AppError> => {
+  const fixed = new Set<number>();
+  const base = [...input.items];
+  // Un abono agregado al final también se puede cambiar: se completa la lista hasta esa posición.
+  const lastIndex = Math.max(-1, ...Object.keys(input.overrides).map(Number));
+  while (base.length > 0 && base.length <= lastIndex) {
+    base.push({ dueDate: nextDueDate(base[base.length - 1]!.dueDate, input.frequency), amount: 0 });
+  }
+  const items = base.map((item, i) => {
+    const override = input.overrides[i];
+    if (override === undefined) return { ...item };
+    fixed.add(i);
+    return { ...item, amount: override };
+  });
+  for (const i of fixed) {
+    const value = items[i]!.amount;
+    if (!isValidCOP(value) || value === 0) {
+      return err(validationError('amount', { index: i }));
+    }
+  }
+  let diff = input.base - items.reduce((sum, item) => sum + item.amount, 0);
+  while (diff > 0) {
+    const last = items[items.length - 1]!;
+    const add = Math.min(input.amount, diff);
+    items.push({ dueDate: nextDueDate(last.dueDate, input.frequency), amount: add });
+    diff -= add;
+  }
+  for (let i = items.length - 1; diff < 0 && i >= 0; i--) {
+    if (fixed.has(i)) continue;
+    const take = Math.min(items[i]!.amount, -diff);
+    items[i] = { ...items[i]!, amount: items[i]!.amount - take };
+    diff += take;
+  }
+  if (diff < 0) return err(appError(PAYMENT_PLAN_ERROR_CODES.PLAN_AMOUNTS_EXCEED));
+  return ok(
+    items.map((item, i) => ({ ...item, amountChanged: fixed.has(i) })).filter((item) => item.amount > 0),
+  );
 };
 
 /** Un id por abono (BR-GEN-04), generados UNA vez para que reintentar no duplique. */

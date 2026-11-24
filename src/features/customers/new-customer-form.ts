@@ -1,6 +1,11 @@
 // Ficha viva de Nuevo cliente (HU-PAN-CLI-03): cálculos puros del formulario, sin red ni React.
 import type { COP } from '@/domain/money';
-import { buildPaymentPlan, type PlanFrequency, type PlanItem } from '@/domain/payment-plan';
+import {
+  adjustPlanAmounts,
+  buildPaymentPlan,
+  type PlanFrequency,
+  type PlanItem,
+} from '@/domain/payment-plan';
 import { isPastDate, type LocalDate } from '@/domain/time';
 
 export type PlanPreviewItem = PlanItem & {
@@ -8,6 +13,8 @@ export type PlanPreviewItem = PlanItem & {
   readonly past: boolean;
   /** HU-PAN-CLI-05: la fecha se corrigió a mano en el calendario (solo ese abono, I-08). */
   readonly changed: boolean;
+  /** #90: el valor se cambió a mano (los demás se ajustan para cubrir el saldo). */
+  readonly amountChanged: boolean;
 };
 
 export type PlanPreview = {
@@ -17,6 +24,8 @@ export type PlanPreview = {
   readonly items: readonly PlanPreviewItem[] | null;
   /** El valor de cada abono no sirve (no es múltiplo de 1.000 o es 0). */
   readonly amountInvalid: boolean;
+  /** #90: los valores cambiados a mano pasan del saldo. */
+  readonly amountsExceed?: boolean;
 };
 
 /**
@@ -33,6 +42,8 @@ export const planPreview = (input: {
   readonly today: LocalDate;
   /** Fechas corregidas a mano, por posición (HU-PAN-CLI-05). Se descartan si el plan se recalcula. */
   readonly overrides?: Readonly<Record<number, LocalDate>>;
+  /** #90: valores cambiados a mano, por posición. Se descartan si el plan se recalcula. */
+  readonly amountOverrides?: Readonly<Record<number, COP>>;
 }): PlanPreview => {
   const base = Math.max(0, input.debt - (input.downPayment ?? 0));
   if (input.amount === null || input.firstDueDate === null || base === 0)
@@ -44,9 +55,17 @@ export const planPreview = (input: {
     firstDueDate: input.firstDueDate,
   });
   if (!plan.ok) return { base, items: null, amountInvalid: plan.error.code === 'VALIDATION' };
+  const adjusted = adjustPlanAmounts({
+    base,
+    frequency: input.frequency,
+    amount: input.amount,
+    items: plan.value,
+    overrides: input.amountOverrides ?? {},
+  });
+  if (!adjusted.ok) return { base, items: null, amountInvalid: false, amountsExceed: true };
   return {
     base,
-    items: plan.value.map((item, i) => {
+    items: adjusted.value.map((item, i) => {
       const override = input.overrides?.[i];
       const dueDate = override ?? item.dueDate;
       return { ...item, dueDate, past: isPastDate(dueDate, input.today), changed: override !== undefined };

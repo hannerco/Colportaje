@@ -672,6 +672,18 @@ export const copy = {
       saved: 'Fecha de venta guardada',
     },
     /** Calendario para elegir fecha (diseño «6 · Cambiar fecha de abono»); la semana empieza el domingo (BR-GEN-07). */
+    /** #90: cambiar el valor de un abono del plan mientras se crea el cliente. */
+    changeAmount: {
+      open: (amount: string) => `Cambiar valor, ${amount}`,
+      title: (index: number, total: number) => `Valor del abono ${index} de ${total}`,
+      label: 'Valor del abono',
+      message: 'Los demás abonos se ajustan para que el plan siga cubriendo el saldo.',
+      save: 'Guardar valor',
+      cancel: 'Cancelar',
+      changed: 'Valor cambiado',
+      invalid: 'Escribe un valor mayor que cero.',
+      exceed: 'Con ese valor los abonos pasan del saldo.',
+    },
     changeDate: {
       /** El botón de la fecha en la lista de abonos. */
       open: (date: string) => `Cambiar fecha, ${date}`,
@@ -1321,6 +1333,7 @@ export const copy = {
       PAYMENT_NOT_SCHEDULED: 'Este abono ya no está por cobrar.',
       PLAN_REQUIRES_BALANCE: 'No hay saldo para programar abonos.',
       PLAN_TOTAL_MISMATCH: 'Los abonos no suman el saldo.',
+      PLAN_AMOUNTS_EXCEED: 'Los valores que cambiaste pasan del saldo.',
       DATE_NOT_LATER: 'Elige una fecha posterior a la actual.',
       RESCHEDULE_NEEDS_CONFIRMATION: 'Es más de 2 meses de plazo. Confírmalo.',
       NO_EXCESS: 'Los abonos ya cuadran con el saldo.',
