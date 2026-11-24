@@ -47,8 +47,8 @@ export const ElegirYQuitar: Story = {
     const frame = canvasElement.querySelector<HTMLElement>('figure.sb-frame')!;
     await userEvent.click(within(frame).getByRole('button', { name: 'Elegir emoji del cliente' }));
     const body = within(document.body);
-    // #63: todas las categorías y más de mil emojis.
-    const categories = await body.findByRole('group', { name: 'Categorías de emojis' });
+    // #63: todas las categorías y más de mil emojis. Con todas las pruebas a la vez, pintarlos tarda más de 1 s.
+    const categories = await body.findByRole('group', { name: 'Categorías de emojis' }, { timeout: 5000 });
     expect(within(categories).getByRole('button', { name: 'Animales y naturaleza' })).toBeTruthy();
     expect(body.getByText(/\d\.\d{3} emojis/)).toBeTruthy();
     await userEvent.type(await body.findByRole('searchbox'), 'panaderia');

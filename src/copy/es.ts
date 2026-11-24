@@ -26,7 +26,7 @@ export const copy = {
   settings: {
     appearance: 'Apariencia',
     theme: 'Tema',
-    themes: { system: 'Como el teléfono', light: 'Claro', dark: 'Oscuro' },
+    themes: { system: 'Como el dispositivo', light: 'Claro', dark: 'Oscuro' },
     themeHint: 'Solo en este dispositivo.',
     adminMode: 'Modo administrador',
     adminModeHint: 'Muestra Admin en la navegación.',

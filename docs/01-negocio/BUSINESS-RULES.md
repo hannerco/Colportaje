@@ -34,7 +34,7 @@ Notación: "colportor" = usuario con rol colportor. Fechas calendario en **Ameri
 - **BR-USR-05** **Invitar desde el panel de admin:** el botón "Invitar" pide un correo y llama a un **endpoint de servidor** (solo admin, usa la `service_role` en servidor) que crea la invitación y devuelve un **enlace para copiar y enviar por WhatsApp**. El envío automático por correo queda para cuando exista dominio y SMTP propio. El enlace caduca; el admin puede **regenerarlo**. El panel incluye además una breve explicación de cómo funciona. *(Ronda 34: reemplazado por **«Autorizar correo»** en Admin · Usuarios: nombre, correo de Google y si es administrador; la persona queda **Pendiente** hasta que entra por primera vez. Un Pendiente se puede **quitar**; no hace falta enlace de invitación ni la `service_role` en el servidor.)*
 - **BR-USR-06** El primer usuario y primer admin es el dueño del producto.
 - **BR-USR-07** El admin puede **desactivar** a un usuario (no puede entrar, sus datos se conservan) y reactivarlo. La lista de usuarios muestra nombre, correo, rol y estado.
-- **BR-USR-08** Cada usuario guarda en su perfil: nombre y formato de hora (12 h/24 h). *(Los Títulos favoritos se eliminaron en la ronda 26, ADR-0043.)* El **tema** (Como el teléfono, Claro u Oscuro) y el **modo administrador** se guardan **por dispositivo**, no en el perfil (ronda 34).
+- **BR-USR-08** Cada usuario guarda en su perfil: nombre y formato de hora (12 h/24 h). *(Los Títulos favoritos se eliminaron en la ronda 26, ADR-0043.)* El **tema** (Como el dispositivo, Claro u Oscuro) y el **modo administrador** se guardan **por dispositivo**, no en el perfil (ronda 34).
 
 ## 3. Títulos (catálogo)
 

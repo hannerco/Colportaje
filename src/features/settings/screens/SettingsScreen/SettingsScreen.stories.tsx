@@ -138,7 +138,7 @@ export const Cargando: Story = { args: { profile: undefined } };
 /** Las combinaciones en claro y oscuro × escritorio y móvil. */
 export const Matriz: Story = { parameters: { frames: 'matrix' } };
 
-/** #42 (propuesta 5): el tema se elige aquí (Como el teléfono, Claro u Oscuro) y el admin ve el modo administrador. */
+/** #42 (propuesta 5): el tema se elige aquí (Como el dispositivo, Claro u Oscuro) y el admin ve el modo administrador. */
 export const TemaYModoAdministrador: Story = {
   name: 'Tema y modo administrador',
   args: { profile: { fullName: 'Hanner Conde', isAdmin: true, timeFormat: '12h' } },
