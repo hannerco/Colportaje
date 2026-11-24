@@ -1,6 +1,8 @@
 // HU-PAN-INV-01 · Libros en físico y Por resolver, de punta a punta en móvil y escritorio.
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { e2eFlaggedNote } from './support/global-setup';
+
+const isMobile = (page: Page) => page.viewportSize()!.width < 768;
 
 const TITLE = 'Salud y bienestar en familia';
 
@@ -38,8 +40,12 @@ test('CA-2: marcar un ejemplar con novedad como Apareció lo saca de Por resolve
   await expect(page.getByRole('listitem').filter({ hasText: note })).toHaveCount(0);
 
   await page.getByRole('status').getByRole('button', { name: 'Deshacer' }).click();
-  // Vuelve a Por resolver (la ventana se cierra al tocar el Aviso en escritorio).
-  if (!(await page.getByRole('list', { name: 'Por resolver' }).isVisible()))
+  // Vuelve a Por resolver. En escritorio la ventana se cierra al tocar el Aviso: se espera a que termine de cerrarse
+  // antes de reabrirla (mirarla en pleno cierre decidía mal según el momento).
+  if (!isMobile(page)) {
+    await expect(page.getByRole('list', { name: 'Por resolver' })).toBeHidden();
+    await page.getByRole('button', { name: /por resolver$/ }).click();
+  } else if (!(await page.getByRole('list', { name: 'Por resolver' }).isVisible()))
     await page.getByRole('button', { name: /por resolver$/ }).click();
   await expect(page.getByRole('listitem').filter({ hasText: note })).toBeVisible();
 });
