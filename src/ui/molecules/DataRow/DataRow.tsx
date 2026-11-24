@@ -16,6 +16,11 @@ type DataRowCommon = {
   previous?: ReactNode;
   /** Divisor superior (`linea`). La primera fila de una isla va sin línea. */
   divider?: boolean;
+  /**
+   * #99: `stacked` pone la etiqueta arriba y el valor debajo a todo el ancho, para valores que son un bloque (las
+   * facturas con sus fotos y campos). Por defecto, en una línea.
+   */
+  layout?: 'inline' | 'stacked';
   className?: string;
 };
 
@@ -36,13 +41,14 @@ export type DataRowProps = DataRowCommon &
  * de `DataList` (`<dl>`), así el lector la lee como par. En escritorio la etiqueta va en una columna de 170.
  */
 export function DataRow(props: DataRowProps) {
-  const { label, icon, previous, divider = true, className } = props;
+  const { label, icon, previous, divider = true, layout = 'inline', className } = props;
   const kind = props.kind ?? 'text';
   return (
     <div
       className={[styles.row, className].filter(Boolean).join(' ')}
       data-kind={kind}
       data-divider={divider ? '' : undefined}
+      data-layout={layout === 'stacked' ? 'stacked' : undefined}
     >
       <dt className={styles.label}>
         {icon && <Icon name={icon} tone="tertiary" />}

@@ -22,6 +22,7 @@ export {
   useDiscardNewCustomer,
   useDiscardSummary,
   usePhotoUrl,
+  usePhotoUrlResolver,
   useAssignCopyToCustomer,
   useCreateCustomer,
   useSaveNewCustomer,

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { copy } from '@/copy/es';
 import type { LocalDate } from '@/domain/time';
 import { Button } from '@/ui/atoms/Button';
@@ -24,6 +24,8 @@ export type InvoiceBlockProps = {
   onRemovePhoto?: (photoId: string) => Promise<void> | void;
   /** Por qué todavía no se puede (sin nombre o sin conexión). */
   disabledReason?: string | null;
+  /** #99: trae la foto completa para verla en grande. */
+  fullUrl?: (photoId: string) => Promise<string>;
 };
 
 const t = copy.customers.create.invoice;
@@ -41,9 +43,12 @@ export function InvoiceBlock({
   onReplacePhoto,
   onRemovePhoto,
   disabledReason,
+  fullUrl,
 }: InvoiceBlockProps) {
   const input = useRef<HTMLInputElement>(null);
-  const disabled = !onCreate || Boolean(disabledReason);
+  // #99: mientras se sube la primera foto de una factura nueva se ve «Subiendo la foto…» (antes no había señal).
+  const [creating, setCreating] = useState(false);
+  const disabled = !onCreate || Boolean(disabledReason) || creating;
   const picker = (
     <input
       ref={input}
@@ -52,10 +57,16 @@ export function InvoiceBlock({
       accept="image/*"
       capture="environment"
       aria-label={t.photo}
-      onChange={(event) => {
+      onChange={async (event) => {
         const file = event.target.files?.[0];
         event.target.value = '';
-        if (file) void onCreate?.(file);
+        if (!file || !onCreate) return;
+        setCreating(true);
+        try {
+          await onCreate(file);
+        } finally {
+          setCreating(false);
+        }
       }}
     />
   );
@@ -63,7 +74,9 @@ export function InvoiceBlock({
   return (
     <div className={styles.block}>
       {invoices.map((invoice, index) => (
-        <div key={invoice.invoiceId} className={styles.invoice} aria-label={t.label(index + 1)} role="group">
+        // #99: cada factura es una tarjeta: sus fotos arriba y el N.º y la fecha debajo.
+        <section key={invoice.invoiceId} className={styles.invoice} aria-label={t.label(index + 1)}>
+          {invoices.length > 1 && <span className={styles.invoiceTitle}>{t.label(index + 1)}</span>}
           <InfoPhotoStrip
             photos={invoice.photos}
             onAdd={onAddPhoto ? (file) => onAddPhoto(invoice.invoiceId, file) : undefined}
@@ -72,6 +85,7 @@ export function InvoiceBlock({
             }
             onRemove={onRemovePhoto}
             disabledReason={disabledReason}
+            fullUrl={fullUrl}
           />
           <div className={styles.fields}>
             <Field
@@ -87,9 +101,15 @@ export function InvoiceBlock({
               onChange={(date) => onChange?.(invoice.invoiceId, { date })}
             />
           </div>
-        </div>
+        </section>
       ))}
-      {invoices.length === 0 ? (
+      {creating && (
+        <p className={styles.uploading} role="status">
+          <span className={styles.spinner} aria-hidden="true" />
+          {t.uploading}
+        </p>
+      )}
+      {invoices.length === 0 && !creating ? (
         <>
           <button
             type="button"
@@ -101,17 +121,19 @@ export function InvoiceBlock({
             <Icon name="receipt" tone="current" />
             {t.photo}
           </button>
-          <p className={styles.hint}>{disabledReason ?? t.hint}</p>
+          {disabledReason && <p className={styles.hint}>{disabledReason}</p>}
         </>
       ) : (
-        <Button
-          variant="link"
-          icon="add"
-          state={disabled ? 'disabled' : 'normal'}
-          onClick={() => input.current?.click()}
-        >
-          {t.another}
-        </Button>
+        <div className={styles.another}>
+          <Button
+            variant="link"
+            icon="add"
+            state={disabled ? 'disabled' : 'normal'}
+            onClick={() => input.current?.click()}
+          >
+            {t.another}
+          </Button>
+        </div>
       )}
       {picker}
     </div>

@@ -336,6 +336,13 @@ export const copy = {
       next: 'Siguiente',
       breadcrumb: 'Ruta',
     },
+    /** Visor de fotos (#99). */
+    photoViewer: {
+      close: 'Cerrar',
+      loading: 'Cargando la foto…',
+      failed: 'No se pudo abrir la foto.',
+      retry: 'Reintentar',
+    },
     /** Estado vacío y de carga (HU-UI-26). */
     empty: {
       loading: 'Cargando…',
@@ -610,7 +617,8 @@ export const copy = {
         photo: 'Foto de la factura',
         number: 'N.º de factura',
         date: 'Fecha',
-        hint: 'La fecha es el día de la foto; puedes cambiarla.',
+        /** #99: mientras se sube la primera foto de una factura nueva. */
+        uploading: 'Subiendo la foto de la factura…',
         another: 'Agregar otra factura',
         label: (n: number) => `Factura ${n}`,
       },
@@ -695,6 +703,9 @@ export const copy = {
     photos: {
       add: 'Agregar imagen',
       adding: 'Subiendo imagen…',
+      /** #99: tocar una foto la abre en grande. */
+      open: (n: number) => `Ver foto ${n}`,
+      viewerTitle: (n: number, total: number) => `Foto ${n} de ${total}`,
       /** #68: el menú de una foto de factura. */
       photoMenu: (n: number) => `Foto ${n}, cambiar o quitar`,
       replace: 'Cambiar foto',

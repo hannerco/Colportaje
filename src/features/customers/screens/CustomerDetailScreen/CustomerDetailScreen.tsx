@@ -74,6 +74,8 @@ export type CustomerDetailScreenProps = {
   onRemoveLocation?: () => void;
   /** «Agregar imagen» (HU-CLI-07). Sin función no hay botón. */
   onAddPhoto?: (file: File) => Promise<void> | void;
+  /** #99: trae la foto completa (imágenes y facturas) para verla en grande. */
+  photoUrl?: (photoId: string) => Promise<string>;
   /**
    * #61: agregar o completar la factura de un cliente ya guardado (la misma isla «Factura» de Nuevo cliente). Sin
    * funciones (archivado), las facturas solo se ven.
@@ -147,6 +149,7 @@ export function CustomerDetailScreen({
   onSchedule,
   onAvatarChange,
   onChangeSoldOn,
+  photoUrl,
 }: CustomerDetailScreenProps) {
   const [archiveOpen, setArchiveOpen] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -364,6 +367,7 @@ export function CustomerDetailScreen({
                     photos={detail.infoPhotos}
                     onAdd={detail.archived ? undefined : onAddPhoto}
                     disabledReason={isOnline ? null : copy.ui.empty.needsConnection}
+                    fullUrl={photoUrl}
                   />
                 }
               />
@@ -371,11 +375,13 @@ export function CustomerDetailScreen({
             {invoiceActions && !detail.archived ? (
               <DataRow
                 label={t.data.invoice}
+                layout="stacked"
                 value={
                   <InvoiceBlock
                     invoices={detail.invoices}
                     {...invoiceActions}
                     disabledReason={isOnline ? null : copy.ui.empty.needsConnection}
+                    fullUrl={photoUrl}
                   />
                 }
               />

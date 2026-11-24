@@ -1,0 +1,123 @@
+/* Visor de fotos (#99): pantalla completa sobre fondo oscuro, en celular y computador. */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--layer-toast);
+  background: var(--color-photo-backdrop);
+}
+
+.viewer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--layer-toast);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: calc(var(--safe-top, 0px) + var(--space-2)) var(--space-3)
+    calc(var(--safe-bottom, 0px) + var(--space-4));
+  color: var(--color-on-brand);
+  outline: none;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: var(--size-control);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--text-body);
+  font-weight: var(--weight-strong);
+}
+
+.close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-control);
+  height: var(--size-control);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.close:focus-visible {
+  outline: 3px solid var(--color-ring);
+}
+
+.stage {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+.image {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+}
+
+/* La miniatura se ve suave mientras llega la foto completa. */
+.image[data-preview] {
+  width: min(100%, 720px);
+  filter: blur(6px);
+}
+
+.loader {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.status {
+  position: absolute;
+  bottom: var(--space-4);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--color-toast);
+  color: var(--color-on-toast);
+  font-size: var(--text-secondary);
+}
+
+.spinner {
+  width: var(--space-4);
+  height: var(--space-4);
+  border: 2px solid var(--color-on-brand-3);
+  border-top-color: var(--color-on-toast);
+  border-radius: var(--radius-pill);
+  animation: spin 0.9s linear infinite;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}

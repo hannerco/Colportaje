@@ -21,6 +21,7 @@ import {
   useUpdateSoldAt,
   SchedulePaymentsDialog,
   type CustomerDetailScreenProps,
+  usePhotoUrlResolver,
 } from '@/features/customers';
 import { appErrorMessage } from '@/features/shared/app-error-message';
 import { ROUTES, useAppShell } from '@/features/shell';
@@ -58,6 +59,7 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
   const { archiveCustomer } = useArchiveCustomer();
   const { restoreCustomer } = useRestoreCustomer();
   const toast = useToast();
+  const photoUrl = usePhotoUrlResolver();
   const { reschedulePayment } = useReschedulePayment();
   const [today] = useState(() => todayBogota(systemClock));
   const [tiles] = useState(mapTiles);
@@ -90,6 +92,7 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
   return (
     <>
       <CustomerDetailScreen
+        photoUrl={photoUrl}
         detail={
           detail.data && {
             ...detail.data,
