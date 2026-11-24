@@ -2,11 +2,11 @@
 
 import { useState, type FormEvent } from 'react';
 import { copy } from '@/copy/es';
-import { Avatar } from '@/ui/atoms/Avatar';
 import { Button } from '@/ui/atoms/Button';
 import { Field } from '@/ui/atoms/Field';
+import { Logo } from '@/ui/atoms/Logo';
+import { Icon } from '@/ui/icons';
 import { Banner } from '@/ui/molecules/Banner';
-import { Island } from '@/ui/organisms/Island';
 import styles from './SignInScreen.module.css';
 
 export type SignInScreenProps = {
@@ -27,11 +27,12 @@ export type SignInScreenProps = {
 };
 
 const t = copy.auth.signIn;
+const [taglineStart, taglineEnd] = copy.app.tagline.split(', ');
 
 /**
- * Iniciar sesión (HU-PAN-BASE-02, BR-USR-02): una isla centrada con el nombre de la app, el correo, la contraseña y
- * «Entrar». Sin conexión avisa con la Franja y no deja entrar (no hay cómo comprobar la clave). Sin diseño del dueño
- * (OQ-44): se armó con la biblioteca. Pantalla de presentación: la sesión la abre quien la usa.
+ * Entrar (HU-PAN-BASE-02, BR-USR-02; diseño: Propuesta 9 del lienzo, Login.dc.html). Escritorio: a la izquierda el
+ * panel marino de la marca con la puerta grande, la frase y la cita; a la derecha, solo lo necesario para entrar.
+ * Móvil: el panel arriba y una hoja que sube con la acción, al alcance del pulgar. Sin conexión avisa y no deja entrar.
  */
 export function SignInScreen({
   isOnline,
@@ -51,46 +52,57 @@ export function SignInScreen({
     if (canSubmit) void onSubmit({ email: email.trim(), password });
   };
 
-  if (google)
-    return (
-      <main className={styles.page}>
-        <div className={styles.column}>
-          {!isOnline && <Banner tone="offline" />}
-          <Island>
-            <div className={styles.form}>
-              <header className={styles.brand}>
-                <Avatar kind="brand" size="xl" decorative />
-                <h1 className={styles.title}>{copy.app.name}</h1>
-                <p className={styles.subtitle}>{t.googleSubtitle}</p>
-              </header>
-              {error && <Banner tone="overdue">{error.message}</Banner>}
-              <Button
-                variant="secondary"
-                width="full"
-                state={google.pending || pending ? 'loading' : isOnline ? 'normal' : 'disabled'}
-                loadingText={t.googleOpening}
-                onClick={google.onClick}
-              >
-                {t.google}
-              </Button>
-              {!isOnline && <p className={styles.subtitle}>{copy.ui.empty.needsConnection}</p>}
-            </div>
-          </Island>
-        </div>
-      </main>
-    );
-
   return (
-    <main className={styles.page}>
-      <div className={styles.column}>
-        {!isOnline && <Banner tone="offline" />}
-        <Island>
-          <form className={styles.form} onSubmit={submit} noValidate>
-            <header className={styles.brand}>
-              <Avatar kind="brand" size="xl" decorative />
-              <h1 className={styles.title}>{copy.app.name}</h1>
+    <div className={styles.page}>
+      <section className={styles.brand} aria-label={copy.app.name}>
+        <Logo variant="logotype" size={28} onBrand />
+        <div className={styles.door}>
+          <Logo variant="mark" size={300} onBrand decorative />
+        </div>
+        <div className={styles.motto}>
+          <p className={styles.tagline}>
+            {taglineStart},<br />
+            {taglineEnd}
+          </p>
+          <p className={styles.quote}>
+            {t.quote}
+            <span className={styles.source}>{t.quoteSource}</span>
+          </p>
+        </div>
+      </section>
+
+      <main className={styles.main}>
+        {google ? (
+          <div className={styles.column}>
+            <header className={styles.header}>
+              <h1 className={styles.title}>{t.heading}</h1>
+              <p className={styles.subtitle}>{t.googleSubtitle}</p>
+            </header>
+            <Button
+              variant="secondary"
+              width="full"
+              state={google.pending || pending ? 'loading' : isOnline ? 'normal' : 'disabled'}
+              loadingText={t.googleOpening}
+              onClick={google.onClick}
+            >
+              {t.google}
+            </Button>
+            {error && <Banner tone="overdue">{error.message}</Banner>}
+            {!isOnline && <Banner tone="offline">{t.offline}</Banner>}
+            <hr className={styles.rule} />
+            <p className={styles.help}>
+              <Icon name="info" tone="current" className={styles.helpIcon} />
+              {t.noSignUp}
+            </p>
+            <p className={styles.mobileQuote}>{t.quote}</p>
+          </div>
+        ) : (
+          <form className={styles.column} onSubmit={submit} noValidate>
+            <header className={styles.header}>
+              <h1 className={styles.title}>{t.heading}</h1>
               <p className={styles.subtitle}>{t.subtitle}</p>
             </header>
+            {!isOnline && <Banner tone="offline" />}
             {error?.kind === 'other' && <Banner tone="overdue">{error.message}</Banner>}
             <Field
               kind="email"
@@ -120,9 +132,10 @@ export function SignInScreen({
             >
               {t.submit}
             </Button>
+            <p className={styles.mobileQuote}>{t.quote}</p>
           </form>
-        </Island>
-      </div>
-    </main>
+        )}
+      </main>
+    </div>
   );
 }
