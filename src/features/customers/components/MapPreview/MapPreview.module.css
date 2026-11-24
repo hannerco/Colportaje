@@ -1,4 +1,6 @@
 .preview {
+  /* #100: el mapa y su pin viven en su propia capa; si no, el pin (z-index 500) quedaba encima de todo. */
+  isolation: isolate;
   position: relative;
   display: block;
   width: 100%;
