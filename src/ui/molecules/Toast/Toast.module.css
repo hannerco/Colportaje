@@ -77,3 +77,11 @@
   left: var(--space-4);
   max-width: none;
 }
+
+/* #89: con el botón flotante en pantalla, el aviso va encima de él; si no, lo tapaba y el «+» no respondía. */
+:global([data-platform='mobile']:has([data-app-fab])) .viewport {
+  bottom: calc(
+    var(--bottom-bar-inset) + var(--size-bottom-bar-item) + var(--space-2) + var(--space-4) +
+      var(--size-fab) + var(--space-3) + env(safe-area-inset-bottom, 0px)
+  );
+}

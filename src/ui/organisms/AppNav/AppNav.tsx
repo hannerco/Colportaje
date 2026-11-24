@@ -306,7 +306,8 @@ export function BottomBar({ active, items, hrefs, fab, onNavigate, className }: 
       </nav>
       {/* R3: encima de la barra, a la derecha; sin `fab` no se pinta. */}
       {fab && (
-        <span className={styles.fab}>
+        // `data-app-fab`: el Aviso sube por encima del botón para no taparlo (#89).
+        <span className={styles.fab} data-app-fab="">
           <Button
             variant="fab"
             icon={fab.icon}

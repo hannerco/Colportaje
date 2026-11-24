@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { expect, fn, userEvent, waitFor } from 'storybook/test';
+import { ToastProvider, useToast } from '../../molecules/Toast';
 import { AppNav, type NavId } from './AppNav';
 
 const hrefs: Record<NavId, string> = {
@@ -288,6 +289,47 @@ export const NavegarSinRecargar: Story = {
       expect(prevented).toBe(true);
       expect(args.onNavigate).toHaveBeenLastCalledWith('#inventario');
     }
+  },
+};
+
+function ToastTrigger() {
+  const { show } = useToast();
+  return (
+    <button type="button" onClick={() => show({ message: 'Cliente guardado', tone: 'success' })}>
+      Mostrar aviso
+    </button>
+  );
+}
+
+/** #89: con un aviso en pantalla, el «+» sigue a la vista y se puede tocar (el aviso sube por encima). */
+export const AvisoNoTapaElBoton: Story = {
+  name: 'El aviso no tapa el «+» · móvil',
+  globals: { platform: 'mobile' },
+  render: (args) => (
+    <div style={{ transform: 'translateZ(0)', minHeight: 520 }}>
+      <ToastProvider durationMs={60_000}>
+        <ToastTrigger />
+        <AppNav {...args} />
+      </ToastProvider>
+    </div>
+  ),
+  play: async ({ canvasElement, args }) => {
+    for (const frame of frames(canvasElement)) {
+      await userEvent.click(
+        [...frame.querySelectorAll('button')].find((b) => b.textContent === 'Mostrar aviso')!,
+      );
+      const toast = await waitFor(() => {
+        const el = [...frame.querySelectorAll<HTMLElement>('li, [role="status"]')].find((e) =>
+          e.textContent?.includes('Cliente guardado'),
+        );
+        expect(el).toBeTruthy();
+        return el!;
+      });
+      const fab = frame.querySelector<HTMLElement>('[aria-label="Nuevo cliente"]')!;
+      expect(toast.getBoundingClientRect().bottom).toBeLessThanOrEqual(fab.getBoundingClientRect().top);
+      await userEvent.click(fab);
+    }
+    expect(args.fab!.onClick).toHaveBeenCalled();
   },
 };
 
