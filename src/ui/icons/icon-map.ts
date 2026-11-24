@@ -35,19 +35,20 @@ import {
   Receipt,
   Search,
   Settings,
+  Share,
   Shield,
   Smartphone,
   Square,
   Sun,
   Trash2,
   TriangleAlert,
+  type LucideIcon,
   Undo2,
   User,
   UserPlus,
   Users,
   WifiOff,
   X,
-  type LucideIcon,
 } from 'lucide-react';
 
 /** Cada nombre con su ícono y el nombre Lucide (el de lucide.dev) para encontrarlo y verificarlo. */
@@ -96,6 +97,8 @@ export const ICON_MAP = {
   offline: { lucide: 'wifi-off', icon: WifiOff },
   // Objetos
   info: { lucide: 'info', icon: Info },
+  /** Ronda 37: compartir e invitar (Ajustes › Acerca de). */
+  share: { lucide: 'share', icon: Share },
   books: { lucide: 'book-open', icon: BookOpen },
   person: { lucide: 'user', icon: User },
   transfer: { lucide: 'smartphone', icon: Smartphone },

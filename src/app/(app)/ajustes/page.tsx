@@ -7,6 +7,7 @@ import { SettingsScreen } from '@/features/settings';
 import { appErrorMessage } from '@/features/shared/app-error-message';
 import { ROUTES, setAdminMode, useAdminMode, useAppShell } from '@/features/shell';
 import { useState } from 'react';
+import packageJson from '../../../../package.json';
 import { applyThemePreference, readThemePreference } from '@/ui/platform';
 import { useToast } from '@/ui/molecules/Toast';
 
@@ -44,6 +45,18 @@ export default function SettingsPage() {
       }}
       adminMode={adminMode}
       onAdminModeChange={setAdminMode}
+      version={packageJson.version}
+      onInvite={async () => {
+        const { inviteText, copied } = copy.app.about;
+        const url = window.location.origin;
+        // La hoja de compartir del teléfono; si no la hay (computador), se copia el texto.
+        if (navigator.share) {
+          await navigator.share({ title: copy.app.name, text: inviteText, url }).catch(() => undefined);
+          return;
+        }
+        await navigator.clipboard?.writeText(`${inviteText} ${url}`);
+        toast.show({ message: copied, tone: 'success' });
+      }}
       onSignOut={async () => {
         const result = await signOut();
         if (!result.ok) fail(result.error);

@@ -17,3 +17,27 @@
   display: flex;
   margin-top: var(--space-3);
 }
+
+/* Ronda 37: Acerca de (ícono de app, nombre, versión y la frase de la marca). */
+.about {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.aboutText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.aboutName {
+  font-size: var(--text-heading);
+  font-weight: var(--weight-title);
+}
+
+.tagline {
+  margin: 0;
+  color: var(--color-text-2);
+  font-size: var(--text-body);
+}

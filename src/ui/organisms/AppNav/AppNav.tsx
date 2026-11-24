@@ -248,7 +248,7 @@ export function Sidebar({
 
 // ─── Móvil: barra inferior, botón flotante y hoja «Más» ───
 
-export function BottomBar({ active, items, hrefs, fab, onNavigate, className }: AppNavProps) {
+export function BottomBar({ active, items, hrefs, fab, onNavigate, account, className }: AppNavProps) {
   const visible = shown(items);
   const [moreOpen, setMoreOpen] = useState(false);
   const fabNoteId = useId();
@@ -286,6 +286,7 @@ export function BottomBar({ active, items, hrefs, fab, onNavigate, className }: 
                 ids={inMore}
                 hrefs={hrefs}
                 onNavigate={onNavigate}
+                account={account}
                 open={moreOpen}
                 onOpenChange={setMoreOpen}
                 trigger={
@@ -337,10 +338,21 @@ export type MoreSheetProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   trigger: ReactElement;
+  /** Ronda 37: la cabecera de la hoja lleva la marca y la cuenta, como la barra lateral. */
+  account?: { name: string };
 };
 
 /** R4: la hoja de «Más», con los grupos Trabajo, Dinero y Cuenta (4 como máximo cada uno). */
-export function MoreSheet({ active, ids, hrefs, onNavigate, open, onOpenChange, trigger }: MoreSheetProps) {
+export function MoreSheet({
+  active,
+  ids,
+  hrefs,
+  onNavigate,
+  open,
+  onOpenChange,
+  trigger,
+  account,
+}: MoreSheetProps) {
   const uid = useId();
   const [container, setContainer] = useState<HTMLElement | null>(null);
   // La hoja se pinta en el ámbito de tema y plataforma más cercano (un marco del Storybook) o en el `<body>`.
@@ -360,7 +372,14 @@ export function MoreSheet({ active, ids, hrefs, onNavigate, open, onOpenChange, 
         <Dialog.Overlay className={styles.scrim} />
         <Dialog.Content className={styles.sheet} aria-describedby={undefined}>
           <span className={styles.handle} aria-hidden="true" />
-          <Dialog.Title className={styles.sheetTitle}>{copy.ui.nav.more}</Dialog.Title>
+          <Dialog.Title className={styles.visuallyHidden}>{copy.ui.nav.more}</Dialog.Title>
+          <div className={styles.sheetAccount}>
+            <Avatar kind="brand" size="lg" decorative />
+            <span className={styles.sheetAccountText}>
+              <span className={styles.sheetAccountApp}>{copy.app.name}</span>
+              {account?.name && <span className={styles.sheetAccountName}>{account.name}</span>}
+            </span>
+          </div>
           {groups.map((group) => (
             <section key={group.id} className={styles.sheetGroup} aria-labelledby={`${uid}-${group.id}`}>
               <h3 id={`${uid}-${group.id}`} className={styles.sheetGroupTitle}>

@@ -53,6 +53,7 @@ export function DepositDetailContainer({
       notFound={saved.isError && saved.error instanceof AppFailure && saved.error.error.code === 'NOT_FOUND'}
       onRetry={() => void saved.refetch()}
       isOnline={isOnline}
+      receiptHref={ROUTES.depositReceipt(depositId)}
       window={
         window ?? {
           mode: 'page',

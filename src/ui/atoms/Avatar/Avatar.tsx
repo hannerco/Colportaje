@@ -1,5 +1,6 @@
 import { copy } from '@/copy/es';
 import { Icon } from '../../icons';
+import { Logo } from '../Logo';
 import styles from './Avatar.module.css';
 
 export type AvatarKind = 'person' | 'emoji' | 'cover' | 'brand';
@@ -43,10 +44,18 @@ export function Avatar({
       data-size={side}
       {...(decorative ? { 'aria-hidden': true } : { role: 'img', 'aria-label': label })}
     >
-      <Content kind={kind} emoji={emoji} coverUrl={coverUrl} />
+      {kind === 'brand' ? (
+        // Ronda 37: la marca es el Logo elegido como ícono de app (cuadro accent y marca blanca al 60 %).
+        <Logo variant="app-icon" size={BRAND_SIDE[side === 'auto' ? 'md' : side]} decorative />
+      ) : (
+        <Content kind={kind} emoji={emoji} coverUrl={coverUrl} />
+      )}
     </span>
   );
 }
+
+/** Lado de la marca en px (los mismos de `--size-avatar-*`). */
+const BRAND_SIDE: Record<Exclude<AvatarSize, 'auto'>, number> = { sm: 24, md: 32, lg: 40, xl: 56 };
 
 function Content({ kind, emoji, coverUrl }: Pick<AvatarProps, 'kind' | 'emoji' | 'coverUrl'>) {
   switch (kind) {
@@ -60,8 +69,6 @@ function Content({ kind, emoji, coverUrl }: Pick<AvatarProps, 'kind' | 'emoji' |
       ) : (
         <Icon name="books" tone="current" className={styles.glyph} />
       );
-    case 'brand':
-      return <Icon name="books" tone="current" className={styles.glyph} />;
     default:
       return <Icon name="person" tone="current" className={styles.glyph} />;
   }

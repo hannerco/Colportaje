@@ -5,6 +5,7 @@ import { copy } from '@/copy/es';
 import { formatTime, type TimeFormat } from '@/domain/time';
 import { Button } from '@/ui/atoms/Button';
 import { Choice, ChoiceGroup } from '@/ui/atoms/Choice';
+import { Logo } from '@/ui/atoms/Logo';
 import { SegmentedControl } from '@/ui/molecules/SegmentedControl';
 import type { ThemePreference } from '@/ui/platform';
 import { DataList, DataRow } from '@/ui/molecules/DataRow';
@@ -33,6 +34,9 @@ export type SettingsScreenProps = {
   /** Modo administrador (BR-USR-04): solo se muestra si el perfil es admin. */
   adminMode: boolean;
   onAdminModeChange: (on: boolean) => void;
+  /** Ronda 37: Acerca de (versión de la app) e «Invitar a otro colportor» (hoja de compartir del teléfono). */
+  version: string;
+  onInvite: () => void;
 };
 
 const THEMES: readonly ThemePreference[] = ['system', 'light', 'dark'];
@@ -58,6 +62,8 @@ export function SettingsScreen({
   onThemeChange,
   adminMode,
   onAdminModeChange,
+  version,
+  onInvite,
 }: SettingsScreenProps) {
   const [signingOut, setSigningOut] = useState(false);
   const [saving, setSaving] = useState<TimeFormat | null>(null);
@@ -122,6 +128,22 @@ export function SettingsScreen({
               ))}
             </ChoiceGroup>
             {!isOnline && <p className={styles.muted}>{copy.ui.empty.needsConnection}</p>}
+          </Island>
+
+          <Island title={copy.app.about.title} icon="info" divided>
+            <div className={styles.about}>
+              <Logo variant="app-icon" size={56} decorative />
+              <span className={styles.aboutText}>
+                <span className={styles.aboutName}>{copy.app.name}</span>
+                <span className={styles.muted}>{copy.app.version(version)}</span>
+              </span>
+            </div>
+            <p className={styles.tagline}>{copy.app.tagline}</p>
+            <div className={styles.actions}>
+              <Button variant="tertiary" icon="share" onClick={onInvite}>
+                {copy.app.about.invite}
+              </Button>
+            </div>
           </Island>
 
           <Island title={t.session} icon="settings">

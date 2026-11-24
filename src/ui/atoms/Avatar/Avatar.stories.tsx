@@ -105,7 +105,9 @@ export const Marca: Story = {
       const avatar = avatarOf(frame);
       expect(avatar.getAttribute('aria-label')).toBe('Colportor');
       expect(box(avatar)).toEqual({ width: 32, height: 32 });
-      expect(getComputedStyle(avatar).borderRadius).toBe('9px');
+      // Ronda 37: la marca es el Logo como ícono de app (cuadro con radio del 22,5 %).
+      const tile = avatar.querySelector<HTMLElement>('[data-variant="app-icon"] > span')!;
+      expect(getComputedStyle(tile).borderRadius).toBe('7.2px');
     }
   },
 };
@@ -175,7 +177,10 @@ export const Matriz: Story = {
     </div>
   ),
   play: async ({ canvasElement }) => {
-    for (const svg of canvasElement.querySelectorAll<SVGElement>('[data-kind] svg')) {
+    // Íconos de trazo (la marca es el Logo, relleno: no lleva trazo de ícono).
+    for (const svg of canvasElement.querySelectorAll<SVGElement>(
+      '[data-kind]:not([data-kind="brand"]) svg',
+    )) {
       const size = svg.closest<HTMLElement>('[data-kind]')!.dataset.size;
       expect(getComputedStyle(svg).strokeWidth).toBe(size === 'sm' ? '2px' : '1.8px');
     }

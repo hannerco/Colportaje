@@ -11,9 +11,9 @@ describe('Ícono (HU-UI-03)', () => {
     expect(strokeWidthFor(12)).toBe(2);
   });
 
-  it('R2: el mapa tiene los 46 nombres, cada uno con un ícono Lucide distinto', () => {
-    expect(ICON_NAMES).toHaveLength(46);
-    expect(new Set(ICON_NAMES.map((n) => ICON_MAP[n].lucide)).size).toBe(46);
-    expect(new Set(ICON_NAMES.map((n) => ICON_MAP[n].icon)).size).toBe(46);
+  it('R2: el mapa tiene los 47 nombres, cada uno con un ícono Lucide distinto', () => {
+    expect(ICON_NAMES).toHaveLength(47);
+    expect(new Set(ICON_NAMES.map((n) => ICON_MAP[n].lucide)).size).toBe(47);
+    expect(new Set(ICON_NAMES.map((n) => ICON_MAP[n].icon)).size).toBe(47);
   });
 });

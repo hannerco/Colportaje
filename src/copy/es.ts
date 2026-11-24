@@ -4,7 +4,42 @@
 export const copy = {
   /** Nombre de la app (título de la pestaña y del ícono instalado). */
   /** Frase de la marca (fija, 2026-11-23). */
-  app: { name: 'Colportor', tagline: 'Tu colportaje, en orden.' },
+  app: {
+    name: 'Colportor',
+    tagline: 'Tu colportaje, en orden.',
+    /** Línea de apoyo al compartir (imagen Open Graph y descripción). */
+    support: 'Clientes, libros y abonos en un solo lugar, también sin señal.',
+    version: (version: string) => `Versión ${version}`,
+    /** Atajos del ícono instalado (manifest). */
+    shortcuts: { newCustomer: 'Nuevo cliente', collect: 'Cobrar' },
+    /** Invitación a instalar (lienzo «Invitación a instalar»). */
+    install: {
+      title: 'Instalar Colportor',
+      benefit: 'Instálala y llévala contigo puerta a puerta. Funciona sin conexión.',
+      install: 'Instalar',
+      later: 'Ahora no',
+      understood: 'Entendido',
+      iosShare: 'Toca Compartir en Safari.',
+      iosAdd: 'Elige Agregar a pantalla de inicio.',
+      iosConfirm: 'Toca Agregar.',
+    },
+    /** Ajustes › Acerca de e «Invitar a otro colportor». */
+    about: {
+      title: 'Acerca de',
+      invite: 'Invitar a otro colportor',
+      inviteText: 'Estoy usando Colportor para llevar mis clientes, libros y abonos. Te puede servir:',
+      copied: 'Invitación copiada. Pégala en un chat.',
+    },
+    /** Página de error y «sin conexión» del arranque. */
+    failure: {
+      errorTitle: 'Algo salió mal',
+      errorMessage: 'No pudimos abrir esta pantalla. Lo que ya guardaste está a salvo.',
+      offlineTitle: 'Sin conexión',
+      offlineMessage: 'La primera vez necesitas internet para abrir Colportor. Después funciona sin señal.',
+      retry: 'Volver a intentar',
+      goHome: 'Ir al inicio',
+    },
+  },
   /** Página pública de privacidad (la pide Google para publicar «Entrar con Google»). Texto base: el dueño lo revisa. */
   privacy: {
     title: 'Política de privacidad',
@@ -1253,6 +1288,32 @@ export const copy = {
       toDeliver: 'Lo que entregas',
       receipt: 'Recibo',
       balance: 'Cuadre',
+    },
+    /** Recibo del Abibono (lienzo «Recibo del Abibono», ronda 37). */
+    depositReceipt: {
+      open: 'Ver recibo',
+      title: 'Recibo',
+      kicker: 'Entrega al líder',
+      date: 'Fecha',
+      colportor: 'Colportor',
+      status: 'Estado',
+      confirmed: 'Confirmado',
+      customer: 'Cliente',
+      paidAt: 'Cobrado el',
+      method: 'Medio',
+      amount: 'Valor',
+      expected: 'Esperado',
+      cash: 'Efectivo',
+      transfer: 'Transferencia',
+      total: 'Total entregado',
+      difference: 'Diferencia',
+      note: 'Nota',
+      photos: (n: number) => `Recibo del líder: ${n === 1 ? '1 foto adjunta' : `${n} fotos adjuntas`}.`,
+      generated: (date: string) => `Generado el ${date}`,
+      print: 'Imprimir o guardar PDF',
+      share: 'Compartir',
+      copied: 'Enlace del recibo copiado.',
+      back: (name: string) => name,
     },
     depositDetail: {
       breadcrumb: 'Dinero',

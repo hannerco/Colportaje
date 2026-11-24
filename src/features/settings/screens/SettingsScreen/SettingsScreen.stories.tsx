@@ -12,6 +12,8 @@ const meta = {
     onThemeChange: fn(),
     adminMode: true,
     onAdminModeChange: fn(),
+    version: '0.1.0',
+    onInvite: fn(),
     nav: {
       active: 'settings',
       items: APP_NAV_ITEMS,
@@ -136,6 +138,20 @@ export const CerrarSesion: Story = {
 export const Cargando: Story = { args: { profile: undefined } };
 
 /** Las combinaciones en claro y oscuro × escritorio y móvil. */
+/** Ronda 37: Acerca de con el ícono de app, la versión y la frase; «Invitar a otro colportor» abre la hoja de compartir. */
+export const AcercaDe: Story = {
+  name: 'Acerca de',
+  play: async ({ canvasElement, args }) => {
+    const frame = frames(canvasElement)[0]!;
+    expect(frame.textContent).toContain('Versión 0.1.0');
+    expect(frame.textContent).toContain('Tu colportaje, en orden.');
+    await userEvent.click(
+      [...frame.querySelectorAll('button')].find((b) => b.textContent === 'Invitar a otro colportor')!,
+    );
+    expect(args.onInvite).toHaveBeenCalled();
+  },
+};
+
 export const Matriz: Story = { parameters: { frames: 'matrix' } };
 
 /** #42 (propuesta 5): el tema se elige aquí (Como el dispositivo, Claro u Oscuro) y el admin ve el modo administrador. */
