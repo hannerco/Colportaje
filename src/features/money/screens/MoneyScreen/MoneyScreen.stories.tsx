@@ -301,6 +301,33 @@ export const HojaDeResumenMovil: Story = {
   },
 };
 
+/** #101: en escritorio, el resumen funciona también en ventana centrada y en página (no solo lateral). */
+export const ResumenEnCadaForma: Story = {
+  name: 'Resumen en ventana centrada y en página',
+  globals: { platform: 'desktop' },
+  play: async ({ canvasElement }) => {
+    const frame = frames(canvasElement)[0]!;
+    await userEvent.click(button(frame, /^Por entregar\s*\$385\.000/)!);
+    for (const mode of ['Centrada', 'Página']) {
+      const option = await waitFor(() => {
+        const found = frame.querySelector<HTMLElement>(`[title="${mode}"]`);
+        expect(found).not.toBeNull();
+        return found!;
+      });
+      await userEvent.click(option);
+      // La forma elegida queda marcada (antes seguía en «Lateral» y la ventana no cambiaba).
+      await waitFor(() => {
+        const current = frame.querySelector<HTMLElement>(`[title="${mode}"]`)!;
+        expect(current.getAttribute('data-state')).toBe('checked');
+      });
+      await waitFor(() => expect(frame.textContent).toContain('Dinero total'));
+      expect(frame.textContent).toContain('Entregar al líder');
+    }
+    // Se deja como estaba para las demás pruebas.
+    window.localStorage.removeItem('colportor.detail-window-mode');
+  },
+};
+
 /** CA-5: en móvil, las acciones de deslizar están en cada abono por cobrar y llevan al mismo formulario. */
 export const DeslizarMovil: Story = {
   name: 'Deslizar (móvil)',

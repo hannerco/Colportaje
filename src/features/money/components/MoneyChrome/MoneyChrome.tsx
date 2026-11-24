@@ -84,10 +84,11 @@ export function useMoneyChrome(options: MoneyChromeOptions): {
       </div>
     ),
     aboveList: null,
-    // En el celular es la hoja de abajo; en el computador, la Ventana lateral (la hoja se vuelve lateral, HU-UI-27).
+    // En el celular es la hoja de abajo. En el computador sigue la forma elegida (lateral, centrada o página, #101):
+    // antes iba fija en lateral y elegir otra no hacía nada.
     sheet: sheetOpen && summary && (
       <DetailWindow
-        mode="sheet"
+        mode={mobile ? 'sheet' : undefined}
         title={t.summaryTitle}
         breadcrumb={{ label: t.title, href: options.backHref }}
         onClose={() => setSheetOpen(false)}
