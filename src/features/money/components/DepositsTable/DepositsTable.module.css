@@ -21,10 +21,6 @@
   vertical-align: middle;
 }
 
-.row:hover {
-  background: var(--color-row-selected);
-}
-
 .number {
   font-variant-numeric: var(--font-numeric);
 }
@@ -38,7 +34,12 @@
   color: var(--color-text-3);
 }
 
+.row {
+  composes: host from '../../../../ui/styles/interactive-row.module.css';
+}
+
 .link {
+  composes: link from '../../../../ui/styles/interactive-row.module.css';
   color: inherit;
   font-weight: var(--weight-medium);
   text-decoration: none;
@@ -65,6 +66,7 @@
 }
 
 .mobileRow {
+  composes: row from '../../../../ui/styles/interactive-row.module.css';
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
@@ -101,6 +103,3 @@
 }
 
 /* #29: el Abibono abierto en la Ventana de detalle se resalta como la fila seleccionada de la Fila de lista. */
-.row[data-selected] {
-  background: var(--color-row-selected);
-}

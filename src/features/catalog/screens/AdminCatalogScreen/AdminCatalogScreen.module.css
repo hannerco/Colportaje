@@ -41,22 +41,19 @@
 }
 
 .titleRow {
+  composes: row inset from '../../../../ui/styles/interactive-row.module.css';
   display: flex;
   align-items: center;
   gap: var(--space-3);
   width: 100%;
   min-height: var(--size-list-row);
-  padding: var(--space-2) 0;
+  padding-block: var(--space-2);
   border: 0;
   background: transparent;
   color: var(--color-text);
   font: inherit;
   text-align: left;
   cursor: pointer;
-}
-
-.titleRow[aria-current='true'] {
-  background: var(--color-row-selected);
 }
 
 .titleRow:focus-visible {

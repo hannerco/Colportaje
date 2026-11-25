@@ -21,6 +21,7 @@
 
 /* ─── Escritorio ─── */
 .row {
+  composes: host from '../../styles/interactive-row.module.css';
   display: grid;
   grid-template-columns: var(--list-columns);
   align-items: center;
@@ -30,10 +31,6 @@
   border-top: 1px solid var(--color-row-line);
   color: var(--color-text);
   font-size: var(--text-body);
-}
-
-.row[data-selected] {
-  background: var(--color-row-selected);
 }
 
 .header {
@@ -86,6 +83,7 @@
 
 /* R1: el nombre va subrayado y es el enlace al detalle. */
 .titleLink {
+  composes: link from '../../styles/interactive-row.module.css';
   display: inline-flex;
   min-width: 0;
   padding: 0;
@@ -154,6 +152,7 @@
 }
 
 .mobileRow {
+  composes: row from '../../styles/interactive-row.module.css';
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -177,7 +176,6 @@
   margin: 0 var(--space-2);
   padding: var(--space-2) var(--space-2);
   border-radius: var(--radius-md);
-  background: var(--color-row-selected);
 }
 
 .mobileRow:focus-visible {

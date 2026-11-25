@@ -55,10 +55,15 @@
   background: var(--color-row-selected);
 }
 
-/* Resaltado con el teclado o el puntero (Radix pone `data-highlighted`; en la hoja, el foco). */
+/* Resaltado con el teclado o el puntero (Radix pone `data-highlighted`; en la hoja, el foco): el color del mouse
+   encima de una fila (2026-11-25), distinto del de la marcada. */
+.item[data-highlighted]:not([data-state='checked']),
+.item:focus-visible:not([data-state='checked']) {
+  background: var(--color-row-hover);
+}
+
 .item[data-highlighted],
 .item:focus-visible {
-  background: var(--color-row-selected);
   outline: 2px solid var(--color-ring);
   outline-offset: -2px;
 }

@@ -6,6 +6,7 @@
 }
 
 .row {
+  composes: host inset from '../../../../ui/styles/interactive-row.module.css';
   display: flex;
   align-items: center;
   gap: var(--space-3);
@@ -16,6 +17,7 @@
 }
 
 .book {
+  composes: link from '../../../../ui/styles/interactive-row.module.css';
   display: flex;
   flex: 1 1 auto;
   align-items: center;
