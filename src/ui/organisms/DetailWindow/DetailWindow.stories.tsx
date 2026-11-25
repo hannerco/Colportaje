@@ -309,6 +309,23 @@ export const CadaTipoRecuerdaSuForma: Story = {
   },
 };
 
+/**
+ * 2026-11-25: «Página» desde una lista no vuelve la ventana una página dentro de la lista (a la derecha, con la lista
+ * a la izquierda): se queda lateral mientras quien la usa navega a la página del registro.
+ */
+export const PaginaDesdeLaLista: Story = {
+  name: 'Página desde la lista, sin salto',
+  globals: { platform: 'desktop' },
+  play: async ({ canvasElement, args }) => {
+    const frame = frames(canvasElement)[0]!;
+    const before = windowOf(frame)!.getBoundingClientRect().width;
+    await userEvent.click(radio(frame, 'Página'));
+    expect(args.onModeChange).toHaveBeenCalledWith('page');
+    expect(windowOf(frame)!.getBoundingClientRect().width).toBe(before);
+    expect(readStoredDetailWindowMode()).toBe('page');
+  },
+};
+
 /** CA-3: centrada abierta desde una fila; Esc la cierra y el foco vuelve a esa fila. */
 export const Centrada: Story = {
   args: { mode: 'center' },

@@ -15,6 +15,8 @@ export type AppShell = {
   readonly isOnline: boolean;
   /** R2: la Franja de sin conexión, o `null` si hay conexión. La pantalla la pone arriba de su contenido. */
   readonly offlineBanner: ReactNode;
+  /** Navega sin recargar, con la barra de progreso de arriba mientras llega la pantalla (#98). */
+  readonly navigate: (href: string) => void;
 };
 
 const AppShellContext = createContext<AppShell | null>(null);
@@ -49,6 +51,7 @@ export function AppShellProvider({ pathname, navigate, children }: AppShellProvi
       },
       isOnline: online,
       offlineBanner: online ? null : <Banner tone="offline" />,
+      navigate,
     }),
     [pathname, navigate, accountName, isAdmin, online],
   );

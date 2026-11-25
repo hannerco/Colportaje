@@ -29,7 +29,7 @@ const OPEN = 'abono';
  * su página (#29, igual que Clientes).
  */
 function MoneyRoute() {
-  const { nav, isOnline, offlineBanner } = useAppShell();
+  const { nav, isOnline, offlineBanner, navigate } = useAppShell();
   const href = useDetailHref();
   const router = useRouter();
   const pathname = usePathname();
@@ -117,7 +117,7 @@ function MoneyRoute() {
               onNext:
                 index >= 0 && index < rows.length - 1 ? () => select(rows[index + 1]!.paymentId) : undefined,
               onModeChange: (mode) => {
-                if (mode === 'page') router.push(ROUTES.payment(selectedId));
+                if (mode === 'page') navigate(ROUTES.payment(selectedId));
               },
             }}
           />

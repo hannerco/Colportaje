@@ -145,8 +145,10 @@ export function DetailWindow(props: DetailWindowProps) {
   const resolved = resolveDetailWindowMode(mode ?? (mobile ? 'page' : stored), platform);
 
   const changeMode = (next: DesktopMode) => {
-    setStored(next);
     storeMode(next, rememberAs);
+    // «Página» desde una lista: quien la usa navega a la página del registro. Mientras llega, la ventana se queda
+    // como está; antes se volvía página dentro de la lista (a la derecha, con la lista a la izquierda) y luego saltaba.
+    if (!(next === 'page' && mode === undefined && onModeChange)) setStored(next);
     onModeChange?.(next);
   };
 

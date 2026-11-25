@@ -25,7 +25,7 @@ const OPEN = 'ejemplar';
  * o en el celular, va a su página (#29, igual que Clientes).
  */
 function CopiesRoute() {
-  const { nav, isOnline, offlineBanner } = useAppShell();
+  const { nav, isOnline, offlineBanner, navigate } = useAppShell();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -90,7 +90,7 @@ function CopiesRoute() {
               onNext:
                 index >= 0 && index < rows.length - 1 ? () => select(rows[index + 1]!.copyId) : undefined,
               onModeChange: (mode) => {
-                if (mode === 'page') router.push(ROUTES.copy(selectedId));
+                if (mode === 'page') navigate(ROUTES.copy(selectedId));
               },
             }}
             onDeleted={() => select(undefined)}
