@@ -171,6 +171,8 @@ export function createSupabasePaymentRepository(getClient: GetSupabaseClient): P
       if (reschedules.error) return err(mapPostgrestError(reschedules.error));
       if (events.error) return err(mapPostgrestError(events.error));
       const amount = (value: unknown) => (typeof value === 'number' ? value : null);
+      const day = (value: unknown) => (typeof value === 'string' ? localDate(value) : null);
+      const method = (value: unknown) => (value === 'cash' || value === 'transfer' ? value : null);
       return ok({
         reschedules: reschedules.data.map((r) => ({
           previousDueDate: localDate(r.previous_due_date),
@@ -185,6 +187,10 @@ export function createSupabasePaymentRepository(getClient: GetSupabaseClient): P
             at: new Date(e.at),
             previousAmount: amount(data.previousAmount),
             newAmount: amount(data.newAmount),
+            previousPaidAt: day(data.previousPaidAt),
+            newPaidAt: day(data.newPaidAt),
+            previousMethod: method(data.previousMethod),
+            newMethod: method(data.newMethod),
           };
         }),
       });

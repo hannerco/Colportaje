@@ -24,7 +24,7 @@ const OPEN = 'cliente';
  * `/clientes/[id]` (CA-3); en móvil, siempre en `/clientes/[id]`.
  */
 function CustomersRoute() {
-  const { nav, isOnline, offlineBanner } = useAppShell();
+  const { nav, isOnline, offlineBanner, navigate } = useAppShell();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -73,7 +73,7 @@ function CustomersRoute() {
       selectedId={selectedId}
       customerHref={ROUTES.customer}
       onOpenCustomer={(id) =>
-        platform === 'mobile' || readStoredDetailWindowMode() === 'page'
+        platform === 'mobile' || readStoredDetailWindowMode('customer') === 'page'
           ? router.push(ROUTES.customer(id))
           : select(id)
       }
@@ -90,7 +90,7 @@ function CustomersRoute() {
               onPrev: index > 0 ? () => select(rows[index - 1]!.id) : undefined,
               onNext: index >= 0 && index < rows.length - 1 ? () => select(rows[index + 1]!.id) : undefined,
               onModeChange: (mode) => {
-                if (mode === 'page') router.push(ROUTES.customer(selectedId));
+                if (mode === 'page') navigate(ROUTES.customer(selectedId));
               },
             }}
           />

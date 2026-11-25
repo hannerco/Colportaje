@@ -89,6 +89,7 @@ export function useMoneyChrome(options: MoneyChromeOptions): {
     sheet: sheetOpen && summary && (
       <DetailWindow
         mode={mobile ? 'sheet' : undefined}
+        rememberAs="money-summary"
         title={t.summaryTitle}
         breadcrumb={{ label: t.title, href: options.backHref }}
         onClose={() => setSheetOpen(false)}

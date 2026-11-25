@@ -20,7 +20,17 @@ const GROUPS: { name: string; tokens: ColorToken[] }[] = [
       { design: 'tone', token: '--color-tone', usage: 'Fondo suave de apoyo' },
       { design: 'track', token: '--color-track', usage: 'Riel del medidor y del interruptor' },
       { design: 'tabTrack', token: '--color-tab-track', usage: 'Riel de las pestañas' },
-      { design: 'selRow', token: '--color-row-selected', usage: 'Fila seleccionada' },
+      { design: 'selRow', token: '--color-row-selected', usage: 'Fila seleccionada (la que está abierta)' },
+      {
+        design: '—',
+        token: '--color-row-hover',
+        usage: 'Fila tocable con el mouse encima (distinta de la seleccionada)',
+      },
+      {
+        design: '—',
+        token: '--color-row-pressed',
+        usage: 'Fila tocable mientras se toca (un paso más fuerte)',
+      },
       { design: 'activeBg', token: '--color-active-bg', usage: 'Pestaña o ítem activo' },
       { design: 'head', token: '--color-table-head', usage: 'Encabezado de tabla' },
     ],

@@ -22,8 +22,8 @@
   font-variant-numeric: var(--font-numeric);
 }
 
-.row:hover {
-  background: var(--color-row-selected);
+.row {
+  composes: host from '../../../../ui/styles/interactive-row.module.css';
 }
 
 .end {
@@ -38,6 +38,7 @@
 }
 
 .link {
+  composes: link from '../../../../ui/styles/interactive-row.module.css';
   color: inherit;
   font-weight: var(--weight-medium);
   text-decoration: none;
@@ -93,6 +94,7 @@
 }
 
 .mobileRow {
+  composes: row from '../../../../ui/styles/interactive-row.module.css';
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr) max-content;
   align-items: center;
@@ -214,10 +216,6 @@
 }
 
 /* #29: el abono abierto en la Ventana de detalle se resalta como la fila seleccionada de la Fila de lista. */
-.row[data-selected] {
-  background: var(--color-row-selected);
-}
-
 /* #70: «Acciones» solo para el lector de pantalla (la columna de «Cobrar» no lleva título visible). */
 .visuallyHidden {
   position: absolute;

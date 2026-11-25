@@ -25,6 +25,27 @@ describe('runMutation (HU-BASE-06)', () => {
     expect(result).toEqual({ ok: false, error: { code: 'NETWORK_ERROR', retryable: true } });
   });
 
+  it('2026-11-25: si la acción no responde a tiempo, devuelve TIMEOUT reintentable (no se queda cargando)', async () => {
+    vi.useFakeTimers();
+    try {
+      const pending = runMutation(fakeConnectivity(true), () => new Promise<never>(() => {}), 45_000);
+      await vi.advanceTimersByTimeAsync(45_000);
+      expect(await pending).toEqual({ ok: false, error: { code: 'TIMEOUT', retryable: true } });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('una acción que responde a tiempo no queda con el reloj puesto', async () => {
+    vi.useFakeTimers();
+    try {
+      expect(await runMutation(fakeConnectivity(true), async () => ok(1), 45_000)).toEqual(ok(1));
+      expect(vi.getTimerCount()).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('un error inesperado que no es de red se relanza', async () => {
     await expect(
       runMutation(fakeConnectivity(true), async () => {

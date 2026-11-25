@@ -64,7 +64,7 @@ export function DepositDetailScreen(props: DepositDetailScreenProps) {
 
   if (!deposit)
     return (
-      <DetailWindow {...props.window} title={copy.ui.nav.items.money}>
+      <DetailWindow {...props.window} rememberAs="deposit" title={copy.ui.nav.items.money}>
         {props.notFound ? (
           <EmptyState kind="empty" title={t.notFound.title} text={t.notFound.text} />
         ) : props.error && !props.loading ? (
@@ -97,7 +97,7 @@ function Detail(props: DepositDetailScreenProps & { deposit: DepositView }) {
 
   return (
     <>
-      <DetailWindow {...props.window} title={deposit.displayTitle} headingInContent>
+      <DetailWindow {...props.window} rememberAs="deposit" title={deposit.displayTitle} headingInContent>
         <div className={styles.stack}>
           <DepositHeader
             title={<HeaderTitle text={deposit.displayTitle} />}

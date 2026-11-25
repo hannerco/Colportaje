@@ -166,6 +166,7 @@
 }
 
 .row {
+  composes: host inset from '../../../../ui/styles/interactive-row.module.css';
   display: grid;
   grid-template-columns: var(--size-control-sm) minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1.2fr) max-content;
   align-items: center;
@@ -196,6 +197,7 @@
 }
 
 .link {
+  composes: link from '../../../../ui/styles/interactive-row.module.css';
   color: inherit;
   text-decoration: none;
 }

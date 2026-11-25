@@ -18,6 +18,7 @@ const meta = {
     onAddBook: fn(),
     today: localDate('2026-11-17'),
     onCollect: fn(),
+    paymentHref: (id: string) => `#abono-${id}`,
     schedule: {
       drafts: [],
       onAdd: fn(),
@@ -311,6 +312,19 @@ export const ArchivadoSinAgregarLibro: Story = {
       await userEvent.click(add, { pointerEventsCheck: 0 });
     }
     expect(args.onAddBook).not.toHaveBeenCalled();
+  },
+};
+
+/** Ronda 38: tocar un abono (pagado o por cobrar) lleva a su detalle; fecha, valor, Cobrar y basura siguen siendo botones. */
+export const TocarUnAbono: Story = {
+  name: 'Tocar un abono lleva a su detalle',
+  play: async ({ canvasElement }) => {
+    for (const frame of frames(canvasElement)) {
+      const rows = [...frame.querySelectorAll<HTMLElement>('ul[aria-label="Abonos programados"] > li')];
+      expect(rows.length).toBeGreaterThan(0);
+      for (const row of rows) expect(row.querySelector('a[href^="#abono-"]')).not.toBeNull();
+      expect(frame.querySelector('a[href="#abono-p-3"]')).not.toBeNull();
+    }
   },
 };
 

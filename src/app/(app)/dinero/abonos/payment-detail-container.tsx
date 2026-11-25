@@ -13,11 +13,14 @@ import {
   useCollectPayment,
   useCorrectScheduledDate,
   useReschedulePayment,
+  useUpdateCollectedPayment,
+  useDeletePayment,
   useUndoCollectPayment,
   type PaymentDetailForm,
 } from '@/features/payments';
+import { useMoneySummary } from '@/features/money';
 import { errorToast } from '@/features/shared/error-report';
-import { ROUTES, useAppShell } from '@/features/shell';
+import { ROUTES, useAppShell, useDetailHref } from '@/features/shell';
 import { systemClock } from '@/lib/clock';
 import { useToast } from '@/ui/molecules/Toast';
 
@@ -29,6 +32,11 @@ type Props = {
   window: PaymentDetailScreenProps['window'];
   /** El formulario abierto al llegar (deslizar en la lista de Dinero lleva a Cobrar o Más plazo). */
   initialForm?: PaymentDetailForm | null;
+  /**
+   * A dónde lleva otro abono del cliente («Abonos de …»). La lista de Dinero lo da para quedarse en la Ventana con su
+   * vista; sin valor, según la forma que recuerdan los abonos.
+   */
+  paymentHref?: (paymentId: string) => string;
 };
 
 /**
@@ -36,9 +44,10 @@ type Props = {
  * · Deshacer» (o «Cobrado $X · Faltan $Y · Programar» si fue parcial) y dar más plazo mueve solo esa fecha. Lo usan la
  * lista de Dinero (Ventana lateral o centrada en escritorio) y la página `/dinero/abonos/[id]` (#29).
  */
-export function PaymentDetailContainer({ paymentId: id, window, initialForm = null }: Props) {
+export function PaymentDetailContainer({ paymentId: id, window, initialForm = null, paymentHref }: Props) {
   const router = useRouter();
   const { isOnline } = useAppShell();
+  const href = useDetailHref();
   const toast = useToast();
   const [today] = useState(() => todayBogota(systemClock));
   const [form, setForm] = useState<PaymentDetailForm | null>(initialForm);
@@ -49,7 +58,10 @@ export function PaymentDetailContainer({ paymentId: id, window, initialForm = nu
   const { collectPayment } = useCollectPayment();
   const { reschedulePayment } = useReschedulePayment();
   const { correctScheduledDate } = useCorrectScheduledDate();
+  const { updateCollectedPayment } = useUpdateCollectedPayment();
   const { undoCollectPayment } = useUndoCollectPayment();
+  const { deletePayment } = useDeletePayment();
+  const summary = useMoneySummary();
 
   const showError = (error: unknown) => toast.show(errorToast(error));
   const rows = detail.data ? [...detail.data.payments, ...detail.data.canceledPayments] : undefined;
@@ -79,9 +91,9 @@ export function PaymentDetailContainer({ paymentId: id, window, initialForm = nu
       isOnline={isOnline}
       window={window}
       today={today}
-      customerHref={ROUTES.customer}
-      paymentHref={ROUTES.payment}
-      depositHref={ROUTES.deposit}
+      customerHref={(customerId) => href('customer', customerId)}
+      paymentHref={paymentHref ?? ((paymentId) => href('payment', paymentId))}
+      depositHref={(depositId) => href('deposit', depositId)}
       form={form}
       onFormChange={setForm}
       onCollect={async (values) => {
@@ -114,6 +126,64 @@ export function PaymentDetailContainer({ paymentId: id, window, initialForm = nu
             },
           },
         });
+      }}
+      toDeliverTotal={summary.data?.toDeliver.total ?? null}
+      onCorrectCollection={async (patch) => {
+        const before =
+          payment?.paidAmount !== null &&
+          payment?.paidAmount !== undefined &&
+          payment.paidAt &&
+          payment.method
+            ? { paidAmount: payment.paidAmount, paidAt: payment.paidAt, method: payment.method }
+            : null;
+        const result = await updateCollectedPayment({ paymentId: id, patch });
+        if (!result.ok) {
+          showError(result.error);
+          throw new Error(result.error.code);
+        }
+        toast.show({
+          message: copy.payments.collection.correctDialog.done,
+          tone: 'success',
+          action: before
+            ? {
+                label: t.result.undo,
+                // Deshacer: vuelve a dejar el cobro como estaba (queda otra corrección en el historial).
+                onAction: async () => {
+                  const undone = await updateCollectedPayment({ paymentId: id, patch: before });
+                  if (!undone.ok) showError(undone.error);
+                },
+              }
+            : undefined,
+        });
+      }}
+      onDeleteCollection={async () => {
+        if (!payment) return;
+        const before =
+          payment.paidAmount !== null && payment.paidAt && payment.method
+            ? { paidAmount: payment.paidAmount, paidAt: payment.paidAt, method: payment.method }
+            : null;
+        // Un abono programado vuelve a «Por cobrar» (BR-PAY-17); la cuota inicial o un abono extra se borran.
+        const scheduled = payment.kind === 'scheduled';
+        const result = scheduled ? await undoCollectPayment(id) : await deletePayment(id);
+        if (!result.ok) {
+          showError(result.error);
+          throw new Error(result.error.code);
+        }
+        toast.show({
+          message: copy.payments.collection.removeDialog.done,
+          tone: 'success',
+          action:
+            scheduled && before
+              ? {
+                  label: t.result.undo,
+                  onAction: async () => {
+                    const again = await collectPayment({ paymentId: id, ...before });
+                    if (!again.ok) showError(again.error);
+                  },
+                }
+              : undefined,
+        });
+        if (!scheduled) window.onClose();
       }}
       onChangeDate={async (date, reason, note) => {
         const result =

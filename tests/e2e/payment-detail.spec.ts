@@ -58,3 +58,32 @@ test('CA-5: en móvil, «Cobrar» de la fila de la lista lleva al mismo formular
   await expect(page).toHaveURL(/accion=cobrar/);
   await expect(page.getByRole('alertdialog')).toContainText('Cobrar · ');
 });
+
+test('propuesta 12: «⋯» de un abono cobrado corrige el medio de pago (queda en el historial) y elimina el cobro', async ({
+  page,
+}, testInfo) => {
+  await openFirstPayment(page, testInfo.project.name);
+  await page.getByRole('button', { name: 'Cobrar', exact: true }).click();
+  await page.getByRole('alertdialog').getByRole('button', { name: 'Cobrar', exact: true }).click();
+  await expect(page.getByText('Abono cobrado')).toBeVisible();
+
+  // Corregir: de Transferencia (por defecto) a Efectivo.
+  await page.getByRole('button', { name: 'Opciones del cobro' }).click();
+  await page.getByRole('menuitem', { name: 'Corregir' }).click();
+  const correct = page.getByRole('alertdialog', { name: 'Corregir cobro' });
+  await correct.getByRole('radio', { name: 'Efectivo' }).click();
+  await expect(correct).toContainText('Antes: Transferencia');
+  await correct.getByRole('button', { name: 'Guardar corrección' }).click();
+  await expect(page.getByText('Cobro corregido', { exact: true })).toBeVisible();
+  await expect(page.getByText('Cobro corregido: Transferencia → Efectivo')).toBeVisible();
+
+  // Eliminar el cobro: vuelve a «Por cobrar».
+  await page.getByRole('button', { name: 'Opciones del cobro' }).click();
+  await page.getByRole('menuitem', { name: 'Eliminar cobro' }).click();
+  await page
+    .getByRole('alertdialog', { name: '¿Eliminar el cobro?' })
+    .getByRole('button', { name: 'Eliminar cobro' })
+    .click();
+  await expect(page.getByText('Cobro eliminado')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Cobrar', exact: true })).toBeVisible();
+});

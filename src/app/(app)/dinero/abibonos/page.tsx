@@ -39,7 +39,7 @@ function DepositWindow({ id, window }: { id: string; window: DepositDetailScreen
  * muestra en la Ventana de detalle con la forma recordada; si es «Página», o en el celular, va a su página (#29).
  */
 function DepositsRoute() {
-  const { nav, isOnline, offlineBanner } = useAppShell();
+  const { nav, isOnline, offlineBanner, navigate } = useAppShell();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -52,7 +52,7 @@ function DepositsRoute() {
   const payments = usePaymentsList(DEFAULT_PAYMENTS_LIST_PARAMS);
   const platform = usePlatform();
   const selectedId = searchParams.get(OPEN) ?? undefined;
-  const inWindow = () => platform === 'desktop' && readStoredDetailWindowMode() !== 'page';
+  const inWindow = () => platform === 'desktop' && readStoredDetailWindowMode('deposit') !== 'page';
 
   const urlFor = useCallback(
     (next: DepositsListParams, open: string | undefined) => {
@@ -99,7 +99,7 @@ function DepositsRoute() {
               onClose: () => select(undefined),
               onModeChange: (mode) => {
                 if (mode === 'page')
-                  router.push(selectedId === NEW_DEPOSIT ? ROUTES.newDeposit : ROUTES.deposit(selectedId));
+                  navigate(selectedId === NEW_DEPOSIT ? ROUTES.newDeposit : ROUTES.deposit(selectedId));
               },
             }}
           />

@@ -1,0 +1,83 @@
+/*
+ * Filas tocables (revisión 2026-11-25): los mismos estados en toda la app. Se usan con `composes` desde el CSS de
+ * cada lista o tabla.
+ *   · Mouse encima: --color-row-hover (distinto de la seleccionada; solo con mouse, no en el celular).
+ *   · Tocándola: --color-row-pressed (más fuerte).
+ *   · Seleccionada (la que está abierta): --color-row-selected; gana a las otras dos.
+ * Dos formas:
+ *   1. `.row`: toda la fila es el enlace o el botón.
+ *   2. `.host` + `.link`: la fila tiene botones dentro (fecha, valor, Cobrar…). El enlace se estira sobre toda la fila y
+ *      los botones quedan encima; la fila cambia de color solo cuando tocarla abre el detalle.
+ */
+.row {
+  cursor: pointer;
+  transition: background-color var(--motion-duration-fade) var(--motion-ease);
+}
+
+@media (hover: hover) {
+  .row:hover {
+    background: var(--color-row-hover);
+  }
+}
+
+.row:active {
+  background: var(--color-row-pressed);
+}
+
+.host {
+  position: relative;
+  transition: background-color var(--motion-duration-fade) var(--motion-ease);
+}
+
+/* Specificity baja (`:where`) para que la seleccionada siempre gane. */
+@media (hover: hover) {
+  .host:has(:where(.link:hover)) {
+    background: var(--color-row-hover);
+  }
+}
+
+.host:has(:where(.link:active)) {
+  background: var(--color-row-pressed);
+}
+
+.link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.link::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+}
+
+.link:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+.host :where(button, input, select, textarea, a:not(.link)) {
+  position: relative;
+  z-index: 1;
+}
+
+.row[aria-current='true'],
+.row[aria-current='page'],
+.row[data-selected],
+.host[aria-current='true'],
+.host[data-selected] {
+  background: var(--color-row-selected);
+}
+
+/*
+ * Dentro de una isla, el fondo de la fila sale un poco a los lados y va redondeado (como la seleccionada de «Abonos
+ * de …»), para que el texto no quede pegado al borde del color.
+ */
+.inset {
+  box-sizing: border-box;
+  /* Crece lo mismo a los dos lados (también si es un botón, que no se estira solo). */
+  width: calc(100% + 2 * var(--space-3));
+  margin-inline: calc(-1 * var(--space-3));
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-sm);
+}

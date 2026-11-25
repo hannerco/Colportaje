@@ -10,6 +10,7 @@
 }
 
 .sibling {
+  composes: row inset from '../../../../ui/styles/interactive-row.module.css';
   /* #72 (diseño): fecha · estado junto a ella · valor a la derecha. */
   display: grid;
   grid-template-columns: max-content max-content minmax(max-content, 1fr);
@@ -149,13 +150,6 @@
   font-size: var(--text-secondary);
 }
 
-.sibling[aria-current='true'] {
-  margin: 0 calc(-1 * var(--space-3));
-  padding: 0 var(--space-3);
-  border-radius: var(--radius-sm);
-  background: var(--color-row-selected);
-}
-
 :global([data-platform='mobile']) .actions {
   flex-wrap: nowrap;
   width: 100%;
@@ -181,4 +175,22 @@
     grid-row: 1 / span 2;
     grid-column: 2;
   }
+}
+
+/* Propuesta 12: «⋯» (o el candado) al final de la franja del abono. */
+.stripEnd {
+  display: inline-flex;
+  margin-inline-start: auto;
+  margin-block: calc(-1 * var(--space-1));
+  color: inherit;
+}
+
+/* «⋯» y el candado van del color de la franja (verde en cobrado, azul en entregado), como en el lienzo. */
+.stripEnd button {
+  color: inherit;
+}
+
+.lockedText {
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
 }

@@ -61,6 +61,8 @@ export type CustomerDetailScreenProps = {
   today?: LocalDate;
   /** «Cobrar» en un abono por cobrar (#35; diseño de la ficha): abre el formulario de cobro. */
   onCollect?: (paymentId: string) => void;
+  /** Tocar un abono lleva a su detalle (Dinero ▸ abono). */
+  paymentHref?: (paymentId: string) => string;
   /**
    * Abonos a mano (ronda 38, lienzo «Propuestas · 11»): «+ Agregar abono» en el encabezado, cambiar la fecha (corregir
    * o aplazar) o el valor, eliminar (pasa a Cancelados) y «Revisar» si lo programado pasa del saldo. Los abonos
@@ -197,6 +199,7 @@ export function CustomerDetailScreen({
   invoiceActions,
   onEditData,
   onCollect,
+  paymentHref,
   schedule,
   onAvatarChange,
   onChangeSoldOn,
@@ -208,7 +211,7 @@ export function CustomerDetailScreen({
 
   if (!detail)
     return (
-      <DetailWindow {...window} title={fallbackTitle}>
+      <DetailWindow {...window} rememberAs="customer" title={fallbackTitle}>
         {error && !loading ? (
           <EmptyState
             kind="error"
@@ -252,7 +255,7 @@ export function CustomerDetailScreen({
   return (
     <>
       <DetailTemplate
-        window={{ ...window, title: detail.name, moreActions }}
+        window={{ ...window, rememberAs: 'customer', title: detail.name, moreActions }}
         banner={bannerOf(detail)}
         identity={{
           avatar: detail.avatarEmoji ? { kind: 'emoji', emoji: detail.avatarEmoji } : { kind: 'person' },
@@ -345,6 +348,7 @@ export function CustomerDetailScreen({
             onRemove={schedule?.onRemove ?? noop}
             onCollect={!detail.archived && isOnline ? onCollect : undefined}
             onReview={!detail.archived && isOnline ? schedule?.onReview : undefined}
+            rowHref={paymentHref}
             afterList={
               detail.canceledPayments.length > 0 && (
                 <>

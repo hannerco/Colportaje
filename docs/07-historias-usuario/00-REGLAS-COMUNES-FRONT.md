@@ -47,6 +47,8 @@ Toda HU de `05-ui/` y `06-pantallas/` incluye estas reglas aunque no las repita.
 - **Solo tokens.** Prohibidos `px`, `rem` o `#hex` de tipografía o color en componentes, así como `rgb()` y sombras escritas a mano. Las medidas de control (alto de botón, radios, espacios) también salen de tokens. Lo verifican stylelint y la prueba de arquitectura de `TESTING.md`.
 - CSS Modules por componente. Sin estilos en línea salvo variables CSS calculadas (p. ej. `style={{ '--gauge-delivered': pct }}`).
 - Variantes por intención (`primary`, `danger`, `overdue`), nunca por color (`blue`, `red`).
+- **Lo pegado abajo deja la barra de gestos (2026-11-25).** La app ocupa toda la pantalla (`viewportFit: cover`): todo lo fijo o pegado abajo (barras de guardar, hojas, diálogos en hoja) suma `var(--safe-bottom)` a su espacio de abajo. Sin eso, en la app instalada de Android el botón queda bajo la barra de gestos y no responde.
+- **Filas tocables (2026-11-25, ronda 38).** Toda fila que abre algo (cliente, ejemplar, abono, Abibono, título) usa `src/ui/styles/interactive-row.module.css` con `composes`, nunca un `:hover` propio. Tres estados, tres colores: **mouse encima** `--color-row-hover` (distinto de la seleccionada, solo con mouse), **tocándola** `--color-row-pressed` (un paso más fuerte) y **seleccionada** `--color-row-selected` (el gris del lienzo; gana a los otros dos). Si toda la fila es el enlace o el botón, `row`. Si tiene botones dentro (fecha, valor, Cobrar, basura), `host` en la fila y `link` en su enlace: el enlace se estira sobre la fila, los botones quedan encima y la fila se ilumina solo cuando tocarla abre el detalle. Dentro de una isla se agrega `inset` (el color sale un poco a los lados, redondeado). El resaltado de una opción de menú usa el mismo `--color-row-hover`.
 
 ## 6. Íconos
 Solo con `<Icon name="…">` de `src/ui/icons`, con los 46 nombres del diseño. Ningún archivo fuera de `src/ui/icons/` importa `lucide-react` (regla de ESLint). Un ícono nuevo se busca primero en lucide.dev y se agrega al mapa con su nombre en español, después de agregarlo a la ficha del Ícono en el lienzo.
@@ -89,6 +91,7 @@ Solo con `<Icon name="…">` de `src/ui/icons`, con los 46 nombres del diseño. 
 - Las pantallas conectadas se prueban de punta a punta con Playwright (móvil y escritorio) en los flujos de `TESTING.md` §Prioridad 3 que ya tengan pantalla.
 
 ## 11. Pantallas
+- **Ventanas de detalle y enlaces (2026-11-25).** Toda pantalla que abre un registro en la Ventana de detalle le dice qué es (`rememberAs`: `customer`, `payment`, `copy`, `deposit`…): cada tipo recuerda su forma (lateral, centrada o página). Un enlace a un registro se arma con `useDetailHref()` del armazón, que respeta esa forma; nunca con la ruta de la página fija. Los enlaces internos son `<a href>` normales: el armazón los navega sin recargar.
 - **Separación presentación / contenedor (§3).** La pantalla de presentación cubre todos sus estados por props: cargando, vacío, sin resultados, sin conexión, error y con datos. Así cada estado tiene su story.
 - Los estados de lista usan `EmptyState` y el de sin conexión la `Banner` «Sin conexión» (BR-GEN-08). Una acción sin conexión no se intenta: el back devuelve `OFFLINE` y la pantalla lo explica.
 - Tras una acción con «Deshacer», el `Toast` dura `undo.toastSeconds` de `business-config` (hoy 6 s; I-34).

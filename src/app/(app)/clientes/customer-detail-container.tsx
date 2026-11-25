@@ -24,7 +24,7 @@ import {
   usePhotoUrlResolver,
 } from '@/features/customers';
 import { errorToast } from '@/features/shared/error-report';
-import { ROUTES, useAppShell } from '@/features/shell';
+import { useAppShell, useDetailHref } from '@/features/shell';
 import { todayBogota } from '@/domain/time';
 import {
   CollectPaymentDialog,
@@ -56,6 +56,7 @@ type Props = {
 /** Contenedor de la ficha de cliente (HU-PAN-CLI-02): lo usan la lista (ventana) y `/clientes/[id]` (página). */
 export function CustomerDetailContainer({ customerId, fallbackTitle, window }: Props) {
   const { isOnline } = useAppShell();
+  const href = useDetailHref();
   const detail = useCustomerDetail(customerId);
   const [wantsPreview, setWantsPreview] = useState(false);
   const [addingBook, setAddingBook] = useState(false);
@@ -142,7 +143,8 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
         fallbackTitle={fallbackTitle}
         isOnline={isOnline}
         window={window}
-        copyHref={ROUTES.copy}
+        copyHref={(copyId) => href('copy', copyId)}
+        paymentHref={(paymentId) => href('payment', paymentId)}
         archivePreview={preview.data}
         onOpenArchive={() => setWantsPreview(true)}
         onArchive={async () => {

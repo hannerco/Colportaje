@@ -14,7 +14,7 @@ import {
   usePaymentsList,
   useUnscheduledCustomers,
 } from '@/features/money';
-import { ROUTES, useAppShell } from '@/features/shell';
+import { ROUTES, useAppShell, useDetailHref } from '@/features/shell';
 import { readStoredDetailWindowMode } from '@/ui/organisms/DetailWindow';
 import { usePlatform } from '@/ui/platform';
 import { PaymentDetailContainer } from './abonos/payment-detail-container';
@@ -29,7 +29,8 @@ const OPEN = 'abono';
  * su página (#29, igual que Clientes).
  */
 function MoneyRoute() {
-  const { nav, isOnline, offlineBanner } = useAppShell();
+  const { nav, isOnline, offlineBanner, navigate } = useAppShell();
+  const href = useDetailHref();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -84,17 +85,17 @@ function MoneyRoute() {
       onDeliver={() => router.push(ROUTES.newDeposit)}
       paymentHref={ROUTES.payment}
       onCollectPayment={(id) => {
-        if (platform === 'mobile' || readStoredDetailWindowMode() === 'page')
+        if (platform === 'mobile' || readStoredDetailWindowMode('payment') === 'page')
           return router.push(`${ROUTES.payment(id)}?accion=cobrar`);
         setCollectOnOpen(id);
         select(id);
       }}
       onExtendPayment={(id) => router.push(`${ROUTES.payment(id)}?accion=plazo`)}
-      customerHref={ROUTES.customer}
+      customerHref={(customerId) => href('customer', customerId)}
       backHref={ROUTES.money}
       selectedId={selectedId}
       onOpenPayment={(id) =>
-        platform === 'mobile' || readStoredDetailWindowMode() === 'page'
+        platform === 'mobile' || readStoredDetailWindowMode('payment') === 'page'
           ? router.push(ROUTES.payment(id))
           : select(id)
       }
@@ -104,6 +105,8 @@ function MoneyRoute() {
             key={`${selectedId}-${collectOnOpen === selectedId}`}
             paymentId={selectedId}
             initialForm={collectOnOpen === selectedId ? 'collect' : null}
+            // «Abonos de …»: pasar a otro abono se queda en la Ventana, con la misma vista de la lista.
+            paymentHref={(paymentId) => urlFor(params, paymentId)}
             window={{
               breadcrumb: { label: copy.ui.nav.items.money, href: ROUTES.money },
               onClose: () => {
@@ -114,7 +117,7 @@ function MoneyRoute() {
               onNext:
                 index >= 0 && index < rows.length - 1 ? () => select(rows[index + 1]!.paymentId) : undefined,
               onModeChange: (mode) => {
-                if (mode === 'page') router.push(ROUTES.payment(selectedId));
+                if (mode === 'page') navigate(ROUTES.payment(selectedId));
               },
             }}
           />

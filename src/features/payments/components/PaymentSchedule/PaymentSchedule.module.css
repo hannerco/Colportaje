@@ -10,11 +10,17 @@
   list-style: none;
 }
 
+/* Ficha: toda la fila lleva al detalle del abono (regla común de filas tocables); los botones quedan encima. */
 .row {
+  composes: host inset from '../../../../ui/styles/interactive-row.module.css';
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-3) 0;
+  padding-block: var(--space-3);
+}
+
+.rowLink {
+  composes: link from '../../../../ui/styles/interactive-row.module.css';
 }
 
 .row + .row {
@@ -371,7 +377,7 @@
     align-items: center;
     column-gap: var(--space-3);
     row-gap: var(--space-1);
-    padding: var(--space-2) 0;
+    padding-block: var(--space-2);
   }
 
   .withCollect {

@@ -107,7 +107,7 @@ export function CopyDetailScreen(props: CopyDetailScreenProps) {
 
   if (!detail)
     return (
-      <DetailWindow {...props.window} title={props.fallbackTitle || copy.inventory.title}>
+      <DetailWindow {...props.window} rememberAs="copy" title={props.fallbackTitle || copy.inventory.title}>
         {props.error && !props.loading ? (
           <EmptyState
             kind="error"
@@ -149,7 +149,7 @@ export function CopyDetailScreen(props: CopyDetailScreenProps) {
   return (
     <>
       <DetailTemplate
-        window={{ ...props.window, title: copyName, moreActions }}
+        window={{ ...props.window, rememberAs: 'copy', title: copyName, moreActions }}
         identity={{
           avatar: { kind: 'cover', coverUrl: detail.imageUrl ?? undefined },
           title: detail.titleName,

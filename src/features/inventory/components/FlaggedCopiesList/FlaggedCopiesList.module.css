@@ -4,6 +4,10 @@
   list-style: none;
 }
 
+.row {
+  composes: host inset from '../../../../ui/styles/interactive-row.module.css';
+}
+
 .row + .row {
   border-top: 1px solid var(--color-row-line);
 }
@@ -12,10 +16,11 @@
   display: flex;
   align-items: center;
   gap: var(--space-4);
-  padding: var(--space-3) 0;
+  padding-block: var(--space-3);
 }
 
 .info {
+  composes: link from '../../../../ui/styles/interactive-row.module.css';
   display: flex;
   flex: 1;
   align-items: center;

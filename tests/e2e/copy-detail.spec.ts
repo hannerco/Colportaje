@@ -19,12 +19,13 @@ test('un ejemplar vendido muestra su cliente, el precio y el historial, y no se 
   await expect(page.getByText('$75.000').first()).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Historial' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Más acciones' })).toHaveCount(0);
-  // El cliente lleva a su ficha.
+  // El cliente lleva a su ficha, en la forma que recuerdan los clientes (2026-11-25): su página en el celular; en
+  // escritorio, la lista con la ficha abierta en la Ventana (lateral por defecto).
   await page
     .getByRole('link', { name: /Prórroga/ })
     .first()
     .click();
-  await expect(page).toHaveURL(/\/clientes\/[0-9a-f-]+$/);
+  await expect(page).toHaveURL(/\/clientes(\/[0-9a-f-]+$|\?(.*&)?cliente=[0-9a-f-]+)/);
 });
 
 test('CA-2: eliminar un ejemplar en físico con nota y «Deshacer» lo devuelve', async ({ page }, testInfo) => {

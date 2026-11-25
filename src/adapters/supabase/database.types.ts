@@ -970,7 +970,7 @@ export type Database = {
       deposit_status: 'draft' | 'confirmed';
       issue_resolution: 'found' | 'lost' | 'removed';
       pay_method: 'cash' | 'transfer';
-      payment_event_type: 'amount_reduced' | 'canceled' | 'reopened';
+      payment_event_type: 'amount_reduced' | 'canceled' | 'reopened' | 'collect_corrected';
       payment_kind: 'down_payment' | 'scheduled' | 'extra';
       payment_status: 'scheduled' | 'collected' | 'delivered' | 'canceled';
       photo_kind: 'customer_info' | 'customer_invoice' | 'deposit_receipt';
@@ -1108,7 +1108,7 @@ export const Constants = {
       deposit_status: ['draft', 'confirmed'],
       issue_resolution: ['found', 'lost', 'removed'],
       pay_method: ['cash', 'transfer'],
-      payment_event_type: ['amount_reduced', 'canceled', 'reopened'],
+      payment_event_type: ['amount_reduced', 'canceled', 'reopened', 'collect_corrected'],
       payment_kind: ['down_payment', 'scheduled', 'extra'],
       payment_status: ['scheduled', 'collected', 'delivered', 'canceled'],
       photo_kind: ['customer_info', 'customer_invoice', 'deposit_receipt'],

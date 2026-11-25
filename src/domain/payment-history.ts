@@ -10,12 +10,26 @@ export type PaymentRescheduleRecord = {
   readonly note: string | null;
 };
 
-/** Un recorte, cancelación o reapertura (`payment_event`, BR-PAY-13, BR-DEP-12). */
+/**
+ * Un recorte, cancelación, reapertura (`payment_event`, BR-PAY-13, BR-DEP-12) o corrección de un cobro (ronda 38:
+ * valor, fecha y medio de pago de antes y de ahora).
+ */
 export type PaymentEventRecord = {
-  readonly type: 'amount_reduced' | 'canceled' | 'reopened';
+  readonly type: 'amount_reduced' | 'canceled' | 'reopened' | 'collect_corrected';
   readonly at: Instant;
   readonly previousAmount: COP | null;
   readonly newAmount: COP | null;
+  readonly previousPaidAt?: LocalDate | null;
+  readonly newPaidAt?: LocalDate | null;
+  readonly previousMethod?: PayMethod | null;
+  readonly newMethod?: PayMethod | null;
+};
+
+/** Lo que cambió al corregir un cobro: solo lo que cambió va en el Historial. */
+export type CollectCorrection = {
+  readonly amount?: { readonly from: COP; readonly to: COP };
+  readonly paidAt?: { readonly from: LocalDate; readonly to: LocalDate };
+  readonly method?: { readonly from: PayMethod; readonly to: PayMethod };
 };
 
 /** Una entrada del Historial del abono (#72, diseño «Detalle de un abono»). La pantalla arma el texto. */
@@ -31,6 +45,7 @@ export type PaymentHistoryEntry = { readonly id: string; readonly date: LocalDat
   | { readonly kind: 'canceled' }
   | { readonly kind: 'reopened' }
   | { readonly kind: 'collected'; readonly amount: COP; readonly method: PayMethod }
+  | ({ readonly kind: 'corrected' } & CollectCorrection)
   | { readonly kind: 'delivered'; readonly depositTitle: string }
 );
 
@@ -80,14 +95,13 @@ export function buildPaymentHistory({ payment, reschedules, events, deposit }: I
   ].sort((a, b) => a.at.getTime() - b.at.getTime());
   for (const { at, entry } of timed) if (entry) entries.push({ ...entry, date: toBogotaDate(at) });
   const collected = payment.status === 'collected' || payment.status === 'delivered';
-  if (collected && payment.paidAt && payment.paidAmount !== null && payment.method)
-    entries.push({
-      id: 'collected',
-      kind: 'collected',
-      date: payment.paidAt,
-      amount: payment.paidAmount,
-      method: payment.method,
-    });
+  // «Cobrado» muestra lo que se cobró la primera vez; las correcciones van aparte («Cobro corregido»).
+  const firstCorrection = events.find((e) => e.type === 'collect_corrected');
+  const paidAt = firstCorrection?.previousPaidAt ?? payment.paidAt;
+  const paidAmount = firstCorrection?.previousAmount ?? payment.paidAmount;
+  const method = firstCorrection?.previousMethod ?? payment.method;
+  if (collected && paidAt && paidAmount !== null && method)
+    entries.push({ id: 'collected', kind: 'collected', date: paidAt, amount: paidAmount, method });
   if (payment.status === 'delivered' && deposit)
     entries.push({
       id: 'delivered',
@@ -117,6 +131,20 @@ const fromEvent = (e: PaymentEventRecord, i: number) => {
   const id = `${e.type}-${i}`;
   if (e.type === 'canceled') return { id, kind: 'canceled' } as const;
   if (e.type === 'reopened') return { id, kind: 'reopened' } as const;
+  if (e.type === 'collect_corrected') return corrected(e, id);
   if (e.previousAmount === null || e.newAmount === null) return null;
   return { id, kind: 'reduced', from: e.previousAmount, to: e.newAmount } as const;
+};
+
+/** Ronda 38: una corrección de cobro con solo lo que cambió (o nada, si no cambió nada). */
+const corrected = (e: PaymentEventRecord, id: string) => {
+  const change: { -readonly [K in keyof CollectCorrection]: CollectCorrection[K] } = {};
+  if (e.previousAmount !== null && e.newAmount !== null && e.previousAmount !== e.newAmount)
+    change.amount = { from: e.previousAmount, to: e.newAmount };
+  if (e.previousPaidAt && e.newPaidAt && e.previousPaidAt !== e.newPaidAt)
+    change.paidAt = { from: e.previousPaidAt, to: e.newPaidAt };
+  if (e.previousMethod && e.newMethod && e.previousMethod !== e.newMethod)
+    change.method = { from: e.previousMethod, to: e.newMethod };
+  if (!change.amount && !change.paidAt && !change.method) return null;
+  return { id, kind: 'corrected', ...change } as const;
 };

@@ -279,6 +279,36 @@ describe('update_collected_payment y delete_payment', () => {
       expect(d.rows[0]).toEqual({ cash_amount: 50_000, transfer_amount: 0 });
     }));
 
+  it('ronda 38 (propuesta 12): corregir un cobro deja «collect_corrected» con lo de antes y lo nuevo; sin cambios, nada', () =>
+    inTransaction(async (tx) => {
+      const { owner, customer } = await setup(tx);
+      const id = randomUUID();
+      const paidAt = await day(tx, -2);
+      await register(tx, owner, id, customer, 'extra', 30_000, paidAt);
+      await correct(tx, owner, id, { amount: 30_000 });
+      expect(
+        (await tx.query('select 1 from public.payment_event where payment_id = $1', [id])).rowCount,
+      ).toBe(0);
+      await correct(tx, owner, id, { amount: 35_000, method: 'cash' });
+      const events = await tx.query<{ type: string; data: Record<string, unknown> }>(
+        'select type, data from public.payment_event where payment_id = $1',
+        [id],
+      );
+      expect(events.rows).toEqual([
+        {
+          type: 'collect_corrected',
+          data: {
+            previousAmount: 30_000,
+            newAmount: 35_000,
+            previousPaidAt: paidAt,
+            newPaidAt: paidAt,
+            previousMethod: 'transfer',
+            newMethod: 'cash',
+          },
+        },
+      ]);
+    }));
+
   it('R4: borrar un cobro de un borrador lo desvincula', () =>
     inTransaction(async (tx) => {
       const { owner, customer } = await setup(tx);

@@ -16,3 +16,5 @@ export { BootScreen } from './screens/BootScreen';
 export { FailureScreen, type FailureScreenProps } from './screens/FailureScreen';
 export { InstallGate, InstallPrompt, type InstallPromptProps } from './components/InstallPrompt';
 export { useInstallPrompt } from './install-prompt';
+export { detailHref, useDetailHref, type DetailKind } from './detail-links';
+export { internalHrefOf, useClientSideLinks } from './client-links';

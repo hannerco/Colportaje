@@ -26,25 +26,37 @@ import styles from './DetailWindow.module.css';
 export type DetailWindowMode = 'side' | 'center' | 'page' | 'sheet';
 type DesktopMode = 'side' | 'center' | 'page';
 
-/** R4: dónde se guarda en el dispositivo la última forma elegida en escritorio (FT-04). */
+/**
+ * R4: dónde se guarda en el dispositivo la última forma elegida en escritorio (FT-04). Desde el 2026-11-25 cada tipo
+ * de ventana guarda la suya (`…-mode.customer`, `…-mode.payment`…): la ficha puede abrirse lateral y el abono
+ * centrado. La clave sin tipo (la de antes) queda como valor inicial de los tipos que aún no eligieron.
+ */
 export const DETAIL_WINDOW_MODE_KEY = 'colportor.detail-window-mode';
+const keyOf = (rememberAs?: string) =>
+  rememberAs ? `${DETAIL_WINDOW_MODE_KEY}.${rememberAs}` : DETAIL_WINDOW_MODE_KEY;
 
 const DESKTOP_MODES: DesktopMode[] = ['side', 'center', 'page'];
 const isDesktopMode = (value: unknown): value is DesktopMode => DESKTOP_MODES.includes(value as DesktopMode);
 
-/** La forma guardada; sin nada guardado (o sin acceso al almacenamiento), lateral. */
-export function readStoredDetailWindowMode(): DesktopMode {
+/**
+ * La forma guardada para ese tipo de ventana (`rememberAs`: «customer», «payment»…); si ese tipo aún no eligió, la que
+ * se guardó antes sin tipo; sin nada guardado (o sin acceso al almacenamiento), lateral.
+ */
+export function readStoredDetailWindowMode(rememberAs?: string): DesktopMode {
   try {
-    const stored = typeof window === 'undefined' ? null : window.localStorage.getItem(DETAIL_WINDOW_MODE_KEY);
-    return isDesktopMode(stored) ? stored : 'side';
+    if (typeof window === 'undefined') return 'side';
+    const own = window.localStorage.getItem(keyOf(rememberAs));
+    if (isDesktopMode(own)) return own;
+    const legacy = window.localStorage.getItem(DETAIL_WINDOW_MODE_KEY);
+    return isDesktopMode(legacy) ? legacy : 'side';
   } catch {
     return 'side';
   }
 }
 
-function storeMode(mode: DesktopMode) {
+function storeMode(mode: DesktopMode, rememberAs?: string) {
   try {
-    window.localStorage.setItem(DETAIL_WINDOW_MODE_KEY, mode);
+    window.localStorage.setItem(keyOf(rememberAs), mode);
   } catch {
     // Sin almacenamiento (modo privado, bloqueado): la forma vale solo mientras la ventana esté abierta.
   }
@@ -61,6 +73,11 @@ export type DetailWindowProps = {
   mode?: DetailWindowMode;
   /** Al elegir otra forma en el selector (escritorio). La forma también queda guardada en el dispositivo. */
   onModeChange?: (mode: DetailWindowMode) => void;
+  /**
+   * Qué se abre («customer», «payment», «copy», «deposit»…): cada tipo recuerda su última forma por separado
+   * (2026-11-25). Sin valor, la forma compartida de antes.
+   */
+  rememberAs?: string;
   /** Nombre con número, p. ej. «Psiconutrición #6». */
   title: string;
   /** Ruta de vuelta en modo página («Inventario»); en móvil, a dónde lleva Volver. */
@@ -111,6 +128,7 @@ export function DetailWindow(props: DetailWindowProps) {
   const {
     mode,
     onModeChange,
+    rememberAs,
     title,
     breadcrumb,
     onClose,
@@ -123,12 +141,14 @@ export function DetailWindow(props: DetailWindowProps) {
   } = props;
   const platform = usePlatform();
   const mobile = platform === 'mobile';
-  const [stored, setStored] = useState<DesktopMode>(readStoredDetailWindowMode);
+  const [stored, setStored] = useState<DesktopMode>(() => readStoredDetailWindowMode(rememberAs));
   const resolved = resolveDetailWindowMode(mode ?? (mobile ? 'page' : stored), platform);
 
   const changeMode = (next: DesktopMode) => {
-    setStored(next);
-    storeMode(next);
+    storeMode(next, rememberAs);
+    // «Página» desde una lista: quien la usa navega a la página del registro. Mientras llega, la ventana se queda
+    // como está; antes se volvía página dentro de la lista (a la derecha, con la lista a la izquierda) y luego saltaba.
+    if (!(next === 'page' && mode === undefined && onModeChange)) setStored(next);
     onModeChange?.(next);
   };
 
