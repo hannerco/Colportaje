@@ -316,7 +316,8 @@
   --size-history-dot: 10px; /* punto del historial (HU-UI-19) */
   --menu-width: 260px; /* menú flotante (HU-UI-20) */
   --menu-padding: 6px;
-  --sheet-padding: 10px 12px 24px; /* hoja inferior del menú en móvil */
+  /* Hojas inferiores: abajo dejan además la barra de gestos del sistema (app instalada en Android, 2026-11-25). */
+  --sheet-padding: 10px 12px calc(24px + var(--safe-bottom)); /* hoja inferior del menú en móvil */
   --sheet-handle-width: 36px;
   --sheet-handle-height: 4px;
   --layer-overlay: 40; /* fondo y hoja, debajo del aviso */
@@ -342,7 +343,7 @@
   --layer-nav: 30; /* barra inferior y botón flotante, debajo de las hojas */
   --dialog-width: 440px; /* diálogo en escritorio (HU-UI-24) */
   --dialog-padding: 24px;
-  --dialog-sheet-padding: 10px 20px 28px; /* diálogo como hoja en móvil */
+  --dialog-sheet-padding: 10px 20px calc(28px + var(--safe-bottom)); /* diálogo como hoja en móvil */
   --money-summary-width: 1100px; /* resumen de dinero en escritorio (HU-UI-25) */
   --money-summary-mobile-width: 358px; /* columna del resumen en la hoja móvil */
   --size-empty-icon: 48px; /* círculo del estado vacío (HU-UI-26) */

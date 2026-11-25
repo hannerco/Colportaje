@@ -17,12 +17,17 @@ export const COMMON_ERROR_CODES = {
   FORBIDDEN: 'FORBIDDEN',
   VALIDATION: 'VALIDATION',
   CONFLICT: 'CONFLICT',
+  /** 2026-11-25: la acción no respondió a tiempo (señal muy lenta o la app trabada); se puede reintentar. */
+  TIMEOUT: 'TIMEOUT',
 } as const;
 
 export type CommonErrorCode = (typeof COMMON_ERROR_CODES)[keyof typeof COMMON_ERROR_CODES];
 
 /** Solo los fallos de red se reintentan tal cual; los demás requieren otra acción del usuario. */
-const RETRYABLE: ReadonlySet<string> = new Set([COMMON_ERROR_CODES.NETWORK_ERROR]);
+const RETRYABLE: ReadonlySet<string> = new Set([
+  COMMON_ERROR_CODES.NETWORK_ERROR,
+  COMMON_ERROR_CODES.TIMEOUT,
+]);
 
 export const appError = (code: string, details?: Readonly<Record<string, unknown>>): AppError =>
   details === undefined
