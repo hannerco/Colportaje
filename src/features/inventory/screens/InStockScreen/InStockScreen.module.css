@@ -54,7 +54,6 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  width: 100%;
   min-height: var(--size-list-row);
   padding-block: var(--space-2);
   border: 0;

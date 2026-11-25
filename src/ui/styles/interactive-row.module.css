@@ -1,7 +1,7 @@
 /*
  * Filas tocables (revisión 2026-11-25): los mismos estados en toda la app. Se usan con `composes` desde el CSS de
  * cada lista o tabla.
- *   · Mouse encima: --color-row-hover (más suave que la seleccionada; solo con mouse, no en el celular).
+ *   · Mouse encima: --color-row-hover (distinto de la seleccionada; solo con mouse, no en el celular).
  *   · Tocándola: --color-row-pressed (más fuerte).
  *   · Seleccionada (la que está abierta): --color-row-selected; gana a las otras dos.
  * Dos formas:
@@ -74,6 +74,9 @@
  * de …»), para que el texto no quede pegado al borde del color.
  */
 .inset {
+  box-sizing: border-box;
+  /* Crece lo mismo a los dos lados (también si es un botón, que no se estira solo). */
+  width: calc(100% + 2 * var(--space-3));
   margin-inline: calc(-1 * var(--space-3));
   padding-inline: var(--space-3);
   border-radius: var(--radius-sm);

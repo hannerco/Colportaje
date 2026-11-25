@@ -29,8 +29,8 @@
   --color-track: #f1efeb; /* track */
   --color-tab-track: #f4f3f0; /* tabTrack */
   --color-row-selected: #f4f3f0; /* selRow */
-  --color-row-hover: #f5f7f8; /* fila tocable con el mouse encima: tinte del acento (4 %), distinto del gris de la seleccionada (2026-11-25) */
-  --color-row-pressed: #e9ecef; /* fila tocable mientras se toca: el mismo tinte, más fuerte (9 %) */
+  --color-row-hover: #efeeea; /* fila tocable con el mouse encima: gris cálido, más marcado que la seleccionada (2026-11-25, opción 2; la 1 era #f5f7f8 azulado) */
+  --color-row-pressed: #e5e3de; /* fila tocable mientras se toca: un paso más fuerte */
   --color-active-bg: #ffffff; /* activeBg */
   --color-table-head: #f4f3f0; /* head */
   /* Líneas */
@@ -112,8 +112,8 @@
   --color-track: #2b2a28;
   --color-tab-track: #262625;
   --color-row-selected: #262625;
-  --color-row-hover: #262829;
-  --color-row-pressed: #2f3236;
+  --color-row-hover: #2c2c2a;
+  --color-row-pressed: #343432;
   --color-active-bg: #363634;
   --color-table-head: #232322;
   --color-line: #363532;
@@ -188,8 +188,8 @@
     --color-track: #2b2a28;
     --color-tab-track: #262625;
     --color-row-selected: #262625;
-    --color-row-hover: #262829;
-    --color-row-pressed: #2f3236;
+    --color-row-hover: #2c2c2a;
+    --color-row-pressed: #343432;
     --color-active-bg: #363634;
     --color-table-head: #232322;
     --color-line: #363532;

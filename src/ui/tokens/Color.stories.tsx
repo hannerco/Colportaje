@@ -24,12 +24,12 @@ const GROUPS: { name: string; tokens: ColorToken[] }[] = [
       {
         design: '—',
         token: '--color-row-hover',
-        usage: 'Fila tocable con el mouse encima (más suave que la seleccionada)',
+        usage: 'Fila tocable con el mouse encima (distinta de la seleccionada)',
       },
       {
         design: '—',
         token: '--color-row-pressed',
-        usage: 'Fila tocable mientras se toca (más fuerte que la seleccionada)',
+        usage: 'Fila tocable mientras se toca (un paso más fuerte)',
       },
       { design: 'activeBg', token: '--color-active-bg', usage: 'Pestaña o ítem activo' },
       { design: 'head', token: '--color-table-head', usage: 'Encabezado de tabla' },
