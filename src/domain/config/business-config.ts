@@ -50,6 +50,12 @@ export const businessConfig = deepFreeze({
   },
 
   /** BR-COPY-11/17: duración del aviso "Deshacer" (lo usa el front, INTERPRETACIONES I-03). */
+  /**
+   * Red (2026-11-25): una acción que no responde en este tiempo se da por fallida y se avisa («La conexión está
+   * tardando demasiado»), en vez de dejar el botón cargando para siempre. Reintentar no duplica (cada acción es
+   * idempotente).
+   */
+  network: { actionTimeoutSeconds: 45 },
   undo: {
     toastSeconds: 6,
   },

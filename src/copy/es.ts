@@ -1528,6 +1528,7 @@ export const copy = {
       // Comunes (00-REGLAS-COMUNES §3)
       OFFLINE: 'Sin conexión: puedes consultar, pero no registrar.',
       NETWORK_ERROR: 'No se pudo conectar. Vuelve a intentarlo.',
+      TIMEOUT: 'La conexión está tardando demasiado. Revisa la señal y vuelve a intentarlo.',
       SESSION_EXPIRED: 'Tu sesión venció. Vuelve a entrar.',
       NOT_FOUND: 'Ya no existe. Puede que se haya borrado.',
       FORBIDDEN: 'No tienes permiso para hacer esto.',

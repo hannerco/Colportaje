@@ -17,6 +17,7 @@ describe('businessConfig', () => {
         defaultCenter: { lat: expect.any(Number), lng: expect.any(Number), zoom: expect.any(Number) },
       },
       copyDelete: { noteRequired: false },
+      network: { actionTimeoutSeconds: 45 },
       undo: { toastSeconds: 6 },
       photos: {
         format: 'webp',

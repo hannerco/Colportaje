@@ -10,9 +10,12 @@ describe('result', () => {
 });
 
 describe('errors', () => {
-  it('NETWORK_ERROR es reintentable; los demás códigos comunes no', () => {
+  it('NETWORK_ERROR y TIMEOUT son reintentables; los demás códigos comunes no', () => {
     expect(appError(COMMON_ERROR_CODES.NETWORK_ERROR).retryable).toBe(true);
-    for (const code of Object.values(COMMON_ERROR_CODES).filter((c) => c !== 'NETWORK_ERROR')) {
+    expect(appError(COMMON_ERROR_CODES.TIMEOUT).retryable).toBe(true);
+    for (const code of Object.values(COMMON_ERROR_CODES).filter(
+      (c) => c !== 'NETWORK_ERROR' && c !== 'TIMEOUT',
+    )) {
       expect(appError(code).retryable).toBe(false);
     }
   });

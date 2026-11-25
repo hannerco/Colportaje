@@ -145,6 +145,7 @@
   position: fixed;
   inset: 0;
   z-index: var(--layer-overlay);
+  padding-bottom: var(--safe-bottom);
   overflow-y: auto;
   background: var(--color-page-mobile);
 }
