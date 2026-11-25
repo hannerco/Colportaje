@@ -54,7 +54,7 @@ test('flujo 5: se precarga con lo cobrado, se guarda y borra un borrador, y con 
   await expect(page).toHaveURL(/\/dinero\/abibonos(\/nuevo$|\?(.*&)?abibono=nuevo)/);
   await expect(page.getByRole('checkbox', { name: 'Abibono E2E' }).first()).toBeChecked();
   await page
-    .getByTestId('receipt-input')
+    .getByTestId('photo-input')
     .setInputFiles({ name: 'recibo.png', mimeType: 'image/png', buffer: PNG });
   await expect(page.getByRole('img', { name: 'Foto del recibo 1' })).toBeVisible();
   const confirm = page.getByRole('button', { name: 'Marcar como entregado' });

@@ -10,7 +10,7 @@ import { Button } from '@/ui/atoms/Button';
 import { Choice } from '@/ui/atoms/Choice';
 import { Field } from '@/ui/atoms/Field';
 import { StatusPill } from '@/ui/atoms/StatusPill';
-import { DateField } from '@/ui/molecules/DateField';
+import { DateField } from '@/ui/organisms/DateField';
 import { Icon } from '@/ui/icons';
 import { Menu } from '@/ui/molecules/Menu';
 import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
@@ -18,6 +18,7 @@ import { DetailWindow, type DetailWindowProps } from '@/ui/organisms/DetailWindo
 import { EmptyState } from '@/ui/organisms/EmptyState';
 import { Island } from '@/ui/organisms/Island';
 import { DetailSkeleton } from '@/ui/templates/DetailTemplate';
+import { PhotoStrip } from '@/ui/organisms/PhotoStrip';
 import {
   BalanceLines,
   DepositHeader,
@@ -26,7 +27,6 @@ import {
   PanelIsland,
   depositCounts,
 } from '../../components/DepositPanel';
-import { ReceiptPhotos } from '../../components/ReceiptPhotos';
 import styles from './DepositEditorScreen.module.css';
 
 /** Lo que el usuario escribió, listo para guardar o confirmar. */
@@ -65,6 +65,8 @@ export type DepositEditorScreenProps = {
   canDelete?: boolean;
   /** Sube un recibo; devuelve si se subió. */
   onAddReceipt: (file: File) => Promise<boolean>;
+  /** Trae la foto completa del recibo para verla en grande. */
+  receiptUrl?: (photoId: string) => Promise<string>;
   onRemoveReceipt: (photoId: string) => void;
   /** Guardan o confirman; si fallan, que lancen para que la pantalla no se dé por terminada (el contenedor ya avisó). */
   onSaveDraft: (values: DepositEditorValues) => Promise<void>;
@@ -270,8 +272,11 @@ function Editor(
                   )}
                 </PanelIsland>
                 <PanelIsland title={copy.money.depositPanel.receipt} icon="receipt">
-                  <ReceiptPhotos
+                  <PhotoStrip
                     photos={props.receipts}
+                    photoLabel={copy.money.depositEditor.receiptPhoto}
+                    addLabel={copy.money.depositEditor.addPhoto}
+                    fullUrl={props.receiptUrl}
                     onAdd={props.onAddReceipt}
                     onRemove={props.onRemoveReceipt}
                     disabledReason={online ? null : copy.ui.empty.needsConnection}

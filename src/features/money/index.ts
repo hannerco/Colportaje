@@ -87,7 +87,6 @@ export {
   type DepositEditorScreenProps,
   type DepositEditorValues,
 } from './screens/DepositEditorScreen';
-export { ReceiptPhotos, type ReceiptPhotosProps } from './components/ReceiptPhotos';
 // HU-PAN-DIN-05: Abibono entregado y reabrir.
 export { DepositDetailScreen, type DepositDetailScreenProps } from './screens/DepositDetailScreen';
 export {

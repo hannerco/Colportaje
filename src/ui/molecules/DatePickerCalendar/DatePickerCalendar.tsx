@@ -15,6 +15,8 @@ export type DatePickerCalendarProps = {
   today: LocalDate;
   /** Días con otro abono del cliente (un punto debajo, como en el lienzo). */
   marked?: readonly LocalDate[];
+  /** La fecha que tenía (anillo punteado), al cambiar la fecha de algo ya guardado (ronda 38). */
+  previous?: LocalDate | null;
   /** Días que no se pueden elegir (p. ej. en una prórroga, hasta la fecha actual del abono, HU-ABO-05 R2). */
   isDisabled?: (date: LocalDate) => boolean;
   /** Nombre del calendario para el lector, p. ej. «Abono 2 de 4». */
@@ -38,6 +40,7 @@ export function DatePickerCalendar({
   onChange,
   today,
   marked = [],
+  previous = null,
   isDisabled,
   label,
 }: DatePickerCalendarProps) {
@@ -129,7 +132,8 @@ export function DatePickerCalendar({
                     className={styles.day}
                     data-outside={!day.inMonth || undefined}
                     data-today={day.date === today || undefined}
-                    aria-label={`${dayName(day.date)}${markedSet.has(day.date) ? `, ${t.otherPayment}` : ''}`}
+                    data-previous={(day.date === previous && !selected) || undefined}
+                    aria-label={`${dayName(day.date)}${day.date === previous ? `, ${t.previousDay}` : ''}${markedSet.has(day.date) ? `, ${t.otherPayment}` : ''}`}
                     aria-pressed={selected}
                     aria-current={day.date === today ? 'date' : undefined}
                     aria-disabled={disabled || undefined}

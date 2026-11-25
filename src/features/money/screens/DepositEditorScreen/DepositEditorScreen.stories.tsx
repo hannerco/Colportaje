@@ -205,8 +205,8 @@ export const ErrorAlSubirElRecibo: Story = {
   play: async ({ canvasElement }) => {
     const frame = frames(canvasElement)[0]!;
     const file = new File(['x'], 'recibo.png', { type: 'image/png' });
-    await userEvent.upload(frame.querySelector<HTMLInputElement>('[data-testid="receipt-input"]')!, file);
-    await waitFor(() => expect(frame.textContent).toContain('No se pudo subir el recibo'));
+    await userEvent.upload(frame.querySelector<HTMLInputElement>('[data-testid="photo-input"]')!, file);
+    await waitFor(() => expect(frame.textContent).toContain('No se pudo subir la foto'));
     expect(button(frame, 'Reintentar')).toBeDefined();
   },
 };
@@ -224,7 +224,19 @@ export const BorradorAbierto: Story = {
     const frame = frames(canvasElement)[0]!;
     expect(frame.querySelector<HTMLInputElement>('input')!.value).toBe('Campaña de noviembre');
     expect(button(frame, 'Más acciones')).toBeDefined();
-    expect(button(frame, 'Quitar foto del recibo 1')).toBeDefined();
+    // El recibo se ve como toda foto de la app: se toca, se abre en grande y desde ahí se quita.
+    await userEvent.click(frame.querySelector<HTMLElement>('[aria-label="Ver foto 1"]')!);
+    const remove = await waitFor(() => {
+      const viewer = frame.querySelector<HTMLElement>('[role="dialog"]');
+      expect(viewer).not.toBeNull();
+      const found = [...viewer!.querySelectorAll<HTMLElement>('button')].find(
+        (b) => b.textContent?.trim() === 'Quitar foto',
+      );
+      expect(found).toBeDefined();
+      return found!;
+    });
+    await userEvent.click(remove);
+    await waitFor(() => expect(frame.querySelector('[aria-label="Ver foto 1"]')).toBeNull());
   },
 };
 

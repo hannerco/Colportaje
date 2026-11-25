@@ -1,7 +1,8 @@
+/* Fotos (revisión 2026-11-24): la misma pieza para imágenes, facturas y recibos. */
 .strip {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--space-2);
 }
 
 .photos {
@@ -89,4 +90,36 @@
 
 .photoButton[aria-busy='true'] {
   opacity: var(--opacity-field-disabled);
+}
+
+/* Una subida que falló: se ofrece «Reintentar» con el mismo archivo. */
+.failed {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-bad-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bad-bg);
+  color: var(--color-bad);
+  font-size: var(--text-secondary);
+}
+
+.failedText {
+  flex: 1;
+}
+
+.retry {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: var(--weight-strong);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.retry:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 1px;
 }

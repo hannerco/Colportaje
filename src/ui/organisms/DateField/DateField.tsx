@@ -5,8 +5,7 @@ import { copy } from '@/copy/es';
 import { todayBogota, type LocalDate } from '@/domain/time';
 import { Field, type FieldProps } from '../../atoms/Field';
 import { Icon } from '../../icons';
-import { DatePickerCalendar } from '../DatePickerCalendar';
-import { Popover } from '../Popover';
+import { DatePickerDialog } from '../DatePickerDialog';
 import styles from './DateField.module.css';
 
 export type DateFieldProps = Omit<Extract<FieldProps, { kind: 'date' }>, 'kind' | 'calendarTrigger'> & {
@@ -19,39 +18,37 @@ export type DateFieldProps = Omit<Extract<FieldProps, { kind: 'date' }>, 'kind' 
 const t = copy.ui.field;
 
 /**
- * Campo de fecha (#62): el Campo `dd/mm/aaaa` con el ícono del calendario convertido en botón. Tocarlo abre el
- * calendario en un Panel flotante; elegir un día lo escribe en el campo y lo cierra. Se puede seguir escribiendo.
+ * Campo de fecha (#62): el Campo `dd/mm/aaaa` con el ícono del calendario convertido en botón. Tocarlo abre la ventana
+ * para elegir fecha (`DatePickerDialog`, la misma de toda la app: hoja en el celular, ventana en escritorio); «Elegir
+ * fecha» escribe el día en el campo. Se puede seguir escribiendo.
  */
 export function DateField({ today, noFuture = false, ...field }: DateFieldProps) {
   const [open, setOpen] = useState(false);
   const now = today ?? todayBogota({ now: () => new Date() });
   const trigger = (
-    <Popover
-      open={open}
-      onOpenChange={setOpen}
-      title={field.label}
-      trigger={
-        <button
-          type="button"
-          className={styles.trigger}
-          aria-label={`${t.openCalendar}, ${field.label}`}
-          disabled={field.disabled}
-        >
-          <Icon name="calendar" tone="current" />
-        </button>
-      }
+    <button
+      type="button"
+      className={styles.trigger}
+      aria-label={`${t.openCalendar}, ${field.label}`}
+      aria-haspopup="dialog"
+      disabled={field.disabled}
+      onClick={() => setOpen(true)}
     >
-      <DatePickerCalendar
-        label={field.label}
+      <Icon name="calendar" tone="current" />
+    </button>
+  );
+  return (
+    <>
+      <Field {...field} kind="date" calendarTrigger={trigger} />
+      <DatePickerDialog
+        open={open}
+        onOpenChange={setOpen}
+        title={field.label}
         value={field.value}
         today={now}
         isDisabled={noFuture ? (date) => date > now : undefined}
-        onChange={(date) => {
-          field.onChange?.(date);
-          setOpen(false);
-        }}
+        onConfirm={(date) => field.onChange?.(date)}
       />
-    </Popover>
+    </>
   );
-  return <Field {...field} kind="date" calendarTrigger={trigger} />;
 }

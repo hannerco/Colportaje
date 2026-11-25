@@ -190,6 +190,19 @@
   border-top: 1px solid var(--color-row-line);
 }
 
+/* «Abonos programados · Por fecha» (ronda 38). */
+.scheduleHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.byDate {
+  color: var(--color-text-3);
+  font-size: var(--text-secondary);
+}
+
 /* Resumen antes de guardar. */
 .summary {
   display: flex;

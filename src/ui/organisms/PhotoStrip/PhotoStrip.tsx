@@ -2,49 +2,60 @@
 
 import { useEffect, useId, useRef, useState } from 'react';
 import { copy } from '@/copy/es';
-import { Button } from '@/ui/atoms/Button';
-import { Icon } from '@/ui/icons';
-import { PhotoViewer } from '@/ui/organisms/PhotoViewer';
-import styles from './InfoPhotoStrip.module.css';
+import { Button } from '../../atoms/Button';
+import { Icon } from '../../icons';
+import { PhotoViewer } from '../PhotoViewer';
+import styles from './PhotoStrip.module.css';
 
-export type InfoPhotoStripProps = {
-  photos: readonly { photoId: string; thumbUrl: string }[];
-  /** «Agregar imagen»: la foto elegida (cámara o galería). Sin función no hay botón. */
-  onAdd?: (file: File) => Promise<void> | void;
-  /** Por qué no se puede agregar todavía (sin conexión, sin nombre). */
-  disabledReason?: string | null;
+export type PhotoStripPhoto = { readonly photoId: string; readonly thumbUrl: string };
+
+export type PhotoStripProps = {
+  photos: readonly PhotoStripPhoto[];
+  /** Nombre de cada foto para el lector y el visor: «Foto 2», «Foto del recibo 2». Por defecto «Foto N». */
+  photoLabel?: (n: number) => string;
+  /** Nombre del botón «+»: «Agregar imagen», «Agregar foto del recibo». Por defecto «Agregar foto». */
+  addLabel?: string;
   /**
-   * #99: tocar una foto la abre en grande. #68: desde ahí, «Cambiar foto» y «Quitar foto» (cambiar sube la nueva y
-   * luego quita la anterior, BR-PHO-03). Sin funciones, la foto solo se ve.
+   * La foto elegida (cámara o galería). Sin función no hay «+». Si devuelve `false`, la subida falló: se ve «No se pudo
+   * subir la foto» con «Reintentar» (el mismo archivo).
    */
+  onAdd?: (file: File) => Promise<boolean | void> | boolean | void;
+  /** Desde el visor: «Cambiar foto» (sube la nueva y luego quita la anterior, BR-PHO-03). */
   onReplace?: (photoId: string, file: File) => Promise<void> | void;
+  /** Desde el visor: «Quitar foto». */
   onRemove?: (photoId: string) => Promise<void> | void;
-  /** #99: trae la foto completa para verla en grande. Sin función, se ve la miniatura. */
+  /** Por qué todavía no se puede agregar ni cambiar (sin conexión, sin nombre). */
+  disabledReason?: string | null;
+  /** Trae la foto completa para el visor. Sin función (o con una foto que aún vive en el teléfono), la miniatura. */
   fullUrl?: (photoId: string) => Promise<string>;
 };
 
-const t = copy.customers;
+const t = copy.ui.photos;
 
 /**
- * «Imágenes» del cliente (diseño «7 · Información y dirección», HU-CLI-07, pieza del módulo): miniaturas y el botón
- * de agregar, que abre la cámara o la galería del teléfono.
+ * Fotos (revisión 2026-11-24): **la única pieza de fotos de la app**. Imágenes del cliente, facturas y recibos del
+ * Abibono se ven igual: miniaturas del mismo tamaño y un «+» punteado que abre la cámara o la galería. Tocar una foto la
+ * abre en grande (#99) y, si se puede, desde ahí se cambia o se quita (#68). Si una subida falla, «Reintentar».
  */
-export function InfoPhotoStrip({
+export function PhotoStrip({
   photos,
+  photoLabel = t.photo,
+  addLabel = t.add,
   onAdd,
-  disabledReason,
   onReplace,
   onRemove,
+  disabledReason,
   fullUrl,
-}: InfoPhotoStripProps) {
-  const replaceInput = useRef<HTMLInputElement>(null);
-  const [replacing, setReplacing] = useState<string | null>(null);
-  const editable = Boolean(onReplace || onRemove) && !disabledReason;
+}: PhotoStripProps) {
   const input = useRef<HTMLInputElement>(null);
-  const [adding, setAdding] = useState(false);
+  const replaceInput = useRef<HTMLInputElement>(null);
   const reasonId = useId();
-  const disabled = Boolean(disabledReason) || adding;
+  const [adding, setAdding] = useState(false);
+  const [failed, setFailed] = useState<File | null>(null);
+  const [replacing, setReplacing] = useState<string | null>(null);
   const [viewing, setViewing] = useState<number | null>(null);
+  const editable = Boolean(onReplace || onRemove) && !disabledReason;
+  const disabled = Boolean(disabledReason) || adding;
   const shown = viewing !== null ? photos[viewing] : undefined;
   // Una foto que aún no se guarda (Nuevo cliente) vive en el teléfono: se ve tal cual, sin pedirla al servidor.
   const local = shown ? /^(blob|data):/.test(shown.thumbUrl) || !fullUrl : false;
@@ -69,20 +80,40 @@ export function InfoPhotoStrip({
   }, [shownId, local, fullUrl, attempt]);
   const current = full?.photoId === shownId ? full : null;
 
+  const upload = async (file: File) => {
+    if (!onAdd) return;
+    setAdding(true);
+    setFailed(null);
+    try {
+      if ((await onAdd(file)) === false) setFailed(file);
+    } finally {
+      setAdding(false);
+    }
+  };
+
   return (
     <div className={styles.strip}>
+      {failed && (
+        <div role="alert" className={styles.failed}>
+          <Icon name="alert" size={16} tone="current" />
+          <span className={styles.failedText}>{t.uploadFailed}</span>
+          <button type="button" className={styles.retry} onClick={() => void upload(failed)}>
+            {t.retry}
+          </button>
+        </div>
+      )}
       <div className={styles.photos}>
         {photos.map((photo, i) => (
           <button
             key={photo.photoId}
             type="button"
             className={styles.photoButton}
-            aria-label={t.photos.open(i + 1)}
+            aria-label={t.open(i + 1)}
             aria-busy={replacing === photo.photoId || undefined}
             onClick={() => setViewing(i)}
           >
             {/* eslint-disable-next-line @next/next/no-img-element -- miniatura firmada de Storage, ya en WebP. */}
-            <img className={styles.photo} src={photo.thumbUrl} alt={t.detail.data.image(i + 1)} />
+            <img className={styles.photo} src={photo.thumbUrl} alt={photoLabel(i + 1)} />
           </button>
         ))}
         {onReplace && (
@@ -111,7 +142,7 @@ export function InfoPhotoStrip({
             <button
               type="button"
               className={styles.add}
-              aria-label={adding ? t.photos.adding : t.photos.add}
+              aria-label={adding ? t.adding : addLabel}
               aria-disabled={disabled || undefined}
               aria-busy={adding || undefined}
               aria-describedby={disabledReason ? reasonId : undefined}
@@ -132,16 +163,11 @@ export function InfoPhotoStrip({
               accept="image/*"
               tabIndex={-1}
               aria-hidden="true"
-              onChange={async (event) => {
+              data-testid="photo-input"
+              onChange={(event) => {
                 const file = event.target.files?.[0];
                 event.target.value = '';
-                if (!file) return;
-                setAdding(true);
-                try {
-                  await onAdd(file);
-                } finally {
-                  setAdding(false);
-                }
+                if (file) void upload(file);
               }}
             />
           </>
@@ -151,10 +177,10 @@ export function InfoPhotoStrip({
         <PhotoViewer
           open
           onOpenChange={(open) => !open && setViewing(null)}
-          title={t.photos.viewerTitle(viewing! + 1, photos.length)}
+          title={t.viewerTitle(viewing! + 1, photos.length)}
           previewSrc={shown.thumbUrl}
           src={local ? shown.thumbUrl : current?.url}
-          alt={t.detail.data.image(viewing! + 1)}
+          alt={photoLabel(viewing! + 1)}
           error={Boolean(current?.failed)}
           onRetry={() => setFull({ photoId: shown.photoId, attempt: attempt + 1 })}
           actions={
@@ -170,7 +196,7 @@ export function InfoPhotoStrip({
                       replaceInput.current?.click();
                     }}
                   >
-                    {t.photos.replace}
+                    {t.replace}
                   </Button>
                 )}
                 {onRemove && (
@@ -182,7 +208,7 @@ export function InfoPhotoStrip({
                       void onRemove(shown.photoId);
                     }}
                   >
-                    {t.photos.remove}
+                    {t.remove}
                   </Button>
                 )}
               </>

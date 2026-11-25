@@ -170,12 +170,9 @@ describe('abonos que no cuadran contra Supabase local (HU-ABO-07)', () => {
     });
   });
 
-  it('CA-4: saldo 0 → LEAVE_NOT_ALLOWED; opción inválida → VALIDATION con field; cliente ajeno → NOT_FOUND', async () => {
+  it('CA-4 (ronda 38): saldo 0 → dejar como está se permite; opción inválida → VALIDATION; cliente ajeno → NOT_FOUND', async () => {
     const { customer } = await customerWith(0);
-    expect(await resolveScheduleExcess(deps(), customer, { action: 'leave' }, 'review')).toEqual({
-      ok: false,
-      error: { code: 'LEAVE_NOT_ALLOWED', retryable: false },
-    });
+    expect((await resolveScheduleExcess(deps(), customer, { action: 'leave' }, 'review')).ok).toBe(true);
     expect(
       await createSupabasePaymentRepository(() => client).resolveScheduleExcess(
         customer,

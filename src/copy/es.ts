@@ -238,6 +238,19 @@ export const copy = {
       openCalendar: 'Abrir calendario',
       pickDate: 'Elegir fecha',
     },
+    /** Fotos (revisión 2026-11-24: una sola pieza para imágenes, facturas y recibos). */
+    photos: {
+      photo: (n: number) => `Foto ${n}`,
+      add: 'Agregar foto',
+      adding: 'Subiendo foto…',
+      /** Tocar una foto la abre en grande (#99). */
+      open: (n: number) => `Ver foto ${n}`,
+      viewerTitle: (n: number, total: number) => `Foto ${n} de ${total}`,
+      replace: 'Cambiar foto',
+      remove: 'Quitar foto',
+      uploadFailed: 'No se pudo subir la foto',
+      retry: 'Reintentar',
+    },
     /** Calendario para elegir fecha (HU-PAN-CLI-05; en la biblioteca desde #62). */
     calendar: {
       weekdays: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
@@ -262,6 +275,14 @@ export const copy = {
       next: 'Mes siguiente',
       /** Junto al día: otro abono del cliente cae ese día. */
       otherPayment: 'otro abono',
+      /** Junto al día: la fecha que tenía (anillo punteado, ronda 38). */
+      previousDay: 'fecha que tenía',
+      legendPrevious: 'Fecha que tenía',
+      legendOthers: 'Otros abonos',
+      /** Ventana para elegir fecha (revisión 2026-11-24: el único calendario de la app). */
+      past: 'Esta fecha ya pasó',
+      confirm: 'Elegir fecha',
+      cancel: 'Cancelar',
     },
 
     /** Buscador (HU-UI-12). */
@@ -650,7 +671,8 @@ export const copy = {
         downPayment: 'Cuota inicial',
         balance: 'Saldo pendiente',
         payments: 'Abonos',
-        paymentsValue: (n: number, amount: string) => `${n} de ${amount}`,
+        /** Ronda 38: cuántos abonos y cuánto suman (cada uno puede tener su valor). */
+        paymentsValue: (n: number, total: string) => `${n} · ${total}`,
       },
       discardDialog: {
         /** Ronda 35 (#57): el cliente no existe hasta guardarlo; salir solo pierde lo escrito. */
@@ -722,11 +744,103 @@ export const copy = {
       message: (book: string, date: string) => `${book} · hoy dice ${date}`,
       label: (date: string) => `Vendido el ${date}`,
       change: (date: string) => `Vendido el ${date}, cambiar`,
-      save: 'Guardar',
+      save: 'Guardar fecha',
       cancel: 'Cancelar',
       saved: 'Fecha de venta guardada',
     },
     /** Calendario para elegir fecha (diseño «6 · Cambiar fecha de abono»); la semana empieza el domingo (BR-GEN-07). */
+    /**
+     * Abonos a mano (ronda 38, lienzo «Propuestas · Abonos a mano, sin plan automático», ADR-0052): la lista, el
+     * totalizador y las ventanas de fecha, valor y eliminar. Lo mismo al crear el cliente y en la ficha.
+     */
+    manual: {
+      heading: 'Abonos programados',
+      byDate: 'Por fecha',
+      label: (n: number, total: number) => `Abono ${n} de ${total}`,
+      add: 'Agregar abono',
+      pickDate: 'Elegir fecha',
+      changeDate: (label: string) => `Cambiar la fecha del ${label.toLowerCase()}`,
+      changeAmount: (label: string) => `Cambiar el valor del ${label.toLowerCase()}`,
+      remove: (label: string) => `Eliminar el ${label.toLowerCase()}`,
+      collect: 'Cobrar',
+      collectAmount: (amount: string) => `Cobrar ${amount}`,
+      emptyCreate:
+        'Todavía no hay abonos programados. Agrega los que acordaste con el cliente, con la fecha y el valor que quieras.',
+      emptySaved: 'No hay abonos por cobrar. Agrega los que acuerdes con el cliente.',
+      rowNotes: {
+        past: 'Esta fecha ya pasó',
+        overdue: (days: number) => (days === 1 ? 'Vencido hace 1 día' : `Vencido hace ${days} días`),
+        farAhead: 'Es más de 2 meses desde hoy',
+        zero: 'Pon el valor. Si queda en $0, este abono no se guarda.',
+        noDate: 'Elige la fecha. Sin fecha, este abono no se guarda.',
+        rescheduled: (date: string) => `Aplazado · antes ${date}`,
+      },
+      totals: {
+        label: 'Totalizador de abonos',
+        pending: 'Saldo pendiente',
+        scheduled: 'Programado',
+        missing: 'Falta programar',
+        over: 'Programaste de más',
+        exact: 'Todo programado',
+        review: 'Revisar',
+        reviewLong: 'Revisar abonos',
+      },
+      removeDialog: {
+        title: (label: string) => `¿Eliminar el ${label.toLowerCase()}?`,
+        whatCreate: (amount: string, date: string | null) =>
+          `${date ? `Era de ${amount} para el ${date}.` : `Era de ${amount}, sin fecha.`} Lo programado baja y el totalizador te dirá cuánto falta.`,
+        whatSaved: (amount: string, date: string | null) =>
+          `${date ? `Era de ${amount} para el ${date}.` : `Era de ${amount}, sin fecha.`} El saldo del cliente no cambia: queda más por programar.`,
+        confirm: 'Eliminar',
+        cancel: 'Cancelar',
+      },
+      dateDialog: {
+        title: (label: string) => `Fecha del ${label.toLowerCase()}`,
+        why: '¿Por qué cambia?',
+        correct: 'Me equivoqué',
+        correctHint: 'Solo corrige la fecha',
+        reschedule: 'El cliente pidió aplazar',
+        rescheduleHint: 'Queda en el historial',
+        note: 'Nota para el historial (opcional)',
+        notePlaceholder: 'Ej.: le pagan el 10',
+        done: 'Listo',
+        saveCorrect: 'Corregir fecha',
+        saveReschedule: 'Aplazar',
+        notes: {
+          past: 'Esta fecha ya pasó',
+          earlier: (date: string) => `Es antes de la fecha que tenía (${date})`,
+          laterReschedule: (days: number) => `Lo estás aplazando ${days === 1 ? '1 día' : `${days} días`}`,
+          laterCorrect: (from: string, to: string, days: number) =>
+            `Pasa del ${from} al ${to} (${days === 1 ? '1 día' : `${days} días`} después)`,
+          paymentAfter: (date: string) => `Ojo: hay un abono programado después, el ${date}`,
+          paymentBefore: (date: string) => `Ojo: hay un abono programado antes, el ${date}`,
+          farAhead: 'Es más de 2 meses desde hoy',
+        },
+      },
+      amountDialog: {
+        title: (label: string) => `Valor del ${label.toLowerCase()}`,
+        label: 'Valor del abono',
+        save: 'Guardar valor',
+        cancel: 'Cancelar',
+        invalid: 'Escribe un valor mayor que cero.',
+      },
+      /** «Revisar» del totalizador: recortar lo que sobra desde el abono más lejano (opcional). */
+      review: {
+        title: '¿Recortar lo que sobra?',
+        message: (amount: string) =>
+          `Lo programado pasa del saldo en ${amount}. Se quita desde el abono más lejano; los que queden en $0 pasan a Cancelados.`,
+        confirm: 'Recortar',
+        cancel: 'Dejar así',
+        done: 'Abonos recortados',
+      },
+      done: {
+        added: 'Abono agregado',
+        corrected: 'Fecha corregida',
+        rescheduled: 'Abono aplazado',
+        amount: 'Valor guardado',
+        removed: 'Abono eliminado',
+      },
+    },
     /** #90: cambiar el valor de un abono del plan mientras se crea el cliente. */
     changeAmount: {
       open: (amount: string) => `Cambiar valor, ${amount}`,
@@ -743,7 +857,6 @@ export const copy = {
       /** El botón de la fecha en la lista de abonos. */
       open: (date: string) => `Cambiar fecha, ${date}`,
       title: (index: number, total: number) => `Abono ${index} de ${total}`,
-      newDate: (date: string) => `Nueva fecha: ${date}`,
       save: 'Guardar fecha',
       cancel: 'Cancelar',
       changed: 'fecha cambiada',
@@ -764,8 +877,9 @@ export const copy = {
       installment: (index: number, total: number) => `Abono ${index} de ${total}`,
       fraction: 'Cuota',
       collect: 'Cobrar',
-      extend: 'Dar más plazo',
-      extendShort: 'Más plazo',
+      /** Ronda 38: «Dar más plazo» pasa a llamarse «Aplazar». */
+      extend: 'Aplazar',
+      extendShort: 'Aplazar',
       moreActions: 'Más acciones',
       /** La franja: situación del abono. */
       banner: {
@@ -796,7 +910,7 @@ export const copy = {
       /** #72: cada entrada del Historial del abono. */
       historyEntry: {
         scheduled: (amount: string, date: string) => `Programado: ${amount} para el ${date}`,
-        rescheduled: (from: string, to: string) => `Más plazo: ${from} → ${to}`,
+        rescheduled: (from: string, to: string) => `Aplazado: ${from} → ${to}`,
         reduced: (from: string, to: string) => `Valor cambiado: ${from} → ${to}`,
         canceled: 'Cancelado',
         reopened: 'Volvió a por cobrar',
@@ -829,11 +943,11 @@ export const copy = {
         undone: 'Cobro deshecho',
         partial: (paid: string, shortfall: string) => `Cobrado ${paid} · Faltan ${shortfall}`,
         program: 'Programar',
-        extended: 'Plazo dado',
+        extended: 'Abono aplazado',
       },
       swipe: {
         collect: (name: string) => `Cobrar a ${name}`,
-        extend: (name: string) => `Dar más plazo a ${name}`,
+        extend: (name: string) => `Aplazar el abono de ${name}`,
       },
     },
   },
@@ -1009,11 +1123,6 @@ export const copy = {
       /** Fecha de recibido: Hoy, Ayer, Anteayer u otra (el lienzo «Fecha de recibido»). */
       receivedMenu: {
         title: 'Fecha de recibido',
-        today: 'Hoy',
-        yesterday: 'Ayer',
-        day_before: 'Anteayer',
-        other: 'Otra fecha…',
-        pick: 'Elegir fecha',
         save: 'Guardar fecha',
         cancel: 'Cancelar',
       },
@@ -1417,10 +1526,7 @@ export const copy = {
       PLAN_REQUIRES_BALANCE: 'No hay saldo para programar abonos.',
       PLAN_TOTAL_MISMATCH: 'Los abonos no suman el saldo.',
       PLAN_AMOUNTS_EXCEED: 'Los valores que cambiaste pasan del saldo.',
-      DATE_NOT_LATER: 'Elige una fecha posterior a la actual.',
-      RESCHEDULE_NEEDS_CONFIRMATION: 'Es más de 2 meses de plazo. Confírmalo.',
       NO_EXCESS: 'Los abonos ya cuadran con el saldo.',
-      LEAVE_NOT_ALLOWED: 'Sin saldo pendiente no se pueden dejar abonos por cobrar.',
       // Dinero (Abibonos)
       PAYMENT_NOT_AVAILABLE: 'Algún abono ya no está disponible. Revisa la lista.',
       DEPOSIT_NOT_DRAFT: 'Este Abibono ya está confirmado.',

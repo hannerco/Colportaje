@@ -176,25 +176,20 @@ describe('resolve_schedule_excess (HU-ABO-07)', () => {
       );
     }));
 
-  it('CA-4 / AF-25: saldo 0 con 2 programados → dejar como está no se permite; recortar cancela los dos', () =>
+  it('CA-4 / AF-25 (ronda 38): saldo 0 con 2 programados → dejar como está se permite; recortar cancela los dos', () =>
     inTransaction(async (tx) => {
       const { owner, customer } = await setup(tx, { debt: 30_000, paid: 30_000 });
       await schedule(tx, owner, customer, [10_000, 10_000]);
-      expect(await resolve(tx, owner, customer, { action: 'leave' }, 'extra_payment')).toMatchObject({
-        ok: false,
-        code: 'LEAVE_NOT_ALLOWED',
-      });
+      expect(await resolve(tx, owner, customer, { action: 'leave' }, 'extra_payment')).toEqual({ ok: true });
       await resolve(tx, owner, customer, { action: 'auto_trim', order: 'nearest' }, 'extra_payment');
       expect((await paymentsOf(tx, customer)).map((r) => r.status)).toEqual(['canceled', 'canceled']);
     }));
 
-  it('R5: con saldo a favor tampoco se permite dejar como está', () =>
+  it('R5 (ronda 38): con saldo a favor también se puede dejar como está', () =>
     inTransaction(async (tx) => {
       const { owner, customer } = await setup(tx, { debt: 30_000, paid: 40_000 });
       await schedule(tx, owner, customer, [10_000]);
-      expect(await resolve(tx, owner, customer, { action: 'leave' }, 'review')).toMatchObject({
-        code: 'LEAVE_NOT_ALLOWED',
-      });
+      expect(await resolve(tx, owner, customer, { action: 'leave' }, 'review')).toEqual({ ok: true });
     }));
 
   it('CA-6: dejar como está con saldo 20.000 y programados 40.000 → nada cambia', () =>

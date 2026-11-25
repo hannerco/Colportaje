@@ -3,7 +3,6 @@ import { COLLECTED_PAYMENT_ERROR_CODES } from '@/domain/collected-payment';
 import { CUSTOMER_ERROR_CODES } from '@/domain/customer-data';
 import { PAYMENT_ERROR_CODES } from '@/domain/payment';
 import { PAYMENT_PLAN_ERROR_CODES } from '@/domain/payment-plan';
-import { RESCHEDULE_ERROR_CODES } from '@/domain/reschedule';
 import { SCHEDULED_PAYMENT_ERROR_CODES } from '@/domain/scheduled-payment';
 import { localDate, type LocalDate } from '@/domain/time';
 import { SCHEDULE_EXCESS_ERROR_CODES } from '@/domain/schedule-excess';
@@ -126,7 +125,6 @@ export function createSupabasePaymentRepository(getClient: GetSupabaseClient): P
         p_payment_id: paymentId,
         p_new_due_date: input.newDueDate,
         ...(input.note ? { p_note: input.note } : {}),
-        p_confirmed: input.confirmed ?? false,
       });
       if (error) return err(mapCollectedError(error));
       return ok({
@@ -218,7 +216,6 @@ const COLLECTED_ERRORS = [
   ...Object.values(COLLECTED_PAYMENT_ERROR_CODES),
   ...Object.values(PAYMENT_PLAN_ERROR_CODES),
   ...Object.values(SCHEDULED_PAYMENT_ERROR_CODES),
-  ...Object.values(RESCHEDULE_ERROR_CODES),
   CUSTOMER_ERROR_CODES.CUSTOMER_ARCHIVED,
   PAYMENT_ERROR_CODES.INVALID_TRANSITION,
   COMMON_ERROR_CODES.VALIDATION,
@@ -230,9 +227,6 @@ const COLLECTED_ERRORS = [
 const mapCollectedError = (error: Parameters<typeof mapRpcError>[0]) =>
   mapRpcError(error, COLLECTED_ERRORS, (code, detail) => {
     if (code === COMMON_ERROR_CODES.VALIDATION && detail) return { field: detail };
-    if (code === RESCHEDULE_ERROR_CODES.RESCHEDULE_NEEDS_CONFIRMATION && detail) {
-      return { dates: z.array(localDateSchema).parse(JSON.parse(detail)) };
-    }
     return undefined;
   });
 

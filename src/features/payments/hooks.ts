@@ -149,10 +149,7 @@ export function useCancelScheduledPayments() {
   return { cancelScheduledPayments: mutate, isPending };
 }
 
-/**
- * Prórroga (HU-ABO-05): más plazo para ese abono; la fecha original no cambia. Si la nueva fecha pasa de
- * 2 meses, devuelve `RESCHEDULE_NEEDS_CONFIRMATION` y el front vuelve a llamar con `confirmed: true`.
- */
+/** Aplazar (HU-ABO-05, ronda 38): cualquier fecha; la fecha original no cambia y queda en el historial. */
 export function useReschedulePayment() {
   const { mutate, isPending } = useCollectedMutation((deps, input: { paymentId: string } & RescheduleInput) =>
     reschedulePayment(deps, input.paymentId, input),

@@ -1,10 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import { copy } from '@/copy/es';
 import { formatDate, type LocalDate } from '@/domain/time';
-import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
-import { DatePickerCalendar } from '@/ui/molecules/DatePickerCalendar';
+import { DatePickerDialog } from '@/ui/organisms/DatePickerDialog';
 
 export type SoldDateDialogProps = {
   open: boolean;
@@ -22,7 +20,7 @@ export type SoldDateDialogProps = {
 const t = copy.payments.soldDate;
 
 /**
- * Cambiar la fecha de venta de un libro (#56, HU-CLI-13): un calendario con hoy marcado; no se puede elegir un día
+ * Cambiar la fecha de venta de un libro (#56, HU-CLI-13): la ventana «Elegir fecha» de la biblioteca; no se puede elegir un día
  * futuro ni anterior a cuando se recibió. Lo usan la ficha del cliente y el detalle del ejemplar.
  */
 export function SoldDateDialog({
@@ -34,30 +32,21 @@ export function SoldDateDialog({
   receivedOn,
   onSave,
 }: SoldDateDialogProps) {
-  const [date, setDate] = useState<LocalDate>(current);
   return (
-    <ConfirmDialog
+    <DatePickerDialog
       open={open}
-      onOpenChange={(next) => {
-        if (next) setDate(current);
-        onOpenChange(next);
-      }}
+      onOpenChange={onOpenChange}
       title={t.title}
-      message={t.message(bookName, formatDate(current))}
+      value={current}
+      today={today}
+      subtitle={t.message(bookName, formatDate(current))}
       confirmLabel={t.save}
       cancelLabel={t.cancel}
-      onConfirm={async () => {
+      isDisabled={(day) => day > today || (Boolean(receivedOn) && day < receivedOn!)}
+      onConfirm={async (date) => {
         if (date === current) return;
         await onSave(date);
       }}
-    >
-      <DatePickerCalendar
-        label={t.title}
-        value={date}
-        onChange={setDate}
-        today={today}
-        isDisabled={(day) => day > today || (Boolean(receivedOn) && day < receivedOn!)}
-      />
-    </ConfirmDialog>
+    />
   );
 }

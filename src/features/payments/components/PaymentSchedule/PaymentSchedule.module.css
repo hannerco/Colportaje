@@ -1,0 +1,457 @@
+/* Abonos a mano (ronda 38, lienzo «AbonosIsla»). */
+.schedule {
+  display: flex;
+  flex-direction: column;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) 0;
+}
+
+.row + .row {
+  border-top: 1px solid var(--color-row-line);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-height: var(--size-control-sm);
+}
+
+.label {
+  font-weight: var(--weight-strong);
+  white-space: nowrap;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Fecha y valor: se tocan para cambiarlos. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--size-control);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--radius-md);
+  background: var(--color-input-bg);
+  color: var(--color-text);
+  font: inherit;
+  font-variant-numeric: var(--font-numeric);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.chip > svg {
+  color: var(--color-text-3);
+}
+
+.chip[data-tone='bad'] {
+  border-color: var(--color-bad-border);
+  color: var(--color-bad);
+}
+
+.chip[data-tone='bad'] > svg {
+  color: var(--color-bad);
+}
+
+.chip[data-tone='empty'] {
+  color: var(--color-text-3);
+}
+
+.chip[data-focus] {
+  border-color: var(--color-accent);
+  outline: 3px solid var(--color-ring);
+  outline-offset: 0;
+}
+
+.chip:disabled,
+.remove:disabled,
+.collect:disabled,
+.add:disabled {
+  cursor: not-allowed;
+  opacity: var(--opacity-field-disabled);
+}
+
+.chip:focus-visible,
+.remove:focus-visible,
+.collect:focus-visible,
+.add:focus-visible,
+.review:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 1px;
+}
+
+.amount {
+  font-weight: var(--weight-strong);
+}
+
+.remove {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--size-control-sm);
+  height: var(--size-control-sm);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-text-3);
+  cursor: pointer;
+}
+
+.remove:hover {
+  background: var(--color-tone);
+  color: var(--color-text);
+}
+
+/* «Cobrar» en azul suave: no compite con el botón principal. */
+.collect {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: var(--size-control-sm);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-accent-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-bg);
+  color: var(--color-accent-text);
+  font: inherit;
+  font-size: var(--text-secondary);
+  font-weight: var(--weight-strong);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.notes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  line-height: 1.35;
+}
+
+.note > svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+.note[data-tone='bad'] {
+  color: var(--color-bad);
+}
+
+.note[data-tone='muted'] {
+  color: var(--color-text-3);
+}
+
+/* «Cobrar $80.000» a todo el ancho; con espacio, solo «Cobrar» al final de la línea. */
+.collectCell {
+  display: flex;
+}
+
+.collectShort {
+  display: none;
+}
+
+.schedule .collect {
+  width: 100%;
+  height: var(--size-touch);
+  border-radius: var(--radius-md);
+  font-size: var(--text-body);
+}
+
+/* Abonos ya pagados (ficha): solo se ven. */
+.paid {
+  flex-direction: row;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.paidLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.paidDate {
+  font-variant-numeric: var(--font-numeric);
+}
+
+.pillLine {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.kind {
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}
+
+.paidValue {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+}
+
+.paidAmount {
+  font-weight: var(--weight-strong);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.method {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.method > svg {
+  color: var(--color-text-3);
+}
+
+.empty {
+  margin: var(--space-1) 0 var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-tone);
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  height: var(--size-control);
+  margin-top: var(--space-2);
+  border: 1px dashed var(--color-neutral-border);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-accent-text);
+  font: inherit;
+  font-weight: var(--weight-strong);
+  cursor: pointer;
+}
+
+/* Totalizador: saldo pendiente, programado y si falta o sobra. */
+.totals {
+  margin-top: var(--space-3);
+  padding: var(--space-1) var(--space-4);
+  border-radius: var(--radius-lg);
+  background: var(--color-tone);
+  overflow: hidden;
+}
+
+.totalRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 0;
+  padding: var(--space-2) 0 var(--space-1);
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}
+
+.totalRow + .totalRow {
+  padding: var(--space-1) 0 var(--space-2);
+}
+
+.totalValue {
+  color: var(--color-text);
+  font-size: var(--text-body);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.result {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 calc(var(--space-4) * -1);
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-neutral-border);
+  color: var(--color-text);
+}
+
+.result > svg {
+  flex: none;
+  color: var(--color-text-2);
+}
+
+.result[data-state='exact'] {
+  border-top-color: var(--color-ok-border);
+  background: var(--color-ok-bg);
+  color: var(--color-ok);
+}
+
+.result[data-state='exact'] > svg {
+  color: var(--color-ok);
+}
+
+.resultText {
+  flex: 1;
+  font-weight: var(--weight-strong);
+}
+
+.resultValue {
+  font-weight: var(--weight-title);
+  font-variant-numeric: var(--font-numeric);
+}
+
+.review {
+  height: var(--size-control-sm);
+  margin-inline-start: var(--space-1);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-control-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-control-bg);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-secondary);
+  font-weight: var(--weight-strong);
+  cursor: pointer;
+}
+
+.reviewRow {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 0 var(--space-3);
+}
+
+/*
+ * Computador con espacio: una línea por abono (fecha · etiqueta · valor · [Cobrar] · basura). Si el panel es angosto
+ * (ventana lateral, 420 px), se queda en dos renglones como en el celular: nada se desborda.
+ */
+.schedule[data-shape='desktop'] {
+  container-type: inline-size;
+}
+
+@container (min-width: 520px) {
+  .scheduled {
+    display: grid;
+    grid-template-areas:
+      'date label amount remove'
+      'notes notes notes notes';
+    grid-template-columns: var(--size-schedule-date) minmax(0, 1fr) var(--size-schedule-amount) var(
+        --size-control-sm
+      );
+    align-items: center;
+    column-gap: var(--space-3);
+    row-gap: var(--space-1);
+    padding: var(--space-2) 0;
+  }
+
+  .withCollect {
+    grid-template-areas:
+      'date label amount collect remove'
+      'notes notes notes notes notes';
+    grid-template-columns:
+      var(--size-schedule-date) minmax(0, 1fr) var(--size-schedule-amount) var(--size-schedule-collect)
+      var(--size-control-sm);
+  }
+
+  .scheduled .top,
+  .scheduled .chips {
+    display: contents;
+  }
+
+  .scheduled .label {
+    grid-area: label;
+    color: var(--color-text-2);
+    font-size: var(--text-secondary);
+    font-weight: var(--weight-regular);
+  }
+
+  .scheduled .remove {
+    grid-area: remove;
+  }
+
+  .scheduled .dateChip {
+    grid-area: date;
+    justify-self: start;
+  }
+
+  .scheduled .amount {
+    grid-area: amount;
+    justify-self: end;
+  }
+
+  .scheduled .notes {
+    grid-area: notes;
+  }
+
+  .scheduled .collectCell {
+    grid-area: collect;
+    justify-content: flex-end;
+  }
+
+  .scheduled .chip {
+    height: var(--size-control-sm);
+    border-radius: var(--radius-sm);
+  }
+
+  .schedule .collect {
+    width: auto;
+    height: var(--size-control-sm);
+    padding: 0 var(--space-4);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-secondary);
+  }
+
+  .collect > svg,
+  .collectLong {
+    display: none;
+  }
+
+  .collectShort {
+    display: inline;
+  }
+
+  .paid {
+    display: grid;
+    grid-template-columns: var(--size-schedule-date) minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: var(--space-3);
+  }
+
+  .paidLeft {
+    display: contents;
+  }
+
+  .paidDate {
+    padding-inline-start: var(--space-3);
+  }
+}

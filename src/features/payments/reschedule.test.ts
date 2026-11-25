@@ -28,28 +28,30 @@ describe('reschedulePayment (HU-ABO-05)', () => {
     expect(deps.payments.reschedule).toHaveBeenCalledWith('p1', {
       newDueDate: '2026-11-15',
       note: 'Pidió plazo',
-      confirmed: false,
     });
   });
 
-  it('CA-4: pasar de 2 meses sin confirmar no llega a la base; confirmado sí', async () => {
+  it('ronda 38: a más de 2 meses o hacia atrás va directo a la base, sin confirmar', async () => {
     const deps = depsWith();
-    expect(await reschedulePayment(deps, 'p1', { newDueDate: localDate('2027-01-10') })).toEqual(
-      err(appError('RESCHEDULE_NEEDS_CONFIRMATION', { dates: ['2027-01-10'] })),
-    );
-    expect(deps.payments.reschedule).not.toHaveBeenCalled();
-    await reschedulePayment(deps, 'p1', { newDueDate: localDate('2027-01-10'), confirmed: true });
-    expect(deps.payments.reschedule).toHaveBeenCalledWith('p1', expect.objectContaining({ confirmed: true }));
+    await reschedulePayment(deps, 'p1', {
+      newDueDate: localDate('2027-06-10'),
+      currentDueDate: localDate('2026-11-30'),
+    });
+    await reschedulePayment(deps, 'p1', {
+      newDueDate: localDate('2026-11-20'),
+      currentDueDate: localDate('2026-11-30'),
+    });
+    expect(deps.payments.reschedule).toHaveBeenCalledTimes(2);
   });
 
-  it('CA-3: con la fecha actual conocida, DATE_NOT_LATER sin ir a la red; sin conexión → OFFLINE', async () => {
+  it('a la misma fecha → VALIDATION sin ir a la red; sin conexión → OFFLINE', async () => {
     const deps = depsWith();
     expect(
       await reschedulePayment(deps, 'p1', {
-        newDueDate: localDate('2026-11-20'),
+        newDueDate: localDate('2026-11-30'),
         currentDueDate: localDate('2026-11-30'),
       }),
-    ).toEqual(err(appError('DATE_NOT_LATER')));
+    ).toMatchObject({ ok: false, error: { code: 'VALIDATION' } });
     expect(await reschedulePayment(depsWith(false), 'p1', { newDueDate: localDate('2026-11-20') })).toEqual(
       err(appError('OFFLINE')),
     );

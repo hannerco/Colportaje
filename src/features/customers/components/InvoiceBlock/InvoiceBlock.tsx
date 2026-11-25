@@ -5,10 +5,10 @@ import { copy } from '@/copy/es';
 import type { LocalDate } from '@/domain/time';
 import { Button } from '@/ui/atoms/Button';
 import { Field } from '@/ui/atoms/Field';
-import { DateField } from '@/ui/molecules/DateField';
+import { DateField } from '@/ui/organisms/DateField';
 import { Icon } from '@/ui/icons';
 import type { CustomerInvoice } from '../../use-cases/customer-invoices';
-import { InfoPhotoStrip } from '../InfoPhotoStrip';
+import { PhotoStrip } from '@/ui/organisms/PhotoStrip';
 import styles from './InvoiceBlock.module.css';
 
 export type InvoiceBlockProps = {
@@ -77,8 +77,9 @@ export function InvoiceBlock({
         // #99: cada factura es una tarjeta: sus fotos arriba y el N.º y la fecha debajo.
         <section key={invoice.invoiceId} className={styles.invoice} aria-label={t.label(index + 1)}>
           {invoices.length > 1 && <span className={styles.invoiceTitle}>{t.label(index + 1)}</span>}
-          <InfoPhotoStrip
+          <PhotoStrip
             photos={invoice.photos}
+            addLabel={copy.customers.photos.add}
             onAdd={onAddPhoto ? (file) => onAddPhoto(invoice.invoiceId, file) : undefined}
             onReplace={
               onReplacePhoto ? (photoId, file) => onReplacePhoto(invoice.invoiceId, photoId, file) : undefined

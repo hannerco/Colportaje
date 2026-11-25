@@ -337,7 +337,7 @@ export const DeslizarMovil: Story = {
     const frame = frames(canvasElement)[0]!;
     await userEvent.click(button(frame, 'Cobrar a María Camila Henao')!);
     expect(args.onCollectPayment).toHaveBeenCalledWith('p1');
-    await userEvent.click(button(frame, 'Dar más plazo a María Camila Henao')!);
+    await userEvent.click(button(frame, 'Aplazar el abono de María Camila Henao')!);
     expect(args.onExtendPayment).toHaveBeenCalledWith('p1');
   },
 };

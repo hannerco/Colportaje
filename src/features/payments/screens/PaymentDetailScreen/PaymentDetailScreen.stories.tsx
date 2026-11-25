@@ -67,7 +67,7 @@ function Demo({ initialForm = null, ...props }: DemoProps) {
       paymentHref={(id) => `#abono-${id}`}
       depositHref={(id) => `#abibono-${id}`}
       onCollect={async () => {}}
-      onReschedule={async () => {}}
+      onChangeDate={async () => {}}
       {...props}
       form={form}
       onFormChange={setForm}
@@ -78,7 +78,7 @@ function Demo({ initialForm = null, ...props }: DemoProps) {
 const meta = {
   title: 'Pantallas/Dinero/Abono',
   component: Demo,
-  args: { onCollect: fn(async () => {}), onReschedule: fn(async () => {}), onRetry: fn() },
+  args: { onCollect: fn(async () => {}), onChangeDate: fn(async () => {}), onRetry: fn() },
   parameters: {
     frameSize: 'screen',
     a11y: {
@@ -102,7 +102,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Detalle de un abono (HU-PAN-DIN-02) sobre la Plantilla de detalle: la franja con su situación, la isla de identidad con «Cobrar», con la franja de estado, la cuota, la fecha acordada, el valor grande y «Cobrar» y «Dar más plazo» a la vista (#72), los demás abonos del cliente y el historial completo. Cobrar pide valor real (sugerido = acordado), fecha y método, y avisa del cobro parcial antes de confirmar. Un abono entregado está bloqueado: candado, sin acciones y con enlace a su Abibono.',
+          'Detalle de un abono (HU-PAN-DIN-02) sobre la Plantilla de detalle: la franja con su situación, la isla de identidad con «Cobrar», con la franja de estado, la cuota, la fecha acordada, el valor grande y «Cobrar» y «Aplazar» a la vista (#72), los demás abonos del cliente y el historial completo. Cobrar pide valor real (sugerido = acordado), fecha y método, y avisa del cobro parcial antes de confirmar. Un abono entregado está bloqueado: candado, sin acciones y con enlace a su Abibono.',
       },
     },
   },
@@ -198,7 +198,7 @@ export const Entregado: Story = {
     const frame = frames(canvasElement)[0]!;
     expect(frame.textContent).toContain('Entregado');
     expect(button(frame, 'Cobrar')).toBeUndefined();
-    expect(button(frame, 'Dar más plazo')).toBeUndefined();
+    expect(button(frame, 'Aplazar')).toBeUndefined();
     expect(frame.querySelector('a[href="#abibono-d1"]')).not.toBeNull();
     expect(frame.querySelector('[data-status="delivered"] svg')).not.toBeNull();
   },
@@ -242,19 +242,23 @@ export const CobroParcial: Story = {
 };
 
 export const DarMasPlazoAbierto: Story = {
-  name: 'Dar más plazo abierto',
+  name: 'Aplazar abierto',
   args: { initialForm: 'extend' },
   globals: { platform: 'desktop' },
   play: async ({ canvasElement }) => {
     const dialog = await waitFor(() => lastDialog(canvasElement));
-    expect(dialog.textContent).toContain('Dar más plazo');
-    expect(dialog.querySelector('textarea')).not.toBeNull();
+    // Ronda 38: la ventana de la fecha del abono abre ya en «El cliente pidió aplazar», con la nota.
+    expect(dialog.textContent).toContain('Fecha del abono 2 de 4');
+    expect(dialog.querySelector('[role="radio"][aria-checked="true"]')?.textContent).toContain(
+      'El cliente pidió aplazar',
+    );
+    expect(dialog.querySelector('input')).not.toBeNull();
   },
 };
 
 /**
  * #72 (diseño aceptado «Detalle de un abono»): la franja de estado arriba de la isla, la cuota «2/4» junto al nombre
- * (enlace a la ficha), el chip «Fecha acordada», el valor acordado grande y «Cobrar» y «Dar más plazo» a la vista; el
+ * (enlace a la ficha), el chip «Fecha acordada», el valor acordado grande y «Cobrar» y «Aplazar» a la vista; el
  * abono abierto resaltado en «Abonos de …» y el Historial con la prórroga y su nota.
  */
 export const DisenoAceptado: Story = {
@@ -288,9 +292,9 @@ export const DisenoAceptado: Story = {
     expect(frame.textContent).toContain('Fecha acordada');
     expect(frame.textContent).toContain('Valor acordado');
     expect(frame.querySelector('[aria-current="true"]')).not.toBeNull();
-    expect(frame.textContent).toContain('Más plazo: 26/10/2026 → 02/11/2026');
+    expect(frame.textContent).toContain('Aplazado: 26/10/2026 → 02/11/2026');
     expect(frame.textContent).toContain('Pidió esperar a la quincena');
-    await userEvent.click(button(frame, 'Dar más plazo')!);
+    await userEvent.click(button(frame, 'Aplazar')!);
     await waitFor(() =>
       expect(
         canvasElement.ownerDocument.querySelector('[role="dialog"], [role="alertdialog"]'),
