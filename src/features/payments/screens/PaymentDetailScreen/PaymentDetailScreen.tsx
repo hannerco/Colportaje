@@ -15,7 +15,8 @@ import { DetailWindow, type DetailWindowProps } from '@/ui/organisms/DetailWindo
 import { EmptyState } from '@/ui/organisms/EmptyState';
 import { Island } from '@/ui/organisms/Island';
 import { DetailSkeleton, DetailTemplate } from '@/ui/templates/DetailTemplate';
-import { ChangeDueDateDialog } from '../../components/ChangeDueDateDialog';
+import type { DateChangeReason } from '@/domain/manual-schedule';
+import { PaymentDateDialog } from '../../components/PaymentDateDialog';
 import { CollectPaymentDialog, type CollectPaymentValues } from '../../components/CollectPaymentDialog';
 import styles from './PaymentDetailScreen.module.css';
 
@@ -43,7 +44,11 @@ export type PaymentDetailScreenProps = {
   onFormChange: (form: PaymentDetailForm | null) => void;
   /** Cobra; si falla, que lance para que el formulario siga abierto (el contenedor ya avisó). */
   onCollect: (values: CollectPaymentValues) => Promise<void>;
-  onReschedule: (date: LocalDate, confirmed: boolean, note?: string) => Promise<void>;
+  /**
+   * Cambiar la fecha (ronda 38): «Aplazar» abre la ventana de la fecha ya en «El cliente pidió aplazar»; también se
+   * puede elegir «Me equivoqué» (corrige). Cualquier fecha; los avisos no bloquean.
+   */
+  onChangeDate: (date: LocalDate, reason: DateChangeReason, note?: string) => Promise<void>;
   /** #72: lo que le pasó al abono (`usePaymentHistory`), del más reciente al más antiguo. */
   history?: readonly PaymentHistoryEntry[];
   /** #72: el nombre del Abibono en que se entregó («Abibono – 25/10/2026»), para la franja. */
@@ -323,24 +328,18 @@ export function PaymentDetailScreen(props: PaymentDetailScreenProps) {
         />
       )}
       {payment.can.reschedule && payment.dueDate && installment && (
-        <ChangeDueDateDialog
+        <PaymentDateDialog
           open={props.form === 'extend'}
           onOpenChange={(open) => props.onFormChange(open ? 'extend' : null)}
-          mode="reschedule"
-          withNote
-          subtitle={
-            agreedAmount !== null
-              ? `${customer.name} · ${copy.payments.detail.collectForm.subtitle(formatCOP(agreedAmount), formatDate(payment.dueDate))}`
-              : customer.name
-          }
-          index={installment.index}
-          total={installment.total}
+          mode="saved"
+          initialReason="reschedule"
+          label={copy.payments.manual.label(installment.index, installment.total)}
           current={payment.dueDate}
           today={today}
           otherDates={siblings
-            .filter((p) => p.paymentId !== payment.paymentId && p.dueDate)
+            .filter((p) => p.paymentId !== payment.paymentId && p.status === 'scheduled' && p.dueDate)
             .map((p) => p.dueDate!)}
-          onSave={props.onReschedule}
+          onSave={props.onChangeDate}
         />
       )}
     </>

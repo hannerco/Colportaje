@@ -91,18 +91,18 @@ describe('schedule-excess: evaluación (R1)', () => {
     ]);
   });
 
-  it('CA-4 / AF-25: saldo 0 con 2 programados → no se puede dejar como está y el recorte cancela los dos', () => {
+  it('CA-4 / AF-25 (ronda 38): saldo 0 con 2 programados → se puede dejar como está; el recorte cancela los dos', () => {
     const evaluation = evaluateScheduleExcess({ balance: 0 }, FOUR.slice(0, 2), 'extra_payment');
-    expect(evaluation?.canLeaveAsIs).toBe(false);
+    expect(evaluation?.canLeaveAsIs).toBe(true);
     expect(evaluation?.suggestedPlan).toEqual([
       { paymentId: 'p1', action: 'cancel' },
       { paymentId: 'p3', action: 'cancel' },
     ]);
   });
 
-  it('R5: con saldo a favor tampoco se ofrece dejar como está; lo que falta pagar es 0', () => {
+  it('R5 (ronda 38): con saldo a favor también se puede dejar como está; lo que falta pagar es 0', () => {
     const evaluation = evaluateScheduleExcess({ balance: -5_000 }, [pay('p1', '2026-11-15')], 'review');
-    expect(evaluation).toMatchObject({ remaining: 0, excess: 10_000, canLeaveAsIs: false });
+    expect(evaluation).toMatchObject({ remaining: 0, excess: 10_000, canLeaveAsIs: true });
   });
 
   it('CA-5: saldo 30.000 y programados por 20.000 → no hay evaluación (lo sin programar no alerta)', () => {

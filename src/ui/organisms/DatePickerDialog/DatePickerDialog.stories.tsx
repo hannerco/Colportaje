@@ -73,9 +73,15 @@ export const ElegirUnDia: Story = {
     const frame = within(canvasElement.querySelector<HTMLElement>('figure.sb-frame')!);
     await userEvent.click(frame.getByRole('button', { name: 'Elegir' }));
     const dialog = await within(document.body).findByRole('alertdialog', { name: 'Fecha de venta' });
-    expect(within(dialog).getByText('Fecha elegida: 20/11/2026')).toBeVisible();
+    expect(within(dialog).getByRole('button', { name: /^20 de noviembre de 2026/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
     await userEvent.click(within(dialog).getByRole('button', { name: /^18 de noviembre de 2026/ }));
-    expect(within(dialog).getByText('Fecha elegida: 18/11/2026')).toBeVisible();
+    expect(within(dialog).getByRole('button', { name: /^18 de noviembre de 2026/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
     await userEvent.click(within(dialog).getByRole('button', { name: 'Elegir fecha' }));
     expect(args.onConfirm).toHaveBeenCalledWith('2026-11-18');
     await waitFor(() => expect(within(document.body).queryByRole('alertdialog')).toBeNull());
@@ -96,7 +102,10 @@ export const CancelarYVolver: Story = {
     expect(args.onConfirm).not.toHaveBeenCalled();
     await userEvent.click(frame.getByRole('button', { name: 'Elegir' }));
     dialog = await within(document.body).findByRole('alertdialog', { name: 'Fecha de venta' });
-    expect(within(dialog).getByText('Fecha elegida: 20/11/2026')).toBeVisible();
+    expect(within(dialog).getByRole('button', { name: /^20 de noviembre de 2026/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
   },
 };
 
@@ -116,13 +125,20 @@ export const SinFechasFuturas: Story = {
   },
 };
 
-/** Con contexto, aviso de fecha pasada y otros abonos marcados con un punto (cambiar la fecha de un abono). */
+/**
+ * La fecha de un abono (lienzo «FechaAbono»): la que tenía con anillo punteado, otros abonos con un punto, la leyenda y
+ * la caja de avisos (fecha pasada en rojo y los demás en gris).
+ */
 export const ConAvisoYPuntos: Story = {
   name: 'Con aviso y otros abonos',
   args: {
-    title: 'Abono 2 de 4',
-    subtitle: 'Felipe Rojas · $35.000',
+    title: 'Fecha del abono 2 de 4',
     value: localDate('2026-11-20'),
+    previous: localDate('2026-12-01'),
+    notes: () => [
+      { text: 'Es antes de la fecha que tenía (01/12)' },
+      { text: 'Ojo: hay un abono programado después, el 15/12', icon: 'alert' },
+    ],
     marked: [localDate('2026-11-15'), localDate('2026-12-15')],
     warnPast: true,
     confirmLabel: 'Guardar fecha',
@@ -130,7 +146,9 @@ export const ConAvisoYPuntos: Story = {
   render: (args) => <Demo {...args} startOpen />,
   parameters: severalOpenDialogs,
   play: async () => {
-    const [dialog] = await within(document.body).findAllByRole('alertdialog', { name: 'Abono 2 de 4' });
+    const [dialog] = await within(document.body).findAllByRole('alertdialog', {
+      name: 'Fecha del abono 2 de 4',
+    });
     expect(within(dialog!).getByText('Esta fecha ya pasó')).toBeVisible();
   },
 };

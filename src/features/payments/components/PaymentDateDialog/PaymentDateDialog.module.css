@@ -1,0 +1,52 @@
+/* ¿Por qué cambia? (lienzo «FechaAbono»): dos tarjetas que se eligen; la elegida con borde y fondo del acento. */
+.why {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.whyLabel {
+  color: var(--color-text-2);
+  font-size: var(--text-secondary);
+}
+
+.reasons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.reason {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: var(--space-2) var(--space-3);
+  border: 1.5px solid var(--color-input-border);
+  border-radius: var(--radius-md);
+  background: var(--color-input-bg);
+  color: var(--color-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.reason[aria-checked='true'] {
+  border-color: var(--color-accent);
+  background: var(--color-accent-bg);
+  color: var(--color-accent-text);
+}
+
+.reason:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 1px;
+}
+
+.reasonText {
+  font-weight: var(--weight-strong);
+}
+
+.reasonHint {
+  color: var(--color-text-2);
+  font-size: var(--text-caption);
+}

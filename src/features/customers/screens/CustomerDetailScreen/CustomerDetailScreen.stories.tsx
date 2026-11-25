@@ -17,7 +17,15 @@ const meta = {
     onRestore: fn(async () => {}),
     onAddBook: fn(),
     today: localDate('2026-11-17'),
-    onReschedule: fn(async () => {}),
+    onCollect: fn(),
+    schedule: {
+      drafts: [],
+      onAdd: fn(),
+      onChangeDate: fn(),
+      onChangeAmount: fn(),
+      onRemove: fn(),
+      onReview: fn(),
+    },
     onRetry: fn(),
     onChooseLocation: fn(),
     onRemoveLocation: fn(),
@@ -47,7 +55,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Ficha de cliente (HU-PAN-CLI-02) sobre la Plantilla de detalle, en cuatro islas: identidad (avatar, nombre, estado, «Llamar» y «WhatsApp», y la cuenta: saldo pendiente, abonado, deuda total, saldo a favor y sin programar), libros, abonos (con «Cancelados» plegable) y datos. Franjas «Aún no tiene libro», «Lo programado supera el saldo» y «Cliente archivado». Más acciones: Archivar (diálogo con los abonos que se cancelarán) o Restaurar. Diferencias con el lienzo (manda la biblioteca): ver la HU.',
+          'Ficha de cliente (HU-PAN-CLI-02) sobre la Plantilla de detalle, en cuatro islas: identidad (avatar, nombre, estado, «Llamar» y «WhatsApp», y la cuenta: saldo pendiente, abonado, deuda total, saldo a favor y sin programar), libros, abonos (con «Cancelados» plegable) y datos. Franjas «Aún no tiene libro» y «Cliente archivado»; lo programado de más lo dice el totalizador de abonos (ronda 38). Más acciones: Archivar (diálogo con los abonos que se cancelarán) o Restaurar. Diferencias con el lienzo (manda la biblioteca): ver la HU.',
       },
     },
   },
@@ -88,12 +96,12 @@ export const Pagando: Story = {
   },
 };
 
-/** El diseño: un abono vencido («hace 5 días») y «Abono vencido desde el 31/10/2026». CA-2: WhatsApp con 57. */
+/** El diseño: un abono vencido («Vencido hace 17 días») y «Abono vencido desde el 31/10/2026». CA-2: WhatsApp con 57. */
 export const Vencido: Story = {
   play: async ({ canvasElement }) => {
     for (const frame of frames(canvasElement)) {
       expect(frame.textContent).toContain('Abono vencido desde el 31/10/2026');
-      expect(frame.textContent).toContain('hace 5 días');
+      expect(frame.textContent).toContain('Vencido hace 17 días');
       const whatsapp = [...frame.querySelectorAll('a')].find((a) => a.textContent === 'WhatsApp')!;
       expect(whatsapp.getAttribute('href')).toBe('https://wa.me/573015579032');
       const call = [...frame.querySelectorAll('a')].find((a) => a.textContent === 'Llamar')!;
@@ -169,13 +177,20 @@ export const Prospecto: Story = {
   },
 };
 
-/** Lo programado supera el saldo (HU-ABO-07): la franja de aviso. */
+/** Ronda 38: lo programado pasa del saldo; el totalizador lo dice y ofrece «Revisar» (ya no hay franja). */
 export const ConAlertaDeSobrante: Story = {
   name: 'Con alerta de sobrante',
-  args: { detail: aCustomerDetailView({ notices: { noBook: false, excess: { amount: 40000 } } }) },
+  args: {
+    detail: aCustomerDetailView({
+      account: aCustomerAccount({ balance: 80000, remaining: 80000 }),
+      notices: { noBook: false, excess: { amount: 40000 } },
+    }),
+  },
   play: async ({ canvasElement }) => {
-    for (const frame of frames(canvasElement))
-      expect(frame.textContent).toContain('Lo programado supera el saldo en $40.000');
+    for (const frame of frames(canvasElement)) {
+      expect(frame.textContent).toContain('Programaste de más');
+      expect(frame.textContent).not.toContain('Lo programado supera el saldo');
+    }
   },
 };
 
@@ -299,33 +314,39 @@ export const ArchivadoSinAgregarLibro: Story = {
   },
 };
 
-/** HU-PAN-CLI-05: tocar la fecha de un abono por cobrar abre la prórroga; solo ese abono se mueve. */
-export const DarMasPlazo: Story = {
-  name: 'Dar más plazo',
+/** Ronda 38: tocar la fecha de un abono por cobrar pregunta «¿Por qué cambia?»; «Aplazar» lo anota con su nota. */
+export const AplazarUnAbono: Story = {
+  name: 'Aplazar un abono',
   globals: { platform: 'desktop' },
   play: async ({ canvasElement, args }) => {
     const frame = frames(canvasElement)[0]!;
-    // Solo los por cobrar (con can.reschedule) son botón: el vencido del 31/10 y el del 14/11.
-    const dates = [...frame.querySelectorAll<HTMLButtonElement>('button[aria-label^="Cambiar fecha"]')];
+    // Solo los por cobrar son botón: el vencido del 31/10 y el del 14/11.
+    const dates = [...frame.querySelectorAll<HTMLButtonElement>('button[aria-label^="Cambiar la fecha"]')];
     expect(dates.map((b) => b.textContent)).toEqual(['31/10/2026', '14/11/2026']);
     await userEvent.click(dates[1]!);
     const dialogs = () => [...canvasElement.querySelectorAll<HTMLElement>('[role="alertdialog"]')];
     await waitFor(() => expect(dialogs().length).toBeGreaterThan(0));
     const dialog = dialogs().at(-1)!;
-    expect(dialog.textContent).toContain('Abono 3 de 3');
+    expect(dialog.textContent).toContain('Fecha del abono 4 de 4');
+    const radio = [...dialog.querySelectorAll<HTMLButtonElement>('[role="radio"]')].find((r) =>
+      r.textContent?.includes('El cliente pidió aplazar'),
+    )!;
+    await userEvent.click(radio);
     await userEvent.click(dialog.querySelector<HTMLButtonElement>('[data-date="2026-11-28"]')!);
-    await userEvent.click(button(dialog, 'Guardar fecha')!);
-    expect(args.onReschedule).toHaveBeenCalledWith('p-3', '2026-11-28', false);
+    expect(dialog.textContent).toContain('Lo estás aplazando 14 días');
+    await userEvent.click(button(dialog, 'Aplazar')!);
+    expect(args.schedule!.onChangeDate).toHaveBeenCalledWith('p-3', '2026-11-28', 'reschedule', undefined);
   },
 };
 
-/** HU-PAN-CLI-05: sin conexión la fecha no es botón (no se intenta una prórroga). */
+/** Sin conexión la fecha, el valor y la basura se ven apagados (no se intenta guardar). */
 export const SinConexionSinPlazo: Story = {
-  name: 'Sin conexión: sin prórroga',
+  name: 'Sin conexión: sin editar abonos',
   args: { isOnline: false },
   play: async ({ canvasElement }) => {
     for (const frame of frames(canvasElement))
-      expect(frame.querySelector('button[aria-label^="Cambiar fecha"]')).toBeNull();
+      for (const b of frame.querySelectorAll<HTMLButtonElement>('button[aria-label^="Cambiar la fecha"]'))
+        expect(b.disabled).toBe(true);
   },
 };
 
@@ -414,16 +435,13 @@ export const Angosta: Story = {
     ),
   ],
   play: async ({ canvasElement }) => {
-    const rows = [...canvasElement.querySelectorAll<HTMLElement>('li[class*="payment"]')];
+    // Ronda 38: a 420 px ninguna fila de abonos se desborda (fecha, valor, Cobrar y basura caben).
+    const rows = [...canvasElement.querySelectorAll<HTMLElement>('ul[aria-label="Abonos programados"] > li')];
     expect(rows.length).toBeGreaterThan(0);
-    const overlap = (a: DOMRect, b: DOMRect) =>
-      a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
     for (const row of rows) {
-      const pill = row.querySelector<HTMLElement>('[data-status]');
-      const side = row.querySelector<HTMLElement>('[class*="paymentSide"]');
-      if (!pill || !side) continue;
-      for (const child of side.querySelectorAll<HTMLElement>('span, button'))
-        expect(overlap(pill.getBoundingClientRect(), child.getBoundingClientRect())).toBe(false);
+      const box = row.getBoundingClientRect();
+      for (const child of row.querySelectorAll<HTMLElement>('button'))
+        expect(child.getBoundingClientRect().right).toBeLessThanOrEqual(box.right + 1);
     }
   },
 };

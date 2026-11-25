@@ -6,7 +6,6 @@ import type { Instant, LocalDate } from './time';
 
 export const SCHEDULE_EXCESS_ERROR_CODES = {
   NO_EXCESS: 'NO_EXCESS',
-  LEAVE_NOT_ALLOWED: 'LEAVE_NOT_ALLOWED',
 } as const;
 
 export type ExcessTrigger =
@@ -61,7 +60,7 @@ export type ExcessEvaluation = {
   readonly presentation: 'modal' | 'banner';
   readonly suggestedOrder: TrimOrder;
   readonly cancelReason: CancelReason;
-  /** "Dejar como está" solo si el cliente aún debe algo (R5, ronda 24). */
+  /** "Dejar como está": desde la ronda 38 siempre (antes solo si el cliente aún debía algo, R5). */
   readonly canLeaveAsIs: boolean;
   /** Los programados, por fecha (más próximo primero), para la lista con casillas. */
   readonly payments: readonly { paymentId: string; dueDate: LocalDate; agreedAmount: COP }[];
@@ -119,7 +118,8 @@ export const evaluateScheduleExcess = (
     presentation,
     suggestedOrder: order,
     cancelReason,
-    canLeaveAsIs: account.balance > 0,
+    // Ronda 38 (ADR-0052): «Dejar como está» siempre se ofrece, también con saldo 0 o a favor.
+    canLeaveAsIs: true,
     payments: sortForTrim(scheduledPayments, 'nearest').map(({ paymentId, dueDate, agreedAmount }) => ({
       paymentId,
       dueDate,

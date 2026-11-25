@@ -44,19 +44,21 @@ Un ADR por decisión relevante. Formato: contexto → decisión → alternativas
 | 0036 | Ubicación del cliente: coordenadas, selector con pin y mapa interactivo | Aceptado |
 | 0037 | Avatar del cliente con emoji opcional | Aceptado |
 | 0038 | Guardado, resumen y descarte de la ficha de cliente nueva | Aceptado (facturas reemplazadas por ADR-0042) |
-| 0039 | Plan de abonos automático | Aceptado (ampliado por ADR-0045; arrastre eliminado por ADR-0047) |
+| 0039 | Plan de abonos automático | Reemplazado por ADR-0052 (ronda 38) |
 | 0040 | Dinero: vistas, estados con color y deuda sin programar | Reemplazado en parte por ADR-0046 |
-| 0033 | Recorte, motivos de cancelación, prórroga y signo del saldo a favor | Aceptado |
+| 0033 | Recorte, motivos de cancelación, prórroga y signo del saldo a favor | Aceptado (lo que obligaba —confirmar más de 2 meses, recorte obligatorio— lo reemplaza ADR-0052) |
 | 0041 | Alcance del back de Clientes, Inventario y Dinero, y reglas de extensibilidad | Aceptado |
 | 0042 | La factura como entidad propia, siempre con foto | Aceptado |
 | 0043 | Inventario según el diseño: agregar por lote, sin favoritos, devolver por unidad y deshacer | Aceptado |
 | 0044 | "Agregar libro" en la ficha lista cada ejemplar en físico | Aceptado |
-| 0045 | Plan de abonos: días de pago, corregir frente a prorrogar y cliente existente | Aceptado |
+| 0045 | Plan de abonos: días de pago, corregir frente a prorrogar y cliente existente | Reemplazado por ADR-0052 (ronda 38) |
 | 0046 | Dinero según la exploración elegida: tarjeta única, Dinero total y cancelados aparte | Aceptado |
-| 0047 | Fechas del plan sin separación mínima y sin arrastre | Aceptado |
+| 0047 | Fechas del plan sin separación mínima y sin arrastre | Reemplazado por ADR-0052 (ronda 38) |
 | 0048 | Librerías de cálculo puro en el dominio | Aceptado |
 | 0049 | Registrar el pasado (empezar a usar la app a mitad de campaña) | Aceptado |
 | 0050 | Front con Storybook y la biblioteca de componentes del diseño (CSS Modules + tokens + Radix, Lucide, nombres en inglés) | Aceptado |
+| 0051 | El cliente nuevo solo existe al guardarlo | Aceptado |
+| 0052 | Abonos a mano, sin plan automático; nada obliga, todo es aviso | Aceptado (reemplaza ADR-0039 y, en lo que obliga, ADR-0033 y ADR-0045) |
 
 ## Plantilla
 ```markdown

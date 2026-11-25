@@ -4,7 +4,7 @@ import pg from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import type { AppSupabaseClient } from '@/adapters/supabase/client';
 import { createSupabasePaymentRepository } from '@/adapters/supabase/payment-repository';
-import { rescheduleConfirmLimit } from '@/domain/reschedule';
+import { farAheadLimit } from '@/domain/manual-schedule';
 import { addDays, localDate, type LocalDate } from '@/domain/time';
 import { reschedulePayment } from '@/features/payments/use-cases/reschedule';
 import { createUser } from '../../scripts/lib/create-user';
@@ -90,27 +90,13 @@ describe('prórroga contra Supabase local (HU-ABO-05)', () => {
     expect(await state(id)).toEqual({ due: addDays(today, 25), original: overdue, reschedules: 2 });
   });
 
-  it('CA-3: llevarlo a una fecha anterior a la actual → DATE_NOT_LATER (lo valida la base)', async () => {
+  it('ronda 38: hacia atrás y a más de 2 meses se guarda sin confirmar', async () => {
     const id = await scheduled(addDays(today, 25));
-    expect(await reschedulePayment(deps(), id, { newDueDate: addDays(today, 15) })).toEqual({
-      ok: false,
-      error: { code: 'DATE_NOT_LATER', retryable: false },
-    });
-  });
-
-  it('CA-4: más allá de 2 meses pide confirmar (con la fecha); confirmado se guarda; el límite exacto no pide', async () => {
-    const id = await scheduled(addDays(today, 5));
-    const limit = rescheduleConfirmLimit(today);
-    const beyond = addDays(limit, 5);
-    // Directo a la base, sin la validación de la app: también pide confirmar.
+    expect((await reschedulePayment(deps(), id, { newDueDate: addDays(today, 15) })).ok).toBe(true);
+    const beyond = addDays(farAheadLimit(today), 5);
     expect(
-      await createSupabasePaymentRepository(() => client).reschedule(id, { newDueDate: beyond }),
-    ).toEqual({
-      ok: false,
-      error: { code: 'RESCHEDULE_NEEDS_CONFIRMATION', retryable: false, details: { dates: [beyond] } },
-    });
-    expect((await reschedulePayment(deps(), id, { newDueDate: limit })).ok).toBe(true);
-    expect((await reschedulePayment(deps(), id, { newDueDate: beyond, confirmed: true })).ok).toBe(true);
+      (await createSupabasePaymentRepository(() => client).reschedule(id, { newDueDate: beyond })).ok,
+    ).toBe(true);
     expect(await state(id)).toMatchObject({ due: beyond, reschedules: 2 });
   });
 

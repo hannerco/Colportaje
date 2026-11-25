@@ -11,7 +11,7 @@ import type { LocalDate } from '@/domain/time';
 export interface PaymentRepository {
   /**
    * Aplica la opción elegida ante abonos que no cuadran (HU-ABO-07, función `resolve_schedule_excess`).
-   * El servidor recalcula el sobrante sobre lo vigente. Errores: `NO_EXCESS`, `LEAVE_NOT_ALLOWED`,
+   * El servidor recalcula el sobrante sobre lo vigente. Errores: `NO_EXCESS`,
    * `CONFLICT` (los programados cambiaron), `NOT_FOUND`, `VALIDATION`, `FORBIDDEN`, `NETWORK_ERROR`.
    */
   resolveScheduleExcess(
@@ -96,13 +96,13 @@ export interface PaymentRepository {
   cancelScheduled(paymentIds: readonly string[]): Promise<Result<{ customerId: string }, AppError>>;
 
   /**
-   * Prorroga un programado (HU-ABO-05): solo ese abono; la fecha original no cambia; deja su fila de
-   * historial. Errores: `PAYMENT_NOT_SCHEDULED`, `DATE_NOT_LATER`,
-   * `RESCHEDULE_NEEDS_CONFIRMATION` (`details.dates`), `CUSTOMER_ARCHIVED`, `NOT_FOUND`, `NETWORK_ERROR`.
+   * Aplaza un programado (HU-ABO-05, ronda 38): cualquier fecha distinta; solo ese abono; la fecha original no
+   * cambia; deja su fila de historial. Errores: `PAYMENT_NOT_SCHEDULED`, `VALIDATION`, `CUSTOMER_ARCHIVED`,
+   * `NOT_FOUND`, `NETWORK_ERROR`.
    */
   reschedule(
     paymentId: string,
-    input: { newDueDate: LocalDate; note?: string | null; confirmed?: boolean },
+    input: { newDueDate: LocalDate; note?: string | null },
   ): Promise<
     Result<{ moved: { paymentId: string; previousDueDate: LocalDate; newDueDate: LocalDate }[] }, AppError>
   >;

@@ -367,6 +367,9 @@
   --size-photo-thumb-width: 80px; /* miniatura de foto de la ficha de cliente */
   --size-photo-thumb-height: 64px;
   --size-calendar-dot: 4px; /* punto de «otro abono» en el calendario (HU-PAN-CLI-05) */
+  --size-schedule-date: 150px; /* columna de la fecha de un abono en escritorio (abonos a mano, ronda 38) */
+  --size-schedule-amount: 116px; /* columna del valor */
+  --size-schedule-collect: 84px; /* columna de «Cobrar» en la ficha */
   --size-map-preview: 160px; /* mapa de la ficha de cliente (HU-PAN-CLI-06) */
   --size-map-picker: 460px; /* mapa del selector de ubicación en escritorio */
   --size-map-picker-mobile: 52dvh; /* mapa del selector en la hoja móvil */

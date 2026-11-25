@@ -5,13 +5,11 @@ import { Suspense, useEffect, useRef, useState } from 'react';
 import { copy } from '@/copy/es';
 import { mapsLinkFor, type CustomerLocation } from '@/domain/customer-location';
 import type { NewCustomerDraft } from '@/domain/new-customer';
-import type { COP } from '@/domain/money';
-import { suggestFirstDueDate, withPaymentIds } from '@/domain/payment-plan';
+import { isSavable, proposedAmount, sortByDueDate, type ScheduleDraftRow } from '@/domain/manual-schedule';
 import { todayBogota, type LocalDate } from '@/domain/time';
 import {
   NewCustomerScreen,
   mapTiles,
-  planPreview,
   useAddCustomerInfoPhoto,
   useAddInvoicePhoto,
   useCreateInvoiceWithPhoto,
@@ -19,7 +17,6 @@ import {
   useSaveNewCustomer,
   useUpdateInvoice,
   type DownPaymentValue,
-  type PaymentPlanValue,
 } from '@/features/customers';
 import { DEFAULT_PAY_METHOD } from '@/features/payments';
 import { errorToast } from '@/features/shared/error-report';
@@ -80,15 +77,9 @@ function NewCustomerRoute() {
     method: DEFAULT_PAY_METHOD,
     paidOn: today,
   });
-  const [plan, setPlan] = useState<PaymentPlanValue>({
-    frequency: 'biweekly',
-    amount: null,
-    firstDueDate: null,
-  });
-  /** Fechas del plan corregidas a mano (HU-PAN-CLI-05); se descartan si el plan se recalcula (I-08). */
-  const [overrides, setOverrides] = useState<Record<number, LocalDate>>({});
-  /** Valores de abonos cambiados a mano (#90); también se descartan si el plan se recalcula. */
-  const [amountOverrides, setAmountOverrides] = useState<Record<number, COP>>({});
+  /** Abonos a mano (ronda 38, ADR-0052): fecha y valor libres; se guardan solo los que tienen ambos. */
+  const [schedule, setSchedule] = useState<readonly ScheduleDraftRow[]>([]);
+  const [focusPaymentId, setFocusPaymentId] = useState<string | null>(null);
   const [leaveOpen, setLeaveOpen] = useState(false);
   const [leaveTo, setLeaveTo] = useState<string>(ROUTES.customers);
   const saved = useRef(false);
@@ -112,7 +103,7 @@ function NewCustomerRoute() {
     photos.length > 0 ||
     invoices.length > 0 ||
     down.amount !== null ||
-    plan.amount !== null;
+    schedule.length > 0;
 
   // Cerrar la pestaña con algo escrito: el navegador pregunta (no queda borrador, #57).
   useEffect(() => {
@@ -131,21 +122,12 @@ function NewCustomerRoute() {
   };
 
   const debt = books.reduce((sum, b) => sum + (b.agreedPrice ?? b.price ?? 0), 0);
-  // El primer abono sugerido sigue a la frecuencia hasta que se cambia a mano (HU-ABO-03 R3).
-  const firstDueDate =
-    plan.firstDueDate ?? (plan.amount !== null ? suggestFirstDueDate(plan.frequency, today) : null);
-  const planInput = {
-    debt,
-    downPayment: down.amount,
-    frequency: plan.frequency,
-    amount: plan.amount,
-    firstDueDate,
-    today,
-    overrides,
-  };
-  // Si después de cambiar valores baja el saldo (se quita un libro) y ya no caben, el plan vuelve a lo calculado.
-  const withAmounts = planPreview({ ...planInput, amountOverrides });
-  const preview = withAmounts.amountsExceed ? planPreview(planInput) : withAmounts;
+  const pending = Math.max(0, debt - (down.amount ?? 0));
+  const scheduledTotal = schedule.reduce((sum, row) => sum + row.amount, 0);
+  const updatePayment = (id: string, patch: Partial<ScheduleDraftRow>) =>
+    setSchedule((current) =>
+      sortByDueDate(current.map((row) => (row.id === id ? { ...row, ...patch } : row))),
+    );
   const downDateInFuture = down.paidOn > today;
 
   /** Sube las fotos del cliente ya guardado; devuelve lo que falló, para reintentar. */
@@ -226,12 +208,10 @@ function NewCustomerRoute() {
         down.amount && down.amount > 0
           ? { paymentId: downPaymentId, amount: down.amount, method: down.method, paidOn: down.paidOn }
           : null,
-      plan: preview.items
-        ? withPaymentIds(
-            preview.items.map(({ dueDate, amount }) => ({ dueDate, amount })),
-            newId,
-          )
-        : null,
+      // Ronda 38: los abonos sin fecha o en $0 no se guardan (la fila ya lo avisa).
+      plan: schedule
+        .filter(isSavable)
+        .map((row) => ({ paymentId: row.id, dueDate: row.dueDate!, amount: row.amount })),
     };
     const result = await saveNewCustomer(draft);
     if (!result.ok) {
@@ -324,23 +304,20 @@ function NewCustomerRoute() {
       downPayment={down}
       onDownPaymentChange={(patch) => setDown((current) => ({ ...current, ...patch }))}
       downPaymentDateError={downDateInFuture ? copy.customers.create.payments.dateInFuture : undefined}
-      plan={{ ...plan, firstDueDate }}
-      onPlanChange={(patch) => {
-        setPlan((current) => ({ ...current, ...patch }));
-        setOverrides({});
-        setAmountOverrides({});
+      schedule={schedule}
+      focusPaymentId={focusPaymentId}
+      onAddPayment={() => {
+        const id = newId();
+        setSchedule((current) => [
+          ...current,
+          { id, dueDate: null, amount: proposedAmount(pending, scheduledTotal) },
+        ]);
+        setFocusPaymentId(id);
       }}
-      onPlanDateChange={(index, date) => setOverrides((current) => ({ ...current, [index]: date }))}
-      onPlanAmountChange={(index, amount) =>
-        setAmountOverrides((current) => ({ ...current, [index]: amount }))
-      }
-      validatePlanAmount={(index, amount) => {
-        const next = planPreview({ ...planInput, amountOverrides: { ...amountOverrides, [index]: amount } });
-        if (next.amountsExceed) return copy.payments.changeAmount.exceed;
-        return next.items ? undefined : copy.payments.changeAmount.invalid;
-      }}
+      onPaymentDateChange={(id, dueDate) => updatePayment(id, { dueDate })}
+      onPaymentAmountChange={(id, amount) => updatePayment(id, { amount })}
+      onRemovePayment={(id) => setSchedule((current) => current.filter((row) => row.id !== id))}
       today={today}
-      preview={preview}
       excess={null}
       banner={shell.offlineBanner}
       isOnline={shell.isOnline}

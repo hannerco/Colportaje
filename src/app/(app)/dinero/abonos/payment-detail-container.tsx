@@ -11,6 +11,7 @@ import {
   PaymentDetailScreen,
   type PaymentDetailScreenProps,
   useCollectPayment,
+  useCorrectScheduledDate,
   useReschedulePayment,
   useUndoCollectPayment,
   type PaymentDetailForm,
@@ -47,6 +48,7 @@ export function PaymentDetailContainer({ paymentId: id, window, initialForm = nu
   const history = usePaymentHistory(id);
   const { collectPayment } = useCollectPayment();
   const { reschedulePayment } = useReschedulePayment();
+  const { correctScheduledDate } = useCorrectScheduledDate();
   const { undoCollectPayment } = useUndoCollectPayment();
 
   const showError = (error: unknown) => toast.show(errorToast(error));
@@ -113,16 +115,27 @@ export function PaymentDetailContainer({ paymentId: id, window, initialForm = nu
           },
         });
       }}
-      onReschedule={async (date, confirmed, note) => {
-        const result = await reschedulePayment({
-          paymentId: id,
-          newDueDate: date,
-          currentDueDate: payment?.dueDate ?? undefined,
-          note,
-          confirmed,
+      onChangeDate={async (date, reason, note) => {
+        const result =
+          reason === 'reschedule'
+            ? await reschedulePayment({
+                paymentId: id,
+                newDueDate: date,
+                currentDueDate: payment?.dueDate ?? undefined,
+                note,
+              })
+            : await correctScheduledDate({ paymentId: id, dueDate: date });
+        if (!result.ok) {
+          showError(result.error);
+          throw new Error(result.error.code);
+        }
+        toast.show({
+          message:
+            reason === 'reschedule'
+              ? copy.payments.manual.done.rescheduled
+              : copy.payments.manual.done.corrected,
+          tone: 'success',
         });
-        if (!result.ok) return showError(result.error);
-        toast.show({ message: t.result.extended, tone: 'success' });
       }}
     />
   );

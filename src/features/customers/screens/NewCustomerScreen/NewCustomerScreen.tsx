@@ -6,7 +6,9 @@ import type { CustomerDetail } from '@/domain/customer-detail';
 import type { MapPoint } from '@/domain/customer-location';
 import { formatCOP, type COP } from '@/domain/money';
 import type { PayMethod } from '@/domain/payment';
+import { scheduleTotals, type ScheduleDraftRow } from '@/domain/manual-schedule';
 import type { LocalDate } from '@/domain/time';
+import { PaymentSchedule } from '@/features/payments/components/PaymentSchedule';
 import type { DiscardSummary } from '@/repositories';
 import { Button } from '@/ui/atoms/Button';
 import { Field } from '@/ui/atoms/Field';
@@ -21,10 +23,8 @@ import { CustomerLocationBlock } from '../../components/CustomerLocationBlock';
 import { EmojiAvatar } from '../../components/EmojiAvatar';
 import { PhotoStrip } from '@/ui/organisms/PhotoStrip';
 import { InvoiceBlock, type InvoiceBlockProps } from '../../components/InvoiceBlock';
-import { PaymentPlanFields, type PaymentPlanValue } from '../../components/PaymentPlanFields';
 import { AddBookButton, SoldBookList } from '../../components/SoldBookList';
 import type { MapTiles } from '../../map-tiles';
-import type { PlanPreview } from '../../new-customer-form';
 import styles from './NewCustomerScreen.module.css';
 
 export type DownPaymentValue = { amount: COP | null; method: PayMethod; paidOn: LocalDate };
@@ -85,14 +85,17 @@ export type NewCustomerScreenProps = {
   onDownPaymentChange: (patch: Partial<DownPaymentValue>) => void;
   /** «La fecha no puede ser futura» (HU-ABO-09). */
   downPaymentDateError?: string;
-  plan: PaymentPlanValue;
-  onPlanChange: (patch: Partial<PaymentPlanValue>) => void;
-  preview: PlanPreview;
-  /** HU-PAN-CLI-05: corregir la fecha de un abono del plan en el calendario (solo ese, sin historial). */
-  onPlanDateChange?: (index: number, date: LocalDate) => void;
-  /** #90: cambiar el valor de un abono del plan (los demás se ajustan) y por qué no sirve un valor. */
-  onPlanAmountChange?: (index: number, amount: COP) => void;
-  validatePlanAmount?: (index: number, amount: COP) => string | undefined;
+  /**
+   * Abonos a mano (ronda 38, ADR-0052): los que el colportor arma, por fecha. Sin plan automático; nada bloquea y el
+   * totalizador dice si programó de más o de menos.
+   */
+  schedule: readonly ScheduleDraftRow[];
+  /** El abono recién agregado (su valor se resalta). */
+  focusPaymentId?: string | null;
+  onAddPayment: () => void;
+  onPaymentDateChange: (id: string, date: LocalDate) => void;
+  onPaymentAmountChange: (id: string, amount: COP) => void;
+  onRemovePayment: (id: string) => void;
   /** Hoy (calendario y avisos de fecha pasada). */
   today: LocalDate;
   /** BR-PAY-13: lo programado supera el saldo (franja). */
@@ -127,7 +130,7 @@ const METHODS: PayMethod[] = ['cash', 'transfer'];
  * abajo.
  */
 export function NewCustomerScreen(props: NewCustomerScreenProps) {
-  const { created, isOnline, preview, books, debt, downPayment, plan } = props;
+  const { created, isOnline, books, debt, downPayment, schedule } = props;
   const mobile = usePlatform() === 'mobile';
   const [summaryOpen, setSummaryOpen] = useState(false);
   const noteId = useId();
@@ -250,8 +253,12 @@ export function NewCustomerScreen(props: NewCustomerScreenProps) {
     </Island>
   );
 
-  // #33: completa cuando la cuota inicial cubre la deuda o el plan reparte el saldo.
-  const paymentsComplete = debt > 0 && (paid >= debt || (preview.items?.length ?? 0) > 0);
+  // #33 / ronda 38: completa cuando la cuota inicial cubre la deuda o los abonos suman justo el saldo.
+  const totals = scheduleTotals(
+    account.balance,
+    schedule.map((row) => row.amount),
+  );
+  const paymentsComplete = debt > 0 && (paid >= debt || totals.state === 'exact');
   const payments = (
     <Island title={t.payments.title} icon="money" divided complete={paymentsComplete}>
       <div className={styles.downPayment}>
@@ -287,19 +294,25 @@ export function NewCustomerScreen(props: NewCustomerScreenProps) {
         </div>
       </div>
       <div className={styles.divider} />
-      <PaymentPlanFields
-        value={plan}
-        onChange={props.onPlanChange}
-        preview={preview}
+      <div className={styles.scheduleHead}>
+        <p className={styles.subheading}>{copy.payments.manual.heading}</p>
+        <span className={styles.byDate}>{copy.payments.manual.byDate}</span>
+      </div>
+      <PaymentSchedule
+        mode="create"
+        rows={schedule.map((row) => ({ type: 'scheduled', ...row }))}
+        pending={account.balance}
         today={props.today}
-        onChangeDate={props.onPlanDateChange}
-        onChangeAmount={props.onPlanAmountChange}
-        validateAmount={props.validatePlanAmount}
+        focusId={props.focusPaymentId}
+        onAdd={props.onAddPayment}
+        onChangeDate={(id, date) => props.onPaymentDateChange(id, date)}
+        onChangeAmount={props.onPaymentAmountChange}
+        onRemove={props.onRemovePayment}
       />
     </Island>
   );
 
-  const items = preview.items ?? [];
+  const items = schedule.filter((row) => row.dueDate !== null && row.amount > 0);
   return (
     <div className={styles.screen} data-shape={mobile ? 'mobile' : 'desktop'}>
       {mobile ? (
@@ -394,7 +407,12 @@ export function NewCustomerScreen(props: NewCustomerScreenProps) {
             {items.length > 0 && (
               <div>
                 <dt>{t.summary.payments}</dt>
-                <dd>{t.summary.paymentsValue(items.length, formatCOP(items[items.length - 1]!.amount))}</dd>
+                <dd>
+                  {t.summary.paymentsValue(
+                    items.length,
+                    formatCOP(items.reduce((sum, row) => sum + row.amount, 0)),
+                  )}
+                </dd>
               </div>
             )}
           </dl>

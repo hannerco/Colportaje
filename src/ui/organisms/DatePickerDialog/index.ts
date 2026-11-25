@@ -1,1 +1,1 @@
-export { DatePickerDialog, type DatePickerDialogProps } from './DatePickerDialog';
+export { DatePickerDialog, type DatePickerDialogProps, type DatePickerNote } from './DatePickerDialog';

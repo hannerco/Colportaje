@@ -2,32 +2,45 @@
 
 import { useState, type ReactNode } from 'react';
 import { copy } from '@/copy/es';
-import { formatDate, isPastDate, type LocalDate } from '@/domain/time';
+import { isPastDate, type LocalDate } from '@/domain/time';
 import { Icon } from '../../icons';
 import { DatePickerCalendar } from '../../molecules/DatePickerCalendar';
 import { ConfirmDialog } from '../ConfirmDialog';
 import styles from './DatePickerDialog.module.css';
 
+/** Un aviso dentro de la ventana: nunca impide elegir el día. */
+export type DatePickerNote = {
+  readonly text: string;
+  /** `bad` (rojo, p. ej. «Esta fecha ya pasó») o `neutral` (gris). */
+  readonly tone?: 'neutral' | 'bad';
+  /** `info` (por defecto) o `alert` («Ojo: …»). */
+  readonly icon?: 'info' | 'alert';
+};
+
 export type DatePickerDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** Qué fecha se elige: «Fecha de venta», «Abono 2 de 4», «Primer abono». */
+  /** Qué fecha se elige: «Fecha de venta», «Fecha del abono 2 de 4». */
   title: string;
   /** El día con el que abre. Sin fecha, hoy. */
   value: LocalDate | null;
   /** Hoy (con anillo en el calendario). */
   today: LocalDate;
-  /** Días con un punto (p. ej. otros abonos del cliente). */
+  /** La fecha que tenía (anillo punteado y leyenda «Fecha que tenía»), al cambiar algo ya guardado. */
+  previous?: LocalDate | null;
+  /** Días con un punto (otros abonos del cliente; leyenda «Otros abonos»). */
   marked?: readonly LocalDate[];
   /** Días que no se pueden elegir (futuros, antes de recibir el libro…). */
   isDisabled?: (date: LocalDate) => boolean;
   /** Una línea de contexto bajo el título, p. ej. «El poder de mis palabras #1 · hoy dice 22/11/2026». */
   subtitle?: ReactNode;
-  /** Un día anterior a hoy se permite pero avisa «Esta fecha ya pasó» (abonos programados, ADR-0049). */
+  /** Arriba del calendario (p. ej. «¿Por qué cambia?» al cambiar la fecha de un abono guardado). */
+  header?: ReactNode;
+  /** Un día anterior a hoy se permite pero avisa «Esta fecha ya pasó» (abonos, ADR-0049). */
   warnPast?: boolean;
-  /** Otros avisos según el día elegido; van debajo de «Fecha elegida», con el mismo aspecto. */
-  notes?: (selected: LocalDate) => string | null;
-  /** Debajo del calendario (p. ej. el Campo de nota de «Dar más plazo»). */
+  /** Otros avisos según el día elegido; van en la caja de avisos, debajo del calendario. */
+  notes?: (selected: LocalDate) => readonly DatePickerNote[];
+  /** Debajo de los avisos (p. ej. la nota para el historial al aplazar). */
   children?: ReactNode;
   /** Por defecto «Elegir fecha». */
   confirmLabel?: string;
@@ -40,9 +53,11 @@ export type DatePickerDialogProps = {
 const t = copy.ui.calendar;
 
 /**
- * Elegir una fecha (#62, revisión de 2026-11-24): **el único calendario de la app**. Es el Diálogo de la biblioteca
- * (hoja inferior en el celular, ventana centrada en escritorio), siempre en el mismo orden: título, contexto opcional,
- * «Fecha elegida: …», avisos, el calendario del mes y «Cancelar» / «Elegir fecha». Lo abren el Campo de fecha y todo lo que cambia una fecha (venta, recibido, abonos).
+ * Elegir una fecha (#62; revisión de 2026-11-24 y lienzo «FechaAbono», ronda 38): **el único calendario de la app**.
+ * Es el Diálogo de la biblioteca (hoja inferior en el celular, ventana centrada en escritorio), siempre en el mismo
+ * orden: título, contexto, lo de arriba (la pregunta de los abonos), el calendario del mes con la leyenda, la caja de
+ * avisos, lo de abajo (una nota) y «Cancelar» / «Elegir fecha». Lo abren el Campo de fecha y todo lo que cambia una
+ * fecha (venta, recibido, abonos).
  */
 export function DatePickerDialog({
   open,
@@ -50,9 +65,11 @@ export function DatePickerDialog({
   title,
   value,
   today,
-  marked,
+  previous = null,
+  marked = [],
   isDisabled,
   subtitle,
+  header,
   warnPast = false,
   notes,
   children,
@@ -67,42 +84,64 @@ export function DatePickerDialog({
     setWasOpen(open);
     if (open) setSelected(value ?? today);
   }
+  const shown: DatePickerNote[] = [
+    ...(warnPast && isPastDate(selected, today)
+      ? [{ text: t.past, tone: 'bad' as const, icon: 'alert' as const }]
+      : []),
+    ...(notes?.(selected) ?? []),
+  ];
+  const legend = previous !== null || marked.length > 0;
   return (
     <ConfirmDialog
       open={open}
       onOpenChange={onOpenChange}
       title={title}
-      message={
-        <span className={styles.message}>
-          {subtitle && <span>{subtitle}</span>}
-          <span className={styles.selected}>{t.selected(formatDate(selected))}</span>
-          {warnPast && isPastDate(selected, today) && <Note text={t.past} />}
-          {notes?.(selected) && <Note text={notes(selected)!} />}
-        </span>
-      }
+      message={subtitle ?? ''}
       confirmLabel={confirmLabel}
       cancelLabel={cancelLabel}
       onConfirm={() => onConfirm(selected)}
     >
-      <DatePickerCalendar
-        label={title}
-        value={selected}
-        onChange={setSelected}
-        today={today}
-        marked={marked}
-        isDisabled={isDisabled}
-      />
-      {children}
+      <div className={styles.body}>
+        {header}
+        <div className={styles.month}>
+          <DatePickerCalendar
+            label={title}
+            value={selected}
+            onChange={setSelected}
+            today={today}
+            previous={previous}
+            marked={marked}
+            isDisabled={isDisabled}
+          />
+          {legend && (
+            <p className={styles.legend}>
+              {previous !== null && (
+                <span className={styles.legendItem}>
+                  <span aria-hidden="true" className={styles.ring} />
+                  {t.legendPrevious}
+                </span>
+              )}
+              {marked.length > 0 && (
+                <span className={styles.legendItem}>
+                  <span aria-hidden="true" className={styles.dot} />
+                  {t.legendOthers}
+                </span>
+              )}
+            </p>
+          )}
+        </div>
+        {shown.length > 0 && (
+          <div className={styles.notes} role="status">
+            {shown.map((note) => (
+              <span key={note.text} className={styles.note} data-tone={note.tone ?? 'neutral'}>
+                <Icon name={note.icon ?? 'info'} size={16} tone="current" />
+                {note.text}
+              </span>
+            ))}
+          </div>
+        )}
+        {children}
+      </div>
     </ConfirmDialog>
-  );
-}
-
-/** Un aviso: no impide elegir el día. */
-function Note({ text }: { text: string }) {
-  return (
-    <span className={styles.note}>
-      <Icon name="alert" size={16} tone="current" />
-      {text}
-    </span>
   );
 }

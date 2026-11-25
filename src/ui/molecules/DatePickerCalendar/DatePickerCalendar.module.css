@@ -69,6 +69,11 @@
   outline-offset: -1px;
 }
 
+.day[data-previous] {
+  outline: 1.5px dashed var(--color-text-3);
+  outline-offset: -2px;
+}
+
 .day[aria-pressed='true'] {
   background: var(--color-accent);
   color: var(--color-on-accent);

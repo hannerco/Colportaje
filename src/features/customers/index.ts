@@ -129,8 +129,6 @@ export {
   type DownPaymentValue,
   type NewCustomerScreenProps,
 } from './screens/NewCustomerScreen';
-export type { PaymentPlanValue } from './components/PaymentPlanFields';
-export { planPreview, type PlanPreview } from './new-customer-form';
 export { useLiveWrite } from './use-live-write';
 export { AddBookSheet, type AddBookSheetProps, type ChosenBook } from './screens/AddBookSheet';
 // HU-PAN-CLI-06: dirección y ubicación.
@@ -151,7 +149,3 @@ export {
 export { useGeolocation } from './use-geolocation';
 export { mapTiles, type MapTiles } from './map-tiles';
 export { chosenBookValues, type ChosenBookValues } from './chosen-book';
-export {
-  SchedulePaymentsDialog,
-  type SchedulePaymentsDialogProps,
-} from './components/SchedulePaymentsDialog';

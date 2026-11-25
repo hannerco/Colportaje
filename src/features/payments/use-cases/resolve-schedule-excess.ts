@@ -16,7 +16,7 @@ export type ResolveScheduleExcessDeps = {
 /**
  * Aplica la opción elegida ante abonos que no cuadran (HU-ABO-07, BR-PAY-13) y devuelve la cuenta
  * recalculada. "Dejar como está" no guarda nada: la cuenta sigue con `notices.excess` (CA-6).
- * Errores: `OFFLINE` (sin intentar), `NO_EXCESS`, `LEAVE_NOT_ALLOWED`, `CONFLICT`, `NOT_FOUND`,
+ * Errores: `OFFLINE` (sin intentar), `NO_EXCESS`, `CONFLICT`, `NOT_FOUND`,
  * `VALIDATION`, `NETWORK_ERROR`.
  */
 export async function resolveScheduleExcess(

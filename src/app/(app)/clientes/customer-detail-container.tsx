@@ -20,7 +20,6 @@ import {
   useRestoreCustomer,
   useUpdateCustomer,
   useUpdateSoldAt,
-  SchedulePaymentsDialog,
   type CustomerDetailScreenProps,
   usePhotoUrlResolver,
 } from '@/features/customers';
@@ -29,17 +28,21 @@ import { ROUTES, useAppShell } from '@/features/shell';
 import { todayBogota } from '@/domain/time';
 import {
   CollectPaymentDialog,
-  useApplyPaymentPlan,
+  useCancelScheduledPayments,
   useCollectPayment,
+  useCorrectScheduledDate,
   useReschedulePayment,
+  useResolveScheduleExcess,
   useScheduleSinglePayment,
   useUndoCollectPayment,
+  useUpdateScheduledAmount,
 } from '@/features/payments';
 import { formatCOP } from '@/domain/money';
-import { withPaymentIds } from '@/domain/payment-plan';
+import { isSavable, proposedAmount, type ScheduleDraftRow } from '@/domain/manual-schedule';
 import { systemClock } from '@/lib/clock';
 import { newId } from '@/lib/ids';
 import { useToast } from '@/ui/molecules/Toast';
+import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
 import { AddBookContainer } from './add-book-container';
 import { LocationPickerContainer } from './location-picker-container';
 
@@ -80,14 +83,44 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
   const { updateSoldAt } = useUpdateSoldAt();
   const { collectPayment } = useCollectPayment();
   const { undoCollectPayment } = useUndoCollectPayment();
-  const { applyPaymentPlan } = useApplyPaymentPlan();
   const { scheduleSinglePayment } = useScheduleSinglePayment();
+  const { updateScheduledAmount } = useUpdateScheduledAmount();
+  const { correctScheduledDate } = useCorrectScheduledDate();
+  const { cancelScheduledPayments } = useCancelScheduledPayments();
+  const { resolveScheduleExcess } = useResolveScheduleExcess();
+  /** Abonos recién agregados (ronda 38): viven en el teléfono hasta tener fecha y valor; entonces se guardan. */
+  const [drafts, setDrafts] = useState<readonly ScheduleDraftRow[]>([]);
+  const [focusPaymentId, setFocusPaymentId] = useState<string | null>(null);
   /** #35: el abono que se está cobrando desde la ficha, y si «Programar abono» está abierto. */
   const [collecting, setCollecting] = useState<string | null>(null);
-  const [scheduling, setScheduling] = useState(false);
+  const [reviewing, setReviewing] = useState(false);
   const collectingRow = detail.data?.payments.find((p) => p.paymentId === collecting);
   const r = copy.payments.detail.result;
-  const s = copy.customers.detail.payments.scheduleForm;
+  const m = copy.payments.manual;
+  const fail = (error: unknown): never => {
+    showError(error);
+    throw new Error('failed');
+  };
+  /** Un abono recién agregado con fecha y valor se guarda como abono suelto y deja de ser borrador. */
+  const updateDraft = async (id: string, patch: Partial<ScheduleDraftRow>) => {
+    const draft = drafts.find((d) => d.id === id);
+    if (!draft) return false;
+    const next = { ...draft, ...patch };
+    if (!isSavable(next)) {
+      setDrafts((current) => current.map((d) => (d.id === id ? next : d)));
+      return true;
+    }
+    const result = await scheduleSinglePayment({
+      paymentId: id,
+      customerId,
+      dueDate: next.dueDate!,
+      agreedAmount: next.amount,
+    });
+    if (!result.ok) return fail(result.error);
+    setDrafts((current) => current.filter((d) => d.id !== id));
+    toast.show({ message: m.done.added, tone: 'success' });
+    return true;
+  };
   const showError = (error: unknown) => toast.show(errorToast(error));
 
   return (
@@ -124,16 +157,6 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
         }}
         onAddBook={() => setAddingBook(true)}
         today={today}
-        onReschedule={async (paymentId, newDueDate, confirmed) => {
-          const current = detail.data?.payments.find((p) => p.paymentId === paymentId)?.dueDate ?? undefined;
-          const result = await reschedulePayment({
-            paymentId,
-            newDueDate,
-            currentDueDate: current,
-            confirmed,
-          });
-          if (!result.ok) toast.show(errorToast(result.error));
-        }}
         tiles={tiles}
         onChooseLocation={() => setChoosingLocation(true)}
         onRemoveLocation={async () => {
@@ -227,7 +250,56 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
           toast.show({ message: copy.payments.soldDate.saved, tone: 'success' });
         }}
         onCollect={setCollecting}
-        onSchedule={() => setScheduling(true)}
+        schedule={{
+          drafts,
+          focusId: focusPaymentId,
+          onAdd: () => {
+            const account = detail.data?.account;
+            const savedTotal = account?.scheduledTotal ?? 0;
+            const draftTotal = drafts.reduce((sum, d) => sum + d.amount, 0);
+            const id = newId();
+            setDrafts((current) => [
+              ...current,
+              { id, dueDate: null, amount: proposedAmount(account?.remaining ?? 0, savedTotal + draftTotal) },
+            ]);
+            setFocusPaymentId(id);
+          },
+          onChangeDate: async (id, dueDate, reason, note) => {
+            if (await updateDraft(id, { dueDate })) return;
+            const current = detail.data?.payments.find((p) => p.paymentId === id)?.dueDate ?? undefined;
+            const result =
+              reason === 'reschedule'
+                ? await reschedulePayment({
+                    paymentId: id,
+                    newDueDate: dueDate,
+                    currentDueDate: current,
+                    note,
+                  })
+                : await correctScheduledDate({ paymentId: id, dueDate });
+            if (!result.ok) return fail(result.error);
+            toast.show({
+              message: reason === 'reschedule' ? m.done.rescheduled : m.done.corrected,
+              tone: 'success',
+            });
+          },
+          onChangeAmount: async (id, amount) => {
+            if (await updateDraft(id, { amount })) return;
+            const result = await updateScheduledAmount({ paymentId: id, agreedAmount: amount });
+            if (!result.ok) return fail(result.error);
+            toast.show({ message: m.done.amount, tone: 'success' });
+          },
+          onRemove: async (id) => {
+            if (drafts.some((d) => d.id === id)) {
+              setDrafts((current) => current.filter((d) => d.id !== id));
+              return;
+            }
+            const result = await cancelScheduledPayments([id]);
+            if (!result.ok) return fail(result.error);
+            toast.show({ message: m.done.removed, tone: 'success' });
+          },
+          // «Revisar» (opcional): recorta lo que sobra desde el abono más lejano (BR-PAY-13, motivo manual).
+          onReview: () => setReviewing(true),
+        }}
         onRestore={async () => {
           const result = await restoreCustomer(customerId);
           toast.show(
@@ -276,36 +348,24 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
           }}
         />
       )}
-      {detail.data && (
-        <SchedulePaymentsDialog
-          open={scheduling}
-          onOpenChange={setScheduling}
-          unscheduled={detail.data.account.unscheduled}
-          today={today}
-          onApplyPlan={async (items) => {
-            const result = await applyPaymentPlan({
+      {reviewing && detail.data && (
+        <ConfirmDialog
+          open
+          onOpenChange={(open) => !open && setReviewing(false)}
+          title={m.review.title}
+          message={m.review.message(
+            formatCOP(Math.max(0, detail.data.account.scheduledTotal - detail.data.account.remaining)),
+          )}
+          confirmLabel={m.review.confirm}
+          cancelLabel={m.review.cancel}
+          onConfirm={async () => {
+            const result = await resolveScheduleExcess({
               customerId,
-              mode: 'unscheduled_only',
-              items: withPaymentIds(items, newId),
+              choice: { action: 'auto_trim', order: 'farthest' },
+              trigger: 'review',
             });
-            if (!result.ok) {
-              showError(result.error);
-              throw new Error(result.error.code);
-            }
-            toast.show({ message: s.done, tone: 'success' });
-          }}
-          onScheduleSingle={async ({ dueDate, amount }) => {
-            const result = await scheduleSinglePayment({
-              paymentId: newId(),
-              customerId,
-              dueDate,
-              agreedAmount: amount,
-            });
-            if (!result.ok) {
-              showError(result.error);
-              throw new Error(result.error.code);
-            }
-            toast.show({ message: s.doneSingle, tone: 'success' });
+            if (!result.ok) return fail(result.error);
+            toast.show({ message: m.review.done, tone: 'success' });
           }}
         />
       )}

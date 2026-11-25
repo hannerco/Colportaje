@@ -2,37 +2,34 @@
 import { validateReschedule } from '@/domain/reschedule';
 import type { AppError } from '@/domain/shared/errors';
 import type { Result } from '@/domain/shared/result';
-import { todayBogota, type LocalDate } from '@/domain/time';
+import type { LocalDate } from '@/domain/time';
 import { runMutation } from '../../shared/run-mutation';
 import type { CollectedPaymentsDeps } from './collected-payments';
 
 export type RescheduleInput = {
   readonly newDueDate: LocalDate;
-  /** La fecha que tiene hoy el abono, si la app la conoce: así `DATE_NOT_LATER` no espera a la red. */
+  /** La fecha que tiene hoy el abono, si la app la conoce. */
   readonly currentDueDate?: LocalDate;
   readonly note?: string | null;
-  /** `true` cuando el usuario ya confirmó una fecha a más de 2 meses (R3). */
-  readonly confirmed?: boolean;
 };
 
 /**
- * Errores: `OFFLINE`, `DATE_NOT_LATER`, `RESCHEDULE_NEEDS_CONFIRMATION` (`details.dates`;
- * no guarda nada), `PAYMENT_NOT_SCHEDULED`, `CUSTOMER_ARCHIVED`, `NOT_FOUND`, `NETWORK_ERROR`.
+ * Aplazar (ronda 38): cualquier fecha distinta de la actual. Errores: `OFFLINE`, `VALIDATION` (misma fecha),
+ * `PAYMENT_NOT_SCHEDULED`, `CUSTOMER_ARCHIVED`, `NOT_FOUND`, `NETWORK_ERROR`.
  */
 export async function reschedulePayment(
-  deps: Pick<CollectedPaymentsDeps, 'payments' | 'connectivity' | 'clock'>,
+  deps: Pick<CollectedPaymentsDeps, 'payments' | 'connectivity'>,
   paymentId: string,
   input: RescheduleInput,
 ): Promise<
   Result<{ moved: { paymentId: string; previousDueDate: LocalDate; newDueDate: LocalDate }[] }, AppError>
 > {
   return runMutation(deps.connectivity, async () => {
-    const valid = validateReschedule({ ...input, today: todayBogota(deps.clock) });
+    const valid = validateReschedule(input);
     if (!valid.ok) return valid;
     return deps.payments.reschedule(paymentId, {
       newDueDate: input.newDueDate,
       note: input.note ?? null,
-      confirmed: input.confirmed ?? false,
     });
   });
 }

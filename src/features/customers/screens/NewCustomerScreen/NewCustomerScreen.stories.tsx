@@ -2,16 +2,21 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, waitFor } from 'storybook/test';
 import type { CustomerDetail } from '@/domain/customer-detail';
-import { suggestFirstDueDate } from '@/domain/payment-plan';
-import { localDate, type LocalDate } from '@/domain/time';
+import { proposedAmount, sortByDueDate, type ScheduleDraftRow } from '@/domain/manual-schedule';
+import { localDate } from '@/domain/time';
 import { Banner } from '@/ui/molecules/Banner';
 import { ToastProvider, useToast } from '@/ui/molecules/Toast';
-import type { PaymentPlanValue } from '../../components/PaymentPlanFields';
-import { planPreview } from '../../new-customer-form';
 import { NewCustomerScreen, type DownPaymentValue } from './NewCustomerScreen';
 import type { CustomerInvoice } from '../../use-cases/customer-invoices';
 
 const today = localDate('2026-11-17');
+/** Lienzo «Propuestas · 10»: cuatro abonos de $35.000 para el saldo de $140.000. */
+const FOUR: ScheduleDraftRow[] = [
+  { id: 'a1', dueDate: localDate('2026-11-30'), amount: 35000 },
+  { id: 'a2', dueDate: localDate('2026-12-15'), amount: 35000 },
+  { id: 'a3', dueDate: localDate('2026-12-30'), amount: 35000 },
+  { id: 'a4', dueDate: localDate('2027-01-15'), amount: 35000 },
+];
 const sold = new Date('2026-11-17T17:00:00.000Z');
 
 /** Natalia del diseño: 2 libros por $180.000. */
@@ -40,7 +45,8 @@ type DemoProps = {
   initialName?: string;
   books?: CustomerDetail['books'];
   initialDown?: Partial<DownPaymentValue>;
-  initialPlan?: Partial<PaymentPlanValue>;
+  /** Abonos a mano ya armados (ronda 38). */
+  initialSchedule?: ScheduleDraftRow[];
   isOnline?: boolean;
   excess?: number | null;
   /** Al guardar: bien, falla (Aviso con Reintentar) o queda guardando. */
@@ -76,7 +82,7 @@ function DemoInner({
   initialName = '',
   books = [],
   initialDown,
-  initialPlan,
+  initialSchedule,
   isOnline = true,
   excess = null,
   save = 'ok',
@@ -102,19 +108,17 @@ function DemoInner({
     paidOn: today,
     ...initialDown,
   });
-  const [plan, setPlan] = useState<PaymentPlanValue>({
-    frequency: 'biweekly',
-    amount: null,
-    firstDueDate: null,
-    ...initialPlan,
-  });
+  const [schedule, setSchedule] = useState<readonly ScheduleDraftRow[]>(initialSchedule ?? []);
+  const [focusId, setFocusId] = useState<string | null>(null);
   const [discardOpen, setDiscardOpen] = useState(false);
   const [emoji, setEmoji] = useState<string | null>(null);
   const [invoices, setInvoices] = useState<CustomerInvoice[]>(initialInvoices ?? []);
-  const [overrides, setOverrides] = useState<Record<number, LocalDate>>({});
   const debt = books.reduce((sum, b) => sum + b.agreedPrice, 0);
-  const firstDueDate =
-    plan.firstDueDate ?? (plan.amount !== null ? suggestFirstDueDate(plan.frequency, today) : null);
+  const pending = Math.max(0, debt - (down.amount ?? 0));
+  const update = (id: string, patch: Partial<ScheduleDraftRow>) =>
+    setSchedule((current) =>
+      sortByDueDate(current.map((row) => (row.id === id ? { ...row, ...patch } : row))),
+    );
   return (
     <NewCustomerScreen
       name={name}
@@ -152,22 +156,18 @@ function DemoInner({
       downPayment={down}
       onDownPaymentChange={(patch) => setDown((d) => ({ ...d, ...patch }))}
       downPaymentDateError={down.paidOn > today ? 'La fecha no puede ser futura' : undefined}
-      plan={{ ...plan, firstDueDate }}
-      onPlanChange={(patch) => {
-        setPlan((p) => ({ ...p, ...patch }));
-        setOverrides({});
+      schedule={schedule}
+      focusPaymentId={focusId}
+      onAddPayment={() => {
+        const id = `n${schedule.length + 1}`;
+        const total = schedule.reduce((sum, row) => sum + row.amount, 0);
+        setSchedule((current) => [...current, { id, dueDate: null, amount: proposedAmount(pending, total) }]);
+        setFocusId(id);
       }}
-      onPlanDateChange={(index, date) => setOverrides((o) => ({ ...o, [index]: date }))}
+      onPaymentDateChange={(id, dueDate) => update(id, { dueDate })}
+      onPaymentAmountChange={(id, amount) => update(id, { amount })}
+      onRemovePayment={(id) => setSchedule((current) => current.filter((row) => row.id !== id))}
       today={today}
-      preview={planPreview({
-        debt,
-        downPayment: down.amount,
-        frequency: plan.frequency,
-        amount: plan.amount,
-        firstDueDate,
-        today,
-        overrides,
-      })}
       excess={excess}
       banner={isOnline ? undefined : <Banner tone="offline" />}
       isOnline={isOnline}
@@ -218,7 +218,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Nuevo cliente, ficha viva (HU-PAN-CLI-03): el cliente existe desde que tiene nombre y cada dato se guarda solo. Nombre, cuenta (saldo, abonado, deuda), información (teléfono), libros vendidos, cuota inicial (valor, fecha y medio) y el plan para el saldo con «Así quedan los abonos». «Guardar cliente» muestra el resumen y lleva a la ficha; «Descartar» (o salir) pregunta con lo que se perderá. Los libros se agregan con HU-PAN-CLI-04. Información y dirección (HU-PAN-CLI-06): dirección en texto, ubicación en el mapa («Elegir en mapa»; con ubicación, el mapa que carga al tocarlo, «Abrir en Maps», «Cambiar» y «Quitar»), información e imágenes.',
+          'Nuevo cliente, ficha viva (HU-PAN-CLI-03): el cliente existe desde que tiene nombre y cada dato se guarda solo. Nombre, cuenta (saldo, abonado, deuda), información (teléfono), libros vendidos, cuota inicial (valor, fecha y medio) y los abonos a mano con su totalizador (ronda 38). «Guardar cliente» muestra el resumen y lleva a la ficha; «Descartar» (o salir) pregunta con lo que se perderá. Los libros se agregan con HU-PAN-CLI-04. Información y dirección (HU-PAN-CLI-06): dirección en texto, ubicación en el mapa («Elegir en mapa»; con ubicación, el mapa que carga al tocarlo, «Abrir en Maps», «Cambiar» y «Quitar»), información e imágenes.',
       },
     },
   },
@@ -241,9 +241,8 @@ export const Vacia: Story = {
   name: 'Vacía',
   play: async ({ canvasElement }) => {
     for (const frame of frames(canvasElement)) {
-      expect(frame.textContent).toContain(
-        'Las fechas aparecen cuando pones el valor de cada abono y el primero.',
-      );
+      expect(frame.textContent).toContain('Todavía no hay abonos programados.');
+      expect(frame.textContent).not.toContain('Frecuencia');
       expect(button(frame, 'Guardar cliente')!.getAttribute('aria-disabled')).toBe('true');
     }
   },
@@ -257,38 +256,36 @@ export const Llena: Story = {
     initialName: 'Natalia Andrea Cárdenas',
     books: BOOKS,
     initialDown: { amount: 40000 },
-    initialPlan: { amount: 35000 },
+    initialSchedule: FOUR,
   },
   play: async ({ canvasElement }) => {
     for (const frame of frames(canvasElement)) {
-      expect(frame.textContent).toContain('Plan para el saldo de $140.000');
-      expect(frame.textContent).toContain('4 abonos cubren el saldo de $140.000');
+      expect(frame.textContent).toContain('Abono 4 de 4');
+      expect(frame.textContent).toContain('Todo programado');
     }
   },
 };
 
-/** CA-3: deuda $240.000, quincenal y $60.000 → 4 abonos; al cambiar a $80.000, 3. */
-export const PlanRecalcula: Story = {
-  name: 'Plan se recalcula',
+/** Ronda 38: sin plan automático; «+ Agregar abono» propone lo que falta ($35.000) y la fecha la elige el colportor. */
+export const AgregarAbono: Story = {
+  name: 'Agregar abono',
   globals: { platform: 'desktop' },
   args: {
     initialName: 'Natalia Andrea Cárdenas',
-    books: [{ ...BOOKS[0]!, agreedPrice: 240000 }],
-    initialPlan: { amount: 60000 },
+    books: BOOKS,
+    initialDown: { amount: 40000 },
+    initialSchedule: FOUR.slice(0, 3),
   },
   play: async ({ canvasElement }) => {
-    for (const frame of frames(canvasElement)) {
-      const list = () => frame.querySelectorAll('section[aria-label="Así quedan los abonos"] li');
-      expect(list()).toHaveLength(4);
-      const amount = input(frame, 'Valor de cada abono')!;
-      await userEvent.clear(amount);
-      await userEvent.type(amount, '80000');
-      await waitFor(() => expect(list()).toHaveLength(3));
-    }
+    const frame = frames(canvasElement)[0]!;
+    expect(frame.textContent).toContain('Falta programar');
+    await userEvent.click(button(frame, 'Agregar abono')!);
+    await waitFor(() => expect(frame.textContent).toContain('Todo programado'));
+    expect(frame.textContent).toContain('Elige la fecha. Sin fecha, este abono no se guarda.');
   },
 };
 
-/** HU-PAN-CLI-05 CA-1: al crear, cambiar la fecha de un abono en el calendario mueve solo ese («fecha cambiada»). */
+/** Al crear, cambiar la fecha de un abono mueve solo ese y la lista se reordena por fecha. */
 export const CorregirFechaDeUnAbono: Story = {
   name: 'Corregir fecha de un abono',
   globals: { platform: 'desktop' },
@@ -296,24 +293,26 @@ export const CorregirFechaDeUnAbono: Story = {
     initialName: 'Natalia Andrea Cárdenas',
     books: BOOKS,
     initialDown: { amount: 40000 },
-    initialPlan: { amount: 35000, firstDueDate: localDate('2026-11-30') },
+    initialSchedule: FOUR,
   },
   play: async ({ canvasElement }) => {
     const frame = frames(canvasElement)[0]!;
     const dates = () =>
-      [...frame.querySelectorAll<HTMLButtonElement>('button[aria-label^="Cambiar fecha"]')].map(
+      [...frame.querySelectorAll<HTMLButtonElement>('button[aria-label^="Cambiar la fecha"]')].map(
         (b) => b.textContent,
       );
     expect(dates()).toEqual(['30/11/2026', '15/12/2026', '30/12/2026', '15/01/2027']);
     await userEvent.click(
-      frame.querySelector<HTMLButtonElement>('button[aria-label="Cambiar fecha, 30/11/2026"]')!,
+      frame.querySelector<HTMLButtonElement>('button[aria-label^="Cambiar la fecha del abono 1 de 4"]')!,
     );
     await waitFor(() => expect(frame.querySelector('[role="alertdialog"]')).not.toBeNull());
     const dialog = frame.querySelector<HTMLElement>('[role="alertdialog"]')!;
-    await userEvent.click(dialog.querySelector<HTMLButtonElement>('[data-date="2026-12-05"]')!);
-    await userEvent.click(button(dialog, 'Guardar fecha')!);
-    await waitFor(() => expect(dates()).toEqual(['05/12/2026', '15/12/2026', '30/12/2026', '15/01/2027']));
-    expect(frame.textContent).toContain('fecha cambiada');
+    await userEvent.click(dialog.querySelector<HTMLButtonElement>('button[aria-label="Mes siguiente"]')!);
+    await waitFor(() => expect(dialog.querySelector('[data-date="2026-12-20"]')).not.toBeNull());
+    await userEvent.click(dialog.querySelector<HTMLButtonElement>('[data-date="2026-12-20"]')!);
+    expect(dialog.textContent).toContain('Ojo: hay un abono programado antes, el 15/12');
+    await userEvent.click(button(dialog, 'Listo')!);
+    await waitFor(() => expect(dates()).toEqual(['15/12/2026', '20/12/2026', '30/12/2026', '15/01/2027']));
   },
 };
 
@@ -323,7 +322,7 @@ export const ConAbonoDeFechaPasada: Story = {
   args: {
     initialName: 'Natalia Andrea Cárdenas',
     books: BOOKS,
-    initialPlan: { amount: 60000, firstDueDate: localDate('2026-11-01') },
+    initialSchedule: [{ id: 'a1', dueDate: localDate('2026-11-01'), amount: 60000 }, ...FOUR.slice(1)],
   },
   play: async ({ canvasElement }) => {
     for (const frame of frames(canvasElement)) {
@@ -350,7 +349,7 @@ export const Guardar: Story = {
     initialName: 'Natalia Andrea Cárdenas',
     books: BOOKS,
     initialDown: { amount: 40000 },
-    initialPlan: { amount: 35000 },
+    initialSchedule: FOUR,
   },
   play: async ({ canvasElement, args }) => {
     const frame = frames(canvasElement)[0]!;
@@ -358,7 +357,7 @@ export const Guardar: Story = {
     await waitFor(() => expect(frame.querySelector('[role="alertdialog"]')).not.toBeNull());
     const dialog = frame.querySelector<HTMLElement>('[role="alertdialog"]')!;
     expect(dialog.textContent).toContain('Libros (2)');
-    expect(dialog.textContent).toContain('4 de $35.000');
+    expect(dialog.textContent).toContain('4 · $140.000');
     await userEvent.click(button(dialog, 'Guardar cliente')!);
     expect(args.onSave).toHaveBeenCalled();
   },
@@ -488,13 +487,13 @@ export const Matriz: Story = {
     initialName: 'Natalia Andrea Cárdenas',
     books: BOOKS,
     initialDown: { amount: 40000 },
-    initialPlan: { amount: 35000 },
+    initialSchedule: FOUR,
   },
 };
 
 /**
  * #32, #33 y #34 (corrección del dueño, 2026-11-22): Nuevo cliente como el lienzo CrearV5: avatar con emoji, islas con
- * su estado (círculo vacío o chulo), isla «Factura» y Medio de pago y Frecuencia como botones segmentados.
+ * su estado (círculo vacío o chulo), isla «Factura» y Medio de pago como botones segmentados.
  */
 export const ComoElDiseno: Story = {
   name: 'Como el diseño (CrearV5)',

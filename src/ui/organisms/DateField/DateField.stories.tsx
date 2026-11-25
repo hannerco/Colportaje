@@ -58,7 +58,6 @@ export const ElegirEnElCalendario: Story = {
     await userEvent.click(frame.getByRole('button', { name: 'Abrir calendario, Fecha' }));
     const panel = await within(document.body).findByRole('alertdialog', { name: 'Fecha' });
     await userEvent.click(within(panel).getByRole('button', { name: /^15 de noviembre de 2026/ }));
-    expect(within(panel).getByText('Fecha elegida: 15/11/2026')).toBeVisible();
     expect(args.onChange).not.toHaveBeenCalled();
     await userEvent.click(within(panel).getByRole('button', { name: 'Elegir fecha' }));
     expect(args.onChange).toHaveBeenCalledWith('2026-11-15');

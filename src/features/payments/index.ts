@@ -46,7 +46,6 @@ export {
   type CollectPaymentInput,
   type CollectPaymentResult,
 } from './use-cases/collect-payment';
-export { RESCHEDULE_ERROR_CODES, rescheduleConfirmLimit } from '@/domain/reschedule';
 // Plan de abonos (cálculo puro, sin red): el front arma la vista previa "Así quedan los abonos".
 export {
   PAYMENT_PLAN_ERROR_CODES,
@@ -71,8 +70,14 @@ export {
   type ExcessTrigger,
   type TrimOrder,
 } from '@/domain/schedule-excess';
-// Piezas del módulo (HU-PAN-CLI-05).
-export { ChangeDueDateDialog, type ChangeDueDateDialogProps } from './components/ChangeDueDateDialog';
+// Piezas del módulo: abonos a mano (ronda 38, ADR-0052).
+export { PaymentDateDialog, type PaymentDateDialogProps } from './components/PaymentDateDialog';
+export { PaymentAmountDialog, type PaymentAmountDialogProps } from './components/PaymentAmountDialog';
+export {
+  PaymentSchedule,
+  type PaymentScheduleProps,
+  type ScheduleListRow,
+} from './components/PaymentSchedule';
 // HU-PAN-DIN-02: detalle de un abono, cobrar y dar más plazo.
 export {
   PaymentDetailScreen,

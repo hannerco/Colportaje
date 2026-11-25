@@ -1,7 +1,7 @@
 // HU-ABO-05 · reschedule_payment: reglas de fecha, confirmación, historial, idempotencia y A/B.
 import { randomUUID } from 'node:crypto';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { rescheduleConfirmLimit } from '@/domain/reschedule';
+import { farAheadLimit } from '@/domain/manual-schedule';
 import { localDate } from '@/domain/time';
 import {
   asAnon,
@@ -124,13 +124,15 @@ describe('reschedule_payment (HU-ABO-05)', () => {
       expect((await state(tx, id)).history).toHaveLength(1);
     }));
 
-  it('CA-3: del 30/11 al 20/11 → DATE_NOT_LATER (y a la misma fecha sin prórroga previa también)', () =>
+  it('ronda 38: del 30/11 al 20/11 (hacia atrás) se guarda con su fila; a la misma fecha → VALIDATION', () =>
     inTransaction(async (tx) => {
       const { owner, customer } = await setup(tx);
       const id = await scheduled(tx, owner, customer, await day(tx, 25));
-      expect(await reschedule(tx, owner, id, await day(tx, 15))).toMatchObject({ code: 'DATE_NOT_LATER' });
-      expect(await reschedule(tx, owner, id, await day(tx, 25))).toMatchObject({ code: 'DATE_NOT_LATER' });
-      expect((await state(tx, id)).history).toEqual([]);
+      expect(await reschedule(tx, owner, id, await day(tx, 25))).toMatchObject({ code: 'VALIDATION' });
+      expect(await reschedule(tx, owner, id, await day(tx, 15))).toMatchObject({ ok: true });
+      const after = await state(tx, id);
+      expect(after.history).toHaveLength(1);
+      expect(after).toMatchObject({ due: await day(tx, 15) });
     }));
 
   it('HU-ABO-08 R2 / CA-3: de hace 15 días a hace 6 (posterior a la actual aunque anterior a hoy) se guarda con 1 fila', () =>
@@ -144,26 +146,15 @@ describe('reschedule_payment (HU-ABO-05)', () => {
       expect(after).toMatchObject({ due: next });
     }));
 
-  it('HU-ABO-08 CA-4: a una fecha anterior a la actual sigue siendo DATE_NOT_LATER', () =>
+  it('ronda 38: a una fecha anterior a hoy y a más de 2 meses se guarda sin confirmar', () =>
     inTransaction(async (tx) => {
       const { owner, customer } = await setup(tx);
       const id = await scheduled(tx, owner, customer, await day(tx, -6));
-      expect(await reschedule(tx, owner, id, await day(tx, -11))).toMatchObject({ code: 'DATE_NOT_LATER' });
-    }));
-
-  it('CA-4: más allá de hoy + 2 meses pide confirmar (con la fecha); confirmado se guarda; el límite exacto no pide', () =>
-    inTransaction(async (tx) => {
-      const { owner, customer } = await setup(tx);
-      const id = await scheduled(tx, owner, customer, await day(tx, 5));
-      const limit = rescheduleConfirmLimit(localDate(await today(tx)));
+      expect(await reschedule(tx, owner, id, await day(tx, -11))).toMatchObject({ ok: true });
+      const limit = farAheadLimit(localDate(await today(tx)));
       const beyond = (await tx.query<{ d: string }>('select ($1::date + 1)::text as d', [limit])).rows[0]!.d;
-      const outcome = await reschedule(tx, owner, id, beyond);
-      expect(outcome).toMatchObject({ code: 'RESCHEDULE_NEEDS_CONFIRMATION' });
-      expect(!outcome.ok && JSON.parse(outcome.detail!)).toEqual([beyond]);
-      expect((await state(tx, id)).history).toEqual([]);
-      // Paridad con el dominio: el límite exacto no pide confirmación.
-      expect(await reschedule(tx, owner, id, limit)).toMatchObject({ ok: true });
-      expect(await reschedule(tx, owner, id, beyond, null, true)).toMatchObject({ ok: true });
+      expect(await reschedule(tx, owner, id, beyond)).toMatchObject({ ok: true });
+      expect((await state(tx, id)).history).toHaveLength(2);
     }));
 
   it('CA-5: prorrogar el primero de tres no mueve los demás; solo él tiene historial', () =>
