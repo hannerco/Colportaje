@@ -15,7 +15,7 @@ import {
 } from '@/features/inventory';
 import { useUpdateSoldAt } from '@/features/customers';
 import { errorToast } from '@/features/shared/error-report';
-import { ROUTES, useAppShell } from '@/features/shell';
+import { useAppShell, useDetailHref } from '@/features/shell';
 import { systemClock } from '@/lib/clock';
 import { useToast } from '@/ui/molecules/Toast';
 
@@ -35,6 +35,7 @@ type Props = {
  */
 export function CopyDetailContainer({ copyId: id, window, onDeleted }: Props) {
   const { isOnline } = useAppShell();
+  const href = useDetailHref();
   const toast = useToast();
   const [today] = useState(() => todayBogota(systemClock));
   const detail = useCopyDetail(id);
@@ -57,7 +58,7 @@ export function CopyDetailContainer({ copyId: id, window, onDeleted }: Props) {
       isOnline={isOnline}
       window={window}
       today={today}
-      customerHref={ROUTES.customer}
+      customerHref={(customerId) => href('customer', customerId)}
       onChangePrice={async (price) => {
         const result = await updateAgreedPrice({ copyId: id, price });
         if (!result.ok) return showError(result.error);

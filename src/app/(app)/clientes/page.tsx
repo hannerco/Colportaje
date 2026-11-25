@@ -73,7 +73,7 @@ function CustomersRoute() {
       selectedId={selectedId}
       customerHref={ROUTES.customer}
       onOpenCustomer={(id) =>
-        platform === 'mobile' || readStoredDetailWindowMode() === 'page'
+        platform === 'mobile' || readStoredDetailWindowMode('customer') === 'page'
           ? router.push(ROUTES.customer(id))
           : select(id)
       }

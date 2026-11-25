@@ -89,7 +89,7 @@ export function DepositEditorScreen(props: DepositEditorScreenProps) {
 
   if (!initial)
     return (
-      <DetailWindow {...props.window} title={title}>
+      <DetailWindow {...props.window} rememberAs="deposit" title={title}>
         {props.notFound ? (
           <EmptyState kind="empty" title={t.notFound.title} text={t.notFound.text} />
         ) : props.error && !props.loading ? (
@@ -193,7 +193,7 @@ function Editor(
   const canConfirm = blockers.length === 0 && date !== null && online;
   return (
     <>
-      <DetailWindow {...props.window} title={props.title} moreActions={moreActions}>
+      <DetailWindow {...props.window} rememberAs="deposit" title={props.title} moreActions={moreActions}>
         <div className={styles.stack}>
           <DepositHeader
             title={

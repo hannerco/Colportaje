@@ -90,6 +90,7 @@ Solo con `<Icon name="…">` de `src/ui/icons`, con los 46 nombres del diseño. 
 - Las pantallas conectadas se prueban de punta a punta con Playwright (móvil y escritorio) en los flujos de `TESTING.md` §Prioridad 3 que ya tengan pantalla.
 
 ## 11. Pantallas
+- **Ventanas de detalle y enlaces (2026-11-25).** Toda pantalla que abre un registro en la Ventana de detalle le dice qué es (`rememberAs`: `customer`, `payment`, `copy`, `deposit`…): cada tipo recuerda su forma (lateral, centrada o página). Un enlace a un registro se arma con `useDetailHref()` del armazón, que respeta esa forma; nunca con la ruta de la página fija. Los enlaces internos son `<a href>` normales: el armazón los navega sin recargar.
 - **Separación presentación / contenedor (§3).** La pantalla de presentación cubre todos sus estados por props: cargando, vacío, sin resultados, sin conexión, error y con datos. Así cada estado tiene su story.
 - Los estados de lista usan `EmptyState` y el de sin conexión la `Banner` «Sin conexión» (BR-GEN-08). Una acción sin conexión no se intenta: el back devuelve `OFFLINE` y la pantalla lo explica.
 - Tras una acción con «Deshacer», el `Toast` dura `undo.toastSeconds` de `business-config` (hoy 6 s; I-34).

@@ -144,7 +144,7 @@ export function PaymentDetailScreen(props: PaymentDetailScreenProps) {
 
   if (!payment || !customer)
     return (
-      <DetailWindow {...props.window} title={copy.ui.nav.items.money}>
+      <DetailWindow {...props.window} rememberAs="payment" title={copy.ui.nav.items.money}>
         {props.notFound ? (
           <EmptyState kind="empty" title={t.notFound.title} text={t.notFound.text} />
         ) : props.error && !props.loading ? (
@@ -192,7 +192,7 @@ export function PaymentDetailScreen(props: PaymentDetailScreenProps) {
   return (
     <>
       <DetailTemplate
-        window={{ ...props.window, title: t.title(customer.name) }}
+        window={{ ...props.window, rememberAs: 'payment', title: t.title(customer.name) }}
         identity={{
           avatar: customer.avatarEmoji ? { kind: 'emoji', emoji: customer.avatarEmoji } : { kind: 'person' },
           title: customer.name,

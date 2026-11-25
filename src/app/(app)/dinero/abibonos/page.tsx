@@ -52,7 +52,7 @@ function DepositsRoute() {
   const payments = usePaymentsList(DEFAULT_PAYMENTS_LIST_PARAMS);
   const platform = usePlatform();
   const selectedId = searchParams.get(OPEN) ?? undefined;
-  const inWindow = () => platform === 'desktop' && readStoredDetailWindowMode() !== 'page';
+  const inWindow = () => platform === 'desktop' && readStoredDetailWindowMode('deposit') !== 'page';
 
   const urlFor = useCallback(
     (next: DepositsListParams, open: string | undefined) => {

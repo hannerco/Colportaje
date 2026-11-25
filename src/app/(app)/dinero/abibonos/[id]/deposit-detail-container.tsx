@@ -14,7 +14,7 @@ import {
 import { usePhotoUrlResolver } from '@/features/customers';
 import { AppFailure } from '@/features/shared/app-failure';
 import { errorToast } from '@/features/shared/error-report';
-import { ROUTES, ShellScreenRoute, useAppShell } from '@/features/shell';
+import { ROUTES, ShellScreenRoute, useAppShell, useDetailHref } from '@/features/shell';
 import { useToast } from '@/ui/molecules/Toast';
 import { usePlatform } from '@/ui/platform';
 
@@ -37,6 +37,7 @@ export function DepositDetailContainer({
   const router = useRouter();
   const toast = useToast();
   const { isOnline } = useAppShell();
+  const href = useDetailHref();
   const mobile = usePlatform() === 'mobile';
   const saved = useDeposit(depositId);
   const { updateDepositNote } = useUpdateDepositNote();
@@ -65,7 +66,7 @@ export function DepositDetailContainer({
           },
         }
       }
-      paymentHref={ROUTES.payment}
+      paymentHref={(paymentId) => href('payment', paymentId)}
       receiptUrl={photoUrl}
       onAddReceipt={async (file) => {
         const result = await addDepositReceipt({ depositId, photoId: newId(), file });

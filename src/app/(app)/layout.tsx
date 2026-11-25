@@ -3,7 +3,14 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useTransition, type ReactNode } from 'react';
 import { useSession } from '@/features/auth';
-import { AppShellProvider, BootScreen, InstallGate, PREFETCH_ROUTES, ROUTES } from '@/features/shell';
+import {
+  AppShellProvider,
+  BootScreen,
+  InstallGate,
+  PREFETCH_ROUTES,
+  ROUTES,
+  useClientSideLinks,
+} from '@/features/shell';
 import { RouteProgress } from '@/ui/atoms/RouteProgress';
 
 /** Rutas de la app (HU-PAN-BASE-01): exigen sesión y dan a cada pantalla la navegación y el estado de conexión. */
@@ -21,6 +28,8 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   // #98: el cambio de pantalla va en una transición: mientras llega, la barra de progreso de arriba lo muestra.
   const [navigating, startNavigation] = useTransition();
   const navigate = useCallback((href: string) => startNavigation(() => router.push(href)), [router]);
+  // 2026-11-25: todo enlace interno navega sin recargar la página (con la misma barra de progreso).
+  useClientSideLinks(navigate);
 
   // #96: con sesión, se traen de fondo las pantallas de los módulos (cuando el navegador está libre). Se repite al
   // cambiar de pantalla y al volver a la app, porque lo traído vence a los 5 minutos. Así tocar un módulo no deja la

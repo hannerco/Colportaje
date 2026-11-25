@@ -211,7 +211,7 @@ export function CustomerDetailScreen({
 
   if (!detail)
     return (
-      <DetailWindow {...window} title={fallbackTitle}>
+      <DetailWindow {...window} rememberAs="customer" title={fallbackTitle}>
         {error && !loading ? (
           <EmptyState
             kind="error"
@@ -255,7 +255,7 @@ export function CustomerDetailScreen({
   return (
     <>
       <DetailTemplate
-        window={{ ...window, title: detail.name, moreActions }}
+        window={{ ...window, rememberAs: 'customer', title: detail.name, moreActions }}
         banner={bannerOf(detail)}
         identity={{
           avatar: detail.avatarEmoji ? { kind: 'emoji', emoji: detail.avatarEmoji } : { kind: 'person' },

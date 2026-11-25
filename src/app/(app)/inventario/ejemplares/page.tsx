@@ -74,7 +74,7 @@ function CopiesRoute() {
       onOpenInStock={() => router.push(ROUTES.inventory)}
       selectedId={selectedId}
       onOpenCopy={(id) =>
-        platform === 'mobile' || readStoredDetailWindowMode() === 'page'
+        platform === 'mobile' || readStoredDetailWindowMode('copy') === 'page'
           ? router.push(ROUTES.copy(id))
           : select(id)
       }

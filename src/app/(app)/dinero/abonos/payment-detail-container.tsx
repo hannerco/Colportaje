@@ -18,7 +18,7 @@ import {
   type PaymentDetailForm,
 } from '@/features/payments';
 import { errorToast } from '@/features/shared/error-report';
-import { ROUTES, useAppShell } from '@/features/shell';
+import { ROUTES, useAppShell, useDetailHref } from '@/features/shell';
 import { systemClock } from '@/lib/clock';
 import { useToast } from '@/ui/molecules/Toast';
 
@@ -30,6 +30,11 @@ type Props = {
   window: PaymentDetailScreenProps['window'];
   /** El formulario abierto al llegar (deslizar en la lista de Dinero lleva a Cobrar o Más plazo). */
   initialForm?: PaymentDetailForm | null;
+  /**
+   * A dónde lleva otro abono del cliente («Abonos de …»). La lista de Dinero lo da para quedarse en la Ventana con su
+   * vista; sin valor, según la forma que recuerdan los abonos.
+   */
+  paymentHref?: (paymentId: string) => string;
 };
 
 /**
@@ -37,9 +42,10 @@ type Props = {
  * · Deshacer» (o «Cobrado $X · Faltan $Y · Programar» si fue parcial) y dar más plazo mueve solo esa fecha. Lo usan la
  * lista de Dinero (Ventana lateral o centrada en escritorio) y la página `/dinero/abonos/[id]` (#29).
  */
-export function PaymentDetailContainer({ paymentId: id, window, initialForm = null }: Props) {
+export function PaymentDetailContainer({ paymentId: id, window, initialForm = null, paymentHref }: Props) {
   const router = useRouter();
   const { isOnline } = useAppShell();
+  const href = useDetailHref();
   const toast = useToast();
   const [today] = useState(() => todayBogota(systemClock));
   const [form, setForm] = useState<PaymentDetailForm | null>(initialForm);
@@ -81,9 +87,9 @@ export function PaymentDetailContainer({ paymentId: id, window, initialForm = nu
       isOnline={isOnline}
       window={window}
       today={today}
-      customerHref={ROUTES.customer}
-      paymentHref={ROUTES.payment}
-      depositHref={ROUTES.deposit}
+      customerHref={(customerId) => href('customer', customerId)}
+      paymentHref={paymentHref ?? ((paymentId) => href('payment', paymentId))}
+      depositHref={(depositId) => href('deposit', depositId)}
       form={form}
       onFormChange={setForm}
       onCollect={async (values) => {

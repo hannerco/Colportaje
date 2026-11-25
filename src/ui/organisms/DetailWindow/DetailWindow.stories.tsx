@@ -12,6 +12,7 @@ import { Island } from '../Island';
 import {
   DETAIL_WINDOW_MODE_KEY,
   DetailWindow,
+  readStoredDetailWindowMode,
   type DetailWindowMode,
   type DetailWindowProps,
 } from './DetailWindow';
@@ -167,10 +168,12 @@ const meta = {
     mode: { control: 'inline-radio', options: ['side', 'center', 'page', 'sheet'] },
     children: { control: false },
   },
-  // R4: cada story empieza sin forma guardada (lateral).
+  // R4: cada story empieza sin forma guardada (lateral), tampoco la de cada tipo.
   beforeEach: () => {
     try {
       window.localStorage.removeItem(DETAIL_WINDOW_MODE_KEY);
+      for (const kind of ['customer', 'payment', 'copy', 'deposit'])
+        window.localStorage.removeItem(`${DETAIL_WINDOW_MODE_KEY}.${kind}`);
     } catch {
       // Sin almacenamiento: nada que limpiar.
     }
@@ -272,6 +275,37 @@ export const CambiarACentrada: Story = {
       await userEvent.keyboard('{Escape}');
       await waitFor(() => expect(windowOf(frame)).toBeNull());
     }
+  },
+};
+
+/**
+ * 2026-11-25: cada tipo de ventana recuerda su forma. Elegir «Centrada» en un abono no cambia la ficha del cliente;
+ * un tipo que aún no eligió arranca con la forma que se guardó antes sin tipo.
+ */
+export const CadaTipoRecuerdaSuForma: Story = {
+  name: 'Cada tipo recuerda su forma',
+  globals: { platform: 'desktop' },
+  render: () => (
+    <div style={{ minHeight: 640 }}>
+      <DetailWindow
+        rememberAs="payment"
+        title="Abono de Luz Marina Restrepo"
+        breadcrumb={{ label: 'Dinero', href: '#lista' }}
+        onClose={() => {}}
+      >
+        <PaymentIslands />
+      </DetailWindow>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const frame = frames(canvasElement)[0]!;
+    window.localStorage.setItem(`${DETAIL_WINDOW_MODE_KEY}.customer`, 'side');
+    await userEvent.click(radio(frame, 'Centrada'));
+    await waitFor(() => expect(readStoredDetailWindowMode('payment')).toBe('center'));
+    expect(readStoredDetailWindowMode('customer')).toBe('side');
+    window.localStorage.setItem(DETAIL_WINDOW_MODE_KEY, 'page');
+    expect(readStoredDetailWindowMode('copy')).toBe('page');
+    expect(readStoredDetailWindowMode('payment')).toBe('center');
   },
 };
 
