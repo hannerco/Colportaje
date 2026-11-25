@@ -1,7 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import { copy } from '@/copy/es';
-import { formatCOP } from '@/domain/money';
+import { formatCOP, type COP } from '@/domain/money';
 import type { PaymentRow } from '@/domain/customer-detail';
 import type { PaymentHistoryEntry } from '@/domain/payment-history';
 import { daysBetween, formatDate, type LocalDate } from '@/domain/time';
@@ -10,19 +11,21 @@ import { Icon } from '@/ui/icons';
 import { usePlatform } from '@/ui/platform';
 import { StatusPill } from '@/ui/atoms/StatusPill';
 import { HistoryTimeline } from '@/ui/molecules/HistoryTimeline';
+import { Menu } from '@/ui/molecules/Menu';
+import { Popover } from '@/ui/molecules/Popover';
 import type { BannerProps } from '@/ui/molecules/Banner';
+import { ConfirmDialog } from '@/ui/organisms/ConfirmDialog';
 import { DetailWindow, type DetailWindowProps } from '@/ui/organisms/DetailWindow';
 import { EmptyState } from '@/ui/organisms/EmptyState';
 import { Island } from '@/ui/organisms/Island';
 import { DetailSkeleton, DetailTemplate } from '@/ui/templates/DetailTemplate';
 import type { DateChangeReason } from '@/domain/manual-schedule';
-import type { PayMethod } from '@/domain/payment';
 import { PaymentDateDialog } from '../../components/PaymentDateDialog';
-import { PaymentMethodDialog } from '../../components/PaymentMethodDialog';
+import { CorrectCollectionDialog, type CollectionValues } from '../../components/CorrectCollectionDialog';
 import { CollectPaymentDialog, type CollectPaymentValues } from '../../components/CollectPaymentDialog';
 import styles from './PaymentDetailScreen.module.css';
 
-export type PaymentDetailForm = 'collect' | 'extend' | 'method';
+export type PaymentDetailForm = 'collect' | 'extend' | 'correct' | 'remove';
 
 export type PaymentDetailScreenProps = {
   /** El abono y el cliente (de `useCustomerDetail`); sin valor mientras carga o si falló. */
@@ -52,10 +55,14 @@ export type PaymentDetailScreenProps = {
    */
   onChangeDate: (date: LocalDate, reason: DateChangeReason, note?: string) => Promise<void>;
   /**
-   * Ronda 38: cambiar el medio de pago de un abono cobrado que aún no se entrega al líder (por si se marcó mal). Si
-   * falla, que lance para que la ventana siga abierta. Sin función, el medio de pago solo se ve.
+   * Ronda 38 (propuesta 12): corregir el cobro de un abono aún no entregado (valor, fecha o medio de pago). Recibe solo
+   * lo que cambió; si falla, que lance para que la ventana siga abierta. Sin función, la franja no lleva «⋯».
    */
-  onChangeMethod?: (method: PayMethod) => Promise<void>;
+  onCorrectCollection?: (patch: Partial<CollectionValues>) => Promise<void>;
+  /** Eliminar el cobro (se marcó cobrado por error). Si falla, que lance. */
+  onDeleteCollection?: () => Promise<void>;
+  /** Lo que hay por entregar al líder (para «Por entregar $X → $Y» al corregir el valor). */
+  toDeliverTotal?: COP | null;
   /** #72: lo que le pasó al abono (`usePaymentHistory`), del más reciente al más antiguo. */
   history?: readonly PaymentHistoryEntry[];
   /** #72: el nombre del Abibono en que se entregó («Abibono – 25/10/2026»), para la franja. */
@@ -85,6 +92,15 @@ const historyText = (entry: PaymentHistoryEntry): { text: string; note?: string 
       return { text: t.collected(formatCOP(entry.amount), t.data.methods[entry.method].toLowerCase()) };
     case 'delivered':
       return { text: h.delivered(entry.depositTitle) };
+    case 'corrected': {
+      // El primer cambio va en el texto; los demás, debajo («Efectivo → Transferencia»).
+      const changes = [
+        entry.amount && h.change(formatCOP(entry.amount.from), formatCOP(entry.amount.to)),
+        entry.paidAt && h.change(formatDate(entry.paidAt.from), formatDate(entry.paidAt.to)),
+        entry.method && h.change(t.data.methods[entry.method.from], t.data.methods[entry.method.to]),
+      ].filter((c): c is string => Boolean(c));
+      return { text: h.corrected(changes[0] ?? ''), note: changes.slice(1).join(' · ') || undefined };
+    }
   }
 };
 
@@ -141,6 +157,7 @@ export function paymentBanner(payment: PaymentRow, today: LocalDate): BannerProp
 export function PaymentDetailScreen(props: PaymentDetailScreenProps) {
   const { payment, customer, isOnline, today } = props;
   const platform = usePlatform();
+  const [lockInfo, setLockInfo] = useState(false);
 
   if (!payment || !customer)
     return (
@@ -171,8 +188,12 @@ export function PaymentDetailScreen(props: PaymentDetailScreenProps) {
   const locked = payment.status === 'delivered';
   const collected = payment.status === 'collected' || payment.status === 'delivered';
   // Cobrado y aún no entregado (ni en un Abibono confirmado): el medio de pago se puede corregir (BR-PAY-11).
-  const canChangeMethod =
-    payment.status === 'collected' && payment.can.edit && Boolean(props.onChangeMethod) && !customer.archived;
+  // Propuesta 12: cobrado y aún no entregado → «⋯» con Corregir y Eliminar cobro; entregado → el candado.
+  const canCorrect =
+    payment.status === 'collected' &&
+    payment.can.edit &&
+    Boolean(props.onCorrectCollection && props.onDeleteCollection);
+  const c = copy.payments.collection;
   const agreedAmount = payment.agreedAmount;
   const paidAmount = payment.paidAmount;
 
@@ -217,6 +238,45 @@ export function PaymentDetailScreen(props: PaymentDetailScreenProps) {
                       {props.depositTitle ?? t.data.depositConfirmed}
                     </a>
                   </>
+                )}
+                {canCorrect && paidAmount !== null && (
+                  <span className={styles.stripEnd}>
+                    <Menu
+                      title={c.menuTitle(formatCOP(paidAmount))}
+                      trigger={
+                        <Button
+                          variant="tertiary"
+                          size="compact"
+                          iconOnly
+                          icon="more"
+                          state={isOnline ? 'normal' : 'disabled'}
+                        >
+                          {c.options}
+                        </Button>
+                      }
+                      items={[
+                        { id: 'correct', label: c.correct, icon: 'edit' },
+                        { id: 'remove', label: c.remove, icon: 'delete', danger: true },
+                      ]}
+                      onSelect={(id) => props.onFormChange(id === 'correct' ? 'correct' : 'remove')}
+                    />
+                  </span>
+                )}
+                {locked && (
+                  <span className={styles.stripEnd}>
+                    <Popover
+                      open={lockInfo}
+                      onOpenChange={setLockInfo}
+                      title={c.lockedTitle}
+                      trigger={
+                        <Button variant="tertiary" size="compact" iconOnly icon="locked">
+                          {c.lockedLabel}
+                        </Button>
+                      }
+                    >
+                      <span className={styles.lockedText}>{c.lockedText}</span>
+                    </Popover>
+                  </span>
                 )}
               </>
             ),
@@ -271,25 +331,12 @@ export function PaymentDetailScreen(props: PaymentDetailScreenProps) {
                 </div>
               ) : (
                 collected &&
-                payment.method &&
-                (canChangeMethod ? (
-                  <button
-                    type="button"
-                    className={[styles.method, styles.methodButton].join(' ')}
-                    aria-label={copy.payments.changeMethod.open(t.data.methods[payment.method])}
-                    disabled={!isOnline}
-                    onClick={() => props.onFormChange('method')}
-                  >
-                    <Icon name={payment.method === 'cash' ? 'money' : 'transfer'} size={16} tone="current" />
-                    {t.data.methods[payment.method]}
-                    <Icon name="edit" size={14} tone="current" />
-                  </button>
-                ) : (
+                payment.method && (
                   <span className={styles.method}>
                     <Icon name={payment.method === 'cash' ? 'money' : 'transfer'} size={16} tone="current" />
                     {t.data.methods[payment.method]}
                   </span>
-                ))
+                )
               )}
             </div>
           ),
@@ -365,15 +412,36 @@ export function PaymentDetailScreen(props: PaymentDetailScreenProps) {
           onSave={props.onChangeDate}
         />
       )}
-      {canChangeMethod && payment.method && paidAmount !== null && props.onChangeMethod && (
-        <PaymentMethodDialog
-          open={props.form === 'method'}
-          onOpenChange={(open) => props.onFormChange(open ? 'method' : null)}
-          current={payment.method}
-          customerName={customer.name}
-          amount={formatCOP(paidAmount)}
-          onSave={props.onChangeMethod}
-        />
+      {canCorrect && payment.method && payment.paidAt && paidAmount !== null && (
+        <>
+          <CorrectCollectionDialog
+            open={props.form === 'correct'}
+            onOpenChange={(open) => props.onFormChange(open ? 'correct' : null)}
+            customerName={customer.name}
+            installment={installment ? `${installment.index}/${installment.total}` : null}
+            agreedAmount={payment.kind === 'scheduled' ? agreedAmount : null}
+            current={{ paidAmount, paidAt: payment.paidAt, method: payment.method }}
+            today={today}
+            toDeliver={props.toDeliverTotal ?? null}
+            onSave={(patch) => props.onCorrectCollection!(patch)}
+          />
+          <ConfirmDialog
+            open={props.form === 'remove'}
+            onOpenChange={(open) => props.onFormChange(open ? 'remove' : null)}
+            tone="danger"
+            title={c.removeDialog.title}
+            message={
+              payment.kind === 'scheduled' && installment
+                ? c.removeDialog.scheduled(`${installment.index}/${installment.total}`, formatCOP(paidAmount))
+                : payment.kind === 'down_payment'
+                  ? c.removeDialog.downPayment(formatCOP(paidAmount))
+                  : c.removeDialog.extra(formatCOP(paidAmount))
+            }
+            confirmLabel={c.removeDialog.confirm}
+            cancelLabel={c.removeDialog.cancel}
+            onConfirm={() => props.onDeleteCollection!()}
+          />
+        </>
       )}
     </>
   );

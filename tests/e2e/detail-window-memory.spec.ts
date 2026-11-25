@@ -11,7 +11,10 @@ test('desde un abono en la ventana lateral, «Abonos de …» pasa a otro abono 
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto('/dinero?vista=por-cobrar');
   await page.evaluate(() => window.localStorage.setItem('colportor.detail-window-mode.payment', 'side'));
-  await page.getByRole('link', { name: /Prórroga desktop/ }).first().click();
+  await page
+    .getByRole('link', { name: /Prórroga desktop/ })
+    .first()
+    .click();
   await expect(page).toHaveURL(/abono=/);
   const first = new URL(page.url()).searchParams.get('abono');
 
@@ -34,11 +37,17 @@ test('el abono recuerda «Centrada» y el cliente sigue en «Lateral»', async (
     window.localStorage.setItem('colportor.detail-window-mode.payment', 'center');
     window.localStorage.setItem('colportor.detail-window-mode.customer', 'side');
   });
-  await page.getByRole('link', { name: /Prórroga desktop/ }).first().click();
+  await page
+    .getByRole('link', { name: /Prórroga desktop/ })
+    .first()
+    .click();
   await expect(page.getByRole('radio', { name: 'Centrada' })).toHaveAttribute('aria-checked', 'true');
 
   await page.goto('/clientes?q=Prórroga desktop');
-  await page.getByRole('table', { name: 'Clientes' }).getByRole('link', { name: /Prórroga desktop/ }).click();
+  await page
+    .getByRole('table', { name: 'Clientes' })
+    .getByRole('link', { name: /Prórroga desktop/ })
+    .click();
   await expect(page).toHaveURL(/cliente=/);
   await expect(page.getByRole('radio', { name: 'Lateral' })).toHaveAttribute('aria-checked', 'true');
 });

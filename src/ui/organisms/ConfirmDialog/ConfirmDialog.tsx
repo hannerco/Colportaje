@@ -23,6 +23,8 @@ export type ConfirmDialogProps = {
   onConfirm: () => void | Promise<void>;
   /** Contenido opcional entre el mensaje y los botones (p. ej. un Campo de nota obligatoria). */
   children?: ReactNode;
+  /** La acción se ve apagada (p. ej. «Guardar corrección» hasta que algo cambie). */
+  confirmDisabled?: boolean;
 };
 
 /**
@@ -40,6 +42,7 @@ export function ConfirmDialog({
   cancelLabel,
   onConfirm,
   children,
+  confirmDisabled = false,
 }: ConfirmDialogProps) {
   const mobile = usePlatform() === 'mobile';
   const [pending, setPending] = useState(false);
@@ -63,7 +66,7 @@ export function ConfirmDialog({
   };
 
   const confirm = async () => {
-    if (pending) return;
+    if (pending || confirmDisabled) return;
     const result = onConfirm();
     if (!(result instanceof Promise)) {
       onOpenChange(false);
@@ -93,7 +96,7 @@ export function ConfirmDialog({
       key="confirm"
       variant={tone === 'danger' ? 'danger' : 'primary'}
       width={width}
-      state={pending ? 'loading' : 'normal'}
+      state={pending ? 'loading' : confirmDisabled ? 'disabled' : 'normal'}
       loadingText={confirmLabel}
       onClick={() => void confirm()}
     >

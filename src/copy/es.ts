@@ -749,15 +749,43 @@ export const copy = {
       saved: 'Fecha de venta guardada',
     },
     /** Calendario para elegir fecha (diseño «6 · Cambiar fecha de abono»); la semana empieza el domingo (BR-GEN-07). */
-    /** Cambiar el medio de pago de un abono cobrado que aún no se entrega al líder (ronda 38). */
-    changeMethod: {
-      open: (method: string) => `Cambiar medio de pago, ${method}`,
-      title: 'Medio de pago',
-      message: (name: string, amount: string) => `¿Cómo te pagó ${name} los ${amount}?`,
-      legend: 'Medio de pago',
-      save: 'Guardar',
-      cancel: 'Cancelar',
-      done: 'Medio de pago cambiado',
+    /** Ronda 38 · propuesta 12 del lienzo: corregir o eliminar el cobro de un abono aún no entregado al líder. */
+    collection: {
+      options: 'Opciones del cobro',
+      menuTitle: (amount: string) => `Cobro de ${amount}`,
+      correct: 'Corregir',
+      remove: 'Eliminar cobro',
+      lockedLabel: 'Por qué no se puede corregir',
+      lockedTitle: 'Entregado en un Abibono',
+      lockedText: 'No se puede corregir ni eliminar',
+      correctDialog: {
+        title: 'Corregir cobro',
+        subtitle: (name: string, installment: string | null, agreed: string | null) =>
+          [installment ? `${name} ${installment}` : name, agreed ? `acordado ${agreed}` : null]
+            .filter(Boolean)
+            .join(' · '),
+        amount: 'Valor cobrado',
+        date: 'Fecha del cobro',
+        method: 'Medio de pago',
+        before: 'Antes:',
+        toDeliver: 'Por entregar',
+        hint: 'Cambia el valor, la fecha o el medio de pago. Se puede hasta que lo entregues al líder.',
+        save: 'Guardar corrección',
+        cancel: 'Cancelar',
+        invalidAmount: 'Escribe un valor mayor que cero.',
+        futureDate: 'La fecha no puede ser futura',
+        done: 'Cobro corregido',
+      },
+      removeDialog: {
+        title: '¿Eliminar el cobro?',
+        scheduled: (installment: string, amount: string) =>
+          `El abono ${installment} vuelve a «Por cobrar» por ${amount} y sale de «Por entregar».`,
+        downPayment: (amount: string) => `La cuota inicial de ${amount} se borra y sale de «Por entregar».`,
+        extra: (amount: string) => `El abono extra de ${amount} se borra y sale de «Por entregar».`,
+        confirm: 'Eliminar cobro',
+        cancel: 'Cancelar',
+        done: 'Cobro eliminado',
+      },
     },
     /**
      * Abonos a mano (ronda 38, lienzo «Propuestas · Abonos a mano, sin plan automático», ADR-0052): la lista, el
@@ -925,6 +953,9 @@ export const copy = {
         canceled: 'Cancelado',
         reopened: 'Volvió a por cobrar',
         delivered: (deposit: string) => `Entregado al líder en el ${deposit}`,
+        /** Ronda 38 (propuesta 12): lo que cambió al corregir el cobro. */
+        corrected: (change: string) => `Cobro corregido: ${change}`,
+        change: (from: string, to: string) => `${from} → ${to}`,
       },
       collected: (amount: string, method: string) => `Cobrado: ${amount} en ${method}`,
       delivered: 'Entregado al líder',

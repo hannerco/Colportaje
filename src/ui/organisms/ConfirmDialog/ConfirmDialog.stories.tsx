@@ -216,6 +216,24 @@ export const Confirmando: Story = {
   },
 };
 
+/** Ronda 38: la acción apagada (p. ej. «Guardar corrección» hasta que algo cambie) no confirma. */
+export const AccionApagada: Story = {
+  name: 'Acción apagada',
+  args: { confirmDisabled: true },
+  play: async ({ canvasElement, args }) => {
+    for (const frame of frames(canvasElement)) {
+      await openWithKeyboard(frame);
+      const dialog = dialogOf(frame)!;
+      const confirm = buttonsOf(dialog).find((b) => b.textContent === 'Descartar')!;
+      await userEvent.click(confirm, { pointerEventsCheck: 0 });
+      expect(args.onConfirm).not.toHaveBeenCalled();
+      expect(dialogOf(frame)).not.toBeNull();
+      await userEvent.keyboard('{Escape}');
+      await waitFor(() => expect(dialogOf(frame)).toBeNull());
+    }
+  },
+};
+
 /** Si `onConfirm` falla, el diálogo queda abierto y el botón vuelve a estar disponible. */
 export const ConfirmacionFallida: Story = {
   name: 'Confirmación fallida',

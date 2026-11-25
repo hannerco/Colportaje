@@ -81,7 +81,9 @@ const meta = {
   args: {
     onCollect: fn(async () => {}),
     onChangeDate: fn(async () => {}),
-    onChangeMethod: fn(async () => {}),
+    onCorrectCollection: fn(async () => {}),
+    onDeleteCollection: fn(async () => {}),
+    toDeliverTotal: 385000,
     onRetry: fn(),
   },
   parameters: {
@@ -206,26 +208,79 @@ export const Entregado: Story = {
     expect(button(frame, 'Aplazar')).toBeUndefined();
     expect(frame.querySelector('a[href="#abibono-d1"]')).not.toBeNull();
     expect(frame.querySelector('[data-status="delivered"] svg')).not.toBeNull();
-    // Entregado al líder: el medio de pago ya no se cambia (BR-PAY-10).
-    expect(frame.querySelector('button[aria-label^="Cambiar medio de pago"]')).toBeNull();
+    // Propuesta 12: entregado al líder, sin «⋯»; el candado explica por qué no se puede corregir ni eliminar.
+    expect(frame.querySelector('button[aria-label="Opciones del cobro"]')).toBeNull();
+    await userEvent.click(
+      frame.querySelector<HTMLButtonElement>('button[aria-label="Por qué no se puede corregir"]')!,
+    );
+    await waitFor(() => expect(document.body.textContent).toContain('No se puede corregir ni eliminar'));
   },
 };
 
 /** Ronda 38: cobrado y aún no entregado, el medio de pago se toca para corregirlo (Transferencia → Efectivo). */
-export const CambiarMedioDePago: Story = {
-  name: 'Cambiar medio de pago',
+/** Propuesta 12: cobrado y no entregado, «⋯» de la franja → «Corregir» abre la ventana con los datos del cobro. */
+export const CorregirElCobro: Story = {
+  name: 'Corregir el cobro',
   args: { ...Cobrado.args },
-  globals: { platform: 'mobile' },
+  globals: { platform: 'desktop' },
   play: async ({ canvasElement, args }) => {
     const frame = frames(canvasElement)[0]!;
-    await userEvent.click(
-      frame.querySelector<HTMLButtonElement>('button[aria-label="Cambiar medio de pago, Transferencia"]')!,
-    );
+    await userEvent.click(frame.querySelector<HTMLButtonElement>('button[aria-label="Opciones del cobro"]')!);
+    const item = await waitFor(() => {
+      const found = [...document.querySelectorAll<HTMLElement>('[role="menuitem"]')].find(
+        (el) => el.textContent?.trim() === 'Corregir',
+      );
+      expect(found).toBeDefined();
+      return found!;
+    });
+    expect(document.body.textContent).toContain('Eliminar cobro');
+    await userEvent.click(item);
     const dialog = await waitFor(() => lastDialog(canvasElement));
-    expect(dialog.textContent).toContain('¿Cómo te pagó Yolanda Ríos los $60.000?');
+    expect(dialog.textContent).toContain('Corregir cobro');
     await userEvent.click(dialog.querySelector<HTMLElement>('[role="radio"][value="cash"]')!);
-    await userEvent.click(button(dialog, 'Guardar')!);
-    expect(args.onChangeMethod).toHaveBeenCalledWith('cash');
+    await userEvent.click(button(dialog, 'Guardar corrección')!);
+    expect(args.onCorrectCollection).toHaveBeenCalledWith({ method: 'cash' });
+  },
+};
+
+/** Propuesta 12, paso 4: después de corregir, el Historial dice qué cambió. */
+export const DespuesDeCorregir: Story = {
+  name: 'Después de corregir',
+  args: {
+    ...Cobrado.args,
+    history: [
+      {
+        id: 'collect_corrected-0',
+        kind: 'corrected',
+        date: localDate('2026-11-25'),
+        amount: { from: 30000, to: 35000 },
+        method: { from: 'cash', to: 'transfer' },
+      },
+      { id: 'collected', kind: 'collected', date: localDate('2026-11-05'), amount: 30000, method: 'cash' },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    for (const frame of frames(canvasElement)) {
+      expect(frame.textContent).toContain('Cobro corregido: $30.000 → $35.000');
+      expect(frame.textContent).toContain('Efectivo → Transferencia');
+      expect(frame.textContent).toContain('Cobrado: $30.000 en efectivo');
+    }
+  },
+};
+
+/** Propuesta 12: «Eliminar cobro» pide confirmar en rojo; el abono 2/4 vuelve a «Por cobrar». */
+export const EliminarElCobro: Story = {
+  name: 'Eliminar el cobro',
+  args: { ...Cobrado.args, initialForm: 'remove' },
+  globals: { platform: 'mobile' },
+  play: async ({ canvasElement, args }) => {
+    const dialog = await waitFor(() => lastDialog(canvasElement));
+    expect(dialog.textContent).toContain('¿Eliminar el cobro?');
+    expect(dialog.textContent).toContain(
+      'El abono 2/4 vuelve a «Por cobrar» por $60.000 y sale de «Por entregar».',
+    );
+    await userEvent.click(button(dialog, 'Eliminar cobro')!);
+    expect(args.onDeleteCollection).toHaveBeenCalled();
   },
 };
 

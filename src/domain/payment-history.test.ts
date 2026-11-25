@@ -67,6 +67,42 @@ describe('buildPaymentHistory (#72)', () => {
     expect(history.at(-1)).toMatchObject({ amount: 30_000 });
   });
 
+  it('ronda 38: «Cobro corregido» con solo lo que cambió; «Cobrado» muestra lo que se cobró la primera vez', () => {
+    const history = buildPaymentHistory({
+      payment: {
+        ...base,
+        status: 'collected',
+        paidAmount: 35_000,
+        paidAt: localDate('2026-11-05'),
+        method: 'transfer',
+      },
+      reschedules: [],
+      events: [
+        {
+          type: 'collect_corrected',
+          at: new Date('2026-11-25T15:00:00Z'),
+          previousAmount: 30_000,
+          newAmount: 35_000,
+          previousPaidAt: localDate('2026-11-05'),
+          newPaidAt: localDate('2026-11-05'),
+          previousMethod: 'cash',
+          newMethod: 'transfer',
+        },
+      ],
+      deposit: null,
+    });
+    expect(history.slice(0, 2)).toEqual([
+      {
+        id: 'collect_corrected-0',
+        kind: 'corrected',
+        date: '2026-11-25',
+        amount: { from: 30_000, to: 35_000 },
+        method: { from: 'cash', to: 'transfer' },
+      },
+      { id: 'collected', kind: 'collected', date: '2026-11-05', amount: 30_000, method: 'cash' },
+    ]);
+  });
+
   it('una cuota inicial no tiene «Programado»', () => {
     const history = buildPaymentHistory({
       payment: {
