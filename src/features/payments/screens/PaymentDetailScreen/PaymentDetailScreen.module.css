@@ -133,6 +133,28 @@
   font-size: var(--text-secondary);
 }
 
+/* Ronda 38: en un abono cobrado (no entregado) el medio de pago se toca para corregirlo. */
+.methodButton {
+  border: 1px solid var(--color-control-border);
+  font: inherit;
+  font-size: var(--text-secondary);
+  cursor: pointer;
+}
+
+.methodButton:hover {
+  color: var(--color-text);
+}
+
+.methodButton:focus-visible {
+  outline: 3px solid var(--color-ring);
+  outline-offset: 1px;
+}
+
+.methodButton:disabled {
+  cursor: not-allowed;
+  opacity: var(--opacity-field-disabled);
+}
+
 .siblingState {
   flex: none;
   min-width: 0;

@@ -78,7 +78,12 @@ function Demo({ initialForm = null, ...props }: DemoProps) {
 const meta = {
   title: 'Pantallas/Dinero/Abono',
   component: Demo,
-  args: { onCollect: fn(async () => {}), onChangeDate: fn(async () => {}), onRetry: fn() },
+  args: {
+    onCollect: fn(async () => {}),
+    onChangeDate: fn(async () => {}),
+    onChangeMethod: fn(async () => {}),
+    onRetry: fn(),
+  },
   parameters: {
     frameSize: 'screen',
     a11y: {
@@ -201,6 +206,26 @@ export const Entregado: Story = {
     expect(button(frame, 'Aplazar')).toBeUndefined();
     expect(frame.querySelector('a[href="#abibono-d1"]')).not.toBeNull();
     expect(frame.querySelector('[data-status="delivered"] svg')).not.toBeNull();
+    // Entregado al líder: el medio de pago ya no se cambia (BR-PAY-10).
+    expect(frame.querySelector('button[aria-label^="Cambiar medio de pago"]')).toBeNull();
+  },
+};
+
+/** Ronda 38: cobrado y aún no entregado, el medio de pago se toca para corregirlo (Transferencia → Efectivo). */
+export const CambiarMedioDePago: Story = {
+  name: 'Cambiar medio de pago',
+  args: { ...Cobrado.args },
+  globals: { platform: 'mobile' },
+  play: async ({ canvasElement, args }) => {
+    const frame = frames(canvasElement)[0]!;
+    await userEvent.click(
+      frame.querySelector<HTMLButtonElement>('button[aria-label="Cambiar medio de pago, Transferencia"]')!,
+    );
+    const dialog = await waitFor(() => lastDialog(canvasElement));
+    expect(dialog.textContent).toContain('¿Cómo te pagó Yolanda Ríos los $60.000?');
+    await userEvent.click(dialog.querySelector<HTMLElement>('[role="radio"][value="cash"]')!);
+    await userEvent.click(button(dialog, 'Guardar')!);
+    expect(args.onChangeMethod).toHaveBeenCalledWith('cash');
   },
 };
 

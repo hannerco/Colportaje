@@ -143,6 +143,7 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
         isOnline={isOnline}
         window={window}
         copyHref={ROUTES.copy}
+        paymentHref={ROUTES.payment}
         archivePreview={preview.data}
         onOpenArchive={() => setWantsPreview(true)}
         onArchive={async () => {

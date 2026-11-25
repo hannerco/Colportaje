@@ -749,6 +749,16 @@ export const copy = {
       saved: 'Fecha de venta guardada',
     },
     /** Calendario para elegir fecha (diseño «6 · Cambiar fecha de abono»); la semana empieza el domingo (BR-GEN-07). */
+    /** Cambiar el medio de pago de un abono cobrado que aún no se entrega al líder (ronda 38). */
+    changeMethod: {
+      open: (method: string) => `Cambiar medio de pago, ${method}`,
+      title: 'Medio de pago',
+      message: (name: string, amount: string) => `¿Cómo te pagó ${name} los ${amount}?`,
+      legend: 'Medio de pago',
+      save: 'Guardar',
+      cancel: 'Cancelar',
+      done: 'Medio de pago cambiado',
+    },
     /**
      * Abonos a mano (ronda 38, lienzo «Propuestas · Abonos a mano, sin plan automático», ADR-0052): la lista, el
      * totalizador y las ventanas de fecha, valor y eliminar. Lo mismo al crear el cliente y en la ficha.

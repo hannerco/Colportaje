@@ -16,11 +16,13 @@ import { EmptyState } from '@/ui/organisms/EmptyState';
 import { Island } from '@/ui/organisms/Island';
 import { DetailSkeleton, DetailTemplate } from '@/ui/templates/DetailTemplate';
 import type { DateChangeReason } from '@/domain/manual-schedule';
+import type { PayMethod } from '@/domain/payment';
 import { PaymentDateDialog } from '../../components/PaymentDateDialog';
+import { PaymentMethodDialog } from '../../components/PaymentMethodDialog';
 import { CollectPaymentDialog, type CollectPaymentValues } from '../../components/CollectPaymentDialog';
 import styles from './PaymentDetailScreen.module.css';
 
-export type PaymentDetailForm = 'collect' | 'extend';
+export type PaymentDetailForm = 'collect' | 'extend' | 'method';
 
 export type PaymentDetailScreenProps = {
   /** El abono y el cliente (de `useCustomerDetail`); sin valor mientras carga o si falló. */
@@ -49,6 +51,11 @@ export type PaymentDetailScreenProps = {
    * puede elegir «Me equivoqué» (corrige). Cualquier fecha; los avisos no bloquean.
    */
   onChangeDate: (date: LocalDate, reason: DateChangeReason, note?: string) => Promise<void>;
+  /**
+   * Ronda 38: cambiar el medio de pago de un abono cobrado que aún no se entrega al líder (por si se marcó mal). Si
+   * falla, que lance para que la ventana siga abierta. Sin función, el medio de pago solo se ve.
+   */
+  onChangeMethod?: (method: PayMethod) => Promise<void>;
   /** #72: lo que le pasó al abono (`usePaymentHistory`), del más reciente al más antiguo. */
   history?: readonly PaymentHistoryEntry[];
   /** #72: el nombre del Abibono en que se entregó («Abibono – 25/10/2026»), para la franja. */
@@ -163,6 +170,9 @@ export function PaymentDetailScreen(props: PaymentDetailScreenProps) {
   const installment = installmentOf(siblings, payment.paymentId);
   const locked = payment.status === 'delivered';
   const collected = payment.status === 'collected' || payment.status === 'delivered';
+  // Cobrado y aún no entregado (ni en un Abibono confirmado): el medio de pago se puede corregir (BR-PAY-11).
+  const canChangeMethod =
+    payment.status === 'collected' && payment.can.edit && Boolean(props.onChangeMethod) && !customer.archived;
   const agreedAmount = payment.agreedAmount;
   const paidAmount = payment.paidAmount;
 
@@ -261,12 +271,25 @@ export function PaymentDetailScreen(props: PaymentDetailScreenProps) {
                 </div>
               ) : (
                 collected &&
-                payment.method && (
+                payment.method &&
+                (canChangeMethod ? (
+                  <button
+                    type="button"
+                    className={[styles.method, styles.methodButton].join(' ')}
+                    aria-label={copy.payments.changeMethod.open(t.data.methods[payment.method])}
+                    disabled={!isOnline}
+                    onClick={() => props.onFormChange('method')}
+                  >
+                    <Icon name={payment.method === 'cash' ? 'money' : 'transfer'} size={16} tone="current" />
+                    {t.data.methods[payment.method]}
+                    <Icon name="edit" size={14} tone="current" />
+                  </button>
+                ) : (
                   <span className={styles.method}>
                     <Icon name={payment.method === 'cash' ? 'money' : 'transfer'} size={16} tone="current" />
                     {t.data.methods[payment.method]}
                   </span>
-                )
+                ))
               )}
             </div>
           ),
@@ -340,6 +363,16 @@ export function PaymentDetailScreen(props: PaymentDetailScreenProps) {
             .filter((p) => p.paymentId !== payment.paymentId && p.status === 'scheduled' && p.dueDate)
             .map((p) => p.dueDate!)}
           onSave={props.onChangeDate}
+        />
+      )}
+      {canChangeMethod && payment.method && paidAmount !== null && props.onChangeMethod && (
+        <PaymentMethodDialog
+          open={props.form === 'method'}
+          onOpenChange={(open) => props.onFormChange(open ? 'method' : null)}
+          current={payment.method}
+          customerName={customer.name}
+          amount={formatCOP(paidAmount)}
+          onSave={props.onChangeMethod}
         />
       )}
     </>

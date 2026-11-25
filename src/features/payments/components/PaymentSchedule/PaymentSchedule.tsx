@@ -63,6 +63,8 @@ export type PaymentScheduleProps = {
   onReview?: () => void;
   /** Entre la lista y el totalizador (p. ej. «Cancelados 1»). */
   afterList?: ReactNode;
+  /** Ficha: tocar un abono guardado lleva a su detalle (los recién agregados, aún sin guardar, no). */
+  rowHref?: (id: string) => string;
 };
 
 const t = copy.payments.manual;
@@ -109,6 +111,7 @@ export function PaymentSchedule({
   onCollect,
   onReview,
   afterList,
+  rowHref,
 }: PaymentScheduleProps) {
   const mobile = usePlatform() === 'mobile';
   const saved = mode === 'saved';
@@ -130,7 +133,9 @@ export function PaymentSchedule({
         <ul className={styles.list} aria-label={t.heading}>
           {rows.map((row, i) => {
             const label = t.label(i + 1, rows.length);
-            if (row.type === 'paid') return <PaidRow key={row.id} row={row} />;
+            if (row.type === 'paid')
+              return <PaidRow key={row.id} row={row} label={label} href={rowHref?.(row.id)} />;
+            const href = row.draft ? undefined : rowHref?.(row.id);
             const editable = !disabled;
             const asSaved = saved && !row.draft;
             const notes = rowNotes({
@@ -210,7 +215,13 @@ export function PaymentSchedule({
                 className={[styles.row, styles.scheduled, saved && styles.withCollect].join(' ')}
               >
                 <span className={styles.top}>
-                  <span className={styles.label}>{label}</span>
+                  {href ? (
+                    <a className={[styles.label, styles.rowLink].join(' ')} href={href}>
+                      {label}
+                    </a>
+                  ) : (
+                    <span className={styles.label}>{label}</span>
+                  )}
                   {remove}
                 </span>
                 <span className={styles.chips}>
@@ -282,7 +293,15 @@ export function PaymentSchedule({
 }
 
 /** Un abono ya cobrado o entregado: solo se ve (fecha, estado, valor y medio de pago). */
-function PaidRow({ row }: { row: Extract<ScheduleListRow, { type: 'paid' }> }) {
+function PaidRow({
+  row,
+  label,
+  href,
+}: {
+  row: Extract<ScheduleListRow, { type: 'paid' }>;
+  label: string;
+  href?: string;
+}) {
   const pill = (
     <span className={styles.pillLine}>
       <StatusPill status={row.status} locked={row.status === 'delivered'} size="sm" />
@@ -300,7 +319,15 @@ function PaidRow({ row }: { row: Extract<ScheduleListRow, { type: 'paid' }> }) {
       )}
     </span>
   );
-  const date = <span className={styles.paidDate}>{row.date ? formatDate(row.date) : '—'}</span>;
+  const text = row.date ? formatDate(row.date) : '—';
+  // Toda la fila lleva al detalle del abono: el enlace se estira sobre ella (CSS).
+  const date = href ? (
+    <a className={[styles.paidDate, styles.rowLink].join(' ')} href={href} aria-label={`${label}, ${text}`}>
+      {text}
+    </a>
+  ) : (
+    <span className={styles.paidDate}>{text}</span>
+  );
   return (
     <li className={[styles.row, styles.paid].join(' ')}>
       <span className={styles.paidLeft}>

@@ -13,6 +13,7 @@ import {
   useCollectPayment,
   useCorrectScheduledDate,
   useReschedulePayment,
+  useUpdateCollectedPayment,
   useUndoCollectPayment,
   type PaymentDetailForm,
 } from '@/features/payments';
@@ -49,6 +50,7 @@ export function PaymentDetailContainer({ paymentId: id, window, initialForm = nu
   const { collectPayment } = useCollectPayment();
   const { reschedulePayment } = useReschedulePayment();
   const { correctScheduledDate } = useCorrectScheduledDate();
+  const { updateCollectedPayment } = useUpdateCollectedPayment();
   const { undoCollectPayment } = useUndoCollectPayment();
 
   const showError = (error: unknown) => toast.show(errorToast(error));
@@ -114,6 +116,14 @@ export function PaymentDetailContainer({ paymentId: id, window, initialForm = nu
             },
           },
         });
+      }}
+      onChangeMethod={async (method) => {
+        const result = await updateCollectedPayment({ paymentId: id, patch: { method } });
+        if (!result.ok) {
+          showError(result.error);
+          throw new Error(result.error.code);
+        }
+        toast.show({ message: copy.payments.changeMethod.done, tone: 'success' });
       }}
       onChangeDate={async (date, reason, note) => {
         const result =
