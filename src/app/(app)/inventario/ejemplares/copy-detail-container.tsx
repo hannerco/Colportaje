@@ -13,7 +13,7 @@ import {
   useReturnToLeader,
   useUpdateReceivedDate,
 } from '@/features/inventory';
-import { useUpdateSoldAt } from '@/features/customers';
+import { useReturnCopyFromCustomer, useUpdateSoldAt } from '@/features/customers';
 import { errorToast } from '@/features/shared/error-report';
 import { useAppShell, useDetailHref } from '@/features/shell';
 import { systemClock } from '@/lib/clock';
@@ -45,6 +45,7 @@ export function CopyDetailContainer({ copyId: id, window, onDeleted }: Props) {
   const { deleteCopy, undoDeleteCopy } = useDeleteCopy();
   const { undoReturnToLeader } = useReturnToLeader();
   const { updateSoldAt } = useUpdateSoldAt();
+  const { returnCopyFromCustomer } = useReturnCopyFromCustomer();
 
   const showError = (error: unknown) => toast.show(errorToast(error));
   const copyName = detail.data ? t.title(detail.data.titleName, detail.data.number) : '';
@@ -81,6 +82,14 @@ export function CopyDetailContainer({ copyId: id, window, onDeleted }: Props) {
           throw new Error(result.error.code);
         }
         toast.show({ message: copy.payments.soldDate.saved, tone: 'success' });
+      }}
+      onReturnFromCustomer={async (reason) => {
+        const result = await returnCopyFromCustomer({ copyId: id, reason });
+        if (!result.ok) {
+          showError(result.error);
+          throw new Error(result.error.code);
+        }
+        toast.show({ message: copy.customers.returnBook.done(copyName), tone: 'success' });
       }}
       onFlag={async (note) => {
         const result = await flagCopy({ copyId: id, note });
