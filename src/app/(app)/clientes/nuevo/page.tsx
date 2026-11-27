@@ -179,9 +179,11 @@ function NewCustomerRoute() {
     }
     saved.current = true;
     if (location) await rememberLastChosenPoint({ lat: location.latitude, lng: location.longitude });
-    await queueAllPhotos();
     toast.show({ message: copy.customers.create.saved, tone: 'success' });
     router.push(ROUTES.customer(id));
+    // Sin esperar: el cliente ya quedó guardado y nada debe dejar «Guardar cliente» cargando. La bandeja vive fuera de
+    // esta pantalla, así que termina de guardar las fotos aunque se abra la ficha (y la ficha lo muestra).
+    void queueAllPhotos();
   };
 
   const screen = (
