@@ -9,7 +9,7 @@ Reglas de Clientes que el back cubre (ADR-0041) y que no tienen pantalla en el d
 | FC-03 | Aviso no bloqueante de **posible duplicado** ("¿Es la misma persona?") con acceso al existente | Crear cliente | BR-CUS-11, AF-70 |
 | FC-04 | Franja **"Aún no tiene libro"** | Ficha y Crear | BR-PAY-14, AF-107 |
 | FC-05 | Franja persistente **"Lo programado supera el saldo en $X · Revisar"** y el **modal** (saldo restante, total programado, sobrante, lista con casillas; Recortar automáticamente / Cancelar los que marque / Dejar como está, este último solo si aún debe) | Ficha, Crear, tras cobrar en Dinero | BR-PAY-13, F-29 |
-| FC-06 | **Devolver un libro** de un cliente guardado: motivo (*El cliente lo devolvió* por defecto / *Me equivoqué de cliente o de registro*) y confirmación ("los abonos y los Abibonos no cambian"); también desde el ejemplar vendido | Ficha (botón "−" y "Más acciones") e Inventario · Ejemplar | BR-COPY-09, F-16 |
+| FC-06 | *(Programado sin diseño propio, ronda 40: `ReturnBookDialog` con el Diálogo y la Selección de la biblioteca; falta dibujarlo en el lienzo.)* **Devolver un libro** de un cliente guardado: motivo (*El cliente lo devolvió* por defecto / *Me equivoqué de cliente o de registro*) y confirmación ("los abonos y los Abibonos no cambian"); también desde el ejemplar vendido | Ficha (botón "−" y "Más acciones") e Inventario · Ejemplar | BR-COPY-09, F-16 |
 | FC-07 | **Saldo a favor** en la ficha, con su nota ("No hay reembolsos") | Ficha | BR-CUS-06 |
 | FC-08 | **Saldo sin programar** y **fecha(s) de venta** en la ficha | Ficha | BR-CUS-10 |
 | FC-09 | Formulario **"Registrar abono"** (cuota inicial o abono extra: valor, método con Transferencia por defecto, fecha) | Ficha (el botón existe, el formulario no) | BR-PAY-01/03/04 |

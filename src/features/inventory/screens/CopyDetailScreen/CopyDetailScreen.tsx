@@ -6,6 +6,7 @@ import type { CopyEvent } from '@/domain/copy';
 import type { CopyDetail, HistoryItem as DomainHistoryItem } from '@/domain/copy-detail';
 import { formatCOP } from '@/domain/money';
 import { formatDate, toBogotaDate, type LocalDate } from '@/domain/time';
+import { ReturnBookDialog, type ReturnReason } from '@/features/customers/components/ReturnBookDialog';
 import { SoldDateDialog } from '@/features/payments/components/SoldDateDialog';
 import { Button } from '@/ui/atoms/Button';
 import { Field } from '@/ui/atoms/Field';
@@ -43,6 +44,8 @@ export type CopyDetailScreenProps = {
   /** Corregir la fecha de venta (#56, HU-CLI-13). Si falla, que lance. Sin función, la fecha solo se muestra. */
   onChangeSoldOn?: (date: LocalDate) => Promise<void>;
   /** Marcar con novedad (nota obligatoria, HU-INV-07) y eliminar (nota, HU-INV-08). */
+  /** «Quitar del cliente» (BR-COPY-09, HU-CLI-10): pregunta el motivo. Si falla, que lance. Sin función, no está. */
+  onReturnFromCustomer?: (reason: ReturnReason) => Promise<void>;
   onFlag: (note: string) => Promise<void>;
   onDelete: (note: string | null) => Promise<void>;
   /** Deshacer la última resolución (Apareció o Perdido) y la devolución al líder (con nota, BR-COPY-16). */
@@ -94,7 +97,7 @@ export function historyText(item: DomainHistoryItem): string {
   }
 }
 
-type Dialog = null | 'flag' | 'delete' | 'undoReturn' | 'price' | 'received' | 'sold';
+type Dialog = null | 'flag' | 'delete' | 'undoReturn' | 'price' | 'received' | 'sold' | 'returnFromCustomer';
 
 /**
  * Detalle de un ejemplar (HU-PAN-INV-03, diseño «3 · Ejemplar»): identidad con su estado, datos (cliente, precio
@@ -126,6 +129,16 @@ export function CopyDetailScreen(props: CopyDetailScreenProps) {
   const undoItem = detail.history.find((item) => item.undo !== 'none');
 
   const actions = [
+    ...(detail.can.returnFromCustomer && detail.customer && props.onReturnFromCustomer
+      ? [
+          {
+            id: 'returnFromCustomer',
+            label: copy.customers.returnBook.action,
+            icon: 'undo' as const,
+            disabled: !isOnline,
+          },
+        ]
+      : []),
     ...(detail.can.flag ? [{ id: 'flag', label: t.flag, icon: 'alert' as const, disabled: !isOnline }] : []),
     ...(detail.can.delete
       ? [{ id: 'delete', label: t.delete, icon: 'delete' as const, danger: true, disabled: !isOnline }]
@@ -141,7 +154,7 @@ export function CopyDetailScreen(props: CopyDetailScreenProps) {
         }
         title={t.moreActions}
         items={actions}
-        onSelect={(id) => setDialog(id as 'flag' | 'delete')}
+        onSelect={(id) => setDialog(id as 'flag' | 'delete' | 'returnFromCustomer')}
       />
     ) : undefined;
 
@@ -295,6 +308,15 @@ export function CopyDetailScreen(props: CopyDetailScreenProps) {
             await props.onChangeSoldOn!(date);
             setDialog(null);
           }}
+        />
+      )}
+      {dialog === 'returnFromCustomer' && detail.customer && props.onReturnFromCustomer && (
+        <ReturnBookDialog
+          open
+          onOpenChange={(open) => !open && setDialog(null)}
+          bookName={copyName}
+          customerName={detail.customer.name}
+          onConfirm={props.onReturnFromCustomer}
         />
       )}
       {dialog === 'received' && (

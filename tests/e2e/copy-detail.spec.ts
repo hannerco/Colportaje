@@ -4,7 +4,7 @@ import { expect, test, type Page } from '@playwright/test';
 const list = (page: Page) =>
   page.getByRole(page.viewportSize()!.width < 768 ? 'list' : 'table', { name: 'Vistas de ejemplares' });
 
-test('un ejemplar vendido muestra su cliente, el precio y el historial, y no se puede eliminar (CA-4)', async ({
+test('un ejemplar vendido muestra su cliente, el precio y el historial; no se elimina, se quita del cliente (CA-4)', async ({
   page,
 }) => {
   await page.goto('/inventario/ejemplares?vista=vendidos');
@@ -18,7 +18,12 @@ test('un ejemplar vendido muestra su cliente, el precio y el historial, y no se 
   await expect(page.getByText('Precio acordado').first()).toBeVisible();
   await expect(page.getByText('$75.000').first()).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Historial' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Más acciones' })).toHaveCount(0);
+  // Vendido: no se elimina ni se marca con novedad; solo se puede quitar del cliente (BR-COPY-09).
+  await page.getByRole('button', { name: 'Más acciones' }).click();
+  await expect(page.getByRole('menuitem', { name: 'Quitar del cliente' })).toBeVisible();
+  await expect(page.getByRole('menuitem', { name: 'Eliminar' })).toHaveCount(0);
+  await expect(page.getByRole('menuitem', { name: 'Marcar con novedad' })).toHaveCount(0);
+  await page.keyboard.press('Escape');
   // El cliente lleva a su ficha, en la forma que recuerdan los clientes (2026-11-25): su página en el celular; en
   // escritorio, la lista con la ficha abierta en la Ventana (lateral por defecto).
   await page

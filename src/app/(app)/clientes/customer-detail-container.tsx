@@ -19,6 +19,7 @@ import {
   useCustomerDetail,
   useRestoreCustomer,
   useUpdateCustomer,
+  useReturnCopyFromCustomer,
   useUpdateSoldAt,
   type CustomerDetailScreenProps,
   usePendingPhotos,
@@ -85,6 +86,7 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
   const invoiceTimers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
   const { updateCustomer } = useUpdateCustomer();
   const { updateSoldAt } = useUpdateSoldAt();
+  const { returnCopyFromCustomer } = useReturnCopyFromCustomer();
   const { collectPayment } = useCollectPayment();
   const { undoCollectPayment } = useUndoCollectPayment();
   const { scheduleSinglePayment } = useScheduleSinglePayment();
@@ -264,6 +266,21 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
             throw new Error(result.error.code);
           }
           toast.show({ message: copy.payments.soldDate.saved, tone: 'success' });
+        }}
+        onReturnBook={async (copyId, reason) => {
+          const book = detail.data?.books.find((b) => b.copyId === copyId);
+          const result = await returnCopyFromCustomer({ copyId, reason });
+          if (!result.ok) {
+            showError(result.error);
+            throw new Error(result.error.code);
+          }
+          if (book)
+            toast.show({
+              message: copy.customers.returnBook.done(
+                copy.inventory.detail.title(book.titleName, book.number),
+              ),
+              tone: 'success',
+            });
         }}
         onCollect={setCollecting}
         schedule={{

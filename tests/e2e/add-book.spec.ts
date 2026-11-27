@@ -43,3 +43,36 @@ test('agregar un libro en la ficha nueva, ajustar su precio y quitarlo (CA-1, CA
   await page.getByRole('alertdialog').getByRole('button', { name: 'Salir' }).click();
   await expect(page).toHaveURL(/\/clientes$/);
 });
+
+test('BR-COPY-09: quitar un libro de un cliente guardado pregunta el motivo y lo deja En físico', async ({
+  page,
+}, testInfo) => {
+  const name = `Devuelve ${testInfo.project.name} ${Date.now()}`;
+  await page.goto('/clientes/nuevo');
+  await page.getByLabel('Nombre del cliente').fill(name);
+  await page.getByRole('button', { name: 'Agregar libro del inventario' }).click();
+  const sheet = page.getByRole('dialog', { name: 'Ejemplares en físico' });
+  await sheet.getByRole('searchbox', { name: 'Buscar libro o número' }).fill('salud');
+  const select = sheet
+    .getByRole('button', { name: /^Seleccionar Salud y bienestar en familia #\d+$/ })
+    .first();
+  const label = (await select.getAttribute('aria-label'))!;
+  const book = label.replace(/^Seleccionar /, '');
+  await select.click();
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: 'Guardar cliente' }).click();
+  await page.getByRole('alertdialog').getByRole('button', { name: 'Guardar cliente' }).click();
+  await expect(page).toHaveURL(/\/clientes\/[0-9a-f-]+$/);
+
+  // En la ficha, el «×» del libro pregunta el motivo, con «El cliente lo devolvió» marcado.
+  const books = page.getByRole('region', { name: 'Libros', exact: true });
+  await books.getByRole('button', { name: `Quitar ${book}` }).click();
+  const dialog = page.getByRole('alertdialog');
+  await expect(dialog).toContainText(`¿Quitar ${book} de ${name}?`);
+  await expect(dialog).toContainText('Los abonos y los Abibonos no cambian');
+  await expect(dialog.getByRole('radio', { name: 'El cliente lo devolvió' })).toBeChecked();
+  await dialog.getByRole('button', { name: 'Quitar libro' }).click();
+
+  await expect(page.getByText(`${book} volvió a En físico`)).toBeVisible();
+  await expect(books.getByRole('button', { name: `Quitar ${book}` })).toHaveCount(0);
+});

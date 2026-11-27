@@ -735,6 +735,23 @@ export const copy = {
       replaced: 'Foto cambiada',
       removed: 'Foto quitada',
     },
+    /**
+     * Quitar un libro de un cliente guardado = devolución con motivo (BR-COPY-09, HU-CLI-10, FC-06). El mismo diálogo
+     * en la ficha («Quitar» del libro) y en el detalle del ejemplar («Más acciones»).
+     */
+    returnBook: {
+      action: 'Quitar del cliente',
+      title: (book: string, customer: string) => `¿Quitar ${book} de ${customer}?`,
+      message:
+        'El libro vuelve a tu inventario En físico. Los abonos y los Abibonos no cambian: si ya pagó más de lo que ahora debe, le queda saldo a favor.',
+      reason: '¿Por qué lo quitas?',
+      customerReturned: 'El cliente lo devolvió',
+      wrongRegistration: 'Me equivoqué de cliente o de registro',
+      wrongRegistrationHint: 'No cuenta como devolución.',
+      confirm: 'Quitar libro',
+      cancel: 'Cancelar',
+      done: (book: string) => `${book} volvió a En físico`,
+    },
     /** Bandeja de fotos (ADR-0054): lo que este teléfono aún no sube, en la ficha del cliente. */
     pendingPhotos: {
       label: 'Fotos por subir',

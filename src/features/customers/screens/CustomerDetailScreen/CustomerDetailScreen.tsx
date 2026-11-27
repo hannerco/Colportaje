@@ -30,6 +30,7 @@ import { EmojiAvatar } from '../../components/EmojiAvatar';
 import { EditCustomerDialog } from '../../components/EditCustomerDialog';
 import { InvoiceBlock, type InvoiceBlockProps } from '../../components/InvoiceBlock';
 import { PendingPhotosNote, type PendingPhotosNoteProps } from '../../components/PendingPhotosNote';
+import { ReturnBookDialog, type ReturnReason } from '../../components/ReturnBookDialog';
 import type { CustomerPatch } from '@/domain/customer-data';
 import { AddBookButton, SoldBookList } from '../../components/SoldBookList';
 import type { MapTiles } from '../../map-tiles';
@@ -82,6 +83,11 @@ export type CustomerDetailScreenProps = {
   onAvatarChange?: (emoji: string | null) => void;
   /** Corregir la fecha de venta de un libro (#56). Si falla, que lance. */
   onChangeSoldOn?: (copyId: string, soldOn: LocalDate) => Promise<void>;
+  /**
+   * Quitar un libro (BR-COPY-09, HU-CLI-10): el «×» del libro pregunta el motivo. Si falla, que lance (el diálogo sigue
+   * abierto). Sin función, o con el cliente archivado, no hay «×».
+   */
+  onReturnBook?: (copyId: string, reason: ReturnReason) => Promise<void>;
   /** HU-PAN-CLI-06: teselas del mapa (SG-09). */
   tiles?: MapTiles | null;
   /** «Elegir en mapa» y «Cambiar» abren el selector. Sin función (archivado) no hay botones de ubicación. */
@@ -202,6 +208,7 @@ export function CustomerDetailScreen({
   invoiceActions,
   onEditData,
   pendingPhotos,
+  onReturnBook,
   onCollect,
   paymentHref,
   schedule,
@@ -212,6 +219,7 @@ export function CustomerDetailScreen({
   const [archiveOpen, setArchiveOpen] = useState(false);
   const [editing, setEditing] = useState(false);
   const [canceledOpen, setCanceledOpen] = useState(false);
+  const [returning, setReturning] = useState<string | null>(null);
 
   if (!detail)
     return (
@@ -255,6 +263,7 @@ export function CustomerDetailScreen({
       }}
     />
   );
+  const returningBook = detail.books.find((book) => book.copyId === returning);
 
   return (
     <>
@@ -315,6 +324,9 @@ export function CustomerDetailScreen({
               books={detail.books}
               copyHref={copyHref}
               {...(onChangeSoldOn && today && isOnline && !detail.archived ? { onChangeSoldOn, today } : {})}
+              {...(onReturnBook && !detail.archived
+                ? { onRemove: setReturning, removeDisabled: !isOnline }
+                : {})}
             />
             {onAddBook && (
               <AddBookButton
@@ -501,6 +513,15 @@ export function CustomerDetailScreen({
           </DataList>
         </Island>
       </DetailTemplate>
+      {onReturnBook && returningBook && (
+        <ReturnBookDialog
+          open
+          onOpenChange={(open) => !open && setReturning(null)}
+          bookName={copy.inventory.detail.title(returningBook.titleName, returningBook.number)}
+          customerName={detail.name}
+          onConfirm={(reason) => onReturnBook(returningBook.copyId, reason)}
+        />
+      )}
       {onEditData && (
         <EditCustomerDialog
           open={editing}
