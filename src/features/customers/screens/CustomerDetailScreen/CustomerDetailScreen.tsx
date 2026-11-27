@@ -29,6 +29,7 @@ import { CustomerLocationBlock } from '../../components/CustomerLocationBlock';
 import { EmojiAvatar } from '../../components/EmojiAvatar';
 import { EditCustomerDialog } from '../../components/EditCustomerDialog';
 import { InvoiceBlock, type InvoiceBlockProps } from '../../components/InvoiceBlock';
+import { PendingPhotosNote, type PendingPhotosNoteProps } from '../../components/PendingPhotosNote';
 import type { CustomerPatch } from '@/domain/customer-data';
 import { AddBookButton, SoldBookList } from '../../components/SoldBookList';
 import type { MapTiles } from '../../map-tiles';
@@ -103,6 +104,8 @@ export type CustomerDetailScreenProps = {
   >;
   /** #69: «Editar» en Datos (nombre, teléfono, dirección e información). Si falla, que lance. Sin función, no hay. */
   onEditData?: (patch: CustomerPatch) => Promise<void>;
+  /** ADR-0054: fotos de este cliente que este teléfono aún no sube. Sin nada pendiente, no se ve. */
+  pendingPhotos?: PendingPhotosNoteProps;
 };
 
 const t = copy.customers.detail;
@@ -198,6 +201,7 @@ export function CustomerDetailScreen({
   onRemovePhoto,
   invoiceActions,
   onEditData,
+  pendingPhotos,
   onCollect,
   paymentHref,
   schedule,
@@ -434,6 +438,14 @@ export function CustomerDetailScreen({
                     fullUrl={photoUrl}
                   />
                 }
+              />
+            )}
+            {pendingPhotos && (pendingPhotos.pending > 0 || pendingPhotos.failed > 0) && (
+              <DataRow
+                label={copy.customers.pendingPhotos.label}
+                layout="stacked"
+                divider={Boolean(detail.info || detail.infoPhotos.length || (onAddPhoto && !detail.archived))}
+                value={<PendingPhotosNote {...pendingPhotos} />}
               />
             )}
             {invoiceActions && !detail.archived ? (

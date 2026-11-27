@@ -72,3 +72,40 @@ test('#57: salir por la navegación con un cliente a medias pregunta antes', asy
   await dialog.getByRole('button', { name: 'Salir' }).click();
   await expect(page).toHaveURL(/\/inventario$/);
 });
+
+/** Una imagen PNG de 1×1 para la factura. */
+const PNG = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+  'base64',
+);
+
+test('ADR-0054: la foto de la factura no se pierde aunque no suba y se cierre la app', async ({
+  page,
+}, testInfo) => {
+  const name = `Con factura ${testInfo.project.name} ${Date.now()}`;
+  await page.goto('/clientes/nuevo');
+  await page.getByLabel('Nombre del cliente').fill(name);
+  await page
+    .getByLabel('Foto de la factura')
+    .setInputFiles({ name: 'factura.png', mimeType: 'image/png', buffer: PNG });
+  await page.getByLabel('N.º de factura').fill('0042');
+
+  // La red no deja subir fotos (como sin señal en la calle): el cliente se guarda igual.
+  await page.route('**/storage/v1/object/**', (route) => route.abort('internetdisconnected'));
+  await page.getByRole('button', { name: 'Guardar cliente' }).click();
+  await page.getByRole('alertdialog').getByRole('button', { name: 'Guardar cliente' }).click();
+  await expect(page).toHaveURL(/\/clientes\/[0-9a-f-]+$/);
+  const customerUrl = page.url();
+  // La ficha dice que la foto quedó guardada en el teléfono.
+  await expect(
+    page.getByText('1 foto guardada en este teléfono. Se sube sola cuando haya señal.'),
+  ).toBeVisible();
+
+  // Se cierra la app y se vuelve a abrir con señal: la foto se sube sola y la factura aparece con su N.º.
+  await page.unroute('**/storage/v1/object/**');
+  await page.goto('about:blank');
+  await page.goto(customerUrl);
+  await expect(page.getByRole('img', { name: /Foto 1|Factura/ }).first()).toBeVisible();
+  await expect(page.getByLabel('N.º de factura').first()).toHaveValue('0042');
+  await expect(page.getByText(/guardada en este teléfono|Subiendo 1 foto/)).toHaveCount(0);
+});

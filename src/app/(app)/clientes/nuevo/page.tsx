@@ -10,12 +10,9 @@ import { todayBogota, type LocalDate } from '@/domain/time';
 import {
   NewCustomerScreen,
   mapTiles,
-  useAddCustomerInfoPhoto,
-  useAddInvoicePhoto,
-  useCreateInvoiceWithPhoto,
+  useQueueNewCustomerPhotos,
   useRememberLastChosenPoint,
   useSaveNewCustomer,
-  useUpdateInvoice,
   type DownPaymentValue,
 } from '@/features/customers';
 import { DEFAULT_PAY_METHOD } from '@/features/payments';
@@ -47,8 +44,9 @@ const middayBogota = (date: LocalDate) => new Date(`${date}T12:00:00-05:00`);
 /**
  * Nuevo cliente (HU-PAN-CLI-03; ronda 35, #57, ADR-0051): **el cliente solo existe al guardarlo**. Todo lo que se
  * escribe, los libros elegidos (que siguen En físico, sin historial), la cuota, el plan y las fotos viven en el teléfono.
- * «Guardar cliente» guarda cliente, libros, cuota y plan en una sola transacción y después sube las fotos; si una foto
- * falla, el cliente ya quedó guardado y el Aviso ofrece reintentarla. Salir con algo escrito pregunta antes.
+ * «Guardar cliente» guarda cliente, libros, cuota y plan en una sola transacción y pone las fotos en la bandeja
+ * (ADR-0054): quedan guardadas en el teléfono y se suben solas, aunque se cierre la app o no haya señal. La ficha
+ * muestra lo que falta. Salir con algo escrito pregunta antes.
  */
 function NewCustomerRoute() {
   const shell = useAppShell();
@@ -85,10 +83,7 @@ function NewCustomerRoute() {
   const saved = useRef(false);
 
   const { saveNewCustomer } = useSaveNewCustomer();
-  const { addCustomerInfoPhoto } = useAddCustomerInfoPhoto();
-  const { createInvoiceWithPhoto } = useCreateInvoiceWithPhoto();
-  const { addInvoicePhoto } = useAddInvoicePhoto();
-  const { updateInvoice } = useUpdateInvoice();
+  const queuePhotos = useQueueNewCustomerPhotos();
   const rememberLastChosenPoint = useRememberLastChosenPoint();
 
   const showError = (error: unknown) => toast.show(errorToast(error));
@@ -130,64 +125,27 @@ function NewCustomerRoute() {
     );
   const downDateInFuture = down.paidOn > today;
 
-  /** Sube las fotos del cliente ya guardado; devuelve lo que falló, para reintentar. */
-  const uploadPhotos = async (customerId: string) => {
-    const failed: (() => Promise<boolean>)[] = [];
-    const attempt = async (run: () => Promise<{ ok: boolean }>) => {
-      const result = await run();
-      if (!result.ok) failed.push(async () => (await run()).ok);
-    };
-    for (const photo of photos)
-      await attempt(() => addCustomerInfoPhoto({ photoId: photo.photoId, customerId, file: photo.file }));
-    for (const invoice of invoices) {
-      const [first, ...rest] = invoice.photos;
-      if (!first) continue;
-      const created = await createInvoiceWithPhoto({
-        invoiceId: invoice.invoiceId,
-        photoId: first.photoId,
-        customerId,
-        file: first.file,
-      });
-      if (!created.ok) {
-        failed.push(async () => {
-          const again = await createInvoiceWithPhoto({
+  /** Las fotos del cliente ya guardado van a la bandeja, que las sube sola (ADR-0054). */
+  const queueAllPhotos = async () => {
+    const count = photos.length + invoices.reduce((sum, invoice) => sum + invoice.photos.length, 0);
+    if (count === 0) return;
+    try {
+      await queuePhotos({
+        customerId: id,
+        photos: {
+          infoPhotos: photos.map(({ photoId, file }) => ({ photoId, file })),
+          invoices: invoices.map((invoice) => ({
             invoiceId: invoice.invoiceId,
-            photoId: first.photoId,
-            customerId,
-            file: first.file,
-          });
-          return again.ok;
-        });
-        continue;
-      }
-      for (const photo of rest)
-        await attempt(() =>
-          addInvoicePhoto({ invoiceId: invoice.invoiceId, photoId: photo.photoId, file: photo.file }),
-        );
-      if (invoice.number || invoice.date)
-        await attempt(() =>
-          updateInvoice({
-            invoiceId: invoice.invoiceId,
-            patch: { number: invoice.number, date: invoice.date },
-          }),
-        );
-    }
-    return failed;
-  };
-
-  const offerRetry = (failed: (() => Promise<boolean>)[]) => {
-    if (failed.length === 0) return;
-    toast.show({
-      message: copy.customers.create.photosFailed(failed.length),
-      tone: 'error',
-      action: {
-        label: copy.errors.retry,
-        onAction: async () => {
-          const results = await Promise.all(failed.map((retry) => retry()));
-          offerRetry(failed.filter((_, i) => !results[i]));
+            number: invoice.number,
+            date: invoice.date,
+            photos: invoice.photos.map(({ photoId, file }) => ({ photoId, file })),
+          })),
         },
-      },
-    });
+      });
+    } catch {
+      // Solo pasa si se cerró la sesión justo al guardar: el cliente quedó guardado, las fotos no.
+      toast.show({ message: copy.customers.create.photosFailed(count), tone: 'error' });
+    }
   };
 
   const save = async () => {
@@ -221,9 +179,9 @@ function NewCustomerRoute() {
     }
     saved.current = true;
     if (location) await rememberLastChosenPoint({ lat: location.latitude, lng: location.longitude });
+    await queueAllPhotos();
     toast.show({ message: copy.customers.create.saved, tone: 'success' });
     router.push(ROUTES.customer(id));
-    offerRetry(await uploadPhotos(id));
   };
 
   const screen = (

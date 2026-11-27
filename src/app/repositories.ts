@@ -1,6 +1,7 @@
 import { canvasImageCodec } from '@/adapters/browser/canvas-image-codec';
 import { browserConnectivity } from '@/adapters/browser/connectivity';
 import { createLastPickerPointStore } from '@/adapters/browser/last-picker-point';
+import { createIndexedDbPhotoOutbox } from '@/adapters/browser/photo-outbox';
 import { offlineCacheFrom } from '@/adapters/browser/query-persister';
 import { createSupabaseAuthRepository } from '@/adapters/supabase/auth-repository';
 import { createSupabaseBrowserClient, type AppSupabaseClient } from '@/adapters/supabase/client';
@@ -35,6 +36,7 @@ export function createAppRepositories(persister: Persister): Repositories {
     invoices: createSupabaseInvoiceRepository(getClient),
     photos: createSupabasePhotoRepository(getClient),
     storage: createSupabaseStorageRepository(getClient),
+    photoOutbox: createIndexedDbPhotoOutbox(),
     imageCodec: canvasImageCodec,
     connectivity: browserConnectivity,
     offlineCache: offlineCacheFrom(persister),

@@ -1,6 +1,6 @@
 # ADR-0051: El cliente nuevo solo existe al guardarlo
 
-**Estado:** Aceptado (2026-11-22, ronda 35, issue #57) · **Reemplaza:** ADR-0038 («ficha viva») en lo que toca a crear un cliente · **Cambia:** BR-CUS-14
+**Estado:** Aceptado (2026-11-22, ronda 35, issue #57); el §3 (cómo se suben las fotos) lo cambia ADR-0054 · **Reemplaza:** ADR-0038 («ficha viva») en lo que toca a crear un cliente · **Cambia:** BR-CUS-14
 
 ## Contexto
 Desde ADR-0038, Nuevo cliente era una **ficha viva**. El cliente existía apenas tenía nombre y cada dato se guardaba solo un momento después. Lo mismo pasaba con cada libro: se vendía al tocarlo y volvía a físico al quitarlo. Por eso, elegir y quitar un libro durante la creación dejaba rastro en el historial del ejemplar, y «Descartar» tenía que deshacer en la base todo lo creado.
@@ -19,7 +19,7 @@ Al probar la app, el dueño pidió: **"El cliente no existe a menos que yo lo gu
    - guarda el plan con `apply_payment_plan`.
 
    O queda todo o no queda nada: si un libro ya no está en físico (otro dispositivo lo vendió), no se guarda nada y la app lo dice. Reintentar con el mismo id no duplica.
-3. **Las fotos se suben después**, con el cliente ya guardado. Si una falla, el Aviso dice «No se subió 1 foto · Reintentar» (las fotos siguen en el teléfono mientras la app esté abierta).
+3. *(Cambiado por ADR-0054, ronda 40: las fotos van a una bandeja del teléfono que se sube sola.)* **Las fotos se suben después**, con el cliente ya guardado. Si una falla, el Aviso dice «No se subió 1 foto · Reintentar» (las fotos siguen en el teléfono mientras la app esté abierta).
 4. **Salir con algo escrito pregunta** «¿Salir sin guardar?». Salir no deja nada: no hay borrador ni nada que borrar. Cerrar la pestaña también pide confirmación al navegador.
 5. Los libros de un cliente **ya guardado** siguen como antes: quitar uno es una devolución (BR-COPY-09) y queda en el historial.
 

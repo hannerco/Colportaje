@@ -7,6 +7,7 @@ import type { InvoiceRepository } from './invoice-repository';
 import type { MoneyRepository } from './money-repository';
 import type { OfflineCache } from './offline-cache';
 import type { PaymentRepository } from './payment-repository';
+import type { PhotoOutbox } from './photo-outbox';
 import type { ImageCodec, PhotoRepository, StorageRepository } from './photo-ports';
 import type { ProfileRepository } from './profile-repository';
 import type { TitleRepository } from './title-repository';
@@ -24,6 +25,7 @@ export type {
 export type { InvoiceRepository, UploadedInvoicePhoto } from './invoice-repository';
 export type { OfflineCache } from './offline-cache';
 export type { PaymentRepository } from './payment-repository';
+export type { PendingPhoto, PendingPhotoTarget, PhotoOutbox } from './photo-outbox';
 export type {
   DecodedImage,
   ImageCodec,
@@ -54,6 +56,8 @@ export interface Repositories {
   readonly invoices: InvoiceRepository;
   readonly photos: PhotoRepository;
   readonly storage: StorageRepository;
+  /** Fotos que esperan subirse, guardadas en el dispositivo (ADR-0054). */
+  readonly photoOutbox: PhotoOutbox;
   readonly imageCodec: ImageCodec;
   readonly connectivity: Connectivity;
   readonly offlineCache: OfflineCache;

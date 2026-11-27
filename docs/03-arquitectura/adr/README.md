@@ -57,8 +57,9 @@ Un ADR por decisión relevante. Formato: contexto → decisión → alternativas
 | 0048 | Librerías de cálculo puro en el dominio | Aceptado |
 | 0049 | Registrar el pasado (empezar a usar la app a mitad de campaña) | Aceptado |
 | 0050 | Front con Storybook y la biblioteca de componentes del diseño (CSS Modules + tokens + Radix, Lucide, nombres en inglés) | Aceptado |
-| 0051 | El cliente nuevo solo existe al guardarlo | Aceptado |
+| 0051 | El cliente nuevo solo existe al guardarlo | Aceptado (el §3, subir las fotos, lo cambia ADR-0054) |
 | 0052 | Abonos a mano, sin plan automático; nada obliga, todo es aviso | Aceptado (reemplaza ADR-0039 y, en lo que obliga, ADR-0033 y ADR-0045) |
+| 0054 | Bandeja de fotos: ninguna foto se pierde sin que la persona lo decida | Aceptado (cambia ADR-0051 §3) |
 
 ## Plantilla
 ```markdown

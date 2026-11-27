@@ -735,6 +735,21 @@ export const copy = {
       replaced: 'Foto cambiada',
       removed: 'Foto quitada',
     },
+    /** Bandeja de fotos (ADR-0054): lo que este teléfono aún no sube, en la ficha del cliente. */
+    pendingPhotos: {
+      label: 'Fotos por subir',
+      uploading: (n: number) => (n === 1 ? 'Subiendo 1 foto…' : `Subiendo ${n} fotos…`),
+      waiting: (n: number) =>
+        n === 1
+          ? '1 foto guardada en este teléfono. Se sube sola cuando haya señal.'
+          : `${n} fotos guardadas en este teléfono. Se suben solas cuando haya señal.`,
+      failed: (n: number) => (n === 1 ? 'No se pudo subir 1 foto' : `No se pudieron subir ${n} fotos`),
+      retry: 'Reintentar',
+      discard: 'Descartar',
+      discardTitle: (n: number) => (n === 1 ? '¿Descartar la foto?' : `¿Descartar ${n} fotos?`),
+      discardMessage: 'Se borran de este teléfono y no se pueden recuperar.',
+      cancel: 'Cancelar',
+    },
   },
   /** Abonos (HU-PAN-CLI-05). */
   payments: {

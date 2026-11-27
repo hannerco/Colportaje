@@ -7,6 +7,7 @@ import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client
 import { useEffect, useState, type ReactNode } from 'react';
 import { CACHE_BUSTER, createIndexedDbPersister } from '@/adapters/browser/query-persister';
 import { startConnectionSync } from '@/features/connection';
+import { PendingPhotosProvider } from '@/features/customers';
 import { createAppQueryClient, OFFLINE_CACHE_MAX_AGE_MS } from '@/features/shared/query-client';
 import { RepositoriesProvider } from '@/features/shared/repositories-provider';
 import { businessConfig } from '@/domain/config/business-config';
@@ -34,11 +35,14 @@ export function Providers({ children }: { children: ReactNode }) {
         persistOptions={{ persister, maxAge: OFFLINE_CACHE_MAX_AGE_MS, buster: CACHE_BUSTER }}
       >
         <RepositoriesProvider repositories={repositories}>
-          {/* HU-UI-15: el aviso «Deshacer» dura `undo.toastSeconds` (I-34). */}
-          <ToastProvider durationMs={businessConfig.undo.toastSeconds * 1000}>
-            <GlobalErrorReporter />
-            {children}
-          </ToastProvider>
+          {/* ADR-0054: las fotos pendientes se suben solas, en cualquier pantalla. */}
+          <PendingPhotosProvider>
+            {/* HU-UI-15: el aviso «Deshacer» dura `undo.toastSeconds` (I-34). */}
+            <ToastProvider durationMs={businessConfig.undo.toastSeconds * 1000}>
+              <GlobalErrorReporter />
+              {children}
+            </ToastProvider>
+          </PendingPhotosProvider>
         </RepositoriesProvider>
       </PersistQueryClientProvider>
     </SerwistProvider>

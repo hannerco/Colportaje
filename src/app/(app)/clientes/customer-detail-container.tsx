@@ -21,6 +21,7 @@ import {
   useUpdateCustomer,
   useUpdateSoldAt,
   type CustomerDetailScreenProps,
+  usePendingPhotos,
   usePhotoUrlResolver,
 } from '@/features/customers';
 import { errorToast } from '@/features/shared/error-report';
@@ -58,6 +59,8 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
   const { isOnline } = useAppShell();
   const href = useDetailHref();
   const detail = useCustomerDetail(customerId);
+  // ADR-0054: las fotos de este cliente que este teléfono aún no sube.
+  const pending = usePendingPhotos(customerId);
   const [wantsPreview, setWantsPreview] = useState(false);
   const [addingBook, setAddingBook] = useState(false);
   const preview = useArchivePreview(wantsPreview ? customerId : null);
@@ -229,6 +232,17 @@ export function CustomerDetailContainer({ customerId, fallbackTitle, window }: P
                 });
               }, 600),
             );
+          },
+        }}
+        pendingPhotos={{
+          pending: pending.pending,
+          uploading: pending.uploading,
+          failed: pending.failedIds.length,
+          onRetry: () => {
+            for (const photoId of pending.failedIds) void pending.retry(photoId);
+          },
+          onDiscard: async () => {
+            for (const photoId of pending.failedIds) await pending.discard(photoId);
           },
         }}
         onEditData={async (patch) => {
