@@ -7,6 +7,8 @@ import type {
   InvoiceRepository,
   MoneyRepository,
   PaymentRepository,
+  PendingPhoto,
+  PhotoOutbox,
   PhotoRepository,
   StorageRepository,
   TitleRepository,
@@ -117,3 +119,22 @@ export const fakeMoneyRepository = (overrides: Partial<MoneyRepository> = {}): M
   reopenDeposit: vi.fn(),
   ...overrides,
 });
+
+/** Bandeja de fotos en memoria (ADR-0054), con la misma semántica que la de IndexedDB. */
+export const memoryPhotoOutbox = (
+  initial: readonly PendingPhoto[] = [],
+): PhotoOutbox & {
+  readonly saved: Map<string, PendingPhoto>;
+} => {
+  const saved = new Map(initial.map((photo) => [photo.photoId, photo]));
+  return {
+    saved,
+    put: vi.fn(async (photos: readonly PendingPhoto[]) => {
+      for (const photo of photos) saved.set(photo.photoId, photo);
+    }),
+    list: vi.fn(async () => [...saved.values()]),
+    remove: vi.fn(async (photoId: string) => {
+      saved.delete(photoId);
+    }),
+  };
+};

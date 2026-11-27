@@ -33,6 +33,11 @@ export {
   useUpdateCustomer,
 } from './hooks';
 export {
+  PendingPhotosProvider,
+  usePendingPhotos,
+  useQueueNewCustomerPhotos,
+} from './pending-photos-provider';
+export {
   assignCopyToCustomer,
   removeCopyDuringCreation,
   returnCopyFromCustomer,
