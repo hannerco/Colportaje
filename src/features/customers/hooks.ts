@@ -60,7 +60,10 @@ export const customerQueryKeys = {
   discardSummary: (customerId: string) => ['customers', 'discard-summary', customerId] as const,
 };
 
-/** Las URL firmadas caducan: las lecturas que las traen se refrescan a mitad de su vida. */
+/**
+ * Una URL firmada sola (la foto completa del visor) vale hasta la mitad de su vida. Las lecturas que traen datos (ficha,
+ * facturas, imágenes) no usan este plazo: se piden de nuevo al abrirse y Storage reutiliza la URL de cada miniatura.
+ */
 const signedUrlStaleMs = (businessConfig.photos.signedUrlSeconds * 1000) / 2;
 
 /** Crea el cliente con su nombre (ficha viva, HU-CLI-02). Devuelve `Result`. */
@@ -221,7 +224,6 @@ export function useCustomerInfoPhotos(customerId: string | null | undefined) {
     queryKey: customerQueryKeys.infoPhotos(customerId ?? ''),
     queryFn: async () => unwrap(await listCustomerInfoPhotos({ photos, storage }, customerId!)),
     enabled: Boolean(customerId),
-    staleTime: signedUrlStaleMs,
   });
 }
 
@@ -290,7 +292,6 @@ export function useCustomerInvoices(customerId: string | null | undefined) {
     queryKey: customerQueryKeys.invoices(customerId ?? ''),
     queryFn: async () => unwrap(await listCustomerInvoices({ invoices, storage }, customerId!)),
     enabled: Boolean(customerId),
-    staleTime: signedUrlStaleMs,
   });
 }
 
@@ -504,6 +505,5 @@ export function useCustomerDetail(customerId: string | null | undefined) {
         await loadCustomerDetail({ customers, photos, invoices, storage, clock: systemClock }, customerId!),
       ),
     enabled: Boolean(customerId),
-    staleTime: signedUrlStaleMs,
   });
 }

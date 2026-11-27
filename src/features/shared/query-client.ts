@@ -19,7 +19,10 @@ export function createAppQueryClient(): QueryClient {
         // poner 30 días: pasa del máximo de setTimeout (~24,8 días), el temporizador se dispara de inmediato y las
         // lecturas recién restauradas sin conexión se borran antes de que una pantalla las lea. `Infinity` = nunca.
         gcTime: Infinity,
-        staleTime: 30_000,
+        // Toda pantalla pide sus datos de nuevo al abrirse (y al volver a la app): lo guardado se ve al instante y se
+        // reemplaza en cuanto llega lo de Supabase. Antes la ficha se daba por fresca 30 minutos y un cambio hecho en
+        // otro equipo (una factura, un abono) no se veía en ese rato, ni recargando. Sin conexión queda lo guardado.
+        staleTime: 0,
         retry: shouldRetry,
       },
     },
